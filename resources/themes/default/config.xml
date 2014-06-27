@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+
+<entry key="color-screen-0">#ffffff</entry>
+<entry key="color-screen-1">#dddddd</entry>
+<entry key="color-screen-2">#777777</entry>
+<entry key="color-screen-3">#4488cc</entry>
+<entry key="color-screen-4">#000000</entry>
+<entry key="color-screen-5">#ff0000</entry>
+
+<entry key="color-player-1">#4488cc</entry>
+<entry key="color-player-2">#66cc66</entry>
+<entry key="color-player-3">#f09944</entry>
+<entry key="color-player-4">#f0f044</entry>
+<entry key="color-player-5">#cc88cc</entry>
+<entry key="color-player-6">#88cccc</entry>
+<entry key="color-player-7">#444444</entry>
+<entry key="color-player-8">#cccccc</entry>
+
+
+<entry key="color-renderer-0">#99ccff</entry>
+<entry key="color-renderer-1">#dddddd</entry>
+<entry key="color-renderer-2">#777777</entry>
+<entry key="color-renderer-3">#4488cc</entry>
+<entry key="color-renderer-4">#f0f066</entry>
+<entry key="color-renderer-5">#cccccc66</entry>
+<entry key="color-renderer-6">#ffffffee</entry>
+<entry key="color-renderer-7">#ffffff</entry>
+<entry key="color-renderer-8">#000000</entry>
+<entry key="color-renderer-9">#0000ff</entry>
+</properties>

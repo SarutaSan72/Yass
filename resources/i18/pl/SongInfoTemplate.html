@@ -1,0 +1,91 @@
+<head>
+<style>
+body
+{
+    color: black;
+    font-family: Arial, sans-serif;
+    font-size: 12;
+} 
+TR
+{
+    color: black;
+    font-family: Arial, sans-serif;
+    font-size: 12;
+}
+.titleCell
+{
+    color: #333366;
+    font-family: Arial, sans-serif;
+    font-size: 12;
+	font-weight:bold;
+	height: 22;
+}
+.fileCell
+{
+    color: black;
+    font-family: Arial, sans-serif;
+    font-size: 10;
+	font-weight:bold;
+	overflow: hidden;
+}
+.folderCell
+{
+    color: white;
+	font-family: Arial, sans-serif;
+    font-size: 10;
+	font-weight:bold;
+	overflow: hidden;
+}
+
+A.file {text-decoration: none; color: #$LINK-COLOR; }        
+A.dir {text-decoration: none; color: white; }        
+   
+</style>
+</head>
+<body>
+<table padding=5 spacing=0 cellpadding=0 border=0 width=100%>
+<tr valign="top">
+<td class="folderCell" colspan=3><a class="dir" href="$DIR-PATH;">$PATH;</a>
+</tr>
+<tr valign="bottom">
+<td class="titleCell">Cover:
+<td>$CO-WIDTH; x $CO-HEIGHT;
+<td align = "right">$CO-FILESIZE; kB
+</tr>
+<tr class="fileCell"><td colspan=3><a class="file" href="$CO-PATH;">$CO-FILENAME;</a></tr>
+
+<tr valign="bottom">
+<td class="titleCell">Background:
+<td>$BG-WIDTH; x $BG-HEIGHT;
+<td align = "right">$BG-FILESIZE; kB
+</tr>
+<tr class="fileCell"><td colspan=3><a class="file" href="$BG-PATH;">$BG-FILENAME;</a></tr>
+
+<tr valign="bottom">
+<td class="titleCell">Audio:
+<td class="fileCell"><nobr>$MP3-VBR; $MP3-BITRATE; - $MP3-FREQUENCY; kHz</nobr>
+<td align = "right">$MP3-FILESIZE; MB
+</tr>
+<tr class="fileCell"><td>Album:<td>$MP3-ALBUM;<td align="right">$MP3-DURATION;</tr>
+<tr class="fileCell"><td>Genre:<td>$MP3-GENRE;<td align="right">$MP3-DATE;</tr>
+<tr class="fileCell"><td colspan=3><a class="file" href="$MP3-PATH;">$MP3-FILENAME;</a></tr>
+
+<tr valign="bottom">
+<td class="titleCell">Video:
+<td>$VD-WIDTH; $VD-CROSS; $VD-HEIGHT; 
+<td align = "right">$VD-FILESIZE; MB
+</tr>
+<tr class="fileCell"><td>Gap:<td>$VD-GAP;<td align = "right">$VD-DURATION;</tr>
+<tr class="fileCell"><td colspan=3><a class="file" href="$VD-PATH;">$VD-FILENAME;</a></tr>
+
+<tr valign="bottom">
+<td class="titleCell">Karaoke:<td class="fileCell"><nobr>$TXT-ENCODING;</nobr><td align = "right"><nobr>$TXT-NOTES; N. / $TXT-PAGES; S.</nobr></tr>
+<tr class="fileCell"><td>Genre:<td>$TXT-GENRE;<td align = "right">$TXT-BPM;&nbsp;bpm</tr>
+<tr class="fileCell"><td>Edition:<td colspan=2>$TXT-EDITION;</tr>
+<tr class="fileCell"><td>Gap:<td>$TXT-GAP;<td align = "right">$TXT-YEAR;</tr>
+<tr class="fileCell"><td>Start/End:<td>$TXT-START; / $TXT-END;<td align = "right">$TXT-LANGUAGE;</tr>
+<tr class="fileCell"><td>Preview:<td>$TXT-PREVIEWSTART;<td align = "right"></tr>
+<tr class="fileCell"><td>Medley:<td colspan=2>$TXT-MEDLEYSTARTBEAT; - $TXT-MEDLEYENDBEAT;</tr>
+<tr class="fileCell"><td colspan=3><a class="file" href="$TXT-PATH;">$TXT-FILENAME;</a></tr>
+
+</body>

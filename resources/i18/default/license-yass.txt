@@ -1,0 +1,10 @@
+Yass is freeware. Any person, company, or organization may use it for an unlimited time at no cost.
+
+You are not allowed to commercialize, bundle, or distribute Yass without the explicit permission of the author. You may, however, link to this software. Please contact me for further information.
+
+Warranty disclaimer
+The software is supplied "as is" without warranty of any kind. The copyright holder: (1) disclaim any warranties, express or implied, including but not limited to any implied warranties of merchantability, fitness for a particular purpose, title or non-infringement, (2) do not assume any legal liability or responsibility for the accuracy, completeness, or usefulness of the software, (3) do not represent that use of the software would not infringe privately owned rights, (4) do not warrant that the software will function uninterrupted, that it is error-free or that any errors will be corrected.
+
+Limitation of liability
+In no event will the copyright holder: be liable for any indirect, incidental, consequential, special or punitive damages of any kind or nature, including but not limited to loss of profits or loss of data, for any reason whatsoever, whether such liability is asserted on the basis of contract, tort (including negligence or strict liability), or otherwise, even if any of said parties has been warned of the possibility of such loss or damages.
+

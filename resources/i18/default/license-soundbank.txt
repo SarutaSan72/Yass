@@ -1,0 +1,6 @@
+Yass uses the following soundbank from HammerSound (http://www.hammersound.net): 
+
+"AJH_Piano"
+(c) Adrian Huang, 2001
+
+Piano soundfont created from Warren Trachtman's resampled 11050Hz mono Medium Loud Strike Steinway Model C Grand Piano samples. 

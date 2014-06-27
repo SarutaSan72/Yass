@@ -1,0 +1,50 @@
+http://freesound.iua.upf.edu/samplesViewSingle.php?id=406
+
+This work is licensed under a Creative Commons Sampling Plus 1.0 License. 
+
+Yass uses the following sound files from Freesound (http://freesound.iua.upf.edu): 
+"click 1 d.wav" from TicTacShutUp
+
+
+main
+554_bebeto_Ambient_loop.mp3
+http://www.freesound.org/samplesViewSingle.php?id=554
+Creative Commons Sampling Plus 1.0 License
+bebeto (http://www.lucadebernardi.com)
+
+view score
+32866_oniwe_smallAudienceClapsYahooyo.wav
+32867_oniwe_smallAudienceClapsYuhuu.wav
+32868_oniwe_smallAudienceLaughsThenClaps.wav
+Creative Commons Sampling Plus 1.0 License
+oniwe
+
+enter highscore
+2681_TexasMusicForge_Austin_Blues_1
+http://www.freesound.org/samplesViewSingle.php?id=2681
+
+jukebox highscore
+24045_bebeto_loop028.wav
+
+credits
+24045_bebeto_loop028.wav
+http://www.freesound.org/samplesViewSingle.php?id=24045
+
+
+songs navigation
+408_TicTacShutUp_light_1.wav
+http://www.freesound.org/samplesViewSingle.php?id=408
+
+
+menu navigation
+28852_junggle_btn042.wav
+
+menu selection
+28862_junggle_btn052.wav
+http://www.freesound.org/samplesViewSingle.php?id=28852
+http://www.freesound.org/samplesViewSingle.php?id=28862
+
+bell
+2328_Jovica_STAB_003_mastered.wav
+http://www.freesound.org/samplesViewSingle.php?id=2328
+

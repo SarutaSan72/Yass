@@ -1,0 +1,9 @@
+Yass uses the following sound files from Freesound (http://freesound.iua.upf.edu): 
+
+License, unless otherwise mentioned, is Creative Commons Sampling Plus 1.0
+http://creativecommons.org/licenses/sampling+/1.0/
+
+
+editor: "click 1 d.wav" 
+(c) TicTacShutUp
+http://freesound.iua.upf.edu/samplesViewSingle.php?id=406

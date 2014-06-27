@@ -1,0 +1,205 @@
+% File:  sphyphb.tex -- Spanish Plain TeX Hyphenation Tables
+% Includes T1 encoded accented letters.
+% Suggested location: .../texmf/tex/generic/hyphen/
+% Rodrigo Medina (rmedina@ivic.ve) V 2.01  <2005/12/10>
+% Licence: LPPL
+% Comments and bug reports are welcome at rmedina@ivic.ve
+%
+%
+% Notes:
+% 1- This package implements the  RAE1999 rules. End-of-line word splitting
+%    is different from syllabic splitting.  The patterns are based on phonetic
+%    rules that depend on the word structure. The optional semantic rules
+%    (compound words, prefixes) and  style considerations (to avoid bad words)
+%    are disregarded.
+% 2- Groups of vowels, including imbeded "h", are not split.
+% 3- A hyphen is never put in front of an "h" except for the patterns "hue"
+%    and "hie".
+% 4- Isolated letters at the beginning or at the end of the word are avoided.
+% 5- Many Spaniards say "at-le-ta", but most Spanish-Americans
+%    say "a-tle-ta". Both hyphenations are accepted. We take the second one. 
+% 6- Some exceptions for the prefix "sub" are included.
+% 7- The patterns work with lefthyphenmin=1 and righthyphenmin=1, but the
+%    result is the same than setting both parameters equal to 2.
+% 8- The package works also with encodings ISO8859-1, ISO8859-15 and UTF-8.
+% 9- In order to use T1 letters they should have \catcode=11 and 
+%    \lccode must be defined as can be seen below.
+%
+%\message{Spanish Hyphenation  Patterns `sphyphb' V 2.01 <2005/12/10>}
+% Define isolatin1 accented letters only inside this group.
+%\begingroup
+%\catcode`\^^e1=11 \lccode`\^^e1=`\^^e1 % 'a
+%\catcode`\^^e9=11 \lccode`\^^e9=`\^^e9 % 'e
+%\catcode`\^^ed=11 \lccode`\^^ed=`\^^ed % 'i
+%\catcode`\^^f1=11 \lccode`\^^f1=`\^^f1 % ~n
+%\catcode`\^^f3=11 \lccode`\^^f3=`\^^f3 % 'o
+%\catcode`\^^fa=11 \lccode`\^^fa=`\^^fa % 'u
+%\catcode`\^^fc=11 \lccode`\^^fc=`\^^fc % "u
+%\catcode`\^^c1=11 \lccode`\^^c1=`\^^e1 % 'A
+%\catcode`\^^c9=11 \lccode`\^^c9=`\^^e9 % 'E
+%\catcode`\^^cd=11 \lccode`\^^cd=`\^^ed % 'I
+%\catcode`\^^d1=11 \lccode`\^^d1=`\^^f1 % ~N
+%\catcode`\^^d3=11 \lccode`\^^d3=`\^^f3 % 'O
+%\catcode`\^^da=11 \lccode`\^^da=`\^^fa % 'U
+%\catcode`\^^dc=11 \lccode`\^^dc=`\^^fc % "U
+\patterns{%
+.a4 a4a a4^^e1 a4e a4^^e9 a4i a4^^ed a4o a4^^f3 a4u a4^^fa a4y.
+.^^e14 ^^e14a ^^e14e ^^e14i ^^e14o ^^e14u ^^e14y.
+.b4 3b4a 3b4^^e1 3b4e 3b4^^e9 3b4i 3b4^^ed 3b4o 3b4^^f3 3b4u 3b4^^fa 3b4y.
+1b2ha 1b2he 1b2hi 1b2ho 1b2hu 1b2h^^e1  1b2h^^e9 1b2h^^ed 1b2h^^f3  1b2h^^fa
+2b3hie 2b3hi^^e9 2b3hue 2b3hu^^e9
+3b4l4a 3b4l4^^e1 3b4l4e 3b4l4^^e9 3b4l4i 3b4l4^^ed 3b4l4o 3b4l4^^f3 3b4l4u
+3b4l^^fa 3b4l4y.
+1b4l2ha 1b4l2he 1b4l2hi 1b4l2ho 1b4l2hu 1b4l2h^^e1  1b4l2h^^e9 1b4l2h^^ed
+1b4l2h^^f3  1b4l2h^^fa 
+.b4r4 3b4r4a 3b4r4^^e1 3b4r4e 3b4r4^^e9 3b4r4i 3b4r4^^ed 3b4r4o 3b4r4^^f3
+3b4r4u 3b4r4^^fa 3b4r4y.
+1b4r2ha 1b4r2he 1b4r2hi 1b4r2ho 1b4r2hu  1b4r2h^^e1  1b4r2h^^e9  1b4r2h^^ed
+1b4r2h^^f3 1b4r2h^^fa
+.c4 3c4a 3c4^^e1 3c4e 3c4^^e9 3c4i 3c4^^ed 3c4o 3c4^^f3 3c4u 3c4^^fa 3c4y.
+3c4r4a 3c4r4^^e1 3c4r4e 3c4r4^^e9 3c4r4i 3c4r4^^ed 3c4r4o 3c4r4^^f3 3c4r4u
+3c4r4^^fa 3c4r4y.
+1c4r2ha 1c4r2he 1c4r2hi 1c4r2ho 1c4r2hu 1c4r2h^^e1 1c4r2h^^e9 1c4r2h^^ed
+1c4r2h^^f3 1c4r2h^^fa
+3c4l4a 3c4l4^^e1 3c4l4e 3c4l4^^e9 3c4l4i 3c4l4^^ed 3c4l4o 3c4l4^^f3 3c4l4u
+3c4l4^^fa 3c4l4y.
+1c4l2ha 1c4l2he 1c4l2hi 1c4l2ho 1c4l2hu 1c4l2h^^e1 1c4l2h^^e9 1c4l2h^^ed
+1c4l2h^^f3 1c4l2h^^fa
+3c4h4a 3c4h4^^e1 3c4h4e 3c4h4^^e9 3c4h4i 3c4h4^^ed 3c4h4o 3c4h4^^f3 3c4h4u
+3c4h4^^fa 3ch4y.
+.d4 3d4a 3d4^^e1 3d4e 3d4^^e9 3d4i 3d4^^ed 3d4o 3d4^^f3 3d4u 3d4^^fa 3d4y.
+1d2ha 1d2he 1d2hi 1d2ho 1d2hu 1d2h^^e1 1d2h^^e9 1d2h^^ed 1d2h^^f3 1d2h^^fa
+2d3hie 2d3hie^^9 2d3hue 2d3hu^^e9
+3d4r4a 3d4r4^^e1 3d4r4e 3d4r4^^e9 3d4r4i 3d4r4^^ed 3d4r4o 3d4r4^^f3 3d4r4u
+3d4r4^^fa 3d4r4y. 1d4r2ha 1d4r2he  1d4r2hi 1d4r2ho 1d4r2hu 1d4r2h^^e1
+1d4r2h^^e9  1d4r2h^^ed 1d4r2h^^f3 1d4r2h^^fa
+.e4 e4a e4^^e1 e4e e4^^e9 e4i e4^^ed e4o e4^^f3 e4u e4^^fa e4y.
+.^^e94 ^^e94a ^^e94e ^^e94i ^^e94o ^^e94u ^^e94y.
+.f4 3f4a 3f4^^e1 3f4e 3f4^^e9 3f4i 3f4^^ed 3f4o 3f4^^f3 3f4u 3f4^^fa 3f4y.
+1f2ha 1f2he 1f2hi 1f2ho 1f2hu 1f2h^^e1 1f2h^^e9 1f2h^^ed 1f2h^^f3 1f2h^^fa
+2f3hie 2f3hi^^e9 2f3hue 2f3hu^^e9
+3f4r4a 3f4r4^^e1 3f4r4e 3f4r4^^e9 3f4r4i 3f4r4^^ed 3f4r4o 3f4r4^^f3 3f4r4u
+3f4r4^^fa 3f4r4y. 1f4r2ha 1f4r2he 1f4r2hi 1f4r2ho 1f4r2hu 1f4r2h^^e1
+1f4r2h^^e9 1f4r2h^^ed 1f4r2h^^f3 1f4r2h^^fa
+3f4l4a 3f4l4^^e1 3f4l4e 3f4l4^^e9 3f4l4i 3f4l4^^ed 3f4l4o 3f4l4^^f3 3f4l4u
+3f4l4^^fa 3f4l4y. 1f4l2ha 1f4l2he 1f4l2hi 1f4l2ho 1f4l2hu 1f4l2h^^e1
+1f4l2h^^e9 1f4l2h^^ed 1f4l2h^^f3 1f4l2h^^fa
+.g4 3g4a 3g4^^e1 3g4e 3g4^^e9 3g4i 3g4^^ed 3g4o 3g4^^f3 3g4u 3g4^^fa
+3g4^^fc 3g4y. 3g4u4e 3g4u4i 3g4u4^^e9 3g4u4^^ed
+1g2ha 1g2he 1g2hi 1g2ho 1g2hu 1g2h^^e1 1g2h^^e9 1g2h^^ed 1g2h^^f3 1g2h^^fa
+2g3hie 2g3hi^^e9 2g3hue 2g3hu^^e9 
+3g4ra 3g4r4^^e1 3g4r4e 3g4r4^^e9 3g4r4i 3g4r4^^ed 3g4r4o 3g4r4^^f3 3g4r4u
+3g4r4^^fa 3g4r4y.  1g4r2ha 1g4r2he 1g4r2hi 1g4r2ho 1g4r2hu 1g4r2h^^e1
+1g4r2h^^e9 1g4r2h^^ed 1g4r2h^^f3 1g4r2h^^fa
+3g4l4a 3g4l4^^e1 3g4l4e 3g4l4^^e9 3g4l4i 3g4l4^^ed 3g4l4o 3g4l4^^f3 3g4l4u
+3g4l4^^fa 3g4l4y.  1g4l2ha 1g4l2he 1g4l2hi 1g4l2ho 1g4l2hu 1g4l2h^^e1
+1g4l2h^^e9 1g4l2h^^ed 1g4l2h^^f3 1g4l2h^^fa
+.h4 h4a h4^^e1 h4e h4^^e9 h4i h4^^ed h4o h4^^f3 h4u h4^^fa h4y.
+3h4u4e 3h4i4e 3h4u4^^e9 3h4i4^^e9
+.i4 i4a i4^^e1 i4e i4^^e9 i4i i4^^ed i4o i4^^f3 i4u i4^^fa i4y.
+.^^ed4 ^^ed4a ^^ed4e ^^ed4i ^^ed4o ^^ed4u ^^ed4y.
+.j4 3j4a 3j4^^e1 3j4e 3j4^^e9 3j4i 3j4^^ed 3j4o 3j4^^f3 3j4u 3j4^^fa 3j4y.
+j2r
+1j2ha 1j2he 1j2hi 1j2ho 1j2hu 1j2h^^e1 1j2h^^e9 1j2h^^ed 1j2h^^f3 1j2h^^fa
+2j3hie 2j3hi^^e9 2j3hue 2j3hu^^e9 
+.k4 3k4a 3k4^^e1 3k4e 3k4^^e9 3k4i 3k4^^ed 3k4o 3k4^^f3 3k4u 3k4^^fa 3k4y.
+1k2ha 1k2he 1k2hi 1k2ho 1k2hu 1k2h^^e1 1k2h^^e9 1k2h^^ed 1k2h^^f3 1k2h^^fa
+2k3hie 2k3hi^^e9 2k3hue 2k3hu^^e9 
+3k4r4a 3k4r4^^e1 3k4r4e 3k4r4^^e9 3k4r4i 3k4r4^^ed 3k4r4o 3k4r4^^f3 3k4r4u
+3k4r4^^fa 3k4r4y. 1k4r2ha 1k4r2he 1k4r2hi 1k4r2ho 1k4r2hu 1k4r2h^^e1
+1k4r2h^^e9 1k4r2h^^ed 1k4r2h^^f3 1k4r2h^^fa
+3k4l4a 3k4l4^^e1 3k4l4e 3k4l4^^e9 3k4l4i 3k4l4^^ed 3k4l4o 3k4l4^^f3 3k4l4u
+3k4l4^^fa 3k4l4y. 1k4l2ha 1k4l2he 1k4l2hi 1k4l2ho 1k4l2hu 1k4l2h^^e1
+1k4l2h^^e9 1k4l2h^^ed 1k4l2h^^f3 1k4l2h^^fa
+.l4 3l4a 3l4^^e1 3l4e 3l4^^e9 3l4i 3l4^^ed 3l4o 3l4^^f3 3l4u 3l4^^fa 3l4y.
+1l2ha 1l2he 1l2hi 1l2ho 1l2hu 1l2h^^e1 1l2h^^e9 1l2h^^ed 1l2h^^f3 1l2h^^fa
+2l3hie 2l3hi^^e9 2l3hue 2l3hu^^e9
+3l4l4a 3l4l4^^e1 3l4l4e 3l4l4^^e9 3l4l4i 3l4l4^^ed 3l4l4o 3l4l4^^f3 3l4l4u
+3l4l4^^fa 3l4l4y. 1l4l2ha 1l4l2he 1l4l2hi 1l4l2ho 1l4l2hu 1l4l2h^^e1
+1l4l2h^^e9 1l4l2h^^ed 1l4l2h^^f3 1l4l2h^^fa
+.m4 3m4a 3m4^^e1 3m4e 3m4^^e9 3m4i 3m4^^ed 3m4o 3m4^^f3 3m4u 3m4^^fa 3m4y.
+1m2ha 1m2he 1m2hi 1m2ho 1m2hu 1m2h^^e1 1m2h^^e9 1m2h^^ed 1m2h^^f3 1lmh^^fa
+2m3hie 2m3hi^^e9 2m3hue 2m3hu^^e9
+.n4 3n4a 3n4^^e1 3n4e 3n4^^e9 3n4i 3n4^^ed 3n4o 3n4^^f3 3n4u 3n4^^fa 3n4y.
+1n2ha 1n2he 1n2hi 1n2ho 1n2hu 1n2h^^e1 1n2h^^e9 1n2h^^ed 1n2h^^f3 1n2h^^fa
+2n3hie 2n3hi^^e9 2n3hue 2n3hu^^e9
+.^^f14 3^^f14a 3^^f14^^e1 3^^f14e 3^^f14^^e9 3^^f14i 3^^f14^^ed 3^^f14o
+3^^f14^^f3 3^^f14u 3^^f14^^fa 3^^f14y.
+1^^f12ha 1^^f12he 1^^f12hi 1^^f12ho 1^^f12hu 1^^f12h^^e1 1^^f12h^^e9
+1^^f12h^^ed 1^^f12h^^f3 1^^f12h^^fa
+2^^f13hie 2^^f13hi^^e9 2^^f13hue 2^^f13hu^^e9
+.o4 o4a o4^^e1 o4e o4^^e9 o4i o4^^ed o4o o4^^f3 o4u o4^^fa o4y.
+.^^f34 ^^f34a ^^f34e ^^f34i ^^f34o ^^f34u ^^f34hi ^^f34y.
+.p4 3p4a 3p4^^e1 3p4e 3p4^^e9 3p4i 3p4^^ed 3p4o 3p4^^f3 3p4u 3p4^^fa 3p4y.
+1p2ha 1p2he 1p2hi 1p2ho 1p2hu 1p2h^^e1 1p2h^^e9 1p2h^^ed 1p2h^^f3 1p2h^^fa
+2p3hie 2p3hi^^e9 2p3hue 2p3hu^^e9
+3p4l4a 3p4l4^^e1 3p4l4e 3p4l4^^e9 3p4l4i 3p4l4^^ed 3p4l4o 3p4l4^^f3 3p4l4u
+3p4l4^^fa 3p4l4y. 1p4l2ha 1p4l2he 1p4l2hi 1p4l2ho 1p4l2hu 1p4l2h^^e1
+1p4l2h^^e9 1p4l2h^^ed 1p4l2h^^f3 1p4l2h^^fa
+3p4r4a 3p4r4^^e1 3p4r4e 3p4r4^^e9 3p4r4i 3p4r4^^ed 3p4r4o 3p4r4^^f3 3p4r4u
+3p4r4^^fa 3p4r4y. 1p4r2ha 1p4r2he 1p4r2hi 1p4r2ho 1p4r2hu 1p4r2h^^e1
+1p4r2h^^e9 1p4r2h^^ed 1p4r2h^^f3 1p4r2h^^fa
+.q4 3q4u4e 3q4u4^^e9 3q4u4i 3q4u4^^ed
+.r4 3r4a 3r4^^e1 3r4e 3r4^^e9 3r4i 3r4^^ed 3r4o 3r4^^f3 3r4u 3r4^^fa 3r4y.
+1r2ha 1r2he 1r2hi 1r2ho 1r2hu 1r2h^^e1 1r2h^^e9 1r2h^^ed 1r2h^^f3 1r2h^^fa
+2r3hie 2r3hi^^e9 2r3hue 2r3hu^^e9
+3r4r4a 3r4r4^^e1 3r4r4e 3r4r4^^e9 3r4r4i 3r4r4^^ed 3r4r4o 3r4r4^^f3 3r4r4u
+3r4r4^^fa 3r4r4y. 1r4r2ha 1r4r2he 1r4r2hi 1r4r2ho 1r4r2hu 1r4r2h^^e1
+1prr2h^^e9 1r4r2h^^ed 1r4r2h^^f3 1r4r2h^^fa
+.s4 3s4a 3s4^^e1 3s4e 3s4^^e9 3s4i 3s4^^ed 3s4o 3s4^^f3 3s4u 3s4^^fa 3s4y.
+1s2ha 1s2he 1s2hi 1s2ho 1s2hu 1s2h^^e1 1s2h^^e9 1s2h^^ed 1s2h^^f3 1s2h^^fa
+2s3hie 2s3hi^^e9 2s3hue 2s3hu^^e9
+.t4 3t4a 3t4^^e1 3t4e 3t4^^e9 3t4i 3t4^^ed 3t4o 3t4^^f3 3t4u 3t4^^fa 3t4y.
+1t2ha 1t2he 1t2hi 1t2ho 1t2hu 1t2h^^e1 1t2h^^e9 1t2h^^ed 1t2h^^f3 1t2h^^fa
+2t3hie 2t3hi^^e9 2t3hue 2t3hu^^e9
+3t4l4a 3t4l4^^e1 3t4l4e 3t4l4^^e9 3t4l4i 3t4l4^^ed 3t4l4o 3t4l4^^f3 3t4l4u
+3t4l4^^fa 3t4l4y. 1t4l2ha 1t4l2he 1t4l2hi 1t4l2ho 1t4l2hu 1t4l2h^^e1
+1t4l2h^^e9 1t4l2h^^ed 1t4l2h^^f3 1t4l2h^^fa
+3t4r4a 3t4r4^^e1 3t4r4e 3t4r4^^e9 3t4r4i 3t4r4^^ed 3t4r4o 3t4r4^^f3 3t4r4u
+3t4r4^^fa 3t4r4y. 1t4r2ha 1t4r2he 1t4r2hi 1t4r2ho 1t4r2hu 1t4r2h^^e1
+1t4r2h^^e9 1t4r2h^^ed 1t4r2h^^f3 1t4r2h^^fa
+.u4 u4a u4^^e1 u4e u4^^e9 u4i u4^^ed u4o u4^^f3 u4u u4^^fa u4y.
+^^fa4a ^^fa4e ^^fa4i ^^fa4o  ^^fa4u ^^fa4y.
+^^fc4e ^^fc4^^e9 ^^fc4i ^^fc4^^ed ^^fc4y.
+.v4 3v4a 3v4^^e1 3v4e 3v4^^e9 3v4i 3v4^^ed 3v4o 3v4^^f3 3v4u 3v4^^fa 3v4y.
+1v2ha 1v2he 1v2hi 1v2ho 1v2hu 1v2h^^e1 1v2h^^e9 1v2h^^ed 1v2h^^f3 1v2h^^fa
+2v3hie 2v3hi^^e9 2v3hue 2v3hu^^e9
+3v4l4a 3v4l4^^e1 3v4l4e 3v4l4^^e9 3v4l4i 3v4l4^^ed 3v4l4o 3v4l4^^f3 3v4l4u
+3v4l4^^fa 3v4l4y. 1v4l2ha 1v4l2he 1v4l2hi 1v4l2ho 1v4l2hu 1v4l2h^^e1
+1v4l2h^^e9 1v4l2h^^ed 1v4l2h^^f3 1v4l2h^^fa
+3v4r4a 3v4r4^^e1 3v4r4e 3v4r4^^e9 3v4r4i 3v4r4^^ed 3v4r4o 3v4r4^^f3 3v4r4u
+3v4r4^^fa 3v4r4y. 1v4r2ha 1v4r2he 1v4r2hi 1v4r2ho 1v4r2hu 1v4r2h^^e1
+1v4r2h^^e9 1v4r2h^^ed 1v4r2h^^f3 1v4r2h^^fa
+.w4 3w4a 3w4^^e1 3w4e 3w4^^e9 3w4i 3w4^^ed 3w4o 3w4^^f3 3w4u 3w4^^fa 3w4y.
+1w2ha 1w2he 1w2hi 1w2ho 1w2hu 1w2h^^e1 1w2h^^e9 1w2h^^ed 1w2h^^f3 1w2h^^fa
+.x4 3x4a 3x4^^e1 3x4e 3x4^^e9 3x4i 3x4^^ed 3x4o 3x4^^f3 3x4u 3x4^^fa 3x4y.
+1x2ha 1x2he 1x2hi 1x2ho 1x2hu 1x2h^^e1 1x2h^^e9 1x2h^^ed 1x2h^^f3 1x2h^^fa
+2x3hie 2x3hi^^e9 2x3hue 2x3hu^^e9
+.y4 3y4a 3y4^^e1 3y4e 3y4^^e9 3y4i 3y4^^ed 3y4o 3y4^^f3 3y4u 3y4^^fa 3y4y.
+1y2ha 1y2he 1y2hi 1y2ho 1y2hu 1y2h^^e1 1y2h^^e9 1y2h^^ed 1y2h^^f3 1y2h^^fa
+2y3hie 2y3hi^^e9 2y3hue 2y3hu^^e9
+.z4 3z4a 3z4^^e1 3z4e 3z4^^e9 3z4i 3z4^^ed 3z4o 3z4^^f3 3z4u 3z4^^fa 3z4y.
+1z2ha 1z2he 1z2hi 1z2ho 1z2hu 1z2h^^e1 1z2h^^e9 1z2h^^ed 1z2h^^f3 1z2h^^fa
+2z3hie 2z3hi^^e9 2z3hue 2z3hu^^e9
+.p4o4s4t5o5p4e5r4a
+.s4u4b5r4a5y
+.s4u4b5l4u5n4a
+.s4u4b5l4i4n5g
+.s4u4b5r4o5g
+.s4u4b5r4u5t
+.s4u4b5a5c4u
+.s4u4b5a4l5g
+.s4u4b5a4l5p
+.s4u4b5a4l5t
+.s4u4b5a5r4r
+.s4u4b5i4n5d
+.s4u4b5i4n5t
+.s4u4b5^^ed4n5d
+.s4u4b5i4n4s5p4e
+.s4u4b5u4r5b4a
+.s4u4b4u5t
+.s4u4b5l4u5m4i
+.s4u4b5l4u5m4^^ed
+}
+%\hyphenation{hard-ware soft-ware} 
+%\endgroup

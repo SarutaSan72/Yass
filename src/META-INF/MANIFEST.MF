@@ -1,0 +1,3 @@
+Manifest-Version: 1.2
+Main-Class: yass.YassMain
+Class-Path: yass-plugins.jar

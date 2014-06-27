@@ -1,0 +1,30 @@
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>.\release\yass.jar</jar>
+  <outfile>.\release\yass.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl></supportUrl>
+  <customProcName>true</customProcName>
+  <stayAlive>false</stayAlive>
+  <manifest></manifest>
+  <icon>.\resources\icons\yass-multi-icon.ico</icon>
+  <jre>
+    <path></path>
+    <minVersion>1.7.0</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+    <initialHeapSize>48</initialHeapSize>
+    <maxHeapSize>512</maxHeapSize>
+  </jre>
+  <splash>
+    <file>.\resources\icons\yass-logo.bmp</file>
+    <waitForWindow>true</waitForWindow>
+    <timeout>60</timeout>
+    <timeoutErr>true</timeoutErr>
+  </splash>
+</launch4jConfig>

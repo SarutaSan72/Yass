@@ -1,0 +1,40 @@
+
+                         J A Z Z Y : Java Spell Checker
+
+
+  What is it?
+  -----------
+
+  Jazzy is a 100% pure Java library implementing a spell checking algorithm
+  similar to aspell. It may be used to spell check a variety of sources.
+
+  
+  Licensing and legal issues
+  --------------------------
+
+  This modified Jazzy package is licensed under the LGPL. 
+  See jazzy-LICENSE.txt for license restrictions.
+
+  
+  Changes by Saruta (June 13, 2007)
+  -----------
+  
+  Changed code to support karaoke hyphen characters "-" and "~"
+  when spellchecking the text. The following files were changed,
+  see comments in source code.
+  
+  com\swabunga\spell\event\SpellChecker.java
+  modified method checkSpelling
+  
+  com\swabunga\spell\event\DocumentWordTokenizer.java
+  modified method getNextWordEnd
+
+  com\swabunga\spell\swing\JTextComponentSpellChecker.java
+  added getHandler method
+  
+  com\swabunga\spell\swing\event\AutoSpellCheckHandler.java
+  added markupSpelling(JEditorPane pane) method
+  modified markupSpelling(StyledDocument doc, int start, int end)
+  modified showSuggestionPopup
+  modified class AddToDictListener
+  
