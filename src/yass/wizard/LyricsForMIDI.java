@@ -103,7 +103,7 @@ public class LyricsForMIDI extends JPanel {
 			});
 		buttons.add(utf8);
 		buttons.add(new JLabel(""));
-		hyPanel.add("West", langCombo = new JComboBox<String>());
+		hyPanel.add("West", langCombo = new JComboBox<>());
 		JButton hyphButton = new JButton(I18.get("create_lyrics_midi_hyphenate"));
 		hyPanel.add("Center", hyphButton);
 		buttons.add(hyPanel);

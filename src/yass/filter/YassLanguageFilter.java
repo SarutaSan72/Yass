@@ -12,7 +12,7 @@ import yass.YassSongList;
  *  Description of the Class
  *
  * @author     Saruta
- * @created    4. März 2008
+ * @created    4. Mï¿½rz 2008
  */
 public class YassLanguageFilter extends YassFilter {
 	private Vector<String> multiple = null;
@@ -36,7 +36,7 @@ public class YassLanguageFilter extends YassFilter {
 	 * @return       The genericRules value
 	 */
 	public String[] getGenericRules(Vector<YassSong> data) {
-		Vector<String> langs = new Vector<String>();
+		Vector<String> langs = new Vector<>();
 		for (Enumeration<?> e = data.elements(); e.hasMoreElements(); ) {
 			YassSong s = (YassSong) e.nextElement();
 			String lang = s.getLanguage();
@@ -63,7 +63,7 @@ public class YassLanguageFilter extends YassFilter {
 		super.setRule(s);
 		if (s.indexOf(";") > 0) {
 			StringTokenizer st = new StringTokenizer(s, ";");
-			multiple = new Vector<String>(4);
+			multiple = new Vector<>(4);
 			while (st.hasMoreTokens()) {
 				String s2 = st.nextToken();
 				multiple.addElement(s2);

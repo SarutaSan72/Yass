@@ -1563,7 +1563,7 @@ public class YassAutoCorrect {
 			kk++;
 			rr = table.getRowAt(kk);
 		}
-		Vector<YassRow> rrv = new Vector<YassRow>(kk);
+		Vector<YassRow> rrv = new Vector<>(kk);
 		for (int j = 0; j < kk; j++) {
 			rrv.addElement((YassRow) table.getRowAt(j).clone());
 		}

@@ -203,7 +203,7 @@ public class YassDatabase {
 		PreparedStatement st = null;
 		ResultSet res = null;
 
-		Vector<YassScore> all = new Vector<YassScore>();
+		Vector<YassScore> all = new Vector<>();
 		try {
 			//st = connection.createStatement();
 			st = connection.prepareStatement("select * from SCORE where artist = ? and title = ? ORDER BY score DESC");
@@ -251,7 +251,7 @@ public class YassDatabase {
 		PreparedStatement st = null;
 		ResultSet res = null;
 
-		Vector<YassScore> all = new Vector<YassScore>();
+		Vector<YassScore> all = new Vector<>();
 		try {
 			//st = connection.createStatement();
 			st = connection.prepareStatement("select * from SCORE where artist = ? and title = ? and player = ? ORDER BY score DESC");
@@ -334,7 +334,7 @@ public class YassDatabase {
 		PreparedStatement st = null;
 		ResultSet res = null;
 
-		Vector<YassScore> all = new Vector<YassScore>();
+		Vector<YassScore> all = new Vector<>();
 		try {
 			//st = connection.createStatement();
 			st = connection.prepareStatement("select * from SCORE where artist = ? and title = ? and difficulty = ? ORDER BY score DESC");
@@ -382,7 +382,7 @@ public class YassDatabase {
 		PreparedStatement st = null;
 		ResultSet res = null;
 
-		Vector<YassScore> all = new Vector<YassScore>();
+		Vector<YassScore> all = new Vector<>();
 		try {
 			//st = connection.createStatement();
 			st = connection.prepareStatement("select * from SCORE where difficulty = ? ORDER BY score DESC");

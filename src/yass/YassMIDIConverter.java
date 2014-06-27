@@ -79,7 +79,7 @@ public class YassMIDIConverter implements DropTargetListener {
 
 	String trackTitle[];
 	Vector<String>[] trackNotes, trackTimes, trackTimesEnd, trackNotesLength;
-	Vector<Long> tempos = new Vector<Long>();
+	Vector<Long> tempos = new Vector<>();
 	JFrame frame = null;
 	JLabel infoLabel;
 	YassTable[] tables;
@@ -204,8 +204,8 @@ public class YassMIDIConverter implements DropTargetListener {
 		instrums = new String[tracks.length];
 		tempos.clear();
 
-		syllables = new Vector<String>(3000);
-		syltimes = new Vector<String>(3000);
+		syllables = new Vector<>(3000);
+		syltimes = new Vector<>(3000);
 
 		duration = 0;
 		nTracks = tracks.length;
@@ -242,10 +242,10 @@ public class YassMIDIConverter implements DropTargetListener {
 			String title = null;
 
 			trackTitle[nTrack] = null;
-			trackNotes[nTrack] = new Vector<String>(3000);
-			trackTimes[nTrack] = new Vector<String>(3000);
-			trackTimesEnd[nTrack] = new Vector<String>(3000);
-			trackNotesLength[nTrack] = new Vector<String>(3000);
+			trackNotes[nTrack] = new Vector<>(3000);
+			trackTimes[nTrack] = new Vector<>(3000);
+			trackTimesEnd[nTrack] = new Vector<>(3000);
+			trackNotesLength[nTrack] = new Vector<>(3000);
 
 			boolean hasTitle = false;
 
@@ -536,7 +536,7 @@ public class YassMIDIConverter implements DropTargetListener {
 		if (nTracks > 0) {
 			buttons = new JButton[nTracks];
 		}
-		tracksBox = new JComboBox<Integer>();
+		tracksBox = new JComboBox<>();
 
 		load = new JButton(I18.get("convert_open"));
 		load.setBackground(new Color(240, 240, 240));
@@ -561,7 +561,7 @@ public class YassMIDIConverter implements DropTargetListener {
 			}
 			int ts = trackTimes[nTrack].size();
 			int te = trackTimesEnd[nTrack].size();
-			trackNotesLength[nTrack] = new Vector<String>(ts);
+			trackNotesLength[nTrack] = new Vector<>(ts);
 			int minL = 256;
 			int maxL = -256;
 			for (int i = 0; i < ts && i < te; i++) {
@@ -1171,7 +1171,7 @@ public class YassMIDIConverter implements DropTargetListener {
 	 * @return The text value
 	 */
 	public String getText() {
-		Vector<?> tables = new Vector<Object>();
+		Vector<?> tables = new Vector<>();
 		int ntakes = 0;
 		for (int i = 0; i < nTracks; i++) {
 			if (take[i]) {

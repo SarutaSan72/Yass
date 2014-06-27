@@ -199,7 +199,7 @@ public class Header extends JPanel {
 	 * @param  m  The new genres value
 	 */
 	public void setGenres(String g, String m) {
-		genreBox = new JComboBox<String>();
+		genreBox = new JComboBox<>();
 		genreBox.setEditable(true);
 		StringTokenizer genres = new StringTokenizer(g, "|");
 		while (genres.hasMoreTokens()) {
@@ -224,7 +224,7 @@ public class Header extends JPanel {
 	 * @param  m  The new languages value
 	 */
 	public void setLanguages(String l, String m) {
-		JComboBox<String> langBox = new JComboBox<String>();
+		JComboBox<String> langBox = new JComboBox<>();
 		langBox.setEditable(true);
 		StringTokenizer lang = new StringTokenizer(l, "|");
 		while (lang.hasMoreTokens()) {

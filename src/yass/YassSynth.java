@@ -233,7 +233,7 @@ public class YassSynth {
 			long len = stream.getFrameLength() * wavaudioFormat.getFrameSize();
 			//stream.read(wavdata, 0, (int) len);
 
-			buffer = new Vector<Byte>((int) len);
+			buffer = new Vector<>((int) len);
 			int nBytesRead = 0;
 			byte[] abData = new byte[BUFFER_SIZE];
 			while (nBytesRead != -1) {

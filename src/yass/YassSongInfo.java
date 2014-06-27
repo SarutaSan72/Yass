@@ -1895,7 +1895,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
 	 * Description of the Class
 	 * 
 	 * @author Saruta
-	 * @created 13. März 2008
+	 * @created 13. Mï¿½rz 2008
 	 */
 	class LoaderThread extends Thread {
 		boolean isInterrupted = false;
@@ -2989,7 +2989,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
 		tm.fireTableDataChanged();
 		tm2.fireTableDataChanged();
 
-		checks = new Vector<JCheckBox>();
+		checks = new Vector<>();
 		int h = t.getRowHeight();
 		JPanel updatePanel = new JPanel(new GridLayout(t.getRowCount() + 1, 1));
 		JLabel label = null;
@@ -3215,7 +3215,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
 		try {
 			Transferable tr = dropTargetDragEvent.getTransferable();
 			if (tr.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-				Vector<?> fileVector = new Vector<Object>();
+				Vector<?> fileVector = new Vector<>();
 				java.util.List fileList = (java.util.List) tr
 						.getTransferData(DataFlavor.javaFileListFlavor);
 				if (fileList.isEmpty()) {
@@ -3308,7 +3308,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
 				dropTargetDropEvent
 						.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
 
-				Vector<?> fileVector = new Vector<Object>();
+				Vector<?> fileVector = new Vector<>();
 				java.util.List fileList = (java.util.List) tr
 						.getTransferData(DataFlavor.javaFileListFlavor);
 				if (fileList.isEmpty()) {

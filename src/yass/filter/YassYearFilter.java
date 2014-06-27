@@ -12,7 +12,7 @@ import yass.YassSongList;
  *  Description of the Class
  *
  * @author     Saruta
- * @created    4. März 2008
+ * @created    4. Mï¿½rz 2008
  */
 public class YassYearFilter extends YassFilter {
 
@@ -36,7 +36,7 @@ public class YassYearFilter extends YassFilter {
 	 * @return       The genericRules value
 	 */
 	public String[] getGenericRules(Vector<YassSong> data) {
-		Vector<String> years = new Vector<String>();
+		Vector<String> years = new Vector<>();
 		Calendar rightNow = Calendar.getInstance();
 		//int year = rightNow.get(Calendar.YEAR);
 		//for (int i=1900; i<=year; i++) {

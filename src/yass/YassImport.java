@@ -508,7 +508,7 @@ public class YassImport {
 				boolean hasBG = false;
 				boolean hasVD = false;
 				boolean hasTXT = false;
-				Vector<String> haveVersions = new Vector<String>();
+				Vector<String> haveVersions = new Vector<>();
 				String txtName = "";
 				File coFile = null;
 				File bgFile = null;

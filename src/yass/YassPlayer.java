@@ -72,7 +72,7 @@ public class YassPlayer {
 
 	private boolean demo = false;
 
-	private Vector<String> devices = new Vector<String>(YassScreen.MAX_PLAYERS);
+	private Vector<String> devices = new Vector<>(YassScreen.MAX_PLAYERS);
 	private int[] playerdevice = new int[YassScreen.MAX_PLAYERS];
 	private int[] playerchannel = new int[YassScreen.MAX_PLAYERS];
 	private YassPlayerNote[] playernote = new YassPlayerNote[YassScreen.MAX_PLAYERS * 2];
@@ -1425,7 +1425,7 @@ public class YassPlayer {
 	 */
 	public void addPlayerListener(YassPlayerListener p) {
 		if (listeners == null) {
-			listeners = new Vector<YassPlayerListener>();
+			listeners = new Vector<>();
 		}
 		listeners.addElement(p);
 	}

@@ -86,7 +86,7 @@ public class YassOptions extends JDialog {
 		super(new OwnerFrame());
 
 		this.prop = a.getProperties();
-		panels = new Hashtable<String, OptionsPanel>();
+		panels = new Hashtable<>();
 
 		DefaultMutableTreeNode top = new DefaultMutableTreeNode("Yass");
 		DefaultMutableTreeNode library = new DefaultMutableTreeNode(I18.get("options_library"));

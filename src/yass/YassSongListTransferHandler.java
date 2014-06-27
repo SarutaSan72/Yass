@@ -207,7 +207,7 @@ public class YassSongListTransferHandler extends TransferHandler {
 		}
 
 		if (rows != null) {
-			Vector<YassSong> d = new Vector<YassSong>();
+			Vector<YassSong> d = new Vector<>();
 			for (int i = rows.length - 1; i >= 0; i--) {
 				d.addElement(data.elementAt(rows[i]));
 			}

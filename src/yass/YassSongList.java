@@ -353,8 +353,8 @@ public class YassSongList extends JTable {
 		 */
 		languagePopup = new JMenu(I18.get("mlib_language"));
 
-		Vector<String> langVector = new Vector<String>();
-		Vector<String> langIDVector = new Vector<String>();
+		Vector<String> langVector = new Vector<>();
+		Vector<String> langIDVector = new Vector<>();
 		StringTokenizer languages = new StringTokenizer(prop.getProperty("language-tag"), "|");
 		ActionListener al =
 			new ActionListener() {
@@ -509,7 +509,7 @@ public class YassSongList extends JTable {
 		cedition.addSeparator();
 		cedition.add(cmoreEditions);
 
-		editions = new Vector<String>();
+		editions = new Vector<>();
 
 		sortbyPopup = new JMenu(I18.get("songlist_col_sortby"));
 		String[] sortString = new String[]{I18.get("songlist_col_1"), I18.get("songlist_col_2"), I18.get("songlist_col_3"), I18.get("songlist_col_4"),
@@ -1747,7 +1747,7 @@ public class YassSongList extends JTable {
 			return;
 		}
 
-		Vector<String> pars = new Vector<String>();
+		Vector<String> pars = new Vector<>();
 		for (Enumeration<String> en = fn.elements(); en.hasMoreElements(); ) {
 			String filename = (String) en.nextElement();
 			File f = new File(filename);
@@ -1809,7 +1809,7 @@ public class YassSongList extends JTable {
 	 * @return    The selectedSongs value
 	 */
 	public Vector<YassSong> getSelectedSongs() {
-		Vector<YassSong> v = new Vector<YassSong>();
+		Vector<YassSong> v = new Vector<>();
 		int rows[] = getSelectedRows();
 		if (rows == null) {
 			return null;
@@ -2083,7 +2083,7 @@ public class YassSongList extends JTable {
 		if (rows == null || rows.length < 1) {
 			return null;
 		}
-		Vector<String> filenames = new Vector<String>();
+		Vector<String> filenames = new Vector<>();
 		for (int i = 0; i < rows.length; i++) {
 			YassSong s = sm.getRowAt(rows[i]);
 			if (s == null) {
@@ -2106,7 +2106,7 @@ public class YassSongList extends JTable {
 	 * @return    The files value
 	 */
 	public Vector<YassSongData> getSongData() {
-		Vector<YassSongData> v = new Vector<YassSongData>();
+		Vector<YassSongData> v = new Vector<>();
 
 		Vector<YassSong> data = getUnfilteredData();
 		for (Enumeration<YassSong> e = data.elements(); e.hasMoreElements(); ) {
@@ -2824,7 +2824,7 @@ public class YassSongList extends JTable {
 	 */
 	public void loadArticles() {
 		if (lang_articles == null) {
-			lang_articles = new Hashtable<String, Vector<String>>();
+			lang_articles = new Hashtable<>();
 		}
 
 		String s = prop.getProperty("articles");
@@ -2834,7 +2834,7 @@ public class YassSongList extends JTable {
 
 			Vector<String> v = (Vector<String>) lang_articles.get(lang);
 			if (v == null) {
-				v = new Vector<String>();
+				v = new Vector<>();
 				lang_articles.put(lang, v);
 			} else {
 				v.clear();
@@ -2915,7 +2915,7 @@ public class YassSongList extends JTable {
 		}
 
 		if (pldata == null) {
-			pldata = new Vector<String>();
+			pldata = new Vector<>();
 		} else {
 			pldata.clear();
 		}
@@ -3213,7 +3213,7 @@ public class YassSongList extends JTable {
 	 */
 	public void addSongListListener(YassSongListListener l) {
 		if (listeners == null) {
-			listeners = new Vector<YassSongListListener>();
+			listeners = new Vector<>();
 		}
 		listeners.addElement(l);
 	}
@@ -3274,7 +3274,7 @@ public class YassSongList extends JTable {
 				fireSongListChanged(state);
 
 				actions.setProgress(I18.get("lib_msg_search"));
-				newdata = new Vector<YassSong>(3000, 1000);
+				newdata = new Vector<>(3000, 1000);
 				libmsgsearch = I18.get("lib_msg_search_n");
 				collect(newdata, new File(dir), "");
 			}
@@ -3339,7 +3339,7 @@ public class YassSongList extends JTable {
 		 * @return    Description of the Return Value
 		 */
 		public Vector<YassSong> removeVersions(Vector<?> d) {
-			Vector<YassSong> v = new Vector<YassSong>(d.size());
+			Vector<YassSong> v = new Vector<>(d.size());
 
 			for (Enumeration<?> en = d.elements(); en.hasMoreElements(); ) {
 				YassSong s = (YassSong) en.nextElement();
@@ -4472,7 +4472,7 @@ public class YassSongList extends JTable {
 
 		TableColumnModel colModel = getColumnModel();
 		SongHeaderRenderer hr = null;
-		Vector<String> msg = new Vector<String>();
+		Vector<String> msg = new Vector<>();
 		for (int i = 0; i < YassRow.ALL_MESSAGES.length; i++) {
 			hr = (SongHeaderRenderer) colModel.getColumn(FIRST_MSG_COLUMN + i).getHeaderRenderer();
 			if (hr.isSelected()) {
@@ -5768,7 +5768,7 @@ public class YassSongList extends JTable {
 
 		private Font font = new Font("SansSerif", Font.PLAIN, 12);
 
-		private Hashtable<String, String> i18Labels = new Hashtable<String, String>();
+		private Hashtable<String, String> i18Labels = new Hashtable<>();
 
 
 		/**
@@ -6555,7 +6555,7 @@ public class YassSongList extends JTable {
 			return false;
 		}
 
-		lyricsCache = new Hashtable<String, String>(2000);
+		lyricsCache = new Hashtable<>(2000);
 		unicode.UnicodeReader r = null;
 		BufferedReader inputStream = null;
 		FileInputStream fis = null;
@@ -6638,7 +6638,7 @@ public class YassSongList extends JTable {
 			if (allData == null) {
 				return;
 			}
-			Vector<YassSong> fData = new Vector<YassSong>(allData.size());
+			Vector<YassSong> fData = new Vector<>(allData.size());
 
 			if (prefilter != null) {
 				YassFilter.isInterrupted = false;
@@ -6810,7 +6810,7 @@ public class YassSongList extends JTable {
 	 * @return          Description of the Return Value
 	 */
 	public Vector<YassSong> findSong(String artist, String title, String version) {
-		Vector<YassSong> hits = new Vector<YassSong>();
+		Vector<YassSong> hits = new Vector<>();
 		if (artist == null || title == null) {
 			return null;
 		}

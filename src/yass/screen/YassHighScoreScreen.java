@@ -74,9 +74,9 @@ public class YassHighScoreScreen extends YassScreen {
 			}
 			title = "";
 
-			scores = new Vector<YassScore>();
-			scores2 = new Vector<YassScore>();
-			scores3 = new Vector<YassScore>();
+			scores = new Vector<>();
+			scores2 = new Vector<>();
+			scores3 = new Vector<>();
 			scores.add(new YassScore("The Sprites", "Where The Fuck Is Denise?", "DUDE", 1000, 0));
 			scores2.add(new YassScore("The Ataris", "Pet Cemetary", "DUDE", 2000, 0));
 			scores3.add(new YassScore("David Joiner", "Faery Tales", "DUDE", 3000, 0));

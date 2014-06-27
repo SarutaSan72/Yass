@@ -34,10 +34,10 @@ public class YassTheme {
 	private static Color pcolors[] = null;
 	private static Color rcolors[] = null;
 
-	private Hashtable<?, ?> mp3s = new Hashtable<Object, Object>();
-	private Hashtable<String, Object> buffers = new Hashtable<String, Object>();
-	private Hashtable<String, AudioFormat> formats = new Hashtable<String, AudioFormat>();
-	private Hashtable<String, Thread> threads = new Hashtable<String, Thread>();
+	private Hashtable<?, ?> mp3s = new Hashtable<>();
+	private Hashtable<String, Object> buffers = new Hashtable<>();
+	private Hashtable<String, AudioFormat> formats = new Hashtable<>();
+	private Hashtable<String, Thread> threads = new Hashtable<>();
 	private AdvancedPlayer advancedPlayer = null;
 
 	private int BUFFER_SIZE = 16000;
@@ -89,7 +89,7 @@ public class YassTheme {
 				catch (Exception e) {}
 			}
 		}
-		Vector<Color> cols = new Vector<Color>();
+		Vector<Color> cols = new Vector<>();
 		int i = 0;
 		while (true) {
 			String c = prop.getProperty("color-screen-" + i++);
@@ -274,7 +274,7 @@ public class YassTheme {
 				return;
 			}
 
-			Vector<Byte> buffer = new Vector<Byte>((int) len);
+			Vector<Byte> buffer = new Vector<>((int) len);
 			int bytesRead = 0;
 			byte[] bufferData = new byte[BUFFER_SIZE];
 			while (bytesRead != -1) {

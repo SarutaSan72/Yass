@@ -75,7 +75,7 @@ public class YassTrack implements Cloneable {
 		this.lines = lines;
 		this.bpm = bpm;
 		gap = gapMillis;
-		playerNotes = new Vector<YassPlayerNote>(4096);
+		playerNotes = new Vector<>(4096);
 	}
 
 

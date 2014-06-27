@@ -51,7 +51,7 @@ public class YassBasicRenderer extends JPanel implements yass.renderer.YassPlayb
 
 	private static final long serialVersionUID = 775652994428561995L;
 
-	private static Hashtable<String, String> strings = new Hashtable<String, String>();
+	private static Hashtable<String, String> strings = new Hashtable<>();
 
 	private YassSession session = null;
 	private YassProperties prop = null;
@@ -608,7 +608,7 @@ public class YassBasicRenderer extends JPanel implements yass.renderer.YassPlayb
 		noteShapes = new Vector[trackCount];
 		for (int t = 0; t < trackCount; t++) {
 			noteShapes[t] = new Vector<Double>(32);
-			flyingStars[t] = new Vector<StarInfo>(64);
+			flyingStars[t] = new Vector<>(64);
 		}
 		init();
 	}
@@ -638,7 +638,7 @@ public class YassBasicRenderer extends JPanel implements yass.renderer.YassPlayb
 		double lineMillis = lineEndMillis - lineStartMillis;
 
 		//thread-safe
-		Vector<Double> notes = new Vector<Double>(lastNote - firstNote + 1);
+		Vector<Double> notes = new Vector<>(lastNote - firstNote + 1);
 		for (int noteIndex = firstNote; noteIndex <= lastNote; noteIndex++) {
 			YassNote note = track.getNote(noteIndex);
 			long startMillis = note.getStartMillis();
@@ -1273,7 +1273,7 @@ public class YassBasicRenderer extends JPanel implements yass.renderer.YassPlayb
 	 * @return    Description of the Return Value
 	 */
 	public BufferedImage[] loadSprite(String s) {
-		Vector<BufferedImage> spriteVector = new Vector<BufferedImage>();
+		Vector<BufferedImage> spriteVector = new Vector<>();
 		String name = "/yass/renderer/sprites/" + s + "_0.png";
 		BufferedImage img = null;
 		try {

@@ -11,7 +11,7 @@ import yass.YassSongList;
  *  Description of the Class
  *
  * @author     Saruta
- * @created    4. März 2008
+ * @created    4. Mï¿½rz 2008
  */
 public class YassEditionFilter extends YassFilter {
 
@@ -33,7 +33,7 @@ public class YassEditionFilter extends YassFilter {
 	 * @return       The genericRules value
 	 */
 	public String[] getGenericRules(Vector<YassSong> data) {
-		Vector<String> editions = new Vector<String>();
+		Vector<String> editions = new Vector<>();
 		for (Enumeration<YassSong> e = data.elements(); e.hasMoreElements(); ) {
 			YassSong s = (YassSong) e.nextElement();
 			String edition = s.getEdition();

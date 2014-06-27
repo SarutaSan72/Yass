@@ -29,7 +29,7 @@ public class YassHyphenator {
 	 * @param  hyphenations  Description of the Parameter
 	 */
 	public YassHyphenator(String hyphenations) {
-		hyphenators = new Hashtable<String, Object>();
+		hyphenators = new Hashtable<>();
 		setHyphenations(hyphenations);
 	}
 

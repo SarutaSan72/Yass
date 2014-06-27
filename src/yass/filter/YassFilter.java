@@ -16,7 +16,7 @@ import yass.YassUtils;
  *  Description of the Class
  *
  * @author     Saruta
- * @created    4. März 2008
+ * @created    4. Mï¿½rz 2008
  */
 public class YassFilter implements Cloneable {
 	/**
@@ -49,8 +49,8 @@ public class YassFilter implements Cloneable {
 	 *  Description of the Method
 	 */
 	public static void init() {
-		hash = new Hashtable<String, YassFilter>();
-		plugins = new Vector<YassFilter>();
+		hash = new Hashtable<>();
+		plugins = new Vector<>();
 		StringTokenizer st = new StringTokenizer(prop.getProperty("filter-plugins"), "|");
 		while (st.hasMoreTokens()) {
 			String s = st.nextToken();

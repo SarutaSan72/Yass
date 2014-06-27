@@ -67,9 +67,9 @@ public class YassSongListPrinter {
 
 	class StyleRenderer extends JLabel implements ListCellRenderer<Object> {
 		private static final long serialVersionUID = -8363240580183018758L;
-		Vector<ImageIcon> images = new Vector<ImageIcon>();
-		Vector<String> titles = new Vector<String>();
-		Vector<String> tooltips = new Vector<String>();
+		Vector<ImageIcon> images = new Vector<>();
+		Vector<String> titles = new Vector<>();
+		Vector<String> tooltips = new Vector<>();
 
 
 		/**
@@ -135,7 +135,7 @@ public class YassSongListPrinter {
 		private String plugindir = null;
 		private Hashtable<String, Object> hash = null;
 		private JComboBox<Integer> detList;
-		private Vector<PrintPlugin> plugins = new Vector<PrintPlugin>();
+		private Vector<PrintPlugin> plugins = new Vector<>();
 		private JPanel description = null, details = null;
 		private JPanel pluginControls = null;
 		private StyleRenderer renderer = null;
@@ -194,7 +194,7 @@ public class YassSongListPrinter {
 
 			details = new JPanel(new BorderLayout());
 			details.setBorder(BorderFactory.createTitledBorder(I18.get("print_style")));
-			detList = new JComboBox<Integer>();
+			detList = new JComboBox<>();
 			renderer = new StyleRenderer();
 			renderer.setPreferredSize(new Dimension(100, 100));
 			detList.setRenderer(renderer);
@@ -241,7 +241,7 @@ public class YassSongListPrinter {
 						}
 						int value = ((Integer) val).intValue();
 						if (value == JOptionPane.OK_OPTION) {
-							hash = new Hashtable<String, Object>();
+							hash = new Hashtable<>();
 							hash.put("covercache", prop.getProperty("songlist-imagecache"));
 							PrintPlugin p = getSelectedPlugin();
 							if (p != null) {

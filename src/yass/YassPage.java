@@ -22,7 +22,7 @@ public class YassPage implements Comparable<Object> {
 	 */
 	public YassPage(YassTable t) {
 		table = t;
-		rows = new Vector<YassRow>(16);
+		rows = new Vector<>(16);
 	}
 
 

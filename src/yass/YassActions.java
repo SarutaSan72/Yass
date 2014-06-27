@@ -65,7 +65,7 @@ public class YassActions implements DropTargetListener {
 
 	private JComboBox<String> groupsBox = null;
 
-	private Hashtable<String, ImageIcon> icons = new Hashtable<String, ImageIcon>();
+	private Hashtable<String, ImageIcon> icons = new Hashtable<>();
 	private JToggleButton mp3Button, midiButton, vmarkButton, detailToggle,
 			songInfoToggle, bgToggle, playlistToggle, snapshotButton,
 			videoButton, videoAudioButton;
@@ -559,7 +559,7 @@ public class YassActions implements DropTargetListener {
 	 */
 	public void closeAll() {
 		if (openTables == null) {
-			openTables = new Vector<YassTable>();
+			openTables = new Vector<>();
 		}
 		if (openTables.size() > 0) {
 			openTables.clear();
@@ -742,7 +742,7 @@ public class YassActions implements DropTargetListener {
 	 * @return Description of the Return Value
 	 */
 	public JComboBox<JLabel> createVersionBox() {
-		vBox = new JComboBox<JLabel>();
+		vBox = new JComboBox<>();
 		vBox.setEditable(false);
 		vBox.setEnabled(false);
 		vBox.setPreferredSize(new Dimension(200, 36));
@@ -2637,9 +2637,9 @@ public class YassActions implements DropTargetListener {
 	 * @return Description of the Return Value
 	 */
 	public JComboBox<String> createPlayListBox() {
-		plBox = new JComboBox<String>();
+		plBox = new JComboBox<>();
 		plBox.setToolTipText(I18.get("tool_playlist_box"));
-		plBoxTips = new Vector<String>();
+		plBoxTips = new Vector<>();
 
 		plBox.addActionListener(plBoxListener = new PlayListBoxListener());
 		plBox.setRenderer(new PlayListBoxRenderer());
@@ -2867,7 +2867,7 @@ public class YassActions implements DropTargetListener {
 		t.setFloatable(false);
 		t.setOrientation(SwingConstants.VERTICAL);
 
-		filter = new JComboBox<String>();
+		filter = new JComboBox<>();
 		filter.setToolTipText(I18.get("tool_lib_find_box"));
 		filter.setEditable(true);
 		filter.setEditable(true);
@@ -2987,7 +2987,7 @@ public class YassActions implements DropTargetListener {
 	 * @return Description of the Return Value
 	 */
 	public JComboBox<String> createGroupsBox() {
-		groupsBox = new JComboBox<String>(yass.filter.YassFilter.getAllLabels());
+		groupsBox = new JComboBox<>(yass.filter.YassFilter.getAllLabels());
 		groupsBox
 				.setMaximumRowCount(Math.min(20, groupsBox.getItemCount() + 1));
 		groupsBox.setEditable(false);
@@ -4010,7 +4010,7 @@ public class YassActions implements DropTargetListener {
 				return;
 			}
 
-			Vector<String> msg = new Vector<String>();
+			Vector<String> msg = new Vector<>();
 			// msg.addElement(YassRow.UNCOMMON_PAGE_BREAK);
 			msg.addElement(YassRow.EARLY_PAGE_BREAK);
 			msg.addElement(YassRow.LATE_PAGE_BREAK);
@@ -4041,7 +4041,7 @@ public class YassActions implements DropTargetListener {
 				return;
 			}
 
-			Vector<String> msg = new Vector<String>();
+			Vector<String> msg = new Vector<>();
 			msg.addElement(YassRow.TOO_MUCH_SPACES);
 			msg.addElement(YassRow.UNCOMMON_SPACING);
 			songList.batchProcess(false, msg);
@@ -4115,7 +4115,7 @@ public class YassActions implements DropTargetListener {
 				return;
 			}
 
-			Vector<String> msg = new Vector<String>();
+			Vector<String> msg = new Vector<>();
 			msg.addElement(YassRow.FILE_FOUND);
 			// msg.addElement(YassRow.NO_COVER_LABEL);
 			// msg.addElement(YassRow.NO_BACKGROUND_LABEL);
@@ -4149,7 +4149,7 @@ public class YassActions implements DropTargetListener {
 				return;
 			}
 
-			Vector<String> msg = new Vector<String>();
+			Vector<String> msg = new Vector<>();
 			msg.addElement(YassRow.MISSING_TAG);
 			msg.addElement(YassRow.UNSORTED_COMMENTS);
 			songList.batchProcess(false, msg);
@@ -5430,7 +5430,7 @@ public class YassActions implements DropTargetListener {
 	 *            The feature to be added to the ToPlayList attribute
 	 */
 	public void addToPlayList(YassSong s) {
-		Vector<YassSong> v = new Vector<YassSong>();
+		Vector<YassSong> v = new Vector<>();
 		v.addElement(s);
 		playList.addSongs(v);
 		songList.repaint();
@@ -5608,7 +5608,7 @@ public class YassActions implements DropTargetListener {
 				String canonicSongDir = new File(songdir).getCanonicalPath();
 				boolean insideSongDir = false;
 
-				Vector<File> fileVector = new Vector<File>();
+				Vector<File> fileVector = new Vector<>();
 				java.util.List fileList = (java.util.List) tr
 						.getTransferData(DataFlavor.javaFileListFlavor);
 				Iterator<?> iterator = fileList.iterator();
@@ -5887,7 +5887,7 @@ public class YassActions implements DropTargetListener {
 	 *            Description of the Parameter
 	 */
 	public static void openURLFile(String fn) {
-		Vector<String> v = new Vector<String>();
+		Vector<String> v = new Vector<>();
 		v.addElement(fn);
 		openURLFiles(v);
 	}
@@ -8242,7 +8242,7 @@ public class YassActions implements DropTargetListener {
 			return false;
 		}
 
-		Vector<String> v = new Vector<String>();
+		Vector<String> v = new Vector<>();
 		StringTokenizer st = new StringTokenizer(filenames, ";");
 		while (st.hasMoreTokens()) {
 			String s = st.nextToken();
@@ -8282,7 +8282,7 @@ public class YassActions implements DropTargetListener {
 			return false;
 		}
 
-		Vector<String> filenames2 = new Vector<String>();
+		Vector<String> filenames2 = new Vector<>();
 		for (Enumeration<String> en = filenames.elements(); en
 				.hasMoreElements();) {
 			String filename = (String) en.nextElement();
@@ -9111,7 +9111,7 @@ public class YassActions implements DropTargetListener {
 				return;
 			}
 
-			Vector<String> splitFiles = new Vector<String>();
+			Vector<String> splitFiles = new Vector<>();
 			for (Enumeration<YassTable> en = openTables.elements(); en
 					.hasMoreElements();) {
 				YassTable t = (YassTable) en.nextElement();
@@ -9422,7 +9422,7 @@ public class YassActions implements DropTargetListener {
 		}
 
 		// create tables
-		Vector<YassTable> tables = new Vector<YassTable>(version.length);
+		Vector<YassTable> tables = new Vector<>(version.length);
 		for (int i = 0; i < version.length; i++) {
 			YassTable res = new YassTable();
 			tables.addElement(res);
@@ -9456,7 +9456,7 @@ public class YassActions implements DropTargetListener {
 		// extract player notes
 		Vector<YassRow> notes[] = new Vector[version.length];
 		for (int i = 0; i < notes.length; i++) {
-			notes[i] = new Vector<YassRow>();
+			notes[i] = new Vector<>();
 		}
 		p = 0;
 		for (Enumeration<?> en = data.elements(); en.hasMoreElements();) {
@@ -9595,7 +9595,7 @@ public class YassActions implements DropTargetListener {
 			}
 		}
 
-		resVector = new Vector<String>(tables.size());
+		resVector = new Vector<>(tables.size());
 		for (Enumeration<YassTable> en = tables.elements(); en
 				.hasMoreElements();) {
 			YassTable res = (YassTable) en.nextElement();
@@ -9678,7 +9678,7 @@ public class YassActions implements DropTargetListener {
 			return;
 		}
 
-		Vector<YassTable> tables = new Vector<YassTable>(filenames.size());
+		Vector<YassTable> tables = new Vector<>(filenames.size());
 		for (Enumeration<?> en = filenames.elements(); en.hasMoreElements();) {
 			String fn = (String) en.nextElement();
 			YassTable t = new YassTable();
@@ -9763,7 +9763,7 @@ public class YassActions implements DropTargetListener {
 		}
 
 		// extract pages
-		Vector<Vector<YassPage>> tablepages = new Vector<Vector<YassPage>>(
+		Vector<Vector<YassPage>> tablepages = new Vector<>(
 				tables.size());
 		for (Enumeration<YassTable> en = tables.elements(); en
 				.hasMoreElements();) {
@@ -9773,7 +9773,7 @@ public class YassActions implements DropTargetListener {
 		}
 
 		// sort in order of appeareance
-		Vector<YassPage> orderedHeads = new Vector<YassPage>(tablepages.size());
+		Vector<YassPage> orderedHeads = new Vector<>(tablepages.size());
 		for (Enumeration<Vector<YassPage>> en = tablepages.elements(); en
 				.hasMoreElements();) {
 			Vector<YassPage> pages = (Vector<YassPage>) en.nextElement();
@@ -9847,7 +9847,7 @@ public class YassActions implements DropTargetListener {
 				}
 
 				// get intersecting page
-				Vector<YassPage> intersecting = new Vector<YassPage>();
+				Vector<YassPage> intersecting = new Vector<>();
 				for (Enumeration<Vector<YassPage>> en = tablepages.elements(); en
 						.hasMoreElements();) {
 					Vector<?> pages = (Vector<YassPage>) en.nextElement();

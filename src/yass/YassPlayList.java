@@ -207,7 +207,7 @@ public class YassPlayList extends JPanel implements TabChangeListener {
 	 */
 	public void loadPlayLists() {
 		if (playlists == null) {
-			playlists = new Vector<YassPlayListModel>();
+			playlists = new Vector<>();
 		} else {
 			playlists.clear();
 		}

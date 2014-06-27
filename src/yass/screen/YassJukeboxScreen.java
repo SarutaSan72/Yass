@@ -11,7 +11,7 @@ import java.util.Vector;
  */
 public class YassJukeboxScreen extends YassScreen {
 	private static final long serialVersionUID = -5940297789578629613L;
-	private Hashtable<String, String> alreadyPlayed = new Hashtable<String, String>();
+	private Hashtable<String, String> alreadyPlayed = new Hashtable<>();
 
 
 	/**
@@ -62,7 +62,7 @@ public class YassJukeboxScreen extends YassScreen {
 		String title = null;
 		if (param.equals("topten")) {
 			getDatabase().open();
-			Vector<YassScore> scores = new Vector<YassScore>();
+			Vector<YassScore> scores = new Vector<>();
 			Vector<YassScore> scores1 = getDatabase().getTop(10, 0);
 			Vector<YassScore> scores2 = getDatabase().getTop(10, 1);
 			Vector<YassScore> scores3 = getDatabase().getTop(10, 2);

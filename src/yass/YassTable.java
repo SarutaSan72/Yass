@@ -74,7 +74,7 @@ public class YassTable extends JTable {
 	private double bpm = 120, gap = 0, vgap = 0, start = 0, end = -1;
 
 	private int MAX_UNDO = 2048;
-	private Vector<YassUndoElement> undos = new Vector<YassUndoElement>(
+	private Vector<YassUndoElement> undos = new Vector<>(
 			MAX_UNDO);
 	private int undoPos = -1, redoMax = 0;
 	private boolean isRelative = false;
@@ -1623,7 +1623,7 @@ public class YassTable extends JTable {
 	 */
 	public void resetMessages() {
 		if (messages == null) {
-			messages = new Hashtable<String, Boolean>();
+			messages = new Hashtable<>();
 		}
 		messages.clear();
 	}
@@ -1636,7 +1636,7 @@ public class YassTable extends JTable {
 	 */
 	public void addMessage(String key) {
 		if (messages == null) {
-			messages = new Hashtable<String, Boolean>();
+			messages = new Hashtable<>();
 		}
 		messages.put(key, new Boolean(true));
 	}
@@ -3383,7 +3383,7 @@ public class YassTable extends JTable {
 	 * @return The pages value
 	 */
 	public Vector<YassPage> getPages() {
-		Vector<YassPage> pages = new Vector<YassPage>();
+		Vector<YassPage> pages = new Vector<>();
 		YassPage p = null;
 
 		boolean first = true;
@@ -5468,7 +5468,7 @@ public class YassTable extends JTable {
 	 * @return The syllables value
 	 */
 	public Vector<String> getSyllables(String txt) {
-		Vector<String> h = new Vector<String>();
+		Vector<String> h = new Vector<>();
 		StringTokenizer st = new StringTokenizer(txt, "\n");
 		while (st.hasMoreTokens()) {
 			String line = st.nextToken();
@@ -5704,9 +5704,9 @@ public class YassTable extends JTable {
 	 * @return Description of the Return Value
 	 */
 	public YassSession createSession() {
-		Vector<YassTrack> tracks = new Vector<YassTrack>();
-		Vector<YassNote> notes = new Vector<YassNote>();
-		Vector<YassLine> lines = new Vector<YassLine>();
+		Vector<YassTrack> tracks = new Vector<>();
+		Vector<YassNote> notes = new Vector<>();
+		Vector<YassLine> lines = new Vector<>();
 		YassLine line = null;
 
 		int firstNoteIndex = -1;

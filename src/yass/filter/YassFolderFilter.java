@@ -13,7 +13,7 @@ import yass.YassSongList;
  *  Description of the Class
  *
  * @author     Saruta
- * @created    4. März 2008
+ * @created    4. Mï¿½rz 2008
  */
 public class YassFolderFilter extends YassFilter {
 	static String songdir = null;
@@ -38,7 +38,7 @@ public class YassFolderFilter extends YassFilter {
 	public String[] getGenericRules(Vector<YassSong> data) {
 		songdir = getProperties().getProperty("song-directory");
 
-		Vector<String> folders = new Vector<String>();
+		Vector<String> folders = new Vector<>();
 		for (Enumeration<YassSong> e = data.elements(); e.hasMoreElements(); ) {
 			YassSong s = (YassSong) e.nextElement();
 			String folder = s.getFolder();

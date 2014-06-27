@@ -15,7 +15,7 @@ import javax.swing.table.AbstractTableModel;
 public class YassTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 879831241165423284L;
 	private static String[] columnNames = {"", I18.get("table_col_1"), I18.get("table_col_2"), I18.get("table_col_3"), I18.get("table_col_4")};
-	private Vector<YassRow> data = new Vector<YassRow>(3000, 1000);
+	private Vector<YassRow> data = new Vector<>(3000, 1000);
 
 
 	/**
@@ -311,7 +311,7 @@ public class YassTableModel extends AbstractTableModel {
 	 * @return    Description of the Return Value
 	 */
 	public Hashtable<String, Vector<YassRow>> collectMessages() {
-		Hashtable<String, Vector<YassRow>> t = new Hashtable<String, Vector<YassRow>>();
+		Hashtable<String, Vector<YassRow>> t = new Hashtable<>();
 		for (Enumeration<YassRow> e = data.elements(); e.hasMoreElements(); ) {
 			YassRow r = (YassRow) e.nextElement();
 			if (!r.hasMessage()) {
@@ -323,7 +323,7 @@ public class YassTableModel extends AbstractTableModel {
 
 				Vector<YassRow> list = (Vector<YassRow>) t.get(msg[0]);
 				if (list == null) {
-					t.put(msg[0], list = new Vector<YassRow>());
+					t.put(msg[0], list = new Vector<>());
 				}
 				list.addElement(r);
 			}

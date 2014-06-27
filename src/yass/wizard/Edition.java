@@ -136,7 +136,7 @@ public class Edition extends JPanel {
 		catch (Exception ex) {}
 		content.add("Center", new JScrollPane(txt));
 
-		fc = new JComboBox<String>();
+		fc = new JComboBox<>();
 		fc.setEditable(true);
 
 		JPanel fPanel = new JPanel(new BorderLayout());

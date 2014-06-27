@@ -64,8 +64,8 @@ public class YassGroups extends JTable implements DropTargetListener {
 
 	private YassGroupsModel gm = null;
 
-	private Hashtable<String, ImageIcon> covers = new Hashtable<String, ImageIcon>();
-	private Hashtable<String, YassFilter> filters = new Hashtable<String, YassFilter>();
+	private Hashtable<String, ImageIcon> covers = new Hashtable<>();
+	private Hashtable<String, YassFilter> filters = new Hashtable<>();
 
 	private String group = null, rule = null;
 
@@ -224,7 +224,7 @@ public class YassGroups extends JTable implements DropTargetListener {
 	}
 
 
-	private Vector<Integer> counters = new Vector<Integer>();
+	private Vector<Integer> counters = new Vector<>();
 	private RefresherThread refresher = null;
 
 
@@ -354,12 +354,12 @@ public class YassGroups extends JTable implements DropTargetListener {
 	 * @return    Description of the Return Value
 	 */
 	public Vector<Vector<YassScreenGroup>> toScreenGroups() {
-		Vector<Vector<YassScreenGroup>> groups = new Vector<Vector<YassScreenGroup>>();
+		Vector<Vector<YassScreenGroup>> groups = new Vector<>();
 
 		String screenGroups = prop.getProperty("screen-groups");
 		StringTokenizer groupTokens = new StringTokenizer(screenGroups, "|");
 		while (groupTokens.hasMoreTokens()) {
-			Vector<YassScreenGroup> subgroups = new Vector<YassScreenGroup>();
+			Vector<YassScreenGroup> subgroups = new Vector<>();
 
 			String g = groupTokens.nextToken();
 			String filterGroups = prop.getProperty("group-" + g);
@@ -378,7 +378,7 @@ public class YassGroups extends JTable implements DropTargetListener {
 								YassFilter f = YassFilter.createFilter(g);
 								f.setRule(t);
 
-								Vector<Integer> matches = new Vector<Integer>();
+								Vector<Integer> matches = new Vector<>();
 								Vector<?> all = songList.getUnfilteredData();
 								f.start(all);
 								int i = 0;
@@ -399,7 +399,7 @@ public class YassGroups extends JTable implements DropTargetListener {
 					YassFilter f = YassFilter.createFilter(g);
 					f.setRule(t);
 
-					Vector<Integer> matches = new Vector<Integer>();
+					Vector<Integer> matches = new Vector<>();
 					Vector<?> all = songList.getUnfilteredData();
 					f.start(all);
 					int i = 0;
@@ -435,7 +435,7 @@ public class YassGroups extends JTable implements DropTargetListener {
 	 */
 	public void setToolBar(String rule, JToolBar t) {
 		if (toolbars == null) {
-			toolbars = new Hashtable<String, JToolBar>();
+			toolbars = new Hashtable<>();
 		}
 		toolbars.put(rule, t);
 	}
@@ -541,7 +541,7 @@ public class YassGroups extends JTable implements DropTargetListener {
 	 *  Description of the Class
 	 *
 	 * @author     Saruta
-	 * @created    4. März 2008
+	 * @created    4. Mï¿½rz 2008
 	 */
 	class GroupRenderer extends JLabel implements TableCellRenderer {
 		private static final long serialVersionUID = 8499609874569104902L;
@@ -559,7 +559,7 @@ public class YassGroups extends JTable implements DropTargetListener {
 		Border b3 = BorderFactory.createLineBorder(Color.green, 2);
 		Border b4 = BorderFactory.createLineBorder(Color.red, 2);
 
-		Hashtable<String, String> i18Labels = new Hashtable<String, String>();
+		Hashtable<String, String> i18Labels = new Hashtable<>();
 
 
 		/**
@@ -891,7 +891,7 @@ public class YassGroups extends JTable implements DropTargetListener {
 				dropTargetDropEvent.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
 
 				if (f.allowCoverDrop(rule)) {
-					Vector<?> fileVector = new Vector<Object>();
+					Vector<?> fileVector = new Vector<>();
 					java.util.List fileList = (java.util.List) tr.getTransferData(DataFlavor.javaFileListFlavor);
 					Iterator<?> iterator = fileList.iterator();
 					File file = null;

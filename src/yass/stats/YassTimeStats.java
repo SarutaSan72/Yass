@@ -10,7 +10,7 @@ import yass.YassTable;
  *  Description of the Class
  *
  * @author     Saruta
- * @created    4. März 2008
+ * @created    4. Mï¿½rz 2008
  */
 public class YassTimeStats extends YassStats {
 
@@ -71,7 +71,7 @@ public class YassTimeStats extends YassStats {
 			return 0;
 		}
 
-		Vector<Integer> lengths = new Vector<Integer>();
+		Vector<Integer> lengths = new Vector<>();
 
 		int i = 0;
 		int n = t.getRowCount() - 1;
@@ -125,7 +125,7 @@ public class YassTimeStats extends YassStats {
 			return 0;
 		}
 
-		Vector<Float> ratios = new Vector<Float>();
+		Vector<Float> ratios = new Vector<>();
 
 		int i = 0;
 		int n = t.getRowCount() - 1;

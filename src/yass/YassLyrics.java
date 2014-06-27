@@ -181,7 +181,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 	public YassLyrics(YassProperties p) {
 		prop = p;
 
-		spellCheckers = new Hashtable<Object, Object>();
+		spellCheckers = new Hashtable<>();
 		StringTokenizer st = new StringTokenizer(prop.getProperty("dicts"), "|");
 		while (st.hasMoreTokens()) {
 			StringTokenizer st2 = new StringTokenizer(st.nextToken(), "()-_");
@@ -1188,7 +1188,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 		selectSyllablesAt(min, max);
 	}
 
-	Vector<Integer> errLines = new Vector<Integer>();
+	Vector<Integer> errLines = new Vector<>();
 
 	/**
 	 * Description of the Method
@@ -1390,7 +1390,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 		}
 	}
 
-	Vector<String> h = new Vector<String>();
+	Vector<String> h = new Vector<>();
 	private boolean hyphenationChanged = true;
 
 	/**

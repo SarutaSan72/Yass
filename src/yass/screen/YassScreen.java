@@ -62,8 +62,8 @@ public class YassScreen extends JPanel {
 	private static Font titleFont = new Font("SansSerif", Font.BOLD, 32);
 	private static Font textFont = new Font("SansSerif", Font.BOLD, 32);
 	private static Font subtextFont = new Font("SansSerif", Font.BOLD, 20);
-	private static Hashtable<String, YassScreen> screens = new Hashtable<String, YassScreen>();
-	private static Hashtable<String, String> strings = new Hashtable<String, String>();
+	private static Hashtable<String, YassScreen> screens = new Hashtable<>();
+	private static Hashtable<String, String> strings = new Hashtable<>();
 	private static Vector<YassSongData> songData = null;
 	private static Vector<?> groupData = null;
 	private static YassScreen currentScreen = null;
@@ -86,7 +86,7 @@ public class YassScreen extends JPanel {
 	private static YassTheme theme = null;
 
 	private static String bgImage = null;
-	private static Hashtable<String, BufferedImage> backgroundImages = new Hashtable<String, BufferedImage>();
+	private static Hashtable<String, BufferedImage> backgroundImages = new Hashtable<>();
 
 	private static YassPlaybackRenderer renderer = null;
 
@@ -456,7 +456,7 @@ public class YassScreen extends JPanel {
 		prop = p;
 
 		theme = new YassTheme();
-		screens = new Hashtable<String, YassScreen>();
+		screens = new Hashtable<>();
 		StringTokenizer st = new StringTokenizer(prop.getProperty("screen-plugins"), "|");
 		while (st.hasMoreTokens()) {
 			String s = st.nextToken();

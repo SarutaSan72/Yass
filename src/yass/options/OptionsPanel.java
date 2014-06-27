@@ -87,7 +87,7 @@ public class OptionsPanel extends JPanel {
 	 */
 	public static void loadProperties(YassProperties p) {
 		prop = p;
-		myprop = new Hashtable<String, String>(p.size());
+		myprop = new Hashtable<>(p.size());
 		for (Enumeration<Object> en = prop.keys(); en.hasMoreElements(); ) {
 			String key = (String) en.nextElement();
 			String val = prop.getProperty(key);
@@ -505,13 +505,13 @@ public class OptionsPanel extends JPanel {
 		String ch = getProperty(choices_key);
 		StringTokenizer st = new StringTokenizer(ch, "|");
 		StringTokenizer st2 = new StringTokenizer(choices_labels, "|");
-		Vector<String> labels = new Vector<String>();
-		Vector<String> keys = new Vector<String>();
+		Vector<String> labels = new Vector<>();
+		Vector<String> keys = new Vector<>();
 		while (st.hasMoreTokens()) {
 			keys.addElement(st.nextToken().trim());
 			labels.addElement(st2.nextToken().trim());
 		}
-		JComboBox<String> choiceBox = new JComboBox<String>(labels);
+		JComboBox<String> choiceBox = new JComboBox<>(labels);
 		String key = getProperty(select_key);
 		int i = keys.indexOf(key);
 		choiceBox.setSelectedIndex(i);

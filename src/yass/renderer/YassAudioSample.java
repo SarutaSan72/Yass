@@ -105,7 +105,7 @@ public class YassAudioSample {
 			stream = AudioSystem.getAudioInputStream(sampleAudioFormat, ostream);
 			long len = stream.getFrameLength() * sampleAudioFormat.getFrameSize();
 
-			buffer = new Vector<Byte>((int) len);
+			buffer = new Vector<>((int) len);
 			int bytesRead = 0;
 			byte[] bufferData = new byte[BUFFER_SIZE];
 			while (bytesRead != -1) {

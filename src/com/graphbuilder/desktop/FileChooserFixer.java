@@ -242,8 +242,8 @@ public class FileChooserFixer implements KeyListener, MouseListener, Runnable {
 	 * @return     The buttons value
 	 */
 	protected JButton[] getButtons(JFileChooser fc) {
-		Vector<Component> v = new Vector<Component>();
-		Stack<Component> s = new Stack<Component>();
+		Vector<Component> v = new Vector<>();
+		Stack<Component> s = new Stack<>();
 		s.push(fc);
 		while (!s.isEmpty()) {
 			Component c = (Component) s.pop();
@@ -276,8 +276,8 @@ public class FileChooserFixer implements KeyListener, MouseListener, Runnable {
 	 * @return     The textFields value
 	 */
 	protected JTextField[] getTextFields(JFileChooser fc) {
-		Vector<Component> v = new Vector<Component>();
-		Stack<Component> s = new Stack<Component>();
+		Vector<Component> v = new Vector<>();
+		Stack<Component> s = new Stack<>();
 		s.push(fc);
 		while (!s.isEmpty()) {
 			Component c = (Component) s.pop();
@@ -310,8 +310,8 @@ public class FileChooserFixer implements KeyListener, MouseListener, Runnable {
 	 * @return     The lists value
 	 */
 	protected JList[] getLists(JFileChooser fc) {
-		Vector<Component> v = new Vector<Component>();
-		Stack<Component> s = new Stack<Component>();
+		Vector<Component> v = new Vector<>();
+		Stack<Component> s = new Stack<>();
 		s.push(fc);
 		while (!s.isEmpty()) {
 			Component c = (Component) s.pop();

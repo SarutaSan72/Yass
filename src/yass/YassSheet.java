@@ -67,8 +67,8 @@ public class YassSheet extends JPanel implements Scrollable,
 		yass.renderer.YassPlaybackRenderer {
 	private static final long serialVersionUID = 3284920111520989009L;
 	private YassTable table = null;
-	private Vector<YassTable> tables = new Vector<YassTable>();
-	private Vector<Vector<YassRectangle>> rects = new Vector<Vector<YassRectangle>>();
+	private Vector<YassTable> tables = new Vector<>();
+	private Vector<Vector<YassRectangle>> rects = new Vector<>();
 	private Vector<YassRectangle> rect = null;
 	private Vector<Cloneable> snapshot = null, snapshotRect = null;
 
@@ -2541,8 +2541,8 @@ public class YassSheet extends JPanel implements Scrollable,
 		}
 
 		int n = j - i + 1;
-		snapshot = new Vector<Cloneable>(n);
-		snapshotRect = new Vector<Cloneable>(n);
+		snapshot = new Vector<>(n);
+		snapshotRect = new Vector<>(n);
 		int startx = -1;
 		for (int k = i; k <= j; k++) {
 			YassRow row = table.getRowAt(k);
@@ -2566,7 +2566,7 @@ public class YassSheet extends JPanel implements Scrollable,
 	 */
 	public void addTable(YassTable t) {
 		tables.addElement(t);
-		rects.addElement(new Vector<YassRectangle>(3000, 1000));
+		rects.addElement(new Vector<>(3000, 1000));
 	}
 
 	/**
@@ -5111,7 +5111,7 @@ public class YassSheet extends JPanel implements Scrollable,
 		}
 	}
 
-	private Vector<Long> tmpNotes = new Vector<Long>(1024);
+	private Vector<Long> tmpNotes = new Vector<>(1024);
 
 	/**
 	 * Gets the temporaryNotes attribute of the YassSheet object

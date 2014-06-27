@@ -17,13 +17,13 @@ import net.java.games.input.ControllerEnvironment;
  * @created    19. April 2010
  */
 public class YassInput {
-	Vector<Controller> controllers = new Vector<Controller>();
-	Vector<Component> components = new Vector<Component>();
-	Vector<KeyEvent> events = new Vector<KeyEvent>();
-	Vector<float[]> values = new Vector<float[]>();
-	Vector<long[]> delays = new Vector<long[]>();
+	Vector<Controller> controllers = new Vector<>();
+	Vector<Component> components = new Vector<>();
+	Vector<KeyEvent> events = new Vector<>();
+	Vector<float[]> values = new Vector<>();
+	Vector<long[]> delays = new Vector<>();
 
-	Vector<KeyListener> listeners = new Vector<KeyListener>();
+	Vector<KeyListener> listeners = new Vector<>();
 
 	static java.awt.Canvas dummy = new java.awt.Canvas();
 

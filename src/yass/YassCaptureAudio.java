@@ -465,7 +465,7 @@ public class YassCaptureAudio {
 	 * @return The deviceNames value
 	 */
 	public static String[] getDeviceNames() {
-		Vector<String> m = new Vector<String>();
+		Vector<String> m = new Vector<>();
 		Line.Info targetLineInfo = new Line.Info(TargetDataLine.class);
 		Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
 		for (int i = 0; i < mixerInfo.length; i++) {
@@ -542,7 +542,7 @@ public class YassCaptureAudio {
 		}
 	}
 
-	Hashtable<String, TargetDataLine> linesHash = new Hashtable<String, TargetDataLine>();
+	Hashtable<String, TargetDataLine> linesHash = new Hashtable<>();
 
 	/**
 	 * Description of the Method
@@ -589,7 +589,7 @@ public class YassCaptureAudio {
 		return new YassPlayerNote[] { left, right };
 	}
 
-	private static Hashtable<String, Integer> channelsHash = new Hashtable<String, Integer>();
+	private static Hashtable<String, Integer> channelsHash = new Hashtable<>();
 
 	/**
 	 * Description of the Method
@@ -661,8 +661,8 @@ public class YassCaptureAudio {
 		public void run() {
 			if (monitor != null) {
 				if (notesLeft == null) {
-					notesLeft = new Vector<YassPlayerNote>(4096);
-					notesRight = new Vector<YassPlayerNote>(4096);
+					notesLeft = new Vector<>(4096);
+					notesRight = new Vector<>(4096);
 				}
 				if (notesLeft.size() < 1) {
 					for (int i = 0; i < 100; i++) {

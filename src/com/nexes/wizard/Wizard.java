@@ -30,7 +30,7 @@ import yass.I18;
 
 
 public class Wizard extends WindowAdapter implements PropertyChangeListener{
-    Hashtable<String, String> values = new Hashtable<String, String>();
+    Hashtable<String, String> values = new Hashtable<>();
     // added by Saruta
     public String getValue(String s) { Object o=values.get(s); if (o==null) return ""; return (String)o;}
     public void setValue(String s, String val) { if (val==null) val=""; values.put(s,val); }

@@ -13,7 +13,7 @@ import javax.swing.table.AbstractTableModel;
 public class YassGroupsModel extends AbstractTableModel {
 	private static final long serialVersionUID = 5944503797621574207L;
 	private static String[] columnNames = {"Group"};
-	private Vector<String> data = new Vector<String>();
+	private Vector<String> data = new Vector<>();
 
 
 	/**

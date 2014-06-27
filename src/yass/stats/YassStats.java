@@ -15,7 +15,7 @@ import yass.YassUtils;
  *  Description of the Class
  *
  * @author     Saruta
- * @created    4. März 2008
+ * @created    4. Mï¿½rz 2008
  */
 public class YassStats implements Cloneable {
 	/**
@@ -120,8 +120,8 @@ public class YassStats implements Cloneable {
 	 *  Description of the Method
 	 */
 	public static void init() {
-		hash = new Hashtable<String, Integer>();
-		plugins = new Vector<YassStats>();
+		hash = new Hashtable<>();
+		plugins = new Vector<>();
 		StringTokenizer st = new StringTokenizer(prop.getProperty("stats-plugins"), "|");
 		while (st.hasMoreTokens()) {
 			String s = st.nextToken();

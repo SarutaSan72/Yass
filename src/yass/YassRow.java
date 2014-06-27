@@ -947,7 +947,7 @@ public class YassRow implements Cloneable, Comparable<Object> {
 	 */
 	public void addMessage(String s) {
 		if (messages == null) {
-			messages = new Vector<String[]>();
+			messages = new Vector<>();
 		}
 		messages.addElement(new String[]{s});
 	}
@@ -961,7 +961,7 @@ public class YassRow implements Cloneable, Comparable<Object> {
 	 */
 	public void addMessage(String s, String d) {
 		if (messages == null) {
-			messages = new Vector<String[]>();
+			messages = new Vector<>();
 		}
 		messages.addElement(new String[]{s, d});
 	}

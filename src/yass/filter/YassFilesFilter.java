@@ -16,7 +16,7 @@ import yass.YassUtils;
  *  Description of the Class
  *
  * @author     Saruta
- * @created    4. März 2008
+ * @created    4. Mï¿½rz 2008
  */
 public class YassFilesFilter extends YassFilter {
 
@@ -71,8 +71,8 @@ public class YassFilesFilter extends YassFilter {
 		}
 
 		if (rule.equals("duplicates")) {
-			songs = new Vector<YassSong>();
-			hash = new Hashtable<String, YassSong>();
+			songs = new Vector<>();
+			hash = new Hashtable<>();
 
 			for (Enumeration<?> e = allsongs.elements(); e.hasMoreElements(); ) {
 				YassSong s = (YassSong) e.nextElement();

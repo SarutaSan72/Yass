@@ -20,7 +20,7 @@ import yass.YassSong;
  *  Description of the Class
  *
  * @author     Saruta
- * @created    4. März 2008
+ * @created    4. Mï¿½rz 2008
  */
 public class YassPlaylistFilter extends YassFilter {
 
@@ -45,10 +45,10 @@ public class YassPlaylistFilter extends YassFilter {
 	 * @return       The genericRules value
 	 */
 	public String[] getGenericRules(Vector<YassSong> data) {
-		Vector<String> pl = new Vector<String>();
+		Vector<String> pl = new Vector<>();
 		if (songs == null) {
-			songs = new Hashtable<String, Vector<String>>(1000);
-			playlists = new Hashtable<String, YassPlayListModel>(10);
+			songs = new Hashtable<>(1000);
+			playlists = new Hashtable<>(10);
 		} else {
 			playlists.clear();
 		}
@@ -154,7 +154,7 @@ public class YassPlaylistFilter extends YassFilter {
 					String key = artist + " : " + title + " [" + version + "]";
 					Vector<String> v = (Vector<String>) songs.get(key);
 					if (v == null) {
-						v = new Vector<String>(3);
+						v = new Vector<>(3);
 						songs.put(key, v);
 					}
 					v.addElement(pl.getName());

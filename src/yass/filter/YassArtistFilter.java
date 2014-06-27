@@ -17,10 +17,10 @@ import yass.YassSong;
  *  Description of the Class
  *
  * @author     Saruta
- * @created    4. März 2008
+ * @created    4. Mï¿½rz 2008
  */
 public class YassArtistFilter extends YassFilter {
-	Vector<String> artists = new Vector<String>();
+	Vector<String> artists = new Vector<>();
 
 
 	/**
@@ -47,7 +47,7 @@ public class YassArtistFilter extends YassFilter {
 			loadArticles();
 		
 		artists.clear();
-		Hashtable<String, Integer> count = new Hashtable<String, Integer>();
+		Hashtable<String, Integer> count = new Hashtable<>();
 		for (Enumeration<?> e = data.elements(); e.hasMoreElements(); ) {
 			YassSong s = (YassSong) e.nextElement();
 			String artist = s.getArtist();
@@ -84,8 +84,8 @@ public class YassArtistFilter extends YassFilter {
 	 *  Description of the Method
 	 */
 	private void loadArticles() {
-		Vector<String> langVector = new Vector<String>(); 
-		Vector<String> langIDVector = new Vector<String>();
+		Vector<String> langVector = new Vector<>();
+		Vector<String> langIDVector = new Vector<>();
 		
 		StringTokenizer languages = new StringTokenizer(getProperties().getProperty("language-tag"), "|");
 		while (languages.hasMoreTokens()) {
@@ -108,7 +108,7 @@ public class YassArtistFilter extends YassFilter {
 		
 		//---
 		
-		lang_articles = new Hashtable<String, Vector<String>>();
+		lang_articles = new Hashtable<>();
 		String s = getProperties().getProperty("articles");
 		StringTokenizer st = new StringTokenizer(s, ":");
 		while (st.hasMoreTokens()) {
@@ -116,7 +116,7 @@ public class YassArtistFilter extends YassFilter {
 
 			Vector<String> v = (Vector<String>) lang_articles.get(lang);
 			if (v == null) {
-				v = new Vector<String>();
+				v = new Vector<>();
 				lang_articles.put(lang, v);
 			} else {
 				v.clear();

@@ -81,7 +81,7 @@ public class PrintPlainLandscape implements PrintPlugin {
 		JPanel styleOptionsLeft = new JPanel(new GridLayout(0, 1));
 		JPanel styleOptionsRight = new JPanel(new GridLayout(0, 1));
 		styleOptionsLeft.add(new JLabel(I18.get("print_land_format")));
-		styleOptionsRight.add(formatBox = new JComboBox<String>(new String[]{I18.get("print_land_format_0"), I18.get("print_land_format_1"), I18.get("print_land_format_2")}));
+		styleOptionsRight.add(formatBox = new JComboBox<>(new String[]{I18.get("print_land_format_0"), I18.get("print_land_format_1"), I18.get("print_land_format_2")}));
 		styleOptionsLeft.add(new JLabel(I18.get("print_land_footer")));
 		styleOptionsRight.add(footnote = new JTextField(I18.get("print_land_footer_text")));
 		styleOptionsLeft.add(new JLabel(I18.get("print_land_date")));
