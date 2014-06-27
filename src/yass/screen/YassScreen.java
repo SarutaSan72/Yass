@@ -37,7 +37,7 @@ import yass.renderer.YassSession;
  *  Description of the Interface
  *
  * @author     Saruta
- * @created    22. M�rz 2010
+ * @created    22. März 2010
  */
 public class YassScreen extends JPanel {
 	private static final long serialVersionUID = 7267844722897446857L;
