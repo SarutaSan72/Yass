@@ -6,7 +6,6 @@ import java.awt.*;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. September 2006
  */
 public class YassCreditsScreen extends YassScreen {
     private static final long serialVersionUID = -1719073108885658488L;

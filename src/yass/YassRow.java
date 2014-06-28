@@ -6,7 +6,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 21. August 2007
  */
 public class YassRow implements Cloneable, Comparable<Object> {
     /**

@@ -612,7 +612,6 @@ public class OptionsPanel extends JPanel {
      * Description of the Class
      *
      * @author Saruta
-     * @created 2. Januar 2008
      */
     class BrowseListener implements ActionListener {
         JTextField textField = null;
@@ -669,7 +668,6 @@ public class OptionsPanel extends JPanel {
      * Description of the Class
      *
      * @author Saruta
-     * @created 2. Januar 2008
      */
     class EditColorListener extends MouseAdapter {
         JLabel label = null;
@@ -730,7 +728,6 @@ public class OptionsPanel extends JPanel {
      * Description of the Class
      *
      * @author Saruta
-     * @created 15. Januar 2008
      */
     class MyItemListener implements ItemListener {
         String key = null;
@@ -763,7 +760,6 @@ public class OptionsPanel extends JPanel {
      * Description of the Class
      *
      * @author Saruta
-     * @created 15. Januar 2008
      */
     class MyActionListener implements ActionListener {
         String key = null, val = null;
@@ -796,7 +792,6 @@ public class OptionsPanel extends JPanel {
      * Description of the Class
      *
      * @author Saruta
-     * @created 4. Januar 2008
      */
     class MyDocumentListener implements DocumentListener {
         String key = null;

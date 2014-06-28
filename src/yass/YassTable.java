@@ -5800,7 +5800,6 @@ public class YassTable extends JTable {
      * Description of the Class
      *
      * @author Saruta
-     * @created 21. August 2007
      */
     public class YassTableCellEditor extends AbstractCellEditor implements
             TableCellEditor {

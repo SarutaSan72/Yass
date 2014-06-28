@@ -6,7 +6,6 @@ import java.awt.geom.RoundRectangle2D;
  * Description of the Class
  *
  * @author Saruta
- * @created 21. Februar 2009
  */
 public class YassRectangle extends RoundRectangle2D.Double implements Cloneable {
     /**

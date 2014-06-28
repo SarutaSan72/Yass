@@ -7,7 +7,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. September 2006
  */
 public class YassJukeboxScreen extends YassScreen {
     private static final long serialVersionUID = -5940297789578629613L;

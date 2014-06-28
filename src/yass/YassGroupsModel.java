@@ -7,7 +7,6 @@ import java.util.Vector;
  * Descriptinoutn of the Class
  *
  * @author Saruta
- * @created 4. September 2006
  */
 public class YassGroupsModel extends AbstractTableModel {
     private static final long serialVersionUID = 5944503797621574207L;

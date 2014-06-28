@@ -4770,7 +4770,6 @@ public class YassSongList extends JTable {
      * Description of the Class
      *
      * @author Saruta
-     * @created 22. August 2007
      */
     class SortByAction implements ActionListener {
         private int col = 0;
@@ -4800,7 +4799,6 @@ public class YassSongList extends JTable {
      * Description of the Class
      *
      * @author Saruta
-     * @created 5. September 2007
      */
     class WorkerThread extends Thread {
         /**

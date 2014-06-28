@@ -8,7 +8,6 @@ import java.awt.*;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. September 2006
  */
 public class YassSelectControllerScreen extends YassScreen {
     private static final long serialVersionUID = 4744949154347328403L;

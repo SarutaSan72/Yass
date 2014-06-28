@@ -25,7 +25,6 @@ import java.util.*;
  * Description of the Class
  *
  * @author Saruta
- * @created 22. August 2007
  */
 public class YassGroups extends JTable implements DropTargetListener {
     private static final long serialVersionUID = 7459513036812933052L;
@@ -711,7 +710,6 @@ public class YassGroups extends JTable implements DropTargetListener {
      * Description of the Class
      *
      * @author Saruta
-     * @created 4. M�rz 2008
      */
     class GroupRenderer extends JLabel implements TableCellRenderer {
         private static final long serialVersionUID = 8499609874569104902L;

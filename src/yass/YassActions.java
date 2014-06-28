@@ -35,7 +35,6 @@ import java.util.*;
  * Description of the Class
  *
  * @author Saruta
- * @created 21. August 2007
  */
 public class YassActions implements DropTargetListener {
 
@@ -11318,7 +11317,6 @@ public class YassActions implements DropTargetListener {
      * Description of the Class
      *
      * @author Saruta
-     * @created 21. August 2007
      */
     private static class OptionPaneCloseAction extends AbstractAction {
         private static final long serialVersionUID = 1L;
@@ -11338,7 +11336,6 @@ public class YassActions implements DropTargetListener {
      * Description of the Class
      *
      * @author Saruta
-     * @created 21. August 2007
      */
     private static class OptionPaneArrowAction extends AbstractAction {
         private static final long serialVersionUID = 1L;
@@ -11373,7 +11370,6 @@ public class YassActions implements DropTargetListener {
      * Description of the Class
      *
      * @author Saruta
-     * @created 28. September 2007
      */
     class VersionListener implements ActionListener {
         /**
@@ -11391,7 +11387,6 @@ public class YassActions implements DropTargetListener {
      * Description of the Class
      *
      * @author Saruta
-     * @created 11. Oktober 2007
      */
     class PlayListBoxRenderer extends BasicComboBoxRenderer {
         private static final long serialVersionUID = 1L;
@@ -11430,7 +11425,6 @@ public class YassActions implements DropTargetListener {
      * Description of the Class
      *
      * @author Saruta
-     * @created 28. September 2007
      */
     class PlayListBoxListener implements ActionListener {
         /**
@@ -11520,7 +11514,6 @@ public class YassActions implements DropTargetListener {
      * Description of the Class
      *
      * @author Saruta
-     * @created 21. August 2007
      */
     class RecordEventListener implements AWTEventListener {
         private boolean lastWasPressed = false;

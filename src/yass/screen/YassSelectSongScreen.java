@@ -14,7 +14,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. September 2006
  */
 public class YassSelectSongScreen extends YassScreen {
     private static final long serialVersionUID = -5077683864700080314L;

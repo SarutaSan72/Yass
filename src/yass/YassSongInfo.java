@@ -2875,7 +2875,6 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
      * Description of the Class
      *
      * @author Saruta
-     * @created 15. September 2007
      */
     public static class ImageSelection implements Transferable {
         private Image image;
@@ -2930,7 +2929,6 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
      * Description of the Class
      *
      * @author Saruta
-     * @created 13. M�rz 2008
      */
     class LoaderThread extends Thread {
         boolean isInterrupted = false;

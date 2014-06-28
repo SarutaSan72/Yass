@@ -10,7 +10,6 @@ import java.util.Properties;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. September 2006
  */
 public class YassProperties extends Properties {
     private static final long serialVersionUID = -8189893110989853544L;

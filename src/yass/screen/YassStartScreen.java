@@ -9,7 +9,6 @@ import java.awt.image.BufferedImage;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. September 2006
  */
 public class YassStartScreen extends YassScreen {
     private static final long serialVersionUID = -4447714100922318520L;

@@ -6,7 +6,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 21. August 2007
  */
 public class YassPlayListModel extends Vector<Object> implements Comparable<Object> {
     private static final long serialVersionUID = 3473486648850642487L;

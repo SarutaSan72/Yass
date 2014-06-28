@@ -23,7 +23,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. September 2006
  */
 public class YassPlayer {
     public static final boolean DEBUG = false;
@@ -1050,7 +1049,6 @@ public class YassPlayer {
      * Description of the Class
      *
      * @author Saruta
-     * @created 26. August 2007
      */
     class Play2Thread extends Thread {
         AdvancedPlayer ap;
@@ -1086,7 +1084,6 @@ public class YassPlayer {
      * Description of the Class
      *
      * @author Saruta
-     * @created 26. August 2007
      */
     class PlayThread extends Thread {
         /**

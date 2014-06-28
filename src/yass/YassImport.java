@@ -15,7 +15,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 22. August 2007
  */
 public class YassImport {
     static JTextPane staticPane;
@@ -275,7 +274,6 @@ public class YassImport {
      * Description of the Class
      *
      * @author Saruta
-     * @created 22. August 2007
      */
     private static class ImportThread extends Thread {
         /**

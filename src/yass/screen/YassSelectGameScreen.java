@@ -8,7 +8,6 @@ import java.awt.geom.AffineTransform;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. September 2006
  */
 public class YassSelectGameScreen extends YassScreen {
     private static final long serialVersionUID = -8982467170029740808L;

@@ -8,7 +8,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 21. August 2007
  */
 public class YassDatabase {
     private final static String DB_NAME = "yass_db";

@@ -12,7 +12,6 @@ import java.util.StringTokenizer;
  * Description of the Class
  *
  * @author Saruta
- * @created 22. August 2007
  */
 public class YassLibOptions extends JDialog {
     private static final long serialVersionUID = -7342966934700458895L;

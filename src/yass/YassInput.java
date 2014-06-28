@@ -14,7 +14,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 19. April 2010
  */
 public class YassInput {
     static java.awt.Canvas dummy = new java.awt.Canvas();

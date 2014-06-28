@@ -18,7 +18,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 24. August 2007
  */
 public class YassMIDIConverter implements DropTargetListener {
     String filename = null;
@@ -1607,7 +1606,6 @@ public class YassMIDIConverter implements DropTargetListener {
      * Description of the Class
      *
      * @author Saruta
-     * @created 24. August 2007
      */
     class BoxRenderer extends JLabel implements ListCellRenderer<Object> {
         private static final long serialVersionUID = 1189583736809373071L;
@@ -1656,7 +1654,6 @@ public class YassMIDIConverter implements DropTargetListener {
      * Description of the Class
      *
      * @author Saruta
-     * @created 24. August 2007
      */
     class RenderThread extends Thread {
         /**
@@ -1732,7 +1729,6 @@ public class YassMIDIConverter implements DropTargetListener {
      * Description of the Class
      *
      * @author Saruta
-     * @created 24. August 2007
      */
     class TrackListener implements ActionListener {
         int n = 0, real = 0;

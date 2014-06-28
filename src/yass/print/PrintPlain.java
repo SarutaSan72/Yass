@@ -20,7 +20,6 @@ import java.util.*;
  * Description of the Class
  *
  * @author Saruta
- * @created 22. Januar 2008
  */
 public class PrintPlain implements PrintPlugin {
     String foottext = "", dformat = null;

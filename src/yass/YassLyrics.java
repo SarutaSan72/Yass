@@ -82,7 +82,6 @@ import com.swabunga.spell.swing.JTextComponentSpellChecker;
  * Description of the Class
  *
  * @author Saruta
- * @created 21. August 2007
  */
 public class YassLyrics extends JPanel implements TabChangeListener {
 	private static final long serialVersionUID = -2873881715263100606L;
@@ -810,7 +809,6 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 	 * Description of the Class
 	 *
 	 * @author Saruta
-	 * @created 21. August 2007
 	 */
 	class LanguageLoader extends Thread {
 		private String lang = null;
@@ -1526,7 +1524,6 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 	 * Description of the Class
 	 *
 	 * @author Saruta
-	 * @created 21. August 2007
 	 */
 	class Selector implements Runnable {
 		int in, out;
@@ -1695,7 +1692,6 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 	 * Description of the Class
 	 *
 	 * @author Saruta
-	 * @created 21. August 2007
 	 */
 	public class LineNumbers extends JPanel {
 		private static final long serialVersionUID = -4666558192446912742L;
@@ -2027,7 +2023,6 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 	 * Description of the Class
 	 *
 	 * @author Saruta
-	 * @created 21. August 2007
 	 */
 	class FindReplace extends JDialog {
 		private static final long serialVersionUID = 2979657194837453134L;

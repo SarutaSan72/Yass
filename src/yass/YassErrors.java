@@ -14,7 +14,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 21. August 2007
  */
 public class YassErrors extends JPanel {
     private static final long serialVersionUID = 2825245752115131894L;

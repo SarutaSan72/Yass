@@ -29,7 +29,6 @@ import java.text.BreakIterator;
  *  document model to be changed when corrections occur.
  *
  * @author     Jason Height (jheight@chariot.net.au)
- * @created    12. September 2007
  */
 public class DocumentWordTokenizer implements WordTokenizer {
 	/**

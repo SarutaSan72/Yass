@@ -9,7 +9,6 @@ import java.awt.event.KeyEvent;
  * Description of the Class
  *
  * @author Saruta
- * @created 25. September 2007
  */
 public class TimeSpinner extends JPanel {
     /**

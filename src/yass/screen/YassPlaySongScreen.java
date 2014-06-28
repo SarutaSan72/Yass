@@ -5,7 +5,6 @@ package yass.screen;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. September 2006
  */
 public class YassPlaySongScreen extends YassScreen {
     private static final long serialVersionUID = 4243370261445350556L;

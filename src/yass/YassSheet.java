@@ -22,7 +22,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. September 2006
  */
 public class YassSheet extends JPanel implements Scrollable,
         yass.renderer.YassPlaybackRenderer {

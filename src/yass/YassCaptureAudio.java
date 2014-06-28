@@ -15,7 +15,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 26. M�rz 2009
  */
 public class YassCaptureAudio {
 

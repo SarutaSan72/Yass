@@ -68,7 +68,6 @@ import javax.swing.SwingUtilities;
  *  should make the JFileChooser easier to use.
  *
  * @author     Saruta
- * @created    22. August 2007
  */
 public class FileChooserFixer implements KeyListener, MouseListener, Runnable {
 

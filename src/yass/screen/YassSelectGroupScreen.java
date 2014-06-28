@@ -7,7 +7,6 @@ import java.awt.image.BufferedImage;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. September 2006
  */
 public class YassSelectGroupScreen extends YassScreen {
     private static final long serialVersionUID = 8767183574660292415L;

@@ -367,7 +367,6 @@ public class AutoSpellCheckHandler extends MouseAdapter implements DocumentListe
 	 *  Description of the Class
 	 *
 	 * @author     Saruta
-	 * @created    11. September 2007
 	 */
 	private class SpellCheckChange implements Runnable {
 
@@ -398,7 +397,6 @@ public class AutoSpellCheckHandler extends MouseAdapter implements DocumentListe
 	 *  Description of the Class
 	 *
 	 * @author     Saruta
-	 * @created    11. September 2007
 	 */
 	private class ReplaceListener implements ActionListener {
 
@@ -430,7 +428,6 @@ public class AutoSpellCheckHandler extends MouseAdapter implements DocumentListe
 	 *  Description of the Class
 	 *
 	 * @author     Saruta
-	 * @created    11. September 2007
 	 */
 	private class AddToDictListener implements ActionListener {
 
@@ -468,7 +465,6 @@ public class AutoSpellCheckHandler extends MouseAdapter implements DocumentListe
 	 *  Description of the Class
 	 *
 	 * @author     Saruta
-	 * @created    11. September 2007
 	 */
 	private class IgnoreAllListener implements ActionListener {
 
@@ -502,7 +498,6 @@ public class AutoSpellCheckHandler extends MouseAdapter implements DocumentListe
 	 *  Description of the Class
 	 *
 	 * @author     Saruta
-	 * @created    11. September 2007
 	 */
 	private class MarkUpSpellingAll implements Runnable {
 

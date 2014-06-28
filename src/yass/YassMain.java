@@ -18,7 +18,6 @@ import java.util.Locale;
  * Description of the Class
  *
  * @author Saruta
- * @created 21. August 2007
  */
 public class YassMain extends JApplet {
 

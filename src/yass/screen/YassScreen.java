@@ -20,7 +20,6 @@ import java.util.Vector;
  * Description of the Interface
  *
  * @author Saruta
- * @created 22. März 2010
  */
 public class YassScreen extends JPanel {
     /**

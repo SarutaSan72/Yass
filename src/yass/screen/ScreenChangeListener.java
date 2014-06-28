@@ -5,7 +5,6 @@ package yass.screen;
  * Description of the Interface
  *
  * @author Saruta
- * @created 8. April 2010
  */
 public interface ScreenChangeListener {
     /**

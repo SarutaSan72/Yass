@@ -14,7 +14,6 @@ import java.util.*;
  * Description of the Class
  *
  * @author Saruta
- * @created 21. August 2007
  */
 public class YassPlayList extends JPanel implements TabChangeListener {
 

@@ -9,7 +9,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 9. Juli 2009
  */
 public class YassAudioSample {
     private static int channels = 1;

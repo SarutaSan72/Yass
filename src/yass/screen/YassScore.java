@@ -4,7 +4,6 @@ package yass.screen;
  * Description of the Class
  *
  * @author Saruta
- * @created 7. April 2010
  */
 public class YassScore implements Comparable<Object> {
     private String artist = null;

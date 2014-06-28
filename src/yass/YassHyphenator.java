@@ -14,7 +14,6 @@ import java.util.StringTokenizer;
  * Description of the Class
  *
  * @author Saruta
- * @created 21. August 2007
  */
 public class YassHyphenator {
     private static String userdir = System.getProperty("user.home") + File.separator + ".yass" + File.separator + "hyphen";

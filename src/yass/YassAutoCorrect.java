@@ -12,7 +12,6 @@ import java.util.*;
  * Description of the Class
  *
  * @author Saruta
- * @created 27. August 2007
  */
 public class YassAutoCorrect {
     private static int FIXED_PAGE_BREAK = 0;
