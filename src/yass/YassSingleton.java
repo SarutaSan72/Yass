@@ -4,7 +4,6 @@ package yass;
  * Description of the Class
  *
  * @author Saruta
- * @created 26. August 2007
  */
 public class YassSingleton {
     private static YassSingleton instance = new YassSingleton();

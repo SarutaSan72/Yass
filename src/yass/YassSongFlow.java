@@ -22,7 +22,6 @@ import java.util.Map;
  * Description of the Class
  *
  * @author Saruta
- * @created 22. August 2007
  */
 public class YassSongFlow extends JPanel {
     private static final long serialVersionUID = 4307686015910924L;
@@ -230,7 +229,7 @@ public class YassSongFlow extends JPanel {
                 continue;
             }
 
-            Image img = null;
+            Image img;
             try {
                 File coverFile = new File(s.getDirectory() + File.separator + s.getCover());
                 img = YassUtils.readImage(coverFile);
@@ -445,7 +444,7 @@ public class YassSongFlow extends JPanel {
                 g.drawString(a, w / 2 - sw / 2, h - 14);
 
                 boolean video = s.getComplete().equals("V");
-                boolean perfect = s.getEdition().indexOf("[SC]") >= 0;
+                boolean perfect = s.getEdition().contains("[SC]");
                 if (perfect && YassSongList.perfectIcon != null) {
                     g.drawImage(YassSongList.perfectIcon, w - 32, h - 32, null);
                 }
@@ -467,7 +466,7 @@ public class YassSongFlow extends JPanel {
                             duration = ((Long) properties.get(key)).longValue();
                         }
                         in.close();
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                     }
                 }
                 if (duration > 0) {
@@ -498,7 +497,7 @@ public class YassSongFlow extends JPanel {
         }
 
         YassSong s = sm.getData().elementAt(pos);
-        Image img = null;
+        Image img;
         try {
             File coverFile = new File(s.getDirectory() + File.separator + s.getCover());
             img = YassUtils.readImage(coverFile);

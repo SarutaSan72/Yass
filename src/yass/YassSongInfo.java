@@ -33,7 +33,6 @@ import java.util.*;
  * Description of the Class
  *
  * @author Saruta
- * @created 21. August 2007
  */
 public class YassSongInfo extends JPanel implements DropTargetListener {
     private static final long serialVersionUID = -9041213163254101396L;
@@ -2565,7 +2564,6 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
         try {
             Transferable tr = dropTargetDragEvent.getTransferable();
             if (tr.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-                Vector<?> fileVector = new Vector<>();
                 java.util.List fileList = (java.util.List) tr
                         .getTransferData(DataFlavor.javaFileListFlavor);
                 if (fileList.isEmpty()) {
@@ -2582,7 +2580,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                 boolean isTXT = filenameLow.endsWith(".txt");
 
                 if (isTXT) {
-                    StringBuffer sb = new StringBuffer();
+                    StringBuilder sb = new StringBuilder();
                     unicode.UnicodeReader r = null;
                     BufferedReader inputStream = null;
                     FileInputStream fis = null;
@@ -2654,7 +2652,6 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                 dropTargetDropEvent
                         .acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
 
-                Vector<?> fileVector = new Vector<>();
                 java.util.List fileList = (java.util.List) tr
                         .getTransferData(DataFlavor.javaFileListFlavor);
                 if (fileList.isEmpty()) {

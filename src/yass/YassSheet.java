@@ -34,7 +34,10 @@ public class YassSheet extends JPanel implements Scrollable,
     private static final long serialVersionUID = 3284920111520989009L;
     private final static int ACTION_CONTROL = 1, ACTION_ALT = 2,
             ACTION_CONTROL_ALT = 4, ACTION_NONE = 0;
+
+    private final static int SKETCH_HORIZONTAL = -1, SKETCH_VERTICAL = -2;
     private final static int SKETCH_LENGTH = 30;
+
     private final static int SKETCH_UP = 1, SKETCH_DOWN = 2, SKETCH_LEFT = 3,
             SKETCH_RIGHT = 4, SKETCH_NONE = 0;
     private final static int[] GESTURE_UP = new int[]{SKETCH_VERTICAL,
@@ -47,7 +50,7 @@ public class YassSheet extends JPanel implements Scrollable,
             SKETCH_VERTICAL, SKETCH_UP, SKETCH_DOWN, SKETCH_UP};
     private final static int[] GESTURE_DOWN_UP_DOWN = new int[]{
             SKETCH_VERTICAL, SKETCH_DOWN, SKETCH_UP, SKETCH_DOWN};
-    private final static int SKETCH_HORIZONTAL = -1, SKETCH_VERTICAL = -2;
+
     private final static int[] GESTURE_LEFT = new int[]{SKETCH_HORIZONTAL,
             SKETCH_LEFT};
     private final static int[] GESTURE_RIGHT = new int[]{SKETCH_HORIZONTAL,
@@ -177,7 +180,6 @@ public class YassSheet extends JPanel implements Scrollable,
     private long lastDragTime = -1;
     private int lyricsWidth = 400;
     private boolean lyricsVisible = true;
-    private boolean infoAreaVisible = true;
     private boolean messageMemory = false;
     private Color disabledColor = new JPanel().getBackground();
     // gray, blue, golden, freestyle, red
@@ -192,10 +194,10 @@ public class YassSheet extends JPanel implements Scrollable,
     Color darkShadow = gray;
     // private Color oddpageColor = new Color(.9f, .9f, .9f, .9f), evenpageColor
     // = new Color(.8f, .8f, .8f, .9f);
-    private Color oddpageColor = gray, evenpageColor = hiGray2;
     private Color hiGray = new Color(.6f, .6f, .6f, 1f);
     private Color hiGray2 = new Color(.9f, .9f, .9f, 1f);
     private Color dkGray = new Color(.4f, .4f, .4f, .7f);
+    private Color oddpageColor = gray, evenpageColor = hiGray2;
     private Color blue = new Color(.4f, .6f, .8f, .7f);
     private Color blueDrag = new Color(.8f, .9f, 1f, .5f);
     private Color dkRed = new Color(.8f, .4f, .4f, .7f);
@@ -324,7 +326,7 @@ public class YassSheet extends JPanel implements Scrollable,
                     e.consume();
                     return;
                 }
-                dispatch(e);
+                dispatch();
             }
 
             public void keyPressed(KeyEvent e) {
@@ -742,7 +744,7 @@ public class YassSheet extends JPanel implements Scrollable,
                     });
                     return;
                 }
-                dispatch(e);
+                dispatch();
             }
 
             public void keyReleased(KeyEvent e) {
@@ -768,10 +770,10 @@ public class YassSheet extends JPanel implements Scrollable,
                         actions.showMessage(0);
                     }
                 }
-                dispatch(e);
+                dispatch();
             }
 
-            private void dispatch(KeyEvent e) {
+            private void dispatch() {
                 // if (table != null)
                 // table.dispatchEvent(e);
             }
@@ -3179,7 +3181,7 @@ public class YassSheet extends JPanel implements Scrollable,
             img = bgImage;
         }
 
-        if (img == null && infoAreaVisible && !live) {
+        if (img == null && !live) {
             int goldenPoints = table.getGoldenPoints();
             if (goldenPoints > 0) {
                 int idealGoldenPoints = table.getIdealGoldenPoints();

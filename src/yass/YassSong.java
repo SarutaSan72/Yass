@@ -8,7 +8,6 @@ import java.util.StringTokenizer;
  * Description of the Class
  *
  * @author Saruta
- * @created 6. September 2007
  */
 public class YassSong implements Cloneable, Comparable<Object> {
     /**
@@ -183,7 +182,7 @@ public class YassSong implements Cloneable, Comparable<Object> {
             return "";
         }
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         int i = 0;
         int n = s.length();
         String c = "/\\?*:<>";
@@ -362,22 +361,16 @@ public class YassSong implements Cloneable, Comparable<Object> {
      * @param r The new song value
      */
     public void setSong(YassSong r) {
-        for (int i = 0; i < s.length; i++) {
-            s[i] = r.s[i];
-        }
+        System.arraycopy(r.s, 0, s, 0, s.length);
         if (r.messages == null) {
             messages = null;
         } else {
-            for (int i = 0; i < messages.length; i++) {
-                messages[i] = r.messages[i];
-            }
+            System.arraycopy(r.messages, 0, messages, 0, messages.length);
         }
         if (r.stats == null) {
             stats = null;
         } else {
-            for (int i = 0; i < stats.length; i++) {
-                stats[i] = r.stats[i];
-            }
+            System.arraycopy(r.stats, 0, stats, 0, stats.length);
         }
         icon = r.icon;
         saved = r.saved;
@@ -1076,9 +1069,9 @@ public class YassSong implements Cloneable, Comparable<Object> {
      * @return Description of the Return Value
      */
     public String toString() {
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < s.length; i++) {
-            sb.append(s[i] == null || s[i].trim().length() < 1 ? "-" : s[i]);
+        StringBuilder sb = new StringBuilder();
+        for (String value : s) {
+            sb.append(value == null || value.trim().length() < 1 ? "-" : value);
             sb.append("\t");
         }
         sb.append(timestamp + "");
@@ -1172,8 +1165,8 @@ public class YassSong implements Cloneable, Comparable<Object> {
         if (!hasMessages()) {
             return false;
         }
-        for (int i = 0; i < m.length; i++) {
-            if (hasMessage(m[i])) {
+        for (int i : m) {
+            if (hasMessage(i)) {
                 return true;
             }
         }
@@ -1458,12 +1451,12 @@ public class YassSong implements Cloneable, Comparable<Object> {
             Integer ti = new Integer(99999);
             try {
                 ti = new Integer(t);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             Integer rti = new Integer(99999);
             try {
                 rti = new Integer(rt);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
 
             int res = ti.compareTo(rti);
@@ -1494,12 +1487,12 @@ public class YassSong implements Cloneable, Comparable<Object> {
             Integer ti = new Integer(999999);
             try {
                 ti = new Integer(t);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             Integer rti = new Integer(999999);
             try {
                 rti = new Integer(rt);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
 
             int res = ti.compareTo(rti);
