@@ -1854,14 +1854,14 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
             double ps = -1;
             int psBeat = 0;
             try {
-                ps = new Double(psl).doubleValue();
+                ps = Double.parseDouble(psl);
                 if (table != null)
                     psBeat = (int) ((ps - table.getGap() / 1000) * 4 * table.getBPM() / 60);
             } catch (Exception ex) {
             }
             try {
-                ms = new Integer(msl).intValue();
-                me = new Integer(mel).intValue();
+                ms = Integer.parseInt(msl);
+                me = Integer.parseInt(mel);
             } catch (Exception ex) {
             }
             boolean psBeatFound = false;

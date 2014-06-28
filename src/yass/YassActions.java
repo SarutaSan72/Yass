@@ -1544,7 +1544,7 @@ public class YassActions implements DropTargetListener {
                 String defbase = prop.getProperty("record-timebase");
                 int def = 1;
                 if (defbase != null) {
-                    def = new Integer(defbase).intValue() - 1;
+                    def = Integer.parseInt(defbase) - 1;
                 }
 
                 Object[] speed = {"100%", "50%", "33%", "25%"};
@@ -3562,7 +3562,7 @@ public class YassActions implements DropTargetListener {
      */
     public void loadLayout() {
         String lyricsWidthString = prop.getProperty("lyrics-width");
-        int lyricsWidth = new Integer(lyricsWidthString).intValue();
+        int lyricsWidth = Integer.parseInt(lyricsWidthString);
         sheet.setLyricsWidth(lyricsWidth);
 
         boolean debugMemory = prop.getProperty("debug-memory").equals("true");
@@ -7859,7 +7859,7 @@ public class YassActions implements DropTargetListener {
                         I18.get("medit_lyrics_edit_gap_msg"),
                         (int) (table.getGap()) + "");
                 try {
-                    int gap = new Integer(input).intValue();
+                    int gap = Integer.parseInt(input);
                     table.setGap(gap);
                     sheet.update();
                     table.firstNote();
@@ -7874,7 +7874,7 @@ public class YassActions implements DropTargetListener {
                         I18.get("medit_lyrics_edit_start_msg"),
                         (int) (table.getStart()) + "");
                 try {
-                    int val = new Integer(input).intValue();
+                    int val = Integer.parseInt(input);
                     setStart(val);
                 } catch (Exception ex) {
                 }
@@ -7886,7 +7886,7 @@ public class YassActions implements DropTargetListener {
                         I18.get("medit_lyrics_edit_end_msg"),
                         (int) (table.getEnd()) + "");
                 try {
-                    int val = new Integer(input).intValue();
+                    int val = Integer.parseInt(input);
                     table.setEnd(val);
                     sheet.update();
                     table.lastNote();
@@ -8391,13 +8391,13 @@ public class YassActions implements DropTargetListener {
         String w = prop.getProperty("frame-width");
         if (w == null) {
             w = dim.width >= 1000 ? "1000" : dim.width + "";
-        } else if (new Integer(w).intValue() > dim.width) {
+        } else if (Integer.parseInt(w) > dim.width) {
             w = dim.width + "";
         }
         String h = prop.getProperty("frame-height");
         if (h == null) {
             h = dim.height >= 600 ? "600" : dim.height + "";
-        } else if (new Integer(h).intValue() > dim.height) {
+        } else if (Integer.parseInt(h) > dim.height) {
             w = dim.height + "";
         }
         Point p = null;
@@ -8534,8 +8534,8 @@ public class YassActions implements DropTargetListener {
 
         String lyricsWidthString = prop.getProperty("lyrics-width");
         String lyricsHeightString = prop.getProperty("lyrics-min-height");
-        int lyricsWidth = new Integer(lyricsWidthString).intValue();
-        int lyricsMinHeight = new Integer(lyricsHeightString).intValue();
+        int lyricsWidth = Integer.parseInt(lyricsWidthString);
+        int lyricsMinHeight = Integer.parseInt(lyricsHeightString);
         if (newh < lyricsMinHeight) {
             newh = lyricsMinHeight;
         }
@@ -8997,8 +8997,7 @@ public class YassActions implements DropTargetListener {
             int ch = 0;
             try {
                 dev = prop.getProperty("player" + t + "_device");
-                ch = new Integer(prop.getProperty("player" + t + "_channel"))
-                        .intValue();
+                ch = Integer.parseInt(prop.getProperty("player" + t + "_channel"));
             } catch (Exception e) {
                 dev = null;
                 ch = 0;
@@ -9596,7 +9595,7 @@ public class YassActions implements DropTargetListener {
             if (r.isMultiplayer()) {
                 String ps = r.getBeat().trim();
                 try {
-                    p = new Integer(ps).intValue();
+                    p = Integer.parseInt(ps);
                 } catch (Exception e) {
                     p = 0;
                 }

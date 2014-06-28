@@ -64,7 +64,7 @@ public class YassTagsFilter extends YassFilter {
                 g = g.replace(',', '.');
             }
             try {
-                double d = new Double(g).doubleValue();
+                double d = Double.parseDouble(g);
                 hit = d >= 60000;
             } catch (Exception e) {
             }
@@ -74,7 +74,7 @@ public class YassTagsFilter extends YassFilter {
                 g = g.replace(',', '.');
             }
             try {
-                double d = new Double(g).doubleValue();
+                double d = Double.parseDouble(g);
                 hit = d >= 30000;
             } catch (Exception e) {
             }
@@ -84,7 +84,7 @@ public class YassTagsFilter extends YassFilter {
                 g = g.replace(',', '.');
             }
             try {
-                double d = new Double(g).doubleValue();
+                double d = Double.parseDouble(g);
                 hit = d < 10000;
             } catch (Exception e) {
             }
@@ -94,7 +94,7 @@ public class YassTagsFilter extends YassFilter {
                 g = g.replace(',', '.');
             }
             try {
-                double d = new Double(g).doubleValue();
+                double d = Double.parseDouble(g);
                 hit = d < 5000;
             } catch (Exception e) {
             }
@@ -104,7 +104,7 @@ public class YassTagsFilter extends YassFilter {
                 g = g.replace(',', '.');
             }
             try {
-                double d = new Double(g).doubleValue();
+                double d = Double.parseDouble(g);
                 hit = d < 200;
             } catch (Exception e) {
             }
@@ -114,7 +114,7 @@ public class YassTagsFilter extends YassFilter {
                 g = g.replace(',', '.');
             }
             try {
-                double d = new Double(g).doubleValue();
+                double d = Double.parseDouble(g);
                 hit = d > 400;
             } catch (Exception e) {
             }

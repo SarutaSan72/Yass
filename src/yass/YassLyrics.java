@@ -163,7 +163,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 	public void init(YassProperties prop) {
 		String fontSizeString = prop.getProperty("lyrics-font-size");
 		try {
-			int i = new Integer(fontSizeString).intValue();
+			int i = Integer.parseInt(fontSizeString);
 			if (i > 0) {
 				fontSize = i;
 			}

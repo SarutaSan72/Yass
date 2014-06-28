@@ -611,7 +611,7 @@ public class YassTable extends JTable {
             return;
         }
         s.replace(',', '.');
-        double d = new Double(s).doubleValue();
+        double d = Double.parseDouble(s);
         if (d > 0) {
             setBPM(d);
         }
@@ -671,7 +671,7 @@ public class YassTable extends JTable {
             return;
         }
         s.replace(',', '.');
-        double d = new Double(s).doubleValue();
+        double d = Double.parseDouble(s);
         if (d > 0) {
             setStart(d);
         }
@@ -731,7 +731,7 @@ public class YassTable extends JTable {
             return;
         }
         s.replace(',', '.');
-        double d = new Double(s).doubleValue();
+        double d = Double.parseDouble(s);
         if (d > 0) {
             setEnd(d);
         }
@@ -784,7 +784,7 @@ public class YassTable extends JTable {
      */
     public void setVideoGap(String vg) {
         vg = vg.replace(',', '.');
-        double vgap = new Double(vg).doubleValue();
+        double vgap = Double.parseDouble(vg);
         setVideoGap(vgap);
     }
 
@@ -801,7 +801,7 @@ public class YassTable extends JTable {
 
         String p = r.getComment();
         p = p.replace(',', '.');
-        return new Double(p).doubleValue();
+        return Double.parseDouble(p);
     }
 
     /**
@@ -841,7 +841,7 @@ public class YassTable extends JTable {
      */
     public void setPreviewStart(String p) {
         p = p.replace(',', '.');
-        double pp = new Double(p).doubleValue();
+        double pp = Double.parseDouble(p);
         setPreviewStart(pp);
     }
 
@@ -857,7 +857,7 @@ public class YassTable extends JTable {
         }
 
         String p = r.getComment();
-        return new Integer(p).intValue();
+        return Integer.parseInt(p);
     }
 
     /**
@@ -902,7 +902,7 @@ public class YassTable extends JTable {
         }
 
         String p = r.getComment();
-        return new Integer(p).intValue();
+        return Integer.parseInt(p);
     }
 
     /**
@@ -944,7 +944,7 @@ public class YassTable extends JTable {
      * @param p The new medleyStartBeat value
      */
     public void setMedleyStartBeat(String p) {
-        int pp = new Integer(p).intValue();
+        int pp = Integer.parseInt(p);
         setMedleyStartBeat(pp);
     }
 
@@ -954,7 +954,7 @@ public class YassTable extends JTable {
      * @param p The new medleyEndBeat value
      */
     public void setMedleyEndBeat(String p) {
-        int pp = new Integer(p).intValue();
+        int pp = Integer.parseInt(p);
         setMedleyEndBeat(pp);
     }
 
@@ -2386,15 +2386,15 @@ public class YassTable extends JTable {
                     mp3 = s;
                 } // bpm or gap are set to 0 for invalid input
                 else if (tag.equals("BPM:")) {
-                    bpm = new Double(s.replace(',', '.')).doubleValue();
+                    bpm = Double.parseDouble(s.replace(',', '.'));
                 } else if (tag.equals("GAP:")) {
-                    gap = new Double(s.replace(',', '.')).doubleValue();
+                    gap = Double.parseDouble(s.replace(',', '.'));
                 } else if (tag.equals("START:")) {
-                    start = new Double(s.replace(',', '.')).doubleValue();
+                    start = Double.parseDouble(s.replace(',', '.'));
                 } else if (tag.equals("END:")) {
-                    end = new Double(s.replace(',', '.')).doubleValue();
+                    end = Double.parseDouble(s.replace(',', '.'));
                 } else if (tag.equals("VIDEOGAP:")) {
-                    vgap = new Double(s.replace(',', '.')).doubleValue();
+                    vgap = Double.parseDouble(s.replace(',', '.'));
                 } else if (tag.equals("PLAYERS:")) {
                     // s="all player names", version=""
                 } else if (tag.equals("RELATIVE:")) {
@@ -2429,15 +2429,14 @@ public class YassTable extends JTable {
                 time2 = time.substring(i + 1).trim();
                 time = time.substring(0, i).trim();
                 if (isRelative) {
-                    int ti = new Integer(time).intValue();
-                    int ti2 = (time2.length() > 0) ? new Integer(time2)
-                            .intValue() : ti;
+                    int ti = Integer.parseInt(time);
+                    int ti2 = (time2.length() > 0) ? Integer.parseInt(time2) : ti;
                     time = (ti + relativePageBreak) + "";
                     time2 = "";
                     relativePageBreak += ti2;
                 }
             } else if (isRelative) {
-                relativePageBreak += new Integer(time).intValue();
+                relativePageBreak += Integer.parseInt(time);
             }
 
             tm.addRow("-", time, time2, "", "");
@@ -2535,7 +2534,7 @@ public class YassTable extends JTable {
         String txt = s.substring(k + 1);
 
         if (isRelative) {
-            int timeInt = new Integer(time).intValue();
+            int timeInt = Integer.parseInt(time);
             timeInt += relativePageBreak;
             time = timeInt + "";
         }
@@ -4209,7 +4208,7 @@ public class YassTable extends JTable {
                 String type = st2.hasMoreTokens() ? st2.nextToken() : "";
                 String beat = st2.hasMoreTokens() ? st2.nextToken() : "";
                 if (pasteBeat == -1) {
-                    pasteBeat = new Integer(beat).intValue();
+                    pasteBeat = Integer.parseInt(beat);
                 }
                 String length = st2.hasMoreTokens() ? st2.nextToken() : "";
                 String height = st2.hasMoreTokens() ? st2.nextToken() : "";
@@ -4219,7 +4218,7 @@ public class YassTable extends JTable {
                     continue;
                 }
 
-                int beatInt = new Integer(beat).intValue();
+                int beatInt = Integer.parseInt(beat);
                 YassRow r2 = getRowAt(startRow + i);
                 if (r2.isNote()) {
                     r2.setBeat(startBeat + beatInt - pasteBeat);
@@ -4500,16 +4499,16 @@ public class YassTable extends JTable {
                 String type = st2.hasMoreTokens() ? st2.nextToken() : "";
                 String beat = st2.hasMoreTokens() ? st2.nextToken() : "";
                 if (pasteBeat == -1) {
-                    pasteBeat = new Integer(beat).intValue();
+                    pasteBeat = Integer.parseInt(beat);
                 }
                 String length = st2.hasMoreTokens() ? st2.nextToken() : "";
                 String height = st2.hasMoreTokens() ? st2.nextToken() : "";
                 String txt = st2.hasMoreTokens() ? st2.nextToken() : "";
                 txt = txt.replace(' ', YassRow.SPACE);
-                int beatInt = new Integer(beat).intValue();
+                int beatInt = Integer.parseInt(beat);
                 isSep = type.equals("-");
                 if (isSep && length.length() > 0) {
-                    int lengthInt = new Integer(length).intValue();
+                    int lengthInt = Integer.parseInt(length);
                     length = (lengthInt + startBeat) + "";
                 }
                 tm.insertRowAt(type, (startBeat + beatInt - pasteBeat) + "",
@@ -5656,8 +5655,8 @@ public class YassTable extends JTable {
         tracks.addElement(track);
         YassTrack[] tracksArray = tracks
                 .toArray(new YassTrack[]{});
-        tracksArray[0].setDifficulty(new Integer(prop
-                .getProperty("player1_difficulty")).intValue());
+        tracksArray[0].setDifficulty(Integer.parseInt(prop
+                .getProperty("player1_difficulty")));
 
         String[] ratings = new String[9];
         for (int i = 0; i < 9; i++) {
@@ -5666,11 +5665,9 @@ public class YassTable extends JTable {
 
         YassSession session = new YassSession(getArtist(), getTitle(),
                 tracksArray, startMillis, endMillis, ratings);
-        int noteScore = new Integer(prop.getProperty("max-points")).intValue();
-        int goldenScore = new Integer(prop.getProperty("max-golden"))
-                .intValue();
-        int lineScore = new Integer(prop.getProperty("max-linebonus"))
-                .intValue();
+        int noteScore = Integer.parseInt(prop.getProperty("max-points"));
+        int goldenScore = Integer.parseInt(prop.getProperty("max-golden"));
+        int lineScore = Integer.parseInt(prop.getProperty("max-linebonus"));
         session.initScore(noteScore, goldenScore, lineScore);
         return session;
     }

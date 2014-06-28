@@ -32,7 +32,7 @@ public class YassArtistFilter extends YassFilter {
      * @return The genericRules value
      */
     public String[] getGenericRules(Vector<YassSong> data) {
-        int min = new Integer(getProperties().getProperty("group-min")).intValue();
+        int min = Integer.parseInt(getProperties().getProperty("group-min"));
 
         moveArticles = getProperties().get("use-articles").equals("true");
         if (moveArticles)

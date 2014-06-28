@@ -706,7 +706,7 @@ public class YassRow implements Cloneable, Comparable<Object> {
         if (s[1].length() < 1) {
             return 0;
         }
-        return new Integer(s[1]).intValue();
+        return Integer.parseInt(s[1]);
     }
 
     /**
@@ -1020,7 +1020,7 @@ public class YassRow implements Cloneable, Comparable<Object> {
         if (isNote()) {
             int time = 0;
             try {
-                time = new Integer(s[1]).intValue();
+                time = Integer.parseInt(s[1]);
             } catch (Exception e) {
             }
             time -= relative;
@@ -1031,8 +1031,8 @@ public class YassRow implements Cloneable, Comparable<Object> {
             int time = 0;
             int time2 = 0;
             try {
-                time = new Integer(s[1]).intValue();
-                time2 = s[2].length() > 0 ? new Integer(s[2]).intValue() : time;
+                time = Integer.parseInt(s[1]);
+                time2 = s[2].length() > 0 ? Integer.parseInt(s[2]) : time;
             } catch (Exception e) {
                 time2 = time;
             }

@@ -64,7 +64,7 @@ public class YassSelectDifficultyScreen extends YassScreen {
             if (s == null) {
                 s = "1";
             }
-            int level = new Integer(s).intValue();
+            int level = Integer.parseInt(s);
             if (level == 2) {
                 player[t] = 0;
             } else if (level == 0) {

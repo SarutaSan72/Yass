@@ -70,7 +70,7 @@ public class CoverGenerator {
 
 		for (int i=0; i<argv.length; i++) {
 		if (argv[i].equals("-size")) {
-			ICON_WIDTH = ICON_HEIGHT = new Integer(argv[i+1]).intValue();
+			ICON_WIDTH = ICON_HEIGHT = Integer.parseInt(argv[i + 1]);
 		}
 		if (argv[i].equals("-background")) {
 			int val = 0; 
@@ -95,17 +95,17 @@ public class CoverGenerator {
 			fontname=argv[i+1];
 		}
 		if (argv[i].equals("-fontsize")) {
-			fontsize= new Integer(argv[i+1]).intValue();
+			fontsize= Integer.parseInt(argv[i + 1]);
 			fontmatch = (fontsize==0);
 		}
 		if (argv[i].equals("-dir")) {
 			dir=argv[i+1];
 		}
 		if (argv[i].equals("-x")) {
-			x= new Integer(argv[i+1]).intValue();
+			x= Integer.parseInt(argv[i + 1]);
 		}
 		if (argv[i].equals("-y")) {
-			y= new Integer(argv[i+1]).intValue();
+			y= Integer.parseInt(argv[i + 1]);
 		}
 		if (argv[i].equals("-bold")) {
 			bold=argv[i+1].equals("true");
@@ -114,16 +114,16 @@ public class CoverGenerator {
 			unicode=argv[i+1].equals("true");
 		}
 		if (argv[i].equals("-quality")) {
-			try { quality=new Double(argv[i+1]).doubleValue(); }catch(Exception e){}
+			try { quality= Double.parseDouble(argv[i + 1]); }catch(Exception e){}
 		}
 		if (argv[i].equals("-opacity")) {
-			try { opacity=new Double(argv[i+1]).doubleValue(); }catch(Exception e){}
+			try { opacity= Double.parseDouble(argv[i + 1]); }catch(Exception e){}
 		}
 		if (argv[i].equals("-fontscale")) {
-			try { fontscale=new Double(argv[i+1]).doubleValue(); }catch(Exception e){}
+			try { fontscale= Double.parseDouble(argv[i + 1]); }catch(Exception e){}
 		}
 		if (argv[i].equals("-opacity2")) {
-			try { opacity2=new Double(argv[i+1]).doubleValue(); }catch(Exception e){}
+			try { opacity2= Double.parseDouble(argv[i + 1]); }catch(Exception e){}
 		}
 		if (argv[i].equals("-template")) {
 			if (argv[i+1].equals("group")) {
@@ -158,12 +158,12 @@ public class CoverGenerator {
 		if (argv[i].equals("-from")) {
 			if (argv[i+1].startsWith("u")) {
 				try { from = Integer.parseInt(argv[i+1].substring(1),16); }catch(Exception e){}
-			} else {from = new Integer(argv[i+1]).intValue();}
+			} else {from = Integer.parseInt(argv[i + 1]);}
 		}
 		if (argv[i].equals("-to")) {
 			if (argv[i+1].startsWith("u")) {
 				try { to = Integer.parseInt(argv[i+1].substring(1),16); }catch(Exception e){}
-			} else {to = new Integer(argv[i+1]).intValue();}
+			} else {to = Integer.parseInt(argv[i + 1]);}
 		}
 		}
 		

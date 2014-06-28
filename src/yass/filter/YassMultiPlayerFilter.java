@@ -47,7 +47,7 @@ public class YassMultiPlayerFilter extends YassFilter {
         int pn = 1;
         String p = s.getMultiplayer();
         try {
-            pn = new Integer(p).intValue();
+            pn = Integer.parseInt(p);
         } catch (Exception e) {
             pn = 1;
         }

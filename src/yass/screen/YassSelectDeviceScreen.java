@@ -98,7 +98,7 @@ public class YassSelectDeviceScreen extends YassScreen {
             String name = getProperties().getProperty("player" + t + "_device");
             String channel = getProperties().getProperty("player" + t + "_channel");
             if (channel != null) {
-                int c = new Integer(channel).intValue();
+                int c = Integer.parseInt(channel);
                 if (name != null) {
                     for (int i = 0; i < devices.length; i++) {
                         if (name.equals(devices[i])) {

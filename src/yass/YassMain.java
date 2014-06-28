@@ -202,13 +202,13 @@ public class YassMain extends JApplet {
         String w = prop.getProperty("frame-width");
         if (w == null) {
             w = dim.width >= 1000 ? "1000" : dim.width + "";
-        } else if (new Integer(w).intValue() > dim.width) {
+        } else if (Integer.parseInt(w) > dim.width) {
             w = dim.width + "";
         }
         String h = prop.getProperty("frame-height");
         if (h == null) {
             h = dim.height >= 600 ? "600" : dim.height + "";
-        } else if (new Integer(h).intValue() > dim.height) {
+        } else if (Integer.parseInt(h) > dim.height) {
             w = dim.height + "";
         }
         return new Dimension(new Integer(w), new Integer(h));
@@ -341,8 +341,8 @@ public class YassMain extends JApplet {
         if (COMBINED_LYRICS) {
             String lyricsWidthString = prop.getProperty("lyrics-width");
             String lyricsHeightString = prop.getProperty("lyrics-min-height");
-            int lyricsWidth = new Integer(lyricsWidthString).intValue();
-            int lyricsMinHeight = new Integer(lyricsHeightString).intValue();
+            int lyricsWidth = Integer.parseInt(lyricsWidthString);
+            int lyricsMinHeight = Integer.parseInt(lyricsHeightString);
 
             // LYRICS POSITION
             if (layout.equals("East")) {
@@ -378,7 +378,7 @@ public class YassMain extends JApplet {
         if (!COMBINED_LYRICS) {
             final JSplitPane splitPaneV = new JSplitPane(JSplitPane.VERTICAL_SPLIT, sheetPanel, p);
             splitPaneV.setOneTouchExpandable(true);
-            splitPaneV.setDividerLocation(new Integer(dv).intValue());
+            splitPaneV.setDividerLocation(Integer.parseInt(dv));
             splitPaneV.setResizeWeight(0);
             splitPaneV.setContinuousLayout(true);
             splitPaneV.addPropertyChangeListener(
@@ -589,7 +589,7 @@ public class YassMain extends JApplet {
                             }
 
                             String lyricsWidthString = prop.getProperty("lyrics-width");
-                            int lyricsWidth = new Integer(lyricsWidthString).intValue();
+                            int lyricsWidth = Integer.parseInt(lyricsWidthString);
 
                             int newx = (int) p.getX() + r.width - lyricsWidth;
                             if (layout.equals("East")) {
@@ -624,7 +624,7 @@ public class YassMain extends JApplet {
                             }
 
                             String lyricsWidthString = prop.getProperty("lyrics-width");
-                            int lyricsWidth = new Integer(lyricsWidthString).intValue();
+                            int lyricsWidth = Integer.parseInt(lyricsWidthString);
 
                             int newx = (int) p.getX() + r.width - lyricsWidth;
                             if (layout.equals("East")) {

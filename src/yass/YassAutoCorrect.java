@@ -669,8 +669,7 @@ public class YassAutoCorrect {
         table.resetMessages();
 
         String fixString = prop.getProperty("correct-uncommon-pagebreaks-fix");
-        FIXED_PAGE_BREAK = fixString != null ? new Integer(fixString)
-                .intValue() : 0;
+        FIXED_PAGE_BREAK = fixString != null ? Integer.parseInt(fixString) : 0;
 
         YassRow r = null;
         try {
@@ -868,7 +867,7 @@ public class YassAutoCorrect {
                             double oldvgap = table.getVideoGap();
                             if (vg != null) {
                                 vg = vg.replace(',', '.');
-                                double vgap = new Double(vg).doubleValue();
+                                double vgap = Double.parseDouble(vg);
 
                                 if (tm.getCommentRow("VIDEOGAP:") == null) {
                                     r.addMessage(

@@ -90,7 +90,7 @@ public class YassViewScoreScreen extends YassScreen {
                 String name = s.getPlayer();
                 System.out.println(name + "/" + score);
                 if (name.startsWith("000")) {
-                    int t = new Integer(name.substring(3, 4)).intValue();
+                    int t = Integer.parseInt(name.substring(3, 4));
                     System.out.println("index " + t);
                     playerRank[t] = i;
                 }

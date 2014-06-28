@@ -590,8 +590,8 @@ public class YassMIDIConverter implements DropTargetListener {
             int min = 256;
             int max = -256;
             for (int i = 0; i < ns; i++) {
-                int note = new Integer(trackNotes[nTrack].elementAt(i)
-                        .toString()).intValue();
+                int note = Integer.parseInt(trackNotes[nTrack].elementAt(i)
+                        .toString());
                 min = Math.min(min, note);
                 max = Math.max(max, note);
             }
@@ -601,10 +601,10 @@ public class YassMIDIConverter implements DropTargetListener {
             int minL = 256;
             int maxL = -256;
             for (int i = 0; i < ts && i < te; i++) {
-                double startTick = new Double(trackTimes[nTrack].elementAt(i)
-                        .toString()).doubleValue();
-                double endTick = new Double(trackTimesEnd[nTrack].elementAt(i)
-                        .toString()).doubleValue();
+                double startTick = Double.parseDouble(trackTimes[nTrack].elementAt(i)
+                        .toString());
+                double endTick = Double.parseDouble(trackTimesEnd[nTrack].elementAt(i)
+                        .toString());
                 double start = tickToTime(startTick);
                 double end = tickToTime(endTick);
                 start = start * 4 * bpm / 60.0;
@@ -1143,9 +1143,9 @@ public class YassMIDIConverter implements DropTargetListener {
             String note = trackNotes[voiceTrack].elementAt(i).toString();
             String timeEnd = trackTimesEnd[voiceTrack].elementAt(i).toString();
 
-            height = new Integer(note).intValue() - 60;
-            double startTick = new Double(time).doubleValue();
-            double endTick = new Double(timeEnd).doubleValue();
+            height = Integer.parseInt(note) - 60;
+            double startTick = Double.parseDouble(time);
+            double endTick = Double.parseDouble(timeEnd);
             double start = tickToTime(startTick);
             double end = tickToTime(endTick);
             start = start * 4 * bpm / 60.0;
