@@ -2,21 +2,21 @@ package yass.options;
 
 
 /**
- *  Description of the Class
+ * Description of the Class
  *
- * @author     Saruta
- * @created    22. August 2007
+ * @author Saruta
+ * @created 22. August 2007
  */
 public class PluginPanel extends OptionsPanel {
 
-	private static final long serialVersionUID = -5827257245107763965L;
+    private static final long serialVersionUID = -5827257245107763965L;
 
-	/**
-	 *  Gets the body attribute of the DirPanel object
-	 */
-	public void addRows() {
-		addText("Package:", "plugins");
-		addComment("Location of custom plugins.<br>(Requires restart for changes to take effect.)");
-	}
+    /**
+     * Gets the body attribute of the DirPanel object
+     */
+    public void addRows() {
+        addText("Package:", "plugins");
+        addComment("Location of custom plugins.<br>(Requires restart for changes to take effect.)");
+    }
 }
 

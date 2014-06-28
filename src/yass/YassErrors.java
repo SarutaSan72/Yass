@@ -1,482 +1,458 @@
 package yass;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Rectangle;
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JToolBar;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
-
 /**
- *  Description of the Class
+ * Description of the Class
  *
- * @author     Saruta
- * @created    21. August 2007
+ * @author Saruta
+ * @created 21. August 2007
  */
 public class YassErrors extends JPanel {
-	private static final long serialVersionUID = 2825245752115131894L;
-	private YassActions actions = null;
-	YassProperties prop;
-	JPanel errorPanel = null;
-	JTable errTable;
-	String template = null;
-	Color bgColor = null;
-	JPanel msgPanel = null, msgButtonPanel = null;
-	DefaultTableModel tm = null;
+    private static final long serialVersionUID = 2825245752115131894L;
+    YassProperties prop;
+    JPanel errorPanel = null;
+    JTable errTable;
+    String template = null;
+    Color bgColor = null;
+    JPanel msgPanel = null, msgButtonPanel = null;
+    DefaultTableModel tm = null;
+    Color stdColor = new Color(.3f, .3f, 0.3f, .7f);
+    private YassActions actions = null;
+    private JLabel popupLabel = null;
+    private JComponent toolbar = null;
 
-	Color stdColor = new Color(.3f, .3f, 0.3f, .7f);
+    private JButton okButton = null, allButton = null, cancelButton = null;
+    private JToolBar buttons = null;
 
-	private JLabel popupLabel = null;
-	private JComponent toolbar = null;
+    private YassAutoCorrect auto = null;
 
-	private JButton okButton = null, allButton = null, cancelButton = null;
-	private JToolBar buttons = null;
-
-	private YassAutoCorrect auto = null;
-
-	private boolean preventTableUpdate = false;
-
-
-	/**
-	 *  Sets the auto attribute of the YassMain object
-	 *
-	 * @param  a  The new auto value
-	 */
-	public void setAutoCorrect(YassAutoCorrect a) {
-		auto = a;
-	}
+    private boolean preventTableUpdate = false;
+    private YassTable table = null;
 
 
-	/**
-	 *  Description of the Method
-	 *
-	 * @param  onoff  Description of the Parameter
-	 */
-	public void preventTableUpdate(boolean onoff) {
-		preventTableUpdate = onoff;
-	}
+    /**
+     * Constructor for the YassGeneral object
+     *
+     * @param p    Description of the Parameter
+     * @param a    Description of the Parameter
+     * @param tool Description of the Parameter
+     */
+    public YassErrors(YassActions a, YassProperties p, JComponent tool) {
+        actions = a;
+        prop = p;
+        toolbar = tool;
+        setLayout(new BorderLayout());
+        add("Center", errorPanel = new JPanel(new BorderLayout()));
 
+        popupLabel = new JLabel();
+        popupLabel.setVerticalAlignment(SwingConstants.TOP);
 
-	/**
-	 *  Description of the Method
-	 *
-	 * @return    Description of the Return Value
-	 */
-	public boolean preventTableUpdate() {
-		return preventTableUpdate;
-	}
+        String[] columns = {I18.get("tool_errors_col_0"), I18.get("tool_errors_col_1"), I18.get("tool_errors_col_2"), I18.get("tool_errors_col_3"), I18.get("tool_errors_col_4"), "#"};
+        tm =
+                new DefaultTableModel(null, columns) {
+                    private static final long serialVersionUID = 4298268313228698022L;
 
+                    public boolean isCellEditable(int row, int column) {
+                        return false;
+                    }
+                };
 
-	/**
-	 *  Constructor for the YassGeneral object
-	 *
-	 * @param  p     Description of the Parameter
-	 * @param  a     Description of the Parameter
-	 * @param  tool  Description of the Parameter
-	 */
-	public YassErrors(YassActions a, YassProperties p, JComponent tool) {
-		actions = a;
-		prop = p;
-		toolbar = tool;
-		setLayout(new BorderLayout());
-		add("Center", errorPanel = new JPanel(new BorderLayout()));
+        errTable = new JTable(tm);
+        errTable.setBackground(new JLabel().getBackground());
+        errTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        errTable.getSelectionModel().addListSelectionListener(
+                new ListSelectionListener() {
+                    public void valueChanged(ListSelectionEvent event) {
+                        updateMessage();
+                    }
+                });
 
-		popupLabel = new JLabel();
-		popupLabel.setVerticalAlignment(SwingConstants.TOP);
+        errTable.getTableHeader().setReorderingAllowed(false);
+        errTable.createDefaultColumnsFromModel();
 
-		String[] columns = {I18.get("tool_errors_col_0"), I18.get("tool_errors_col_1"), I18.get("tool_errors_col_2"), I18.get("tool_errors_col_3"), I18.get("tool_errors_col_4"), "#"};
-		tm =
-			new DefaultTableModel(null, columns) {
-				private static final long serialVersionUID = 4298268313228698022L;
+        errTable.getColumnModel().getColumn(0).setMinWidth(240);
+        errTable.getColumnModel().getColumn(0).setMaxWidth(240);
+        errTable.getColumnModel().getColumn(0).setPreferredWidth(240);
+        errTable.getColumnModel().getColumn(0).setResizable(true);
 
-				public boolean isCellEditable(int row, int column) {
-					return false;
-				}
-			};
+        errTable.getColumnModel().getColumn(1).setMinWidth(48);
+        errTable.getColumnModel().getColumn(1).setMaxWidth(48);
+        errTable.getColumnModel().getColumn(1).setPreferredWidth(48);
+        errTable.getColumnModel().getColumn(1).setResizable(false);
 
-		errTable = new JTable(tm);
-		errTable.setBackground(new JLabel().getBackground());
-		errTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		errTable.getSelectionModel().addListSelectionListener(
-			new ListSelectionListener() {
-				public void valueChanged(ListSelectionEvent event) {
-					updateMessage();
-				}
-			});
+        errTable.getColumnModel().getColumn(2).setMinWidth(48);
+        errTable.getColumnModel().getColumn(2).setMaxWidth(48);
+        errTable.getColumnModel().getColumn(2).setPreferredWidth(48);
+        errTable.getColumnModel().getColumn(2).setResizable(false);
 
-		errTable.getTableHeader().setReorderingAllowed(false);
-		errTable.createDefaultColumnsFromModel();
+        errTable.getColumnModel().getColumn(3).setMinWidth(0);
+        errTable.getColumnModel().getColumn(3).setMaxWidth(0);
+        errTable.getColumnModel().getColumn(3).setPreferredWidth(0);
+        errTable.getColumnModel().getColumn(3).setResizable(false);
 
-		errTable.getColumnModel().getColumn(0).setMinWidth(240);
-		errTable.getColumnModel().getColumn(0).setMaxWidth(240);
-		errTable.getColumnModel().getColumn(0).setPreferredWidth(240);
-		errTable.getColumnModel().getColumn(0).setResizable(true);
+        errTable.getColumnModel().getColumn(4).setMinWidth(64);
+        errTable.getColumnModel().getColumn(4).setPreferredWidth(64);
+        errTable.getColumnModel().getColumn(4).setResizable(true);
 
-		errTable.getColumnModel().getColumn(1).setMinWidth(48);
-		errTable.getColumnModel().getColumn(1).setMaxWidth(48);
-		errTable.getColumnModel().getColumn(1).setPreferredWidth(48);
-		errTable.getColumnModel().getColumn(1).setResizable(false);
+        errTable.getColumnModel().getColumn(5).setMinWidth(0);
+        errTable.getColumnModel().getColumn(5).setMaxWidth(0);
+        errTable.getColumnModel().getColumn(5).setPreferredWidth(0);
+        errTable.getColumnModel().getColumn(5).setResizable(false);
 
-		errTable.getColumnModel().getColumn(2).setMinWidth(48);
-		errTable.getColumnModel().getColumn(2).setMaxWidth(48);
-		errTable.getColumnModel().getColumn(2).setPreferredWidth(48);
-		errTable.getColumnModel().getColumn(2).setResizable(false);
+        errorPanel.add("Center", new JScrollPane(errTable));
+        errorPanel.add("South", msgPanel = new JPanel(new BorderLayout()));
+        msgPanel.add("Center", popupLabel);
+        msgPanel.add("South", msgButtonPanel = new JPanel(new BorderLayout()));
+        JToolBar tb = new JToolBar();
+        tb.setFloatable(false);
+        msgButtonPanel.add("Center", tb);
+        msgButtonPanel.add("East", toolbar);
 
-		errTable.getColumnModel().getColumn(3).setMinWidth(0);
-		errTable.getColumnModel().getColumn(3).setMaxWidth(0);
-		errTable.getColumnModel().getColumn(3).setPreferredWidth(0);
-		errTable.getColumnModel().getColumn(3).setResizable(false);
+        buttons = new JToolBar(I18.get("tool_correct"));
+        buttons.setFloatable(false);
+        buttons.add(okButton = new JButton(I18.get("tool_correct_ok")));
+        buttons.add(allButton = new JButton(I18.get("tool_correct_all")));
+        buttons.add(cancelButton = new JButton(I18.get("tool_correct_cancel")));
 
-		errTable.getColumnModel().getColumn(4).setMinWidth(64);
-		errTable.getColumnModel().getColumn(4).setPreferredWidth(64);
-		errTable.getColumnModel().getColumn(4).setResizable(true);
+        okButton.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        if (table != null) {
+                            int viewRow = errTable.getSelectedRow();
+                            if (viewRow < 0) {
+                                return;
+                            }
+                            Vector<?> data = tm.getDataVector();
+                            if (data.size() <= viewRow) {
+                                return;
+                            }
 
-		errTable.getColumnModel().getColumn(5).setMinWidth(0);
-		errTable.getColumnModel().getColumn(5).setMaxWidth(0);
-		errTable.getColumnModel().getColumn(5).setPreferredWidth(0);
-		errTable.getColumnModel().getColumn(5).setResizable(false);
+                            Vector<?> v = (Vector<?>) data.elementAt(viewRow);
+                            int i = ((Integer) (v.elementAt(3))).intValue();
+                            int id = ((Integer) (v.elementAt(5))).intValue();
+                            YassRow r = table.getRowAt(i);
+                            String m = r.getMessage(id);
 
-		errorPanel.add("Center", new JScrollPane(errTable));
-		errorPanel.add("South", msgPanel = new JPanel(new BorderLayout()));
-		msgPanel.add("Center", popupLabel);
-		msgPanel.add("South", msgButtonPanel = new JPanel(new BorderLayout()));
-		JToolBar tb = new JToolBar();
-		tb.setFloatable(false);
-		msgButtonPanel.add("Center", tb);
-		msgButtonPanel.add("East", toolbar);
+                            boolean changed = auto.autoCorrect(table, false, m);
+                            if (changed) {
+                                table.addUndo();
+                                ((YassTableModel) table.getModel()).fireTableDataChanged();
+                            }
 
-		buttons = new JToolBar(I18.get("tool_correct"));
-		buttons.setFloatable(false);
-		buttons.add(okButton = new JButton(I18.get("tool_correct_ok")));
-		buttons.add(allButton = new JButton(I18.get("tool_correct_all")));
-		buttons.add(cancelButton = new JButton(I18.get("tool_correct_cancel")));
+                            auto.checkData(table, false, true);
 
-		okButton.addActionListener(
-			new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if (table != null) {
-						int viewRow = errTable.getSelectedRow();
-						if (viewRow < 0) {
-							return;
-						}
-						Vector<?> data = tm.getDataVector();
-						if (data.size() <= viewRow) {
-							return;
-						}
+                            SwingUtilities.invokeLater(
+                                    new Runnable() {
+                                        public void run() {
+                                            updateMessage();
+                                        }
+                                    });
+                        }
+                    }
+                });
+        allButton.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        if (table != null) {
+                            int viewRow = errTable.getSelectedRow();
+                            if (viewRow < 0) {
+                                return;
+                            }
+                            Vector<?> data = tm.getDataVector();
+                            if (data.size() <= viewRow) {
+                                return;
+                            }
 
-						Vector<?> v = (Vector<?>) data.elementAt(viewRow);
-						int i = ((Integer) (v.elementAt(3))).intValue();
-						int id = ((Integer) (v.elementAt(5))).intValue();
-						YassRow r = table.getRowAt(i);
-						String m = r.getMessage(id);
+                            Vector<?> v = (Vector<?>) data.elementAt(viewRow);
+                            int i = ((Integer) (v.elementAt(3))).intValue();
+                            int id = ((Integer) (v.elementAt(5))).intValue();
+                            YassRow r = table.getRowAt(i);
+                            String m = r.getMessage(id);
 
-						boolean changed = auto.autoCorrect(table, false, m);
-						if (changed) {
-							table.addUndo();
-							((YassTableModel) table.getModel()).fireTableDataChanged();
-						}
+                            boolean changed = auto.autoCorrect(table, true, m);
+                            if (changed) {
+                                table.addUndo();
+                                ((YassTableModel) table.getModel()).fireTableDataChanged();
+                            }
+                            auto.checkData(table, false, true);
 
-						auto.checkData(table, false, true);
+                            SwingUtilities.invokeLater(
+                                    new Runnable() {
+                                        public void run() {
+                                            updateMessage();
+                                        }
+                                    });
+                        }
+                    }
+                });
+        cancelButton.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        SwingUtilities.invokeLater(
+                                new Runnable() {
+                                    public void run() {
+                                        actions.hideErrors();
+                                    }
+                                });
+                    }
+                });
+    }
 
-						SwingUtilities.invokeLater(
-							new Runnable() {
-								public void run() {
-									updateMessage();
-								}
-							});
-					}
-				}
-			});
-		allButton.addActionListener(
-			new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					if (table != null) {
-						int viewRow = errTable.getSelectedRow();
-						if (viewRow < 0) {
-							return;
-						}
-						Vector<?> data = tm.getDataVector();
-						if (data.size() <= viewRow) {
-							return;
-						}
+    /**
+     * Sets the auto attribute of the YassMain object
+     *
+     * @param a The new auto value
+     */
+    public void setAutoCorrect(YassAutoCorrect a) {
+        auto = a;
+    }
 
-						Vector<?> v = (Vector<?>) data.elementAt(viewRow);
-						int i = ((Integer) (v.elementAt(3))).intValue();
-						int id = ((Integer) (v.elementAt(5))).intValue();
-						YassRow r = table.getRowAt(i);
-						String m = r.getMessage(id);
-
-						boolean changed = auto.autoCorrect(table, true, m);
-						if (changed) {
-							table.addUndo();
-							((YassTableModel) table.getModel()).fireTableDataChanged();
-						}
-						auto.checkData(table, false, true);
-
-						SwingUtilities.invokeLater(
-							new Runnable() {
-								public void run() {
-									updateMessage();
-								}
-							});
-					}
-				}
-			});
-		cancelButton.addActionListener(
-			new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					SwingUtilities.invokeLater(
-						new Runnable() {
-							public void run() {
-								actions.hideErrors();
-							}
-						});
-				}
-			});
-	}
+    /**
+     * Description of the Method
+     *
+     * @param onoff Description of the Parameter
+     */
+    public void preventTableUpdate(boolean onoff) {
+        preventTableUpdate = onoff;
+    }
 
 
 	/*
-	 *  public boolean hasFocus() {
+     *  public boolean hasFocus() {
 	 *  return super.hasFocus() || okButton.hasFocus() || allButton.hasFocus();
 	 *  }
 	 */
-	/**
-	 *  Description of the Method
-	 */
-	public void updateMessage() {
-		if (table == null) {
-			return;
-		}
 
-		int rows[] = errTable.getSelectedRows();
-		if (rows == null || rows.length != 1) {
-			hideMessage();
-			return;
-		}
-		int viewRow = rows[0];
+    /**
+     * Description of the Method
+     *
+     * @return Description of the Return Value
+     */
+    public boolean preventTableUpdate() {
+        return preventTableUpdate;
+    }
 
-		Vector<?> data = tm.getDataVector();
-		if (data.size() <= viewRow) {
-			hideMessage();
-			return;
-		}
+    /**
+     * Description of the Method
+     */
+    public void updateMessage() {
+        if (table == null) {
+            return;
+        }
 
-		Vector<?> v = (Vector<?>) data.elementAt(viewRow);
-		int i = ((Integer) (v.elementAt(3))).intValue();
-		int id = ((Integer) (v.elementAt(5))).intValue();
+        int rows[] = errTable.getSelectedRows();
+        if (rows == null || rows.length != 1) {
+            hideMessage();
+            return;
+        }
+        int viewRow = rows[0];
 
-		if (!preventTableUpdate) {
-			table.setRowSelectionInterval(i, i);
-			table.updatePlayerPosition();
-			table.zoomPage();
-		}
+        Vector<?> data = tm.getDataVector();
+        if (data.size() <= viewRow) {
+            hideMessage();
+            return;
+        }
 
-		YassRow r = (YassRow) table.getRowAt(i);
+        Vector<?> v = (Vector<?>) data.elementAt(viewRow);
+        int i = ((Integer) (v.elementAt(3))).intValue();
+        int id = ((Integer) (v.elementAt(5))).intValue();
 
-		String msg = getMessage(r, id);
-		popupLabel.setText(msg);
+        if (!preventTableUpdate) {
+            table.setRowSelectionInterval(i, i);
+            table.updatePlayerPosition();
+            table.zoomPage();
+        }
 
-		String mess = r.getMessage(id);
-		msgButtonPanel.remove(buttons);
-		if (auto.autoCorrectionSupported(mess)) {
-			msgButtonPanel.add("West", buttons);
-		}
-		repaint();
-	}
+        YassRow r = (YassRow) table.getRowAt(i);
+
+        String msg = getMessage(r, id);
+        popupLabel.setText(msg);
+
+        String mess = r.getMessage(id);
+        msgButtonPanel.remove(buttons);
+        if (auto.autoCorrectionSupported(mess)) {
+            msgButtonPanel.add("West", buttons);
+        }
+        repaint();
+    }
+
+    /**
+     * Description of the Method
+     */
+    public void hideMessage() {
+        popupLabel.setText("");
+        msgButtonPanel.remove(buttons);
+        repaint();
+    }
+
+    /**
+     * Description of the Method
+     *
+     * @param id Description of the Parameter
+     */
+    public void showMessage(int id) {
+        int rows[] = table.getSelectedRows();
+        if (rows == null || rows.length != 1) {
+            hideMessage();
+            return;
+        }
+        int i = rows[0];
+
+        YassRow r = (YassRow) table.getRowAt(i);
+        if (!r.hasMessage()) {
+            hideMessage();
+            return;
+        }
+
+        String mess = r.getMessage(id);
+        if (mess == null) {
+            hideMessage();
+            return;
+        }
+
+        String msg = getMessage(r, id);
+        popupLabel.setText(msg);
+        //popupLabel.repaint();
+
+        msgButtonPanel.remove(buttons);
+        if (auto.autoCorrectionSupported(mess)) {
+            msgButtonPanel.add("West", buttons);
+        }
+
+        Vector<?> data = tm.getDataVector();
+        int k = 0;
+        for (Enumeration<?> en = data.elements(); en.hasMoreElements(); k++) {
+            Vector<?> v = (Vector<?>) en.nextElement();
+            int ii = ((Integer) (v.elementAt(3))).intValue();
+            int idv = ((Integer) (v.elementAt(5))).intValue();
+            if (i == ii) {
+                preventTableUpdate(true);
+                errTable.setRowSelectionInterval(k, k);
+                Rectangle rr = errTable.getCellRect(k, 0, true);
+                errTable.scrollRectToVisible(rr);
+                preventTableUpdate(false);
+                break;
+            }
+        }
+        repaint();
+    }
+
+    /**
+     * Gets the messagePanel attribute of the YassErrors object
+     *
+     * @return The messagePanel value
+     */
+    public JPanel getMessagePanel() {
+        return msgPanel;
+    }
+
+    /**
+     * Gets the message attribute of the YassAutoCorrect object
+     *
+     * @param r Description of the Parameter
+     * @param i Description of the Parameter
+     * @return The message value
+     */
+    public String getMessage(YassRow r, int i) {
+        if (!r.hasMessage()) {
+            return null;
+        }
+
+        StringBuffer sb = new StringBuffer();
+        sb.append("<html><font size=+1 color=red>");
+        String mess[] = r.getMessageWithDetail(i);
+        sb.append(I18.get(mess[0]));
+        sb.append("</font><br><font color=black>");
+        String msg = I18.get(mess[0] + "_msg");
+        if (msg != null) {
+            sb.append(msg);
+        }
+        if (mess.length > 1 && mess[1] != null) {
+            sb.append("</font><br><font size=-2 color=red>");
+            sb.append(mess[1]);
+        }
+        if (!auto.isAutoCorrectionSafe(r.getMessage()) && auto.autoCorrectionSupported(r.getMessage())) {
+            sb.append("</font><br><font size=-2 color=red>" + I18.get("tool_correct_unsafe"));
+        }
+        sb.append("</font></html>");
+        return sb.toString();
+    }
+
+    /**
+     * Description of the Method
+     */
+    public void selectFirstError() {
+        if (isEmpty()) {
+            return;
+        }
+
+        errTable.setRowSelectionInterval(0, 0);
+        updateMessage();
+    }
+
+    /**
+     * Gets the empty attribute of the YassErrors object
+     *
+     * @return The empty value
+     */
+    public boolean isEmpty() {
+        return errTable.getRowCount() < 1;
+    }
 
 
-	/**
-	 *  Description of the Method
-	 */
-	public void hideMessage() {
-		popupLabel.setText("");
-		msgButtonPanel.remove(buttons);
-		repaint();
-	}
+    /**
+     * Sets the general attribute of the YassGeneral object
+     *
+     * @param t The new general value
+     */
+    public void setTable(YassTable t) {
 
+        table = t;
+        tm.getDataVector().clear();
 
-	/**
-	 *  Description of the Method
-	 *
-	 * @param  id  Description of the Parameter
-	 */
-	public void showMessage(int id) {
-		int rows[] = table.getSelectedRows();
-		if (rows == null || rows.length != 1) {
-			hideMessage();
-			return;
-		}
-		int i = rows[0];
+        if (table != null) {
+            YassTableModel tablemodel = (YassTableModel) t.getModel();
 
-		YassRow r = (YassRow) table.getRowAt(i);
-		if (!r.hasMessage()) {
-			hideMessage();
-			return;
-		}
+            int rows = tablemodel.getRowCount();
+            int line = 1;
+            int note = 0;
+            for (int i = 0; i < rows; i++) {
+                YassRow r = tablemodel.getRowAt(i);
+                if (r.isNote()) {
+                    note++;
+                }
+                if (r.isPageBreak()) {
+                    note = 0;
+                    line++;
+                }
+                String txt = r.getText();
+                if (txt == null) {
+                    txt = "";
+                }
 
-		String mess = r.getMessage(id);
-		if (mess == null) {
-			hideMessage();
-			return;
-		}
-
-		String msg = getMessage(r, id);
-		popupLabel.setText(msg);
-		//popupLabel.repaint();
-
-		msgButtonPanel.remove(buttons);
-		if (auto.autoCorrectionSupported(mess)) {
-			msgButtonPanel.add("West", buttons);
-		}
-
-		Vector<?> data = tm.getDataVector();
-		int k = 0;
-		for (Enumeration<?> en = data.elements(); en.hasMoreElements(); k++) {
-			Vector<?> v = (Vector<?>) en.nextElement();
-			int ii = ((Integer) (v.elementAt(3))).intValue();
-			int idv = ((Integer) (v.elementAt(5))).intValue();
-			if (i == ii) {
-				preventTableUpdate(true);
-				errTable.setRowSelectionInterval(k, k);
-				Rectangle rr = errTable.getCellRect(k, 0, true);
-				errTable.scrollRectToVisible(rr);
-				preventTableUpdate(false);
-				break;
-			}
-		}
-		repaint();
-	}
-
-
-	/**
-	 *  Gets the messagePanel attribute of the YassErrors object
-	 *
-	 * @return    The messagePanel value
-	 */
-	public JPanel getMessagePanel() {
-		return msgPanel;
-	}
-
-
-	/**
-	 *  Gets the message attribute of the YassAutoCorrect object
-	 *
-	 * @param  r  Description of the Parameter
-	 * @param  i  Description of the Parameter
-	 * @return    The message value
-	 */
-	public String getMessage(YassRow r, int i) {
-		if (!r.hasMessage()) {
-			return null;
-		}
-
-		StringBuffer sb = new StringBuffer();
-		sb.append("<html><font size=+1 color=red>");
-		String mess[] = r.getMessageWithDetail(i);
-		sb.append(I18.get(mess[0]));
-		sb.append("</font><br><font color=black>");
-		String msg = I18.get(mess[0] + "_msg");
-		if (msg != null) {
-			sb.append(msg);
-		}
-		if (mess.length > 1 && mess[1] != null) {
-			sb.append("</font><br><font size=-2 color=red>");
-			sb.append(mess[1]);
-		}
-		if (!auto.isAutoCorrectionSafe(r.getMessage()) && auto.autoCorrectionSupported(r.getMessage())) {
-			sb.append("</font><br><font size=-2 color=red>" + I18.get("tool_correct_unsafe"));
-		}
-		sb.append("</font></html>");
-		return sb.toString();
-	}
-
-
-	/**
-	 *  Description of the Method
-	 */
-	public void selectFirstError() {
-		if (isEmpty()) {
-			return;
-		}
-
-		errTable.setRowSelectionInterval(0, 0);
-		updateMessage();
-	}
-
-
-	private YassTable table = null;
-
-
-	/**
-	 *  Gets the empty attribute of the YassErrors object
-	 *
-	 * @return    The empty value
-	 */
-	public boolean isEmpty() {
-		return errTable.getRowCount() < 1;
-	}
-
-
-	/**
-	 *  Sets the general attribute of the YassGeneral object
-	 *
-	 * @param  t  The new general value
-	 */
-	public void setTable(YassTable t) {
-
-		table = t;
-		tm.getDataVector().clear();
-
-		if (table != null) {
-			YassTableModel tablemodel = (YassTableModel) t.getModel();
-
-			int rows = tablemodel.getRowCount();
-			int line = 1;
-			int note = 0;
-			for (int i = 0; i < rows; i++) {
-				YassRow r = tablemodel.getRowAt(i);
-				if (r.isNote()) {
-					note++;
-				}
-				if (r.isPageBreak()) {
-					note = 0;
-					line++;
-				}
-				String txt = r.getText();
-				if (txt == null) {
-					txt = "";
-				}
-
-				Vector<String[]> msg = r.getMessages();
-				if (msg != null) {
-					int id = 0;
-					for (Enumeration<String[]> en = msg.elements(); en.hasMoreElements(); id++) {
-						String[] m = (String[]) en.nextElement();
-						String m18 = I18.get(m[0]);
-						tm.addRow(new Object[]{m18, line, note, new Integer(i), txt, new Integer(id)});
-					}
-				}
-			}
-		}
-		tm.fireTableDataChanged();
-		//errTable.repaint();
-	}
+                Vector<String[]> msg = r.getMessages();
+                if (msg != null) {
+                    int id = 0;
+                    for (Enumeration<String[]> en = msg.elements(); en.hasMoreElements(); id++) {
+                        String[] m = (String[]) en.nextElement();
+                        String m18 = I18.get(m[0]);
+                        tm.addRow(new Object[]{m18, line, note, new Integer(i), txt, new Integer(id)});
+                    }
+                }
+            }
+        }
+        tm.fireTableDataChanged();
+        //errTable.repaint();
+    }
 }
 
 
