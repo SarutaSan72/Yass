@@ -160,7 +160,7 @@ public class YassGroups extends JTable implements DropTargetListener {
                             t = rules[k];
                             gm.addRow(t);
 
-                            YassFilter f = (YassFilter) filters.get(group + "-" + t);
+                            YassFilter f = filters.get(group + "-" + t);
                             if (f == null) {
                                 f = YassFilter.createFilter(group);
                                 if (f != null) {
@@ -174,7 +174,7 @@ public class YassGroups extends JTable implements DropTargetListener {
             } else {
                 gm.addRow(t);
 
-                YassFilter f = (YassFilter) filters.get(group + "-" + t);
+                YassFilter f = filters.get(group + "-" + t);
                 if (f == null) {
                     f = YassFilter.createFilter(group);
                     if (f != null) {
@@ -219,7 +219,7 @@ public class YassGroups extends JTable implements DropTargetListener {
      * @return The filter value
      */
     public YassFilter getFilter(String rule) {
-        YassFilter f = (YassFilter) filters.get(group + "-" + rule);
+        YassFilter f = filters.get(group + "-" + rule);
         return f;
     }
 
@@ -374,7 +374,7 @@ public class YassGroups extends JTable implements DropTargetListener {
             return getDefaultToolBar();
         }
         String rule = group = YassFilter.getIDAt(i);
-        JToolBar t = (JToolBar) toolbars.get(rule);
+        JToolBar t = toolbars.get(rule);
         if (t == null) {
             return getDefaultToolBar();
         }
@@ -389,7 +389,7 @@ public class YassGroups extends JTable implements DropTargetListener {
      */
     public ImageIcon getCover(String s) {
         //System.out.println("getcover " + s);
-        ImageIcon ii = (ImageIcon) covers.get(s);
+        ImageIcon ii = covers.get(s);
         if (ii != null) {
             return ii;
         }
@@ -680,7 +680,7 @@ public class YassGroups extends JTable implements DropTargetListener {
             //System.out.println("refreshing counters...");
             for (Enumeration<?> en = rules.elements(); en.hasMoreElements() && notInterrupted; ) {
                 String t = (String) en.nextElement();
-                YassFilter f = (YassFilter) filters.get(group + "-" + t);
+                YassFilter f = filters.get(group + "-" + t);
                 if (!f.count()) {
                     counters.addElement(new Integer(-1));
                     continue;
@@ -753,7 +753,7 @@ public class YassGroups extends JTable implements DropTargetListener {
             String groupkey = "group_" + f.getID();
             String key = "group_" + f.getID() + "_" + s;
             try {
-                String is = (String) i18Labels.get(key);
+                String is = i18Labels.get(key);
                 //System.out.println(key + " " + is);
                 if (is == null) {
                     is = I18.get(key);
@@ -799,7 +799,7 @@ public class YassGroups extends JTable implements DropTargetListener {
 
             String tooltip = s;
             if (rowIndex < counters.size()) {
-                int n = ((Integer) (counters.elementAt(rowIndex))).intValue();
+                int n = counters.elementAt(rowIndex).intValue();
                 if (n >= 0) {
                     tooltip += " " + msgtip.format(new Object[]{new Integer(n)});
                     counterString = n + "";

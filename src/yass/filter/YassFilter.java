@@ -84,7 +84,7 @@ public class YassFilter implements Cloneable {
         String[] s = new String[plugins.size()];
         int i = 0;
         for (Enumeration<YassFilter> en = plugins.elements(); en.hasMoreElements(); ) {
-            YassFilter f = (YassFilter) en.nextElement();
+            YassFilter f = en.nextElement();
             s[i++] = f.getID();
         }
         return s;
@@ -100,7 +100,7 @@ public class YassFilter implements Cloneable {
         String[] s = new String[plugins.size()];
         int i = 0;
         for (Enumeration<YassFilter> en = plugins.elements(); en.hasMoreElements(); ) {
-            YassFilter f = (YassFilter) en.nextElement();
+            YassFilter f = en.nextElement();
             s[i++] = f.getLabel();
         }
         return s;
@@ -114,7 +114,7 @@ public class YassFilter implements Cloneable {
      * @return The iDAt value
      */
     public static String getIDAt(int i) {
-        YassFilter f = (YassFilter) plugins.elementAt(i);
+        YassFilter f = plugins.elementAt(i);
         return f.getID();
     }
 
@@ -147,7 +147,7 @@ public class YassFilter implements Cloneable {
             init();
         }
         try {
-            YassFilter f = (YassFilter) hash.get(group);
+            YassFilter f = hash.get(group);
             YassFilter f2 = (YassFilter) f.clone();
             return f2;
         } catch (Exception e) {

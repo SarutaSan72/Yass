@@ -104,7 +104,7 @@ public class YassStatsScreen extends YassScreen {
         if (scores != null) {
             g2.setFont(getTextFont());
             for (Enumeration<YassScore> en = scores.elements(); en.hasMoreElements() && i < 5; i++) {
-                YassScore s = (YassScore) en.nextElement();
+                YassScore s = en.nextElement();
 
                 y += 30;
                 g2.drawString(s.getPlayer(), x, y);

@@ -46,7 +46,7 @@ public class YassAlbumFilter extends YassFilter {
         }
         Collections.sort(albums);
 
-        return (String[]) albums.toArray(new String[]{});
+        return albums.toArray(new String[]{});
     }
 
 

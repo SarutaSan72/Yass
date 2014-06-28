@@ -217,7 +217,7 @@ public class YassHighScoreScreen extends YassScreen {
 
             int i = 0;
             for (Enumeration<YassScore> en = scores.elements(); en.hasMoreElements() && i < 10; i++) {
-                YassScore s = (YassScore) en.nextElement();
+                YassScore s = en.nextElement();
 
                 if (i == 5) {
                     y += dy;
@@ -266,7 +266,7 @@ public class YassHighScoreScreen extends YassScreen {
             int yy = y;
             int i = 0;
             for (Enumeration<YassScore> en = scores.elements(); en.hasMoreElements() && i < 10; i++) {
-                YassScore s = (YassScore) en.nextElement();
+                YassScore s = en.nextElement();
 
                 if (i == 5) {
                     yy += dy;
@@ -281,7 +281,7 @@ public class YassHighScoreScreen extends YassScreen {
             yy = y;
             i = 0;
             for (Enumeration<YassScore> en = scores2.elements(); en.hasMoreElements() && i < 10; i++) {
-                YassScore s = (YassScore) en.nextElement();
+                YassScore s = en.nextElement();
 
                 if (i == 5) {
                     yy += dy;
@@ -296,7 +296,7 @@ public class YassHighScoreScreen extends YassScreen {
             yy = y;
             i = 0;
             for (Enumeration<YassScore> en = scores3.elements(); en.hasMoreElements() && i < 10; i++) {
-                YassScore s = (YassScore) en.nextElement();
+                YassScore s = en.nextElement();
 
                 if (i == 5) {
                     yy += dy;

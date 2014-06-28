@@ -431,18 +431,18 @@ public class YassSelectControllerScreen extends YassScreen {
 
         if (eventCol >= 0 && eventRow >= 0) {
             g2.setColor(getTheme().getColor(3));
-            x = getMargin() + 200 + ((int) (eventCol / 2)) * colWidth - 10;
+            x = getMargin() + 200 + eventCol / 2 * colWidth - 10;
             y = getMargin() + eventRow * d + 5;
             g2.fillRect(x, y, colWidth - 10, d);
         }
 
         if (activeCol >= 0) {
             if (activeCol % 2 == 0) {
-                x = getMargin() + 200 + ((int) (activeCol / 2)) * colWidth - 10;
+                x = getMargin() + 200 + activeCol / 2 * colWidth - 10;
                 y = getMargin() + 5;
                 g2.drawRect(x, y, colWidth - 10, d * 5);
             } else {
-                x = getMargin() + 200 + ((int) (activeCol / 2)) * colWidth - 10;
+                x = getMargin() + 200 + activeCol / 2 * colWidth - 10;
                 y = getMargin() + d * 6 + 5;
                 g2.drawRect(x, y, colWidth - 10, d * 12);
             }

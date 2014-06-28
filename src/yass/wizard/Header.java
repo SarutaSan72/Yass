@@ -270,9 +270,9 @@ public class Header extends JPanel {
 
                     public TableCellEditor getCellEditor(int row, int column) {
                         if (row == 2 && column == 1 && genreEditor != null) {
-                            return (TableCellEditor) genreEditor;
+                            return genreEditor;
                         } else if (row == 3 && column == 1 && langEditor != null) {
-                            return (TableCellEditor) langEditor;
+                            return langEditor;
                         } else if (column == 1) {
                             return super.getCellEditor(row, column);
                         } else {

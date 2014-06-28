@@ -34,7 +34,7 @@ public class YassGenreFilter extends YassFilter {
     public String[] getGenericRules(Vector<YassSong> data) {
         Vector<String> genres = new Vector<>();
         for (Enumeration<YassSong> e = data.elements(); e.hasMoreElements(); ) {
-            YassSong s = (YassSong) e.nextElement();
+            YassSong s = e.nextElement();
             String genre = s.getGenre();
             if (genre == null || genre.length() < 1) {
                 continue;
@@ -46,7 +46,7 @@ public class YassGenreFilter extends YassFilter {
         }
         Collections.sort(genres);
 
-        return (String[]) genres.toArray(new String[]{});
+        return genres.toArray(new String[]{});
     }
 
 

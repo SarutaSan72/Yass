@@ -664,8 +664,8 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
 		 * if (dw > (int) (dh * 4 / 3.0)) { w = (int) dw; h = (int) (w * 3 /
 		 * 4.0); } else { h = dh; w = (int) (h * 4 / 3.0); }
 		 */
-        int xx = (int) (dw / 2 - w / 2);
-        int yy = (int) (dh / 2 - h / 2);
+        int xx = dw / 2 - w / 2;
+        int yy = dh / 2 - h / 2;
 
         g2d.setColor(bgColor);
         g2d.fillRect(0, 0, dw, dh);
@@ -2275,7 +2275,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
 
         int i = 0;
         while (i < n) {
-            YassRow r = (YassRow) table.getRowAt(i++);
+            YassRow r = table.getRowAt(i++);
             if (r.isComment()) {
                 tm.addRow(r);
                 String tag = r.getCommentTag();
@@ -2291,7 +2291,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
         }
         int i2 = 0;
         while (i2 < n2) {
-            YassRow r = (YassRow) table2.getRowAt(i2++);
+            YassRow r = table2.getRowAt(i2++);
             if (r.isComment()) {
                 String tag = r.getCommentTag();
                 YassRow r2 = table.getCommentRow(tag);
@@ -2309,7 +2309,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
         int count = 0;
         int count2 = 0;
         while (i < n) {
-            YassRow r = (YassRow) table.getRowAt(i++);
+            YassRow r = table.getRowAt(i++);
             if (r.isComment() && isHeader) {
                 continue;
             } else {
@@ -2321,7 +2321,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
         i2 = 0;
         isHeader = true;
         while (i2 < n2) {
-            YassRow r = (YassRow) table2.getRowAt(i2++);
+            YassRow r = table2.getRowAt(i2++);
             if (r.isComment() && isHeader) {
                 continue;
             } else {
@@ -2356,8 +2356,8 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
         n = t.getRowCount();
         int changedTags = 0;
         while (i < n) {
-            YassRow r = (YassRow) tm.getRowAt(i);
-            YassRow r2 = (YassRow) t2.getRowAt(i++);
+            YassRow r = tm.getRowAt(i);
+            YassRow r2 = t2.getRowAt(i++);
             if (r.isComment() && isHeader) {
                 String tag = r.isHidden() ? r2.getCommentTag() : r
                         .getCommentTag();
@@ -2424,7 +2424,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                     boolean onoff = ((JCheckBox) (e.getSource())).isSelected();
                     for (Enumeration<JCheckBox> en = checks.elements(); en
                             .hasMoreElements(); ) {
-                        JCheckBox ch = (JCheckBox) en.nextElement();
+                        JCheckBox ch = en.nextElement();
                         ch.setSelected(onoff);
                     }
                 }
@@ -2477,12 +2477,12 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                     t3.init(prop);
                     int n = t.getRowCount();
                     YassTableModel tm3 = (YassTableModel) t3.getModel();
-                    boolean notesChecked = ((JCheckBox) (checks
-                            .elementAt(checks.size() - 1))).isSelected();
+                    boolean notesChecked = checks
+                            .elementAt(checks.size() - 1).isSelected();
 
                     while (i < n) {
-                        YassRow r = (YassRow) t.getRowAt(i);
-                        YassRow r2 = (YassRow) t2.getRowAt(i++);
+                        YassRow r = t.getRowAt(i);
+                        YassRow r2 = t2.getRowAt(i++);
                         if (r.isComment() && isHeader) {
                             String tag = r.isHidden() ? r2.getCommentTag() : r
                                     .getCommentTag();
@@ -2495,7 +2495,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                                 tm3.addRow(r);
                                 continue;
                             }
-                            JCheckBox check = (JCheckBox) checks
+                            JCheckBox check = checks
                                     .elementAt(i - 1);
                             boolean checked = check.isSelected();
                             if (r2.isHidden()) {
@@ -3083,7 +3083,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                     AudioFileFormat baseFileFormat = AudioSystem
                             .getAudioFileFormat(file);
                     if (baseFileFormat instanceof TAudioFileFormat) {
-                        Map<?, ?> properties = ((TAudioFileFormat) baseFileFormat)
+                        Map<?, ?> properties = baseFileFormat
                                 .properties();
                         setProperty("mp3-author",
                                 (String) properties.get("author"));
@@ -3236,7 +3236,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                 if (msb >= 0 && meb >= 0) {
                     int pg = 1;
                     for (Enumeration<YassRow> en = t.getRows(); en.hasMoreElements(); ) {
-                        YassRow r = (YassRow) en.nextElement();
+                        YassRow r = en.nextElement();
                         if (r.isPageBreak()) {
                             pg++;
                             continue;

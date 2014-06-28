@@ -343,11 +343,11 @@ public class YassAutoCorrect {
         }
         Vector<YassRow> rrv = new Vector<>(kk);
         for (int j = 0; j < kk; j++) {
-            rrv.addElement((YassRow) table.getRowAt(j).clone());
+            rrv.addElement(table.getRowAt(j).clone());
         }
         Collections.sort(rrv);
         for (int j = 0; j < kk; j++) {
-            table.getRowAt(j).setRow((YassRow) rrv.elementAt(j));
+            table.getRowAt(j).setRow(rrv.elementAt(j));
         }
     }
 
@@ -1012,7 +1012,7 @@ public class YassAutoCorrect {
                             int range = maxH - minH;
                             if (minH >= 12
                                     || (range <= 48 && (minH < -12 || maxH > 36))) {
-                                int minHd = (int) (minH / 12) * 12;
+                                int minHd = minH / 12 * 12;
                                 int bias = minH - minHd;
                                 int newMin = bias;
                                 int newMax = maxH - minH + bias;
@@ -1155,9 +1155,9 @@ public class YassAutoCorrect {
             // Golden / MaxScore = 2*SumOfGoldenBeats / (SumOfNormalBeats + 2*SumOfGoldenBeats)
             // Example: Golden=1000, MaxScore=8000, TotalBeats=100 --> SumOfGoldenBeats=6
 
-            int idealGoldenBeats = (int) Math.round(idealGoldenPoints * durationNormal / (2 * maxPoints - 2 * idealGoldenPoints));
+            int idealGoldenBeats = Math.round(idealGoldenPoints * durationNormal / (2 * maxPoints - 2 * idealGoldenPoints));
 
-            int goldenPoints = durationNormal + 2 * durationGolden > 0 ? (int) Math.round(maxPoints * 2 * durationGolden / (durationNormal + 2 * durationGolden)) : 0;
+            int goldenPoints = durationNormal + 2 * durationGolden > 0 ? Math.round(maxPoints * 2 * durationGolden / (durationNormal + 2 * durationGolden)) : 0;
 
             String diff = idealGoldenBeats > durationGolden ? "+"
                     + (idealGoldenBeats - durationGolden) : ""
@@ -1265,7 +1265,7 @@ public class YassAutoCorrect {
                         maxH = Math.max(maxH, height);
                     }
                 }
-                int minHd = (int) (minH / 12) * 12;
+                int minHd = minH / 12 * 12;
                 int bias = minH - minHd;
                 for (int j = 0; j < n; j++) {
                     r3 = table.getRowAt(j);
@@ -1507,7 +1507,7 @@ public class YassAutoCorrect {
                 }
                 //
             }
-            fw = (int) (fontWidth[ascii] / 2) + 2;
+            fw = fontWidth[ascii] / 2 + 2;
             // Oline
             // fw = fontWidth[(int)(c[i])]+1; //Oline2
             cw = fw * fontH * aspectW;

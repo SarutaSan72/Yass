@@ -294,7 +294,7 @@ public class PrintPlain implements PrintPlugin {
 
             boolean has09 = false;
             for (Enumeration<YassSong> e = songList.elements(); e.hasMoreElements(); ) {
-                YassSong s = (YassSong) e.nextElement();
+                YassSong s = e.nextElement();
                 String nr = i + "";
                 i++;
                 String complete = s.getComplete();
@@ -454,7 +454,7 @@ public class PrintPlain implements PrintPlugin {
     PdfPTable createPDFTable() {
         PdfPTable datatable = new PdfPTable(ncol);
         try {
-            float twidth = (float) rect.getRight() - mleft - mright;
+            float twidth = rect.getRight() - mleft - mright;
             float ttwidth = twidth;
 
             float headerwidths[] = new float[ncol];

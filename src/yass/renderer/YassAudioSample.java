@@ -167,11 +167,11 @@ public class YassAudioSample {
     public static byte[] getFrame(int frameNum) {
         int frameSize = sampleAudioFormat.getFrameSize();
 
-        int framePos = (int) ((frameNum - 1) * frameSize);
+        int framePos = (frameNum - 1) * frameSize;
         byte[] frame = new byte[frameSize];
         Byte sample = null;
         for (int i = 0; i < frameSize; i++) {
-            sample = (Byte) buffer.get(framePos + i + 1);
+            sample = buffer.get(framePos + i + 1);
             frame[i] = sample.byteValue();
         }
         return frame;
@@ -184,7 +184,7 @@ public class YassAudioSample {
      */
     public static int getLengthInFrames() {
         int frameLength = audioFormat.getFrameSize();
-        return (int) (buffer.size() / frameLength) - 1;
+        return buffer.size() / frameLength - 1;
     }
 
     /**
@@ -199,7 +199,7 @@ public class YassAudioSample {
         finished = false;
         double soundFramePos = 1;
         int frameLength = sampleAudioFormat.getFrameSize();
-        int lengthInFrames = (int) (buffer.size() / frameLength) - 1;
+        int lengthInFrames = buffer.size() / frameLength - 1;
 
         byte[] sample = null;
 

@@ -243,7 +243,7 @@ public class PrintPlainLandscape implements PrintPlugin {
             mct.addRegularColumns(document.left(), document.right(), mcol, 2);
 
             for (Enumeration<YassSong> e = songList.elements(); e.hasMoreElements(); ) {
-                YassSong s = (YassSong) e.nextElement();
+                YassSong s = e.nextElement();
                 String nr = i + "";
                 i++;
                 String complete = s.getComplete();
@@ -352,7 +352,7 @@ public class PrintPlainLandscape implements PrintPlugin {
     PdfPTable createPDFTable() {
         PdfPTable datatable = new PdfPTable(ncol);
         try {
-            float twidth = (float) rect.getRight() - mleft - mright - mcol;
+            float twidth = rect.getRight() - mleft - mright - mcol;
             twidth = twidth / 2;
 
             float headerwidths[] = new float[ncol];

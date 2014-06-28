@@ -196,7 +196,7 @@ public class YassPlayList extends JPanel implements TabChangeListener {
      */
     public boolean containsFile(Vector<YassPlayListModel> v, String s) {
         for (Enumeration<YassPlayListModel> en = v.elements(); en.hasMoreElements(); ) {
-            YassPlayListModel pl = (YassPlayListModel) en.nextElement();
+            YassPlayListModel pl = en.nextElement();
             if (s.equalsIgnoreCase(pl.getFileName())) {
                 return true;
             }
@@ -370,7 +370,7 @@ public class YassPlayList extends JPanel implements TabChangeListener {
         data.removeAllElements();
 
         for (Enumeration<YassSong> en = olddata.elements(); en.hasMoreElements(); ) {
-            YassSong s = (YassSong) en.nextElement();
+            YassSong s = en.nextElement();
             YassSong s2 = lib.getSong(s.getArtist(), s.getTitle(), s.getVersion());
             if (s2 != null) {
                 data.addElement(s2);
@@ -535,7 +535,7 @@ public class YassPlayList extends JPanel implements TabChangeListener {
             listTitle = "";
         }
 
-        String input = JOptionPane.showInputDialog((JFrame) SwingUtilities.getWindowAncestor(this), I18.get("playlist_store"), listTitle);
+        String input = JOptionPane.showInputDialog(SwingUtilities.getWindowAncestor(this), I18.get("playlist_store"), listTitle);
         if (input == null || input.trim().length() < 1) {
             return true;
         }
@@ -561,7 +561,7 @@ public class YassPlayList extends JPanel implements TabChangeListener {
             filename = listFilename;
 
             for (Enumeration<YassPlayListModel> en = playlists.elements(); en.hasMoreElements(); ) {
-                YassPlayListModel pl = (YassPlayListModel) en.nextElement();
+                YassPlayListModel pl = en.nextElement();
                 if (pl.getName().equals(oldTitle)) {
                     pl.setFileName(listFilename);
                 }
@@ -571,7 +571,7 @@ public class YassPlayList extends JPanel implements TabChangeListener {
         boolean exists = false;
         if (new File(filename).exists()) {
             exists = true;
-            int ok = JOptionPane.showConfirmDialog((JFrame) SwingUtilities.getWindowAncestor(this), I18.get("playlist_store_error"), I18.get("playlist_store_title"), JOptionPane.OK_CANCEL_OPTION);
+            int ok = JOptionPane.showConfirmDialog(SwingUtilities.getWindowAncestor(this), I18.get("playlist_store_error"), I18.get("playlist_store_title"), JOptionPane.OK_CANCEL_OPTION);
             if (ok != JOptionPane.OK_OPTION) {
                 return false;
             }
@@ -597,7 +597,7 @@ public class YassPlayList extends JPanel implements TabChangeListener {
             }
             new File(old).delete();
             for (Enumeration<YassPlayListModel> en = playlists.elements(); en.hasMoreElements(); ) {
-                YassPlayListModel pl = (YassPlayListModel) en.nextElement();
+                YassPlayListModel pl = en.nextElement();
                 if (pl.getName().equals(oldTitle)) {
                     pl.setName(listTitle);
                 }
@@ -704,7 +704,7 @@ public class YassPlayList extends JPanel implements TabChangeListener {
      * @param n The new playList value
      */
     public void setPlayList(int n) {
-        YassPlayListModel pl = (YassPlayListModel) getPlayLists().elementAt(n);
+        YassPlayListModel pl = getPlayLists().elementAt(n);
         setPlayList(pl);
     }
 
@@ -714,12 +714,12 @@ public class YassPlayList extends JPanel implements TabChangeListener {
      * @param n Description of the Parameter
      */
     public void removePlayList(int n) {
-        YassPlayListModel pl = (YassPlayListModel) getPlayLists().elementAt(n);
+        YassPlayListModel pl = getPlayLists().elementAt(n);
         String defDir = prop.getProperty("playlist-directory");
         String filename = defDir + File.separator + pl.getName() + ".upl";
         File f = new File(filename);
 
-        int ok = JOptionPane.showConfirmDialog((JFrame) SwingUtilities.getWindowAncestor(this), I18.get("playlist_remove_msg"), I18.get("playlist_remove_title"), JOptionPane.OK_CANCEL_OPTION);
+        int ok = JOptionPane.showConfirmDialog(SwingUtilities.getWindowAncestor(this), I18.get("playlist_remove_msg"), I18.get("playlist_remove_title"), JOptionPane.OK_CANCEL_OPTION);
         if (ok != JOptionPane.OK_OPTION) {
             return;
         }

@@ -38,8 +38,8 @@ public class YassTapNotes {
                 int beat = r.getBeatInt();
                 int length = r.getLengthInt();
 
-                long tapBeat = ((Long) taps.elementAt(k++)).longValue();
-                long tapBeat2 = ((Long) taps.elementAt(k++)).longValue();
+                long tapBeat = taps.elementAt(k++).longValue();
+                long tapBeat2 = taps.elementAt(k++).longValue();
 
                 double ms = tapBeat / 1000.0 - gap;
                 double ms2 = tapBeat2 / 1000.0 - gap;

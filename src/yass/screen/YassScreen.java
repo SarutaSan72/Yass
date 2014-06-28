@@ -509,7 +509,7 @@ public class YassScreen extends JPanel {
      * @return The currentSong value
      */
     public static YassSongData getSelectedSong() {
-        return (YassSongData) songData.elementAt(selectedSong);
+        return songData.elementAt(selectedSong);
     }
 
     /**
@@ -527,7 +527,7 @@ public class YassScreen extends JPanel {
      * @return The jukeboxSong value
      */
     public static YassSongData getJukeboxSong() {
-        return (YassSongData) songData.elementAt(jukeboxSong);
+        return songData.elementAt(jukeboxSong);
     }
 
     /**
@@ -595,7 +595,7 @@ public class YassScreen extends JPanel {
      * @return The songAt value
      */
     public static YassSongData getSongDataAt(int i) {
-        return (YassSongData) songData.elementAt(i);
+        return songData.elementAt(i);
     }
 
     /**
@@ -766,7 +766,7 @@ public class YassScreen extends JPanel {
      */
     public static YassScreen setCurrentScreen(String id) {
         currentID = id;
-        currentScreen = (YassScreen) screens.get(id);
+        currentScreen = screens.get(id);
         return currentScreen;
     }
 
@@ -785,7 +785,7 @@ public class YassScreen extends JPanel {
      * @param s Description of the Parameter
      */
     public static void loadBackgroundImage(String s) {
-        BufferedImage img = (BufferedImage) backgroundImages.get(s);
+        BufferedImage img = backgroundImages.get(s);
         if (img == null) {
             img = getTheme().getImage(s);
             backgroundImages.put(s, img);
@@ -1113,7 +1113,7 @@ public class YassScreen extends JPanel {
      * @return The string value
      */
     public String getString(String key) {
-        String s = (String) strings.get(key);
+        String s = strings.get(key);
         if (s == null) {
             try {
                 s = I18.get("screen_" + getID() + "_" + key);
@@ -1136,7 +1136,7 @@ public class YassScreen extends JPanel {
      * @return The string value
      */
     public String getString(String pre, String key) {
-        String s = (String) strings.get(pre + key);
+        String s = strings.get(pre + key);
         if (s == null) {
             try {
                 s = I18.get(pre + key);
@@ -1270,7 +1270,7 @@ public class YassScreen extends JPanel {
 
         BufferedImage img = null;
         if (bgImage != null) {
-            img = (BufferedImage) backgroundImages.get(bgImage);
+            img = backgroundImages.get(bgImage);
         }
         if (img != null) {
             boolean wide = w >= h * 4 / 3.0;
@@ -1281,10 +1281,10 @@ public class YassScreen extends JPanel {
             int height = h;
             if (wide) {
                 height = (int) (w * 3 / 4.0);
-                top = (int) (h / 2 - height / 2);
+                top = h / 2 - height / 2;
             } else {
                 width = (int) (h * 4 / 3.0);
-                left = (int) (w / 2 - width / 2);
+                left = w / 2 - width / 2;
             }
             g2.drawImage(img, left, top, width, height, null);
         } else {
@@ -1344,7 +1344,7 @@ public class YassScreen extends JPanel {
         //GradientPaint gp = new GradientPaint(0, 100, Color.white, 0, 0, getTheme().getColor(3));
         //g2.setPaint(gp);
 
-        float alpha = (float) (1 - curtain);
+        float alpha = 1 - curtain;
         if (nextID != null && nextID.equals("playsong") && alpha >= 0 && alpha < 1) {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
             g2.setColor(Color.black);

@@ -930,7 +930,7 @@ public class YassSongList extends JTable {
             return;
         }
 
-        YassSong s = (YassSong) sm.getRowAt(i);
+        YassSong s = sm.getRowAt(i);
 
         String input = s.getTitle();
         String msg = I18.get("mpop_title_msg");
@@ -963,7 +963,7 @@ public class YassSongList extends JTable {
             return;
         }
         for (Enumeration<YassSong> en = sel.elements(); en.hasMoreElements(); ) {
-            YassSong s = (YassSong) en.nextElement();
+            YassSong s = en.nextElement();
             s.setArtist(input);
             s.setSaved(false);
 
@@ -992,7 +992,7 @@ public class YassSongList extends JTable {
             return;
         }
         for (Enumeration<YassSong> en = sel.elements(); en.hasMoreElements(); ) {
-            YassSong s = (YassSong) en.nextElement();
+            YassSong s = en.nextElement();
             s.setAlbum(input);
             s.setSaved(false);
 
@@ -1021,7 +1021,7 @@ public class YassSongList extends JTable {
             return;
         }
         for (Enumeration<YassSong> en = sel.elements(); en.hasMoreElements(); ) {
-            YassSong s = (YassSong) en.nextElement();
+            YassSong s = en.nextElement();
             s.setLength(input);
             s.setSaved(false);
 
@@ -1050,7 +1050,7 @@ public class YassSongList extends JTable {
             return;
         }
         for (Enumeration<YassSong> en = sel.elements(); en.hasMoreElements(); ) {
-            YassSong s = (YassSong) en.nextElement();
+            YassSong s = en.nextElement();
             s.setID(input);
             s.setSaved(false);
 
@@ -1074,7 +1074,7 @@ public class YassSongList extends JTable {
 
         Vector<YassSong> sel = getSelectedSongs();
         for (Enumeration<YassSong> en = sel.elements(); en.hasMoreElements(); ) {
-            YassSong s = (YassSong) en.nextElement();
+            YassSong s = en.nextElement();
             s.setEncoding(enc);
             s.setSaved(false);
 
@@ -1097,7 +1097,7 @@ public class YassSongList extends JTable {
         boolean changed = false;
         Vector<YassSong> sel = getSelectedSongs();
         for (Enumeration<YassSong> en = sel.elements(); en.hasMoreElements(); ) {
-            YassSong s = (YassSong) en.nextElement();
+            YassSong s = en.nextElement();
 
             String dir = s.getDirectory();
             String mp3 = s.getMP3();
@@ -1107,9 +1107,9 @@ public class YassSongList extends JTable {
                 try {
                     AudioFileFormat baseFileFormat = AudioSystem.getAudioFileFormat(file);
                     if (baseFileFormat instanceof TAudioFileFormat) {
-                        Map<?, ?> properties = ((TAudioFileFormat) baseFileFormat).properties();
+                        Map<?, ?> properties = baseFileFormat.properties();
                         Long dur = (Long) properties.get("duration");
-                        long sec = (long) Math.round(dur.longValue() / 1000000.0);
+                        long sec = Math.round(dur.longValue() / 1000000.0);
                         s.setLength(sec + "");
                         s.setSaved(false);
                         changed = true;
@@ -1136,7 +1136,7 @@ public class YassSongList extends JTable {
         boolean changed = false;
         Vector<YassSong> sel = getSelectedSongs();
         for (Enumeration<YassSong> en = sel.elements(); en.hasMoreElements(); ) {
-            YassSong s = (YassSong) en.nextElement();
+            YassSong s = en.nextElement();
 
             String dir = s.getDirectory();
             String mp3 = s.getMP3();
@@ -1146,7 +1146,7 @@ public class YassSongList extends JTable {
                 try {
                     AudioFileFormat baseFileFormat = AudioSystem.getAudioFileFormat(file);
                     if (baseFileFormat instanceof TAudioFileFormat) {
-                        Map<?, ?> properties = ((TAudioFileFormat) baseFileFormat).properties();
+                        Map<?, ?> properties = baseFileFormat.properties();
                         String a = (String) properties.get("album");
                         if (a != null && a.trim().length() > 0) {
                             s.setAlbum(a);
@@ -1176,7 +1176,7 @@ public class YassSongList extends JTable {
         boolean changed = false;
         Vector<YassSong> sel = getSelectedSongs();
         for (Enumeration<YassSong> en = sel.elements(); en.hasMoreElements(); ) {
-            YassSong s = (YassSong) en.nextElement();
+            YassSong s = en.nextElement();
 
             String dir = s.getDirectory();
             String mp3 = s.getMP3();
@@ -1186,7 +1186,7 @@ public class YassSongList extends JTable {
                 try {
                     AudioFileFormat baseFileFormat = AudioSystem.getAudioFileFormat(file);
                     if (baseFileFormat instanceof TAudioFileFormat) {
-                        Map<?, ?> properties = ((TAudioFileFormat) baseFileFormat).properties();
+                        Map<?, ?> properties = baseFileFormat.properties();
                         String y = (String) properties.get("year");
                         if (y != null && y.trim().length() > 0) {
                             s.setYear(y);
@@ -1222,7 +1222,7 @@ public class YassSongList extends JTable {
             return;
         }
         for (Enumeration<YassSong> en = sel.elements(); en.hasMoreElements(); ) {
-            YassSong s = (YassSong) en.nextElement();
+            YassSong s = en.nextElement();
             s.setEdition(input);
             s.setSaved(false);
 
@@ -1255,7 +1255,7 @@ public class YassSongList extends JTable {
 
         boolean saved = true;
         for (Enumeration<YassSong> en = sel.elements(); en.hasMoreElements(); ) {
-            YassSong s = (YassSong) en.nextElement();
+            YassSong s = en.nextElement();
             String folder = s.getFolder();
             String edition = s.getEdition();
             if (folder == null) {
@@ -1311,7 +1311,7 @@ public class YassSongList extends JTable {
         }
 
         for (Enumeration<YassSong> en = sel.elements(); en.hasMoreElements(); ) {
-            YassSong s = (YassSong) en.nextElement();
+            YassSong s = en.nextElement();
 
             String sdir = s.getDirectory();
             File f = new File(sdir);
@@ -1349,7 +1349,7 @@ public class YassSongList extends JTable {
             return false;
         }
 
-        YassSong s = (YassSong) sm.getRowAt(i);
+        YassSong s = sm.getRowAt(i);
 
         String input = s.getFolder();
         if (input == null || input.length() < 1) {
@@ -1386,7 +1386,7 @@ public class YassSongList extends JTable {
 
         String newfoldername = newfolder.getAbsolutePath();
         for (Enumeration<YassSong> en = allData.elements(); en.hasMoreElements(); ) {
-            YassSong s2 = (YassSong) en.nextElement();
+            YassSong s2 = en.nextElement();
             String sf = s2.getFolder();
             if (sf != null && sf.equals(input)) {
                 s2.setFolder(newinput);
@@ -1423,7 +1423,7 @@ public class YassSongList extends JTable {
             input = "";
         }
         for (Enumeration<YassSong> en = sel.elements(); en.hasMoreElements(); ) {
-            YassSong s = (YassSong) en.nextElement();
+            YassSong s = en.nextElement();
             s.setYear(input);
             s.setSaved(false);
 
@@ -1647,7 +1647,7 @@ public class YassSongList extends JTable {
 
         Vector<String> pars = new Vector<>();
         for (Enumeration<String> en = fn.elements(); en.hasMoreElements(); ) {
-            String filename = (String) en.nextElement();
+            String filename = en.nextElement();
             File f = new File(filename);
             File p = f.getParentFile();
             filename = p.getAbsolutePath();
@@ -1719,7 +1719,7 @@ public class YassSongList extends JTable {
         if (row < 0) {
             return null;
         }
-        return (YassSong) sm.getRowAt(row);
+        return sm.getRowAt(row);
     }
 
     /**
@@ -1729,7 +1729,7 @@ public class YassSongList extends JTable {
      * @return The songAt value
      */
     public YassSong getSongAt(int row) {
-        return (YassSong) sm.getRowAt(row);
+        return sm.getRowAt(row);
     }
 
     /**
@@ -1931,7 +1931,7 @@ public class YassSongList extends JTable {
 
         Vector<YassSong> data = getUnfilteredData();
         for (Enumeration<YassSong> e = data.elements(); e.hasMoreElements(); ) {
-            YassSong s = (YassSong) e.nextElement();
+            YassSong s = e.nextElement();
             yass.screen.YassSongData sd = s.toSongData();
             v.addElement(sd);
         }
@@ -1945,7 +1945,7 @@ public class YassSongList extends JTable {
         Vector<YassSong> data = sm.getData();
         int i = 0;
         for (Enumeration<YassSong> e = data.elements(); e.hasMoreElements(); i++) {
-            YassSong s = (YassSong) e.nextElement();
+            YassSong s = e.nextElement();
             if (s.isOpened()) {
                 s.setOpened(false);
                 repaintIfVisible(i);
@@ -1972,7 +1972,7 @@ public class YassSongList extends JTable {
         Vector<YassSong> data = sm.getData();
         int i = 0;
         for (Enumeration<YassSong> e = data.elements(); e.hasMoreElements(); i++) {
-            YassSong s = (YassSong) e.nextElement();
+            YassSong s = e.nextElement();
             String dir2 = s.getDirectory();
             String txt2 = s.getFilename();
             if (txt2 != null && txt.equals(txt2) && dir2 != null && dir.equals(dir2)) {
@@ -2081,7 +2081,7 @@ public class YassSongList extends JTable {
 
         if (op == TILE) {
             if (getTableHeader() != null && getTableHeader().getParent() != null) {
-                ((JViewport) getTableHeader().getParent()).setVisible(false);
+                getTableHeader().getParent().setVisible(false);
             }
 
             fixWidth(0, 0);
@@ -2097,7 +2097,7 @@ public class YassSongList extends JTable {
             showStatsColumns(false);
         } else if (op == DETAILS) {
             if (getTableHeader() != null && getTableHeader().getParent() != null) {
-                ((JViewport) getTableHeader().getParent()).setVisible(true);
+                getTableHeader().getParent().setVisible(true);
             }
 
             if (showErrors || showStats) {
@@ -2179,7 +2179,7 @@ public class YassSongList extends JTable {
             interruptWorker();
             Enumeration<YassSong> en = sm.getData().elements();
             while (en.hasMoreElements()) {
-                YassSong s = (YassSong) en.nextElement();
+                YassSong s = en.nextElement();
                 s.clearMessages();
             }
             sm.fireTableDataChanged();
@@ -2200,7 +2200,7 @@ public class YassSongList extends JTable {
             interruptWorker();
             Enumeration<YassSong> en = sm.getData().elements();
             while (en.hasMoreElements()) {
-                YassSong s = (YassSong) en.nextElement();
+                YassSong s = en.nextElement();
                 s.clearStats();
             }
             sm.fireTableDataChanged();
@@ -2253,7 +2253,7 @@ public class YassSongList extends JTable {
         int max = 0;
         Enumeration<YassSong> en = sm.getData().elements();
         while (en.hasMoreElements()) {
-            YassSong s = (YassSong) en.nextElement();
+            YassSong s = en.nextElement();
             max = Math.max(max, metrics.stringWidth(s.elementAt(col) + ""));
         }
         return max + 2;
@@ -2337,7 +2337,7 @@ public class YassSongList extends JTable {
         int i = 1;
         Enumeration<YassSong> en = sm.getData().elements();
         while (en.hasMoreElements()) {
-            ((YassSong) en.nextElement()).setState((i++) + "");
+            en.nextElement().setState((i++) + "");
         }
         sm.fireTableRowsUpdated(0, sm.getRowCount());
     }
@@ -2452,7 +2452,7 @@ public class YassSongList extends JTable {
         editions.clear();
         Vector<YassSong> data = sm.getData();
         for (Enumeration<YassSong> e = data.elements(); e.hasMoreElements(); ) {
-            YassSong s = (YassSong) e.nextElement();
+            YassSong s = e.nextElement();
             String edition = s.getEdition();
             if (edition == null || edition.length() < 1) {
                 continue;
@@ -2468,7 +2468,7 @@ public class YassSongList extends JTable {
 
         int i = 0;
         for (Enumeration<String> en = editions.elements(); en.hasMoreElements(); ) {
-            String ed = (String) en.nextElement();
+            String ed = en.nextElement();
 
             if (++i > 20) {
                 i = 0;
@@ -2576,7 +2576,7 @@ public class YassSongList extends JTable {
         while (st.hasMoreTokens()) {
             String lang = st.nextToken();
 
-            Vector<String> v = (Vector<String>) lang_articles.get(lang);
+            Vector<String> v = lang_articles.get(lang);
             if (v == null) {
                 v = new Vector<>();
                 lang_articles.put(lang, v);
@@ -2612,7 +2612,7 @@ public class YassSongList extends JTable {
             }
         }
 
-        Vector<?> v = (Vector<?>) lang_articles.get(lang);
+        Vector<?> v = lang_articles.get(lang);
         if (v == null) {
             return null;
         }
@@ -2832,7 +2832,7 @@ public class YassSongList extends JTable {
         Vector<YassSong> data = sm.getData();
         int i = 0;
         for (Enumeration<YassSong> e = data.elements(); e.hasMoreElements(); i++) {
-            YassSong s = (YassSong) e.nextElement();
+            YassSong s = e.nextElement();
             String dir2 = s.getDirectory();
             String txt2 = s.getFilename();
             if (dir2 == null || txt2 == null) {
@@ -2872,7 +2872,7 @@ public class YassSongList extends JTable {
             int i = 0;
             Enumeration<YassSong> en = sm.getData().elements();
             while (en.hasMoreElements()) {
-                ((YassSong) en.nextElement()).setState((i++) + "");
+                en.nextElement().setState((i++) + "");
             }
             sm.fireTableRowsUpdated(0, sm.getRowCount());
 
@@ -2901,7 +2901,7 @@ public class YassSongList extends JTable {
         Vector<YassSong> data = sm.getData();
         int i = 0;
         for (Enumeration<YassSong> e = data.elements(); e.hasMoreElements(); ) {
-            YassSong s = (YassSong) e.nextElement();
+            YassSong s = e.nextElement();
             String sfilename = s.getDirectory() + File.separator + s.getFilename();
             if (filename.equals(sfilename)) {
                 YassTable t = new YassTable();
@@ -2927,7 +2927,7 @@ public class YassSongList extends JTable {
 
         YassSongListEvent e = new YassSongListEvent(this, state);
         for (Enumeration<YassSongListListener> en = listeners.elements(); en.hasMoreElements(); ) {
-            YassSongListListener l = (YassSongListListener) en.nextElement();
+            YassSongListListener l = en.nextElement();
             l.stateChanged(e);
         }
     }
@@ -3100,7 +3100,7 @@ public class YassSongList extends JTable {
         int rows[] = getSelectedRows();
         Vector<YassSong> sel = getSelectedSongs();
         for (Enumeration<YassSong> en = sel.elements(); en.hasMoreElements(); ) {
-            YassSong s = (YassSong) en.nextElement();
+            YassSong s = en.nextElement();
             if (!s.isSaved()) {
                 storeSongDetails(s, t);
             }
@@ -3115,7 +3115,7 @@ public class YassSongList extends JTable {
 
         Vector<YassSong> data = sm.getData();
         for (Enumeration<YassSong> en = data.elements(); en.hasMoreElements(); ) {
-            YassSong s = (YassSong) en.nextElement();
+            YassSong s = en.nextElement();
             if (!s.isSaved()) {
                 return;
             }
@@ -3131,7 +3131,7 @@ public class YassSongList extends JTable {
         Vector<YassSong> sel = getSelectedSongs();
         int rows[] = getSelectedRows();
         for (Enumeration<YassSong> en = sel.elements(); en.hasMoreElements(); ) {
-            YassSong s = (YassSong) en.nextElement();
+            YassSong s = en.nextElement();
             if (!s.isSaved()) {
                 loadSongDetails(s, t);
                 s.setSaved(true);
@@ -3149,7 +3149,7 @@ public class YassSongList extends JTable {
 
         Vector<YassSong> data = sm.getData();
         for (Enumeration<YassSong> en = data.elements(); en.hasMoreElements(); ) {
-            YassSong s = (YassSong) en.nextElement();
+            YassSong s = en.nextElement();
             if (!s.isSaved()) {
                 return;
             }
@@ -3166,7 +3166,7 @@ public class YassSongList extends JTable {
         YassTable t = new YassTable();
         Vector<YassSong> data = sm.getData();
         for (Enumeration<YassSong> e = data.elements(); e.hasMoreElements(); ) {
-            YassSong s = (YassSong) e.nextElement();
+            YassSong s = e.nextElement();
             if (!s.isSaved()) {
                 loadSongDetails(s, t);
                 s.setSaved(true);
@@ -3708,7 +3708,7 @@ public class YassSongList extends JTable {
             outputStream = new PrintWriter(fw = new FileWriter(cache));
             Vector<YassSong> data = getUnfilteredData();
             for (Enumeration<YassSong> en = data.elements(); en.hasMoreElements(); ) {
-                YassSong s = (YassSong) en.nextElement();
+                YassSong s = en.nextElement();
                 outputStream.println(s.toString());
             }
         } catch (Exception e) {
@@ -3744,7 +3744,7 @@ public class YassSongList extends JTable {
             try {
                 outputStream = new PrintWriter(fw = new FileWriter(plcache));
                 for (Enumeration<String> en = pldata.elements(); en.hasMoreElements(); ) {
-                    String s = (String) en.nextElement();
+                    String s = en.nextElement();
                     outputStream.println(s);
                 }
             } catch (Exception e) {
@@ -3957,7 +3957,7 @@ public class YassSongList extends JTable {
             outputStream.println();
 
             for (Enumeration<YassSong> en = v.elements(); en.hasMoreElements(); ) {
-                YassSong s = (YassSong) en.nextElement();
+                YassSong s = en.nextElement();
                 String artist = s.getArtist();
                 String title = s.getTitle();
                 String genre = s.getGenre();
@@ -4157,7 +4157,7 @@ public class YassSongList extends JTable {
 				 */
                 Vector<YassSong> v = findSong(artist, title, null);
                 for (Enumeration<YassSong> en = v.elements(); en.hasMoreElements(); ) {
-                    YassSong s = (YassSong) en.nextElement();
+                    YassSong s = en.nextElement();
 
                     boolean changed = false;
                     if (useGenre) {
@@ -4571,7 +4571,7 @@ public class YassSongList extends JTable {
             outputStream = new PrintWriter(bw);
 
             for (Enumeration<YassSong> e = allData.elements(); e.hasMoreElements(); ) {
-                YassSong s = (YassSong) e.nextElement();
+                YassSong s = e.nextElement();
                 String txt = s.getLyrics();
                 if (txt == null) {
                     continue;
@@ -4668,7 +4668,7 @@ public class YassSongList extends JTable {
         }
 
         for (Enumeration<YassSong> en = data.elements(); en.hasMoreElements(); ) {
-            s = (YassSong) en.nextElement();
+            s = en.nextElement();
             String artist2 = s.getArtist();
             String title2 = s.getTitle();
             if (artist2 == null || title2 == null) {
@@ -4702,7 +4702,7 @@ public class YassSongList extends JTable {
         YassSong s = null;
         Vector<YassSong> data = sm.getData();
         for (Enumeration<YassSong> en = data.elements(); en.hasMoreElements(); ) {
-            s = (YassSong) en.nextElement();
+            s = en.nextElement();
             String artist2 = s.getArtist().toLowerCase().trim();
             String title2 = s.getTitle().toLowerCase().trim();
             if (artist2 == null || title2 == null) {
@@ -4928,7 +4928,7 @@ public class YassSongList extends JTable {
             Vector<YassSong> data = sm.getData();
             int i = 0;
             for (Enumeration<YassSong> en = data.elements(); en.hasMoreElements() && notInterrupted; ) {
-                YassSong s = (YassSong) en.nextElement();
+                YassSong s = en.nextElement();
                 String at = YassSong.toFilename(s.getArtist() + " - " + s.getTitle() + " @ " + s.getFolder());
                 File cacheFile = new File(imageCacheName + File.separator + at + ".jpg");
                 if (cacheFile.exists()) {
@@ -5096,7 +5096,7 @@ public class YassSongList extends JTable {
             actions.setProgress(I18.get("lib_msg_thumb"), data.size());
             int i = 0;
             for (Enumeration<YassSong> en = data.elements(); en.hasMoreElements() && notInterrupted; ) {
-                YassSong s = (YassSong) en.nextElement();
+                YassSong s = en.nextElement();
                 if (cacheSongCover(imageCacheName, s)) {
                     repaintIfVisible(i);
                     sm.fireTableRowsUpdated(i, i);
@@ -5132,7 +5132,7 @@ public class YassSongList extends JTable {
             actions.setProgress(I18.get("lib_msg_store"), data.size());
             int i = 0;
             for (Enumeration<YassSong> en = data.elements(); en.hasMoreElements() && notInterrupted; ) {
-                YassSong s = (YassSong) en.nextElement();
+                YassSong s = en.nextElement();
                 if (!s.isSaved()) {
                     storeSongDetails(s, t);
                 }
@@ -5201,7 +5201,7 @@ public class YassSongList extends JTable {
             YassTable t = new YassTable();
             YassTable t2 = new YassTable();
             for (Enumeration<YassSong> e = data.elements(); e.hasMoreElements() && notInterrupted; ) {
-                YassSong s = (YassSong) e.nextElement();
+                YassSong s = e.nextElement();
 
                 if (!allsongs && !isRowSelected(i)) {
                     i++;
@@ -5973,7 +5973,7 @@ public class YassSongList extends JTable {
             String key = null;
             if (t == null || t.length() < 1) {
                 key = "songlist_no_3";
-                t = (String) i18Labels.get(key);
+                t = i18Labels.get(key);
                 if (t == null) {
                     i18Labels.put(key, t = I18.get(key));
                 }
@@ -5984,7 +5984,7 @@ public class YassSongList extends JTable {
             }
             if (a == null || a.length() < 1) {
                 key = "songlist_no_2";
-                a = (String) i18Labels.get(key);
+                a = i18Labels.get(key);
                 if (a == null) {
                     i18Labels.put(key, a = I18.get(key));
                 }
@@ -5992,7 +5992,7 @@ public class YassSongList extends JTable {
             l = s.getLanguage();
             if (l == null || l.length() < 1) {
                 key = "songlist_no_7";
-                l = (String) i18Labels.get(key);
+                l = i18Labels.get(key);
                 if (l == null) {
                     i18Labels.put(key, l = I18.get(key));
                 }
@@ -6000,7 +6000,7 @@ public class YassSongList extends JTable {
             e = s.getEdition();
             if (e == null || e.length() < 1) {
                 key = "songlist_no_6";
-                e = (String) i18Labels.get(key);
+                e = i18Labels.get(key);
                 if (e == null) {
                     i18Labels.put(key, e = I18.get(key));
                 }
@@ -6008,7 +6008,7 @@ public class YassSongList extends JTable {
             g = s.getGenre();
             if (g == null || g.length() < 1) {
                 key = "songlist_no_5";
-                g = (String) i18Labels.get(key);
+                g = i18Labels.get(key);
                 if (g == null) {
                     i18Labels.put(key, g = I18.get(key));
                 }
@@ -6016,7 +6016,7 @@ public class YassSongList extends JTable {
             y = s.getYear();
             if (y == null || y.length() < 1) {
                 key = "songlist_no_8";
-                y = (String) i18Labels.get(key);
+                y = i18Labels.get(key);
                 if (y == null) {
                     i18Labels.put(key, y = I18.get(key));
                 }
@@ -6024,7 +6024,7 @@ public class YassSongList extends JTable {
             f = s.getFolder();
             if (f == null || f.length() < 1) {
                 key = "songlist_no_9";
-                f = (String) i18Labels.get(key);
+                f = i18Labels.get(key);
                 if (f == null) {
                     i18Labels.put(key, f = I18.get(key));
                 }
@@ -6036,7 +6036,7 @@ public class YassSongList extends JTable {
             al = s.getAlbum();
             if (al == null || al.length() < 1) {
                 key = "songlist_no_10";
-                al = (String) i18Labels.get(key);
+                al = i18Labels.get(key);
                 if (al == null) {
                     i18Labels.put(key, al = I18.get(key));
                 }
@@ -6044,7 +6044,7 @@ public class YassSongList extends JTable {
             len = s.getLength();
             if (len == null || len.length() < 1) {
                 key = "songlist_no_11";
-                len = (String) i18Labels.get(key);
+                len = i18Labels.get(key);
                 if (len == null) {
                     i18Labels.put(key, len = I18.get(key));
                 }
@@ -6432,7 +6432,7 @@ public class YassSongList extends JTable {
             boolean notInterrupted = true;
             int k = 0;
             for (Enumeration<YassSong> e = allData.elements(); e.hasMoreElements() && notInterrupted; ) {
-                YassSong s = (YassSong) e.nextElement();
+                YassSong s = e.nextElement();
                 boolean add = false;
 
                 if (isInterrupted) {
@@ -6467,7 +6467,7 @@ public class YassSongList extends JTable {
                     if (txt == null) {
                         if (lyricsCache != null) {
                             String key = s.getDirectory() + File.separator + s.getFilename();
-                            txt = (String) lyricsCache.get(key);
+                            txt = lyricsCache.get(key);
                         }
                         if (txt == null) {
                             loadSongDetails(s, ft);
@@ -6498,7 +6498,7 @@ public class YassSongList extends JTable {
             int i = 1;
             Enumeration<YassSong> en = sm.getData().elements();
             while (en.hasMoreElements()) {
-                ((YassSong) en.nextElement()).setState((i++) + "");
+                en.nextElement().setState((i++) + "");
 
                 if (isInterrupted) {
                     isFinished = true;

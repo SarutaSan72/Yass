@@ -362,12 +362,12 @@ public class YassSynth {
         int frame_size = wavaudioFormat.getFrameSize();
 
         // To read the 'j'th frame in the file:
-        int framePos = (int) ((frameNum - 1) * frame_size);
+        int framePos = (frameNum - 1) * frame_size;
         byte[] frame = new byte[frame_size];
         Byte sample = null;
         for (int i = 0; i < frame_size; i++) {
             // System.out.println("   -frameNum: "+frameNum+" framePos "+framePos+" i "+i);
-            sample = (Byte) buffer.get(framePos + i + 1);
+            sample = buffer.get(framePos + i + 1);
             frame[i] = sample.byteValue();
         }
         return frame;
@@ -380,7 +380,7 @@ public class YassSynth {
      */
     public static int getLengthInFrames() {
         int frame_length = audioFormat.getFrameSize();
-        return (int) (buffer.size() / frame_length) - 1;
+        return buffer.size() / frame_length - 1;
     }
 
     /**
@@ -392,7 +392,7 @@ public class YassSynth {
         //		public void run() {
         double snd_pos = 1;// In Frames
         int frame_length = wavaudioFormat.getFrameSize();
-        int length_in_frames = (int) (buffer.size() / frame_length) - 1;
+        int length_in_frames = buffer.size() / frame_length - 1;
         //System.out.println("   -frame length " + frame_length + " length_in_frames " + length_in_frames);
 
         byte[] sample = null;

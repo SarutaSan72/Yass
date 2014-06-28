@@ -522,7 +522,7 @@ public class YassPlayer {
             AudioFileFormat baseFileFormat = AudioSystem
                     .getAudioFileFormat(file);
             if (baseFileFormat instanceof TAudioFileFormat) {
-                Map<?, ?> properties = ((TAudioFileFormat) baseFileFormat)
+                Map<?, ?> properties = baseFileFormat
                         .properties();
                 String key = "author";
                 // String val = (String) properties.get(key);
@@ -900,7 +900,7 @@ public class YassPlayer {
         }
         for (Enumeration<YassPlayerListener> en = listeners.elements(); en
                 .hasMoreElements(); ) {
-            ((YassPlayerListener) en.nextElement()).playerStarted();
+            en.nextElement().playerStarted();
         }
     }
 
@@ -913,7 +913,7 @@ public class YassPlayer {
         }
         for (Enumeration<YassPlayerListener> en = listeners.elements(); en
                 .hasMoreElements(); ) {
-            ((YassPlayerListener) en.nextElement()).playerStopped();
+            en.nextElement().playerStopped();
         }
     }
 
@@ -1209,7 +1209,7 @@ public class YassPlayer {
                     }
                     for (Enumeration<String> devEnum = devices.elements(); devEnum
                             .hasMoreElements(); ) {
-                        String device = (String) devEnum.nextElement();
+                        String device = devEnum.nextElement();
                         capture.startQuery(device);
                     }
                 }
@@ -1386,7 +1386,7 @@ public class YassPlayer {
                             int d = 0;
                             for (Enumeration<String> devEnum = devices
                                     .elements(); devEnum.hasMoreElements(); ) {
-                                String device = (String) devEnum.nextElement();
+                                String device = devEnum.nextElement();
                                 YassPlayerNote[] note = capture.query(device);
                                 playernote[d++] = note != null ? note[0] : null;
                                 playernote[d++] = note != null ? note[1] : null;
@@ -1485,7 +1485,7 @@ public class YassPlayer {
                 if (useCapture) {
                     for (Enumeration<String> devEnum = devices.elements(); devEnum
                             .hasMoreElements(); ) {
-                        String device = (String) devEnum.nextElement();
+                        String device = devEnum.nextElement();
                         capture.stopQuery(device);
                     }
                 }

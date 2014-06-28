@@ -183,7 +183,7 @@ public class YassSongFlow extends JPanel {
             imageChanged = true;
         }
         refreshBackBuffer();
-        Graphics2D gb = (Graphics2D) getBackBuffer().createGraphics();
+        Graphics2D gb = getBackBuffer().createGraphics();
         gb.drawImage(getPlainBuffer(), 0, 0, null);
         //if (getPlainBuffer().contentsLost())
         gb.dispose();
@@ -197,7 +197,7 @@ public class YassSongFlow extends JPanel {
         int w = image.getWidth();
         int h = image.getHeight();
 
-        Graphics2D g = (Graphics2D) image.createGraphics();
+        Graphics2D g = image.createGraphics();
 
         g.setColor(getBackground());
         g.fillRect(0, 0, w, h);
@@ -218,7 +218,7 @@ public class YassSongFlow extends JPanel {
         Enumeration<YassSong> en = sm.getData().elements();
         int i = -1;
         while (en.hasMoreElements()) {
-            YassSong s = (YassSong) en.nextElement();
+            YassSong s = en.nextElement();
             i++;
 
             if (i < pos - 2 || i > pos + 2) {
@@ -462,7 +462,7 @@ public class YassSongFlow extends JPanel {
                         AudioFileFormat baseFileFormat = AudioSystem.getAudioFileFormat(file);
                         AudioFormat baseFormat = in.getFormat();
                         if (baseFileFormat instanceof TAudioFileFormat) {
-                            Map<?, ?> properties = ((TAudioFileFormat) baseFileFormat).properties();
+                            Map<?, ?> properties = baseFileFormat.properties();
                             String key = "duration";
                             duration = ((Long) properties.get(key)).longValue();
                         }
@@ -497,7 +497,7 @@ public class YassSongFlow extends JPanel {
             return;
         }
 
-        YassSong s = (YassSong) sm.getData().elementAt(pos);
+        YassSong s = sm.getData().elementAt(pos);
         Image img = null;
         try {
             File coverFile = new File(s.getDirectory() + File.separator + s.getCover());
@@ -534,7 +534,7 @@ public class YassSongFlow extends JPanel {
                 break;
             }
 
-            Graphics2D gb = (Graphics2D) getBackBuffer().createGraphics();
+            Graphics2D gb = getBackBuffer().createGraphics();
             gb.drawImage(getPlainBuffer(), 0, 0, null);
 
             gb.translate(w / 2, 10 + ih / 2);
@@ -595,11 +595,11 @@ public class YassSongFlow extends JPanel {
             imageChanged = false;
         }
 
-        Graphics2D gc = (Graphics2D) backVolImage.createGraphics();
+        Graphics2D gc = backVolImage.createGraphics();
         gc.drawImage(image, 0, 0, null);
         gc.dispose();
 
-        gc = (Graphics2D) plainVolImage.createGraphics();
+        gc = plainVolImage.createGraphics();
         gc.drawImage(image, 0, 0, null);
         gc.dispose();
     }
@@ -622,7 +622,7 @@ public class YassSongFlow extends JPanel {
                     backVolImage.flush();
                     backVolImage = g.getDeviceConfiguration().createCompatibleVolatileImage(image.getWidth(), image.getHeight());
                 case VolatileImage.IMAGE_RESTORED:
-                    Graphics2D gc = (Graphics2D) backVolImage.createGraphics();
+                    Graphics2D gc = backVolImage.createGraphics();
                     gc.drawImage(image, 0, 0, Color.white, null);
                     gc.dispose();
                     break;

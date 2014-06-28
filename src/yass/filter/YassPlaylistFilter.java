@@ -49,7 +49,7 @@ public class YassPlaylistFilter extends YassFilter {
 
         String plcacheName = getProperties().getProperty("playlist-cache");
         if (plcacheName == null) {
-            return (String[]) pl.toArray(new String[]{});
+            return pl.toArray(new String[]{});
         }
         File plcache = new File(plcacheName);
         if (plcache.exists()) {
@@ -66,7 +66,7 @@ public class YassPlaylistFilter extends YassFilter {
             }
         }
 
-        return (String[]) pl.toArray(new String[]{});
+        return pl.toArray(new String[]{});
     }
 
     // copied from yassplaylist
@@ -144,7 +144,7 @@ public class YassPlaylistFilter extends YassFilter {
                         title = title.substring(0, k);
                     }
                     String key = artist + " : " + title + " [" + version + "]";
-                    Vector<String> v = (Vector<String>) songs.get(key);
+                    Vector<String> v = songs.get(key);
                     if (v == null) {
                         v = new Vector<>(3);
                         songs.put(key, v);
@@ -204,7 +204,7 @@ public class YassPlaylistFilter extends YassFilter {
         // abandoned
         // false cognitive model; using songlist for displaying playlist irritates user
 
-        YassPlayListModel pl = (YassPlayListModel) playlists.get(rule);
+        YassPlayListModel pl = playlists.get(rule);
         if (pl == null) {
             return;
         }
@@ -315,7 +315,7 @@ public class YassPlaylistFilter extends YassFilter {
                 version = "";
             }
             String key = artist + " - " + title + " [" + version + "]";
-            Vector<?> v = (Vector<?>) songs.get(key);
+            Vector<?> v = songs.get(key);
             if (v == null) {
                 hit = true;
             }
@@ -327,7 +327,7 @@ public class YassPlaylistFilter extends YassFilter {
                 version = "";
             }
             String key = artist + " : " + title + " [" + version + "]";
-            Vector<?> v = (Vector<?>) songs.get(key);
+            Vector<?> v = songs.get(key);
             if (v != null) {
                 for (Enumeration<?> en = v.elements(); en.hasMoreElements(); ) {
                     String pl = (String) en.nextElement();

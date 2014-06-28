@@ -539,7 +539,7 @@ public class PrintBlocks implements PrintPlugin {
     PdfPTable createPDFTable() {
         PdfPTable datatable = new PdfPTable(ncol);
         try {
-            float twidth = (float) rect.getRight() - mleft - mright;
+            float twidth = rect.getRight() - mleft - mright;
             //-mcol;
             twidth /= 2;
 

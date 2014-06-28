@@ -49,7 +49,7 @@ public class YassLanguageFilter extends YassFilter {
         }
         Collections.sort(langs);
 
-        return (String[]) langs.toArray(new String[]{});
+        return langs.toArray(new String[]{});
     }
 
 

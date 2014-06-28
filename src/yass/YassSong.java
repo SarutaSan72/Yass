@@ -1769,7 +1769,7 @@ public class YassSong implements Cloneable, Comparable<Object> {
         }
         int previewStartMillis = -1;
         if (previewStart > 0) {
-            previewStartMillis = (int) (1000 * previewStart);
+            previewStartMillis = 1000 * previewStart;
         }
 
         return new yass.screen.YassSongData(artist, title, genre, edition, language, folder, album, year, length, start, end, bpm, gap, medleyStartMillis, medleyEndMillis, previewStartMillis, multiplayer, txt, thumbnail, cover, background, audio, video);

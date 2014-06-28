@@ -74,14 +74,14 @@ public class YassJukeboxScreen extends YassScreen {
             int n = scores.size();
             if (n > 0) {
                 int i = (int) (Math.random() * n);
-                YassScore score = (YassScore) scores.elementAt(i);
+                YassScore score = scores.elementAt(i);
                 artist = score.getArtist();
                 title = score.getTitle();
 
                 int trials = 100;
                 while (alreadyPlayed.get(artist + "-" + title) != null && --trials > 0) {
                     i = (int) (Math.random() * n);
-                    score = (YassScore) scores.elementAt(i);
+                    score = scores.elementAt(i);
                     artist = score.getArtist();
                     title = score.getTitle();
                 }

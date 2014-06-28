@@ -97,7 +97,7 @@ public class YassStats implements Cloneable {
 
         length = 0;
         for (Enumeration<YassStats> en = plugins.elements(); en.hasMoreElements(); ) {
-            YassStats stats = (YassStats) en.nextElement();
+            YassStats stats = en.nextElement();
             length += stats.getIDCount();
         }
 
@@ -108,7 +108,7 @@ public class YassStats implements Cloneable {
 
         int k = 0;
         for (Enumeration<YassStats> en = plugins.elements(); en.hasMoreElements(); ) {
-            YassStats stats = (YassStats) en.nextElement();
+            YassStats stats = en.nextElement();
             String s[] = stats.getIDs();
             for (int i = 0; i < s.length; i++) {
                 allstats[k] = stats;
@@ -150,7 +150,7 @@ public class YassStats implements Cloneable {
      * @return Description of the Return Value
      */
     public static int indexOf(String id) {
-        return ((Integer) (hash.get(id))).intValue();
+        return hash.get(id).intValue();
     }
 
     /**

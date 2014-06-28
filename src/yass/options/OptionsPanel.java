@@ -56,8 +56,8 @@ public class OptionsPanel extends JPanel {
      */
     public static void storeProperties() {
         for (Enumeration<String> en = myprop.keys(); en.hasMoreElements(); ) {
-            String key = (String) en.nextElement();
-            String val = (String) myprop.get(key);
+            String key = en.nextElement();
+            String val = myprop.get(key);
             prop.put(key, val);
         }
         prop.store();
@@ -88,7 +88,7 @@ public class OptionsPanel extends JPanel {
      * @return The property value
      */
     public String getProperty(String key) {
-        return (String) myprop.get(key);
+        return myprop.get(key);
     }
 
     /**
@@ -603,7 +603,7 @@ public class OptionsPanel extends JPanel {
         public void actionPerformed(ActionEvent e) {
             JComboBox<?> c = (JComboBox<?>) e.getSource();
             int i = c.getSelectedIndex();
-            String key = (String) keys.elementAt(i);
+            String key = keys.elementAt(i);
             setProperty(select_key, key);
             // System.out.println("Setting " + select_key + " to " + key);
         }

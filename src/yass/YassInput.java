@@ -196,7 +196,7 @@ public class YassInput {
      */
     public void fireKeyPressed(KeyEvent e) {
         for (Enumeration<KeyListener> en = listeners.elements(); en.hasMoreElements(); ) {
-            KeyListener l = (KeyListener) en.nextElement();
+            KeyListener l = en.nextElement();
             l.keyPressed(new KeyEvent((java.awt.Component) e.getSource(), KeyEvent.KEY_PRESSED, System.currentTimeMillis(), e.getModifiers(), e.getKeyCode(), e.getKeyChar(), e.getKeyLocation()));
         }
     }
@@ -208,7 +208,7 @@ public class YassInput {
      */
     public void fireKeyReleased(KeyEvent e) {
         for (Enumeration<KeyListener> en = listeners.elements(); en.hasMoreElements(); ) {
-            KeyListener l = (KeyListener) en.nextElement();
+            KeyListener l = en.nextElement();
             l.keyReleased(new KeyEvent((java.awt.Component) e.getSource(), KeyEvent.KEY_RELEASED, System.currentTimeMillis(), e.getModifiers(), e.getKeyCode(), e.getKeyChar(), e.getKeyLocation()));
         }
     }
@@ -503,11 +503,11 @@ public class YassInput {
                 Enumeration<long[]> delaysEnum = delays.elements();
 
                 while (dEnum.hasMoreElements()) {
-                    Controller d = (Controller) dEnum.nextElement();
-                    Component c = (Component) cEnum.nextElement();
-                    KeyEvent e = (KeyEvent) eEnum.nextElement();
-                    float value[] = (float[]) vEnum.nextElement();
-                    long delays[] = (long[]) delaysEnum.nextElement();
+                    Controller d = dEnum.nextElement();
+                    Component c = cEnum.nextElement();
+                    KeyEvent e = eEnum.nextElement();
+                    float value[] = vEnum.nextElement();
+                    long delays[] = delaysEnum.nextElement();
 
                     boolean ok = d.poll();
                     if (ok) {

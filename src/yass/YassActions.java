@@ -1942,7 +1942,7 @@ public class YassActions implements DropTargetListener {
             Vector<String> splitFiles = new Vector<>();
             for (Enumeration<YassTable> en = openTables.elements(); en
                     .hasMoreElements(); ) {
-                YassTable t = (YassTable) en.nextElement();
+                YassTable t = en.nextElement();
 
                 String dir = t.getDir();
                 String txt = t.getFilename();
@@ -3318,7 +3318,7 @@ public class YassActions implements DropTargetListener {
         }
         try {
             for (Enumeration<String> en = fn.elements(); en.hasMoreElements(); ) {
-                String filename = (String) en.nextElement();
+                String filename = en.nextElement();
 
                 try {
                     // Java 1.6
@@ -3893,7 +3893,7 @@ public class YassActions implements DropTargetListener {
         if (openTables == null || openTables.size() < 1) {
             return null;
         }
-        return (YassTable) openTables.elementAt(0);
+        return openTables.elementAt(0);
     }
 
     /**
@@ -3982,7 +3982,7 @@ public class YassActions implements DropTargetListener {
         Font f = new Label().getFont();
         for (Enumeration<YassTable> en = openTables.elements(); en
                 .hasMoreElements(); ) {
-            YassTable t = (YassTable) en.nextElement();
+            YassTable t = en.nextElement();
             String fn = t.getDir() + File.separator + t.getFilename();
             String title = t.getTitle();
             String version = t.getVersion();
@@ -4043,7 +4043,7 @@ public class YassActions implements DropTargetListener {
         }
         vBox.setSelectedIndex(b);
 
-        YassTable t = (YassTable) openTables.elementAt(b);
+        YassTable t = openTables.elementAt(b);
         setTable(t);
 
         auto.checkData(table, false, true);
@@ -4132,7 +4132,7 @@ public class YassActions implements DropTargetListener {
      * @return The icon value
      */
     public ImageIcon getIcon(String s) {
-        return (ImageIcon) icons.get(s);
+        return icons.get(s);
     }
 
     /**
@@ -5463,7 +5463,7 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("correct24Icon"));
         b.setFocusable(false);
-        hasErrorsButton = (JButton) b;
+        hasErrorsButton = b;
 
         mp3Button = new JToggleButton();
         // t.add(...);
@@ -6299,7 +6299,7 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("correcttransposed24Icon"));
         b.setFocusable(false);
-        correctTransposedButton = (JButton) b;
+        correctTransposedButton = b;
 
         t.add(b = new JButton());
         b.setAction(autoCorrectPageBreaks);
@@ -6307,7 +6307,7 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("correctpagebreak24Icon"));
         b.setFocusable(false);
-        correctPageBreakButton = (JButton) b;
+        correctPageBreakButton = b;
 
         t.add(b = new JButton());
         b.setAction(autoCorrectSpacing);
@@ -6315,7 +6315,7 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("correcttext24Icon"));
         b.setFocusable(false);
-        correctSpacingButton = (JButton) b;
+        correctSpacingButton = b;
 
         return t;
     }
@@ -6694,7 +6694,7 @@ public class YassActions implements DropTargetListener {
         }
 
         for (Enumeration<String> en = fn.elements(); en.hasMoreElements(); ) {
-            String filename = (String) en.nextElement();
+            String filename = en.nextElement();
             File file = new File(filename);
             if (!file.exists()) {
                 continue;
@@ -7999,7 +7999,7 @@ public class YassActions implements DropTargetListener {
      * Description of the Method
      */
     public void updateVideoGap() {
-        double vgap = (double) table.getVideoGap();
+        double vgap = table.getVideoGap();
         int ms = (int) (vgap * 1000);
 
         if (vgapSpinner != null) {
@@ -8670,7 +8670,7 @@ public class YassActions implements DropTargetListener {
         Vector<String> filenames2 = new Vector<>();
         for (Enumeration<String> en = filenames.elements(); en
                 .hasMoreElements(); ) {
-            String filename = (String) en.nextElement();
+            String filename = en.nextElement();
             File file = new File(filename);
             if (!file.exists()) {
                 continue;
@@ -8702,7 +8702,7 @@ public class YassActions implements DropTargetListener {
 
         for (Enumeration<String> en = filenames.elements(); en
                 .hasMoreElements(); ) {
-            String filename = (String) en.nextElement();
+            String filename = en.nextElement();
             File file = new File(filename);
 
             YassTable mt = new YassTable();
@@ -9090,7 +9090,7 @@ public class YassActions implements DropTargetListener {
         String recentFiles = null;
         for (Enumeration<YassTable> en = openTables.elements(); en
                 .hasMoreElements(); ) {
-            YassTable yt = (YassTable) en.nextElement();
+            YassTable yt = en.nextElement();
             String fn = yt.getDir() + File.separator + yt.getFilename();
             if (recentFiles == null) {
                 recentFiles = fn;
@@ -9187,7 +9187,7 @@ public class YassActions implements DropTargetListener {
 
         for (Enumeration<YassTable> en = openTables.elements(); en
                 .hasMoreElements(); ) {
-            YassTable t = (YassTable) en.nextElement();
+            YassTable t = en.nextElement();
             songList.addOpened(t);
         }
 
@@ -9360,7 +9360,7 @@ public class YassActions implements DropTargetListener {
     public void reload() {
         for (Enumeration<YassTable> en = openTables.elements(); en
                 .hasMoreElements(); ) {
-            YassTable t = (YassTable) en.nextElement();
+            YassTable t = en.nextElement();
             String d = t.getDir();
             String f = t.getFilename();
             String m = t.getMP3();
@@ -9561,7 +9561,7 @@ public class YassActions implements DropTargetListener {
         int p = 0;
         for (Enumeration<YassTable> en = tables.elements(); en
                 .hasMoreElements(); ) {
-            YassTable res = (YassTable) en.nextElement();
+            YassTable res = en.nextElement();
             YassTableModel resmodel = (YassTableModel) res.getModel();
             Vector<YassRow> resdata = resmodel.getData();
 
@@ -9615,7 +9615,7 @@ public class YassActions implements DropTargetListener {
                     int lastn = notes[i].size() - 1;
                     YassRow last = null;
                     if (lastn >= 0) {
-                        last = (YassRow) notes[i].elementAt(lastn);
+                        last = notes[i].elementAt(lastn);
                     }
 
                     if (last != null && last.isNote()) {// skip other-player
@@ -9629,13 +9629,13 @@ public class YassActions implements DropTargetListener {
                 for (int i = 0; i < notes.length; i++) {
                     // skip other-player page breaks
                     int lastn = notes[i].size() - 1;
-                    YassRow last = (YassRow) notes[i].elementAt(lastn);
+                    YassRow last = notes[i].elementAt(lastn);
                     while (last.isPageBreak()) {
                         notes[i].removeElementAt(lastn--);
                         if (lastn == 0) {
                             break;
                         }
-                        last = (YassRow) notes[i].elementAt(lastn);
+                        last = notes[i].elementAt(lastn);
                     }
                     notes[i].addElement(new YassRow(r));
                 }
@@ -9646,7 +9646,7 @@ public class YassActions implements DropTargetListener {
         p = 0;
         for (Enumeration<YassTable> en = tables.elements(); en
                 .hasMoreElements(); ) {
-            YassTable res = (YassTable) en.nextElement();
+            YassTable res = en.nextElement();
             YassTableModel resmodel = (YassTableModel) res.getModel();
             Vector<YassRow> resdata = resmodel.getData();
 
@@ -9663,7 +9663,7 @@ public class YassActions implements DropTargetListener {
         // move first beat to zero
         for (Enumeration<YassTable> en = tables.elements(); en
                 .hasMoreElements(); ) {
-            YassTable res = (YassTable) en.nextElement();
+            YassTable res = en.nextElement();
             YassTableModel resmodel = (YassTableModel) res.getModel();
             Vector<?> resdata = resmodel.getData();
 
@@ -9700,7 +9700,7 @@ public class YassActions implements DropTargetListener {
         p = 0;
         for (Enumeration<YassTable> en = tables.elements(); en
                 .hasMoreElements(); ) {
-            YassTable res = (YassTable) en.nextElement();
+            YassTable res = en.nextElement();
             YassTableModel resmodel = (YassTableModel) res.getModel();
             Vector<?> resdata = resmodel.getData();
 
@@ -9727,7 +9727,7 @@ public class YassActions implements DropTargetListener {
         resVector = new Vector<>(tables.size());
         for (Enumeration<YassTable> en = tables.elements(); en
                 .hasMoreElements(); ) {
-            YassTable res = (YassTable) en.nextElement();
+            YassTable res = en.nextElement();
             YassTableModel resmodel = (YassTableModel) res.getModel();
             Vector<?> resdata = resmodel.getData();
 
@@ -9760,7 +9760,7 @@ public class YassActions implements DropTargetListener {
             int j = rows[rows.length - 1] + 1;
             for (Enumeration<YassTable> en = tables.elements(); en
                     .hasMoreElements(); ) {
-                YassTable res = (YassTable) en.nextElement();
+                YassTable res = en.nextElement();
                 YassTableModel resmodel = (YassTableModel) res.getModel();
                 Vector<?> resdata = resmodel.getData();
 
@@ -9814,7 +9814,7 @@ public class YassActions implements DropTargetListener {
         // remove gap in all tables
         for (Enumeration<YassTable> en = tables.elements(); en
                 .hasMoreElements(); ) {
-            YassTable t = (YassTable) en.nextElement();
+            YassTable t = en.nextElement();
 
             double gap = t.getGap();
             double bpm = t.getBPM();
@@ -9847,7 +9847,7 @@ public class YassActions implements DropTargetListener {
         YassTable mintable = null;
         for (Enumeration<YassTable> en = tables.elements(); en
                 .hasMoreElements(); ) {
-            YassTable t = (YassTable) en.nextElement();
+            YassTable t = en.nextElement();
 
             YassRow r = t.getFirstNote();
             int b = r.getBeatInt();
@@ -9863,7 +9863,7 @@ public class YassActions implements DropTargetListener {
         // move first beat to zero
         for (Enumeration<YassTable> en = tables.elements(); en
                 .hasMoreElements(); ) {
-            YassTable t = (YassTable) en.nextElement();
+            YassTable t = en.nextElement();
 
             YassTableModel tm = (YassTableModel) t.getModel();
             Vector<?> data = tm.getData();
@@ -9892,7 +9892,7 @@ public class YassActions implements DropTargetListener {
                 tables.size());
         for (Enumeration<YassTable> en = tables.elements(); en
                 .hasMoreElements(); ) {
-            YassTable t = (YassTable) en.nextElement();
+            YassTable t = en.nextElement();
             Vector<YassPage> pages = t.getPages();
             tablepages.addElement(pages);
         }
@@ -9901,7 +9901,7 @@ public class YassActions implements DropTargetListener {
         Vector<YassPage> orderedHeads = new Vector<>(tablepages.size());
         for (Enumeration<Vector<YassPage>> en = tablepages.elements(); en
                 .hasMoreElements(); ) {
-            Vector<YassPage> pages = (Vector<YassPage>) en.nextElement();
+            Vector<YassPage> pages = en.nextElement();
             if (pages.isEmpty()) {
                 continue;
             }
@@ -9957,13 +9957,13 @@ public class YassActions implements DropTargetListener {
                 YassPage minpage = null;
                 for (Enumeration<Vector<YassPage>> en = tablepages.elements(); en
                         .hasMoreElements(); ) {
-                    Vector<YassPage> pages = (Vector<YassPage>) en
+                    Vector<YassPage> pages = en
                             .nextElement();
                     if (pages.isEmpty()) {
                         continue;
                     }
 
-                    YassPage p = (YassPage) pages.firstElement();
+                    YassPage p = pages.firstElement();
                     int min = p.getMinBeat();
                     if (minpage == null || minpagebeat > min) {
                         minpagebeat = min;
@@ -9975,7 +9975,7 @@ public class YassActions implements DropTargetListener {
                 Vector<YassPage> intersecting = new Vector<>();
                 for (Enumeration<Vector<YassPage>> en = tablepages.elements(); en
                         .hasMoreElements(); ) {
-                    Vector<?> pages = (Vector<YassPage>) en.nextElement();
+                    Vector<?> pages = en.nextElement();
                     if (pages.isEmpty()) {
                         continue;
                     }
@@ -9995,7 +9995,7 @@ public class YassActions implements DropTargetListener {
                 int matching = 0;
                 for (Enumeration<YassPage> en = intersecting.elements(); en
                         .hasMoreElements(); ) {
-                    YassPage p = (YassPage) en.nextElement();
+                    YassPage p = en.nextElement();
                     if (minpage.matches(p)) {
                         matching++;
                     }
@@ -10025,7 +10025,7 @@ public class YassActions implements DropTargetListener {
                 if (!combineTracks) {
                     for (Enumeration<YassPage> en = intersecting.elements(); en
                             .hasMoreElements(); ) {
-                        YassPage p = (YassPage) en.nextElement();
+                        YassPage p = en.nextElement();
                         player = tables.indexOf(p.getTable()) + 1;
                         resdata.addElement(new YassRow("P", player + "", "",
                                 "", ""));
@@ -10046,7 +10046,7 @@ public class YassActions implements DropTargetListener {
                 isEmpty = true;
                 for (Enumeration<Vector<YassPage>> en = tablepages.elements(); en
                         .hasMoreElements(); ) {
-                    Vector<YassPage> pages = (Vector<YassPage>) en
+                    Vector<YassPage> pages = en
                             .nextElement();
                     if (!pages.isEmpty()) {
                         isEmpty = false;
@@ -11414,7 +11414,7 @@ public class YassActions implements DropTargetListener {
                 setBackground(list.getSelectionBackground());
                 setForeground(list.getSelectionForeground());
                 if (-1 < index) {
-                    list.setToolTipText((String) plBoxTips.elementAt(index));
+                    list.setToolTipText(plBoxTips.elementAt(index));
                 }
             } else {
                 setBackground(list.getBackground());

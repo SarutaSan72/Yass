@@ -94,7 +94,7 @@ public class YassSongListModel extends AbstractTableModel {
         if (row >= data.size()) {
             return null;
         }
-        YassSong r = (YassSong) data.elementAt(row);
+        YassSong r = data.elementAt(row);
         if (col < columnNames.length) {
             switch (col) {
                 case 1:
@@ -183,7 +183,7 @@ public class YassSongListModel extends AbstractTableModel {
      */
     public void setValueAt(Object value, int row, int col) {
         if (col < columnNames.length) {
-            YassSong r = (YassSong) data.elementAt(row);
+            YassSong r = data.elementAt(row);
 
             switch (col) {
                 case 1: {
@@ -274,7 +274,7 @@ public class YassSongListModel extends AbstractTableModel {
         if (i >= data.size()) {
             return null;
         }
-        return (YassSong) data.elementAt(i);
+        return data.elementAt(i);
     }
 
 

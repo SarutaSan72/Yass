@@ -120,7 +120,7 @@ public class I18 {
             sb.append("<a href=\"http://www.yass-along.com\">http://www.yass-along.com</a><br><br>");
 
             sb.append("Yass ist Freeware. Die Verwendung ist kostenlos. <br><br>");
-            sb.append("Ohne meine ausdr�ckliche Erlaubnis darf Yass nicht f�r kommerzielle Zwecke<br>");
+            sb.append("Ohne meine ausdrückliche Erlaubnis darf Yass nicht für kommerzielle Zwecke<br>");
             sb.append("genutzt werden, und nicht bearbeitet oder weiter gegeben werden.<br>");
             sb.append("Verweise auf die Webseite sind jedoch erlaubt.<br>");
             sb.append("Bitte kontaktieren Sie mich bei Bedarf.<br><br>");
@@ -129,11 +129,12 @@ public class I18 {
             sb.append("and Tritonus Sequencer, iText, Jazzy Spell Checker, TeX Hyphenator, JInput,<br>");
             sb.append("VFFMpeg Objects (fobs), Java Media Framework (JMF), Robert Eckstein's Wizard code.<br>");
             sb.append("Speed measure 'Inverse Duration' basiert auf Marcel Taeumels Ansatz (http://uman.sf.net).<br>");
-            sb.append("Spanisch �bersetzung von Pantera.<br>");
+            sb.append("Spanisch Übersetzung von Pantera.<br>");
             sb.append("Lizensen finden Sie im Hilfebereich.");
             return sb.toString();
         } else if (lang.equals("es")) {
-            StringBuffer sb = new StringBuffer();
+            // TODO UTF-8
+            StringBuilder sb = new StringBuilder();
             sb.append("<html><body><font size=+2><u>Yass</u>&#161;</font> de Saruta<br>Versi�n: "
                     + version + " (" + date + ")<br>mail@yass-along.com<br>");
             //sb.append("<html><body>Otro Sistema de Canciones M�s de Saruta<br>Versi�n: "
@@ -153,7 +154,7 @@ public class I18 {
             return sb.toString();
         }
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("<html><body><font size=+2><u>Yass</u>&#161;</font> by Saruta<br>Version: "
                 + version + " (" + date + ")<br>mail@yass-along.com<br>");
         sb.append("<a href=\"http://www.yass-along.com\">http://www.yass-along.com</a><br><br>");

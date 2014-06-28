@@ -53,7 +53,7 @@ public class YassArtistFilter extends YassFilter {
             }
 
             if (!artists.contains(artist)) {
-                Integer i = (Integer) count.get(artist);
+                Integer i = count.get(artist);
                 if (i == null) {
                     i = new Integer(1);
                 }
@@ -65,7 +65,7 @@ public class YassArtistFilter extends YassFilter {
         }
         Collections.sort(artists);
 
-        return (String[]) artists.toArray(new String[]{});
+        return artists.toArray(new String[]{});
     }
 
     /**
@@ -102,7 +102,7 @@ public class YassArtistFilter extends YassFilter {
         while (st.hasMoreTokens()) {
             String lang = st.nextToken();
 
-            Vector<String> v = (Vector<String>) lang_articles.get(lang);
+            Vector<String> v = lang_articles.get(lang);
             if (v == null) {
                 v = new Vector<>();
                 lang_articles.put(lang, v);
@@ -133,7 +133,7 @@ public class YassArtistFilter extends YassFilter {
             }
         }
 
-        Vector<?> v = (Vector<?>) lang_articles.get(lang);
+        Vector<?> v = lang_articles.get(lang);
         if (v == null)
             return a;
 

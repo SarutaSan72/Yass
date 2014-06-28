@@ -66,8 +66,8 @@ public class YassSelectSortingScreen extends YassScreen {
         int i = 0;
         selectedItem = 0;
         for (Enumeration<Vector<YassScreenGroup>> en = (Enumeration<Vector<YassScreenGroup>>) getGroupsData().elements(); en.hasMoreElements(); ) {
-            Vector<YassScreenGroup> groups = (Vector<YassScreenGroup>) en.nextElement();
-            String title = ((YassScreenGroup) groups.elementAt(0)).getTitle();
+            Vector<YassScreenGroup> groups = en.nextElement();
+            String title = groups.elementAt(0).getTitle();
             if (title.equals(s)) {
                 selectedItem = i;
                 break;

@@ -310,8 +310,8 @@ public class YassRow implements Cloneable, Comparable<Object> {
      * @return The message value
      */
     public static boolean isMessage(int msg, int[] all) {
-        for (int i = 0; i < all.length; i++) {
-            if (msg == all[i]) {
+        for (int m : all) {
+            if (msg == m) {
                 return true;
             }
         }
@@ -718,7 +718,7 @@ public class YassRow implements Cloneable, Comparable<Object> {
         if (!hasSecondBeat()) {
             return getBeatInt();
         }
-        return new Integer(getSecondBeat()).intValue();
+        return Integer.parseInt(getSecondBeat());
     }
 
     /**
@@ -730,7 +730,7 @@ public class YassRow implements Cloneable, Comparable<Object> {
         if (s[2].length() < 1) {
             return 0;
         }
-        return new Integer(s[2]).intValue();
+        return Integer.parseInt(s[2]);
     }
 
     /**
@@ -742,7 +742,7 @@ public class YassRow implements Cloneable, Comparable<Object> {
         if (s[3].length() < 1) {
             return 0;
         }
-        return new Integer(s[3]).intValue();
+        return Integer.parseInt(s[3]);
     }
 
     /**
@@ -893,7 +893,7 @@ public class YassRow implements Cloneable, Comparable<Object> {
      * @return The message value
      */
     public String getMessage() {
-        String[] msg = (String[]) messages.firstElement();
+        String[] msg = messages.firstElement();
         return msg[0];
     }
 
@@ -907,7 +907,7 @@ public class YassRow implements Cloneable, Comparable<Object> {
         if (i >= messages.size()) {
             return null;
         }
-        String[] msg = (String[]) messages.elementAt(i);
+        String[] msg = messages.elementAt(i);
         return msg[0];
     }
 
@@ -921,7 +921,7 @@ public class YassRow implements Cloneable, Comparable<Object> {
         if (i >= messages.size()) {
             return null;
         }
-        String[] msg = (String[]) messages.elementAt(i);
+        String[] msg = messages.elementAt(i);
         return msg[1];
     }
 
@@ -935,7 +935,7 @@ public class YassRow implements Cloneable, Comparable<Object> {
         if (i >= messages.size()) {
             return null;
         }
-        return (String[]) messages.elementAt(i);
+        return messages.elementAt(i);
     }
 
     /**
@@ -969,7 +969,7 @@ public class YassRow implements Cloneable, Comparable<Object> {
      * @return The detail value
      */
     public String getDetail() {
-        String[] msg = (String[]) messages.firstElement();
+        String[] msg = messages.firstElement();
         return msg[1];
     }
 
@@ -979,7 +979,7 @@ public class YassRow implements Cloneable, Comparable<Object> {
      * @return Description of the Return Value
      */
     public boolean hasDetail() {
-        String[] msg = (String[]) messages.firstElement();
+        String[] msg = messages.firstElement();
         return msg.length > 1;
     }
 

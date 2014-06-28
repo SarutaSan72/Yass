@@ -121,8 +121,8 @@ public class YassSongListPrinter {
                 return this;
             }
 
-            setIcon((ImageIcon) images.elementAt(selectedIndex));
-            setToolTipText((String) titles.elementAt(selectedIndex));
+            setIcon(images.elementAt(selectedIndex));
+            setToolTipText(titles.elementAt(selectedIndex));
             setText("");
             setFont(list.getFont());
             return this;
@@ -230,7 +230,7 @@ public class YassSongListPrinter {
             if (plugins.size() < 1) {
                 return null;
             }
-            return (PrintPlugin) plugins.elementAt(detList.getSelectedIndex());
+            return plugins.elementAt(detList.getSelectedIndex());
         }
 
         public void addPlugin(String s) {

@@ -1618,7 +1618,7 @@ public class YassTable extends JTable {
         }
         Enumeration<String> en = messages.keys();
         while (en.hasMoreElements()) {
-            String key = (String) en.nextElement();
+            String key = en.nextElement();
             if (YassAutoCorrect.isAutoCorrectionMinorPageBreak(key)) {
                 return true;
             }
@@ -1637,7 +1637,7 @@ public class YassTable extends JTable {
         }
         Enumeration<String> en = messages.keys();
         while (en.hasMoreElements()) {
-            String key = (String) en.nextElement();
+            String key = en.nextElement();
             if (YassAutoCorrect.isAutoCorrectionPageBreak(key)) {
                 return true;
             }
@@ -1656,7 +1656,7 @@ public class YassTable extends JTable {
         }
         Enumeration<String> en = messages.keys();
         while (en.hasMoreElements()) {
-            String key = (String) en.nextElement();
+            String key = en.nextElement();
             if (key.equals(YassRow.TRANSPOSED_NOTES)) {
                 return true;
             }
@@ -1675,7 +1675,7 @@ public class YassTable extends JTable {
         }
         Enumeration<String> en = messages.keys();
         while (en.hasMoreElements()) {
-            String key = (String) en.nextElement();
+            String key = en.nextElement();
             if (YassAutoCorrect.isAutoCorrectionFileName(key)) {
                 return true;
             }
@@ -1694,7 +1694,7 @@ public class YassTable extends JTable {
         }
         Enumeration<String> en = messages.keys();
         while (en.hasMoreElements()) {
-            String key = (String) en.nextElement();
+            String key = en.nextElement();
             if (YassAutoCorrect.isAutoCorrectionSpacing(key)) {
                 return true;
             }
@@ -1713,7 +1713,7 @@ public class YassTable extends JTable {
         }
         Enumeration<String> en = messages.keys();
         while (en.hasMoreElements()) {
-            String key = (String) en.nextElement();
+            String key = en.nextElement();
             if (YassAutoCorrect.isAutoCorrectionTags(key)) {
                 return true;
             }
@@ -2135,7 +2135,7 @@ public class YassTable extends JTable {
         Vector<YassRow> c = (Vector<YassRow>) tm.getData().clone();
         int n = c.size();
         for (int i = 0; i < n; i++) {
-            c.setElementAt((YassRow) ((YassRow) c.elementAt(i)).clone(), i);
+            c.setElementAt(c.elementAt(i).clone(), i);
         }
 
         n = undos.size();
@@ -2201,7 +2201,7 @@ public class YassTable extends JTable {
      * @return Description of the Return Value
      */
     public YassUndoElement currentUndo() {
-        return (YassUndoElement) undos.elementAt(undoPos);
+        return undos.elementAt(undoPos);
     }
 
     /**
@@ -2213,7 +2213,7 @@ public class YassTable extends JTable {
         if (undoPos < 1) {
             return null;
         }
-        return (YassUndoElement) undos.elementAt(undoPos - 1);
+        return undos.elementAt(undoPos - 1);
     }
 
     /**
@@ -2226,7 +2226,7 @@ public class YassTable extends JTable {
         if (undoPos + 1 >= n) {
             return null;
         }
-        return (YassUndoElement) undos.elementAt(undoPos + 1);
+        return undos.elementAt(undoPos + 1);
     }
 
     /**
@@ -2239,12 +2239,12 @@ public class YassTable extends JTable {
         redoMax--;
         undoPos++;
 
-        YassUndoElement undoElem = (YassUndoElement) undos.elementAt(undoPos);
+        YassUndoElement undoElem = undos.elementAt(undoPos);
 
         Vector<YassRow> c = (Vector<YassRow>) undoElem.data.clone();
         int n = c.size();
         for (int i = 0; i < n; i++) {
-            c.setElementAt((YassRow) ((YassRow) c.elementAt(i)).clone(), i);
+            c.setElementAt(c.elementAt(i).clone(), i);
         }
 
         tm.setData(c);
@@ -2299,14 +2299,14 @@ public class YassTable extends JTable {
         if (n < 1) {
             return;
         }
-        YassUndoElement undoElem = (YassUndoElement) undos.elementAt(undoPos);
-        YassUndoElement nextUndoElem = (YassUndoElement) undos
+        YassUndoElement undoElem = undos.elementAt(undoPos);
+        YassUndoElement nextUndoElem = undos
                 .elementAt(undoPos + 1);
 
         Vector<YassRow> c = (Vector<YassRow>) undoElem.data.clone();
         n = c.size();
         for (int i = 0; i < n; i++) {
-            c.setElementAt(((YassRow) c.elementAt(i)).clone(), i);
+            c.setElementAt(c.elementAt(i).clone(), i);
         }
 
         tm.setData(c);
@@ -4161,7 +4161,7 @@ public class YassTable extends JTable {
 
         Enumeration<YassRow> en = tm.getData().elements();
         while (en.hasMoreElements()) {
-            YassRow r = (YassRow) en.nextElement();
+            YassRow r = en.nextElement();
 
             if (r.isNote()) {
                 r.setBeat(r.getBeatInt() / 2);
@@ -5107,7 +5107,7 @@ public class YassTable extends JTable {
         int w2 = w - w1;
 
         r.setLength(w1);
-        YassRow r2 = (YassRow) r.clone();
+        YassRow r2 = r.clone();
         r2.setBeat(r.getBeatInt() + w1);
         r2.setLength(w2);
         String txt = r.getText();
@@ -5433,22 +5433,22 @@ public class YassTable extends JTable {
         txt = "";
         int k = 0;
         boolean changed = false;
-        Vector<?> data = (Vector<?>) tm.getData();
+        Vector<?> data = tm.getData();
         int n = data.size();
         for (i = 0; i < n; i++) {
             YassRow r = getRowAt(i);
             if (r.isNoteOrPageBreak()) {
                 if (k < syllables) {
-                    txt = (String) hyph.elementAt(k++);
+                    txt = hyph.elementAt(k++);
                 } else {
                     txt = " -";
                 }
                 if (txt.equals("\n")) {
                     if (k < syllables) {
-                        txt = (String) hyph.elementAt(k);
+                        txt = hyph.elementAt(k);
                         if (txt.equals("\n")) {
                             while (k < syllables && txt.equals("\n")) {
-                                txt = (String) hyph.elementAt(k++);
+                                txt = hyph.elementAt(k++);
                             }
                         }
                     }
@@ -5585,7 +5585,7 @@ public class YassTable extends JTable {
         int lineMin = 1000;
         int lineMax = -1000;
 
-        double trackBPM = (double) getBPM();
+        double trackBPM = getBPM();
         int gapMillis = (int) getGap();
         long startMillis = (long) (getStart() * 1000);
         long endMillis = (long) (getEnd() * 1000);
@@ -5649,12 +5649,12 @@ public class YassTable extends JTable {
             }
         }
 
-        YassNote[] notesArray = (YassNote[]) notes.toArray(new YassNote[]{});
-        YassLine[] linesArray = (YassLine[]) lines.toArray(new YassLine[]{});
+        YassNote[] notesArray = notes.toArray(new YassNote[]{});
+        YassLine[] linesArray = lines.toArray(new YassLine[]{});
         YassTrack track = new YassTrack(notesArray, linesArray, trackBPM,
                 gapMillis);
         tracks.addElement(track);
-        YassTrack[] tracksArray = (YassTrack[]) tracks
+        YassTrack[] tracksArray = tracks
                 .toArray(new YassTrack[]{});
         tracksArray[0].setDifficulty(new Integer(prop
                 .getProperty("player1_difficulty")).intValue());
@@ -5850,7 +5850,7 @@ public class YassTable extends JTable {
          * @return The cellEditorValue value
          */
         public Object getCellEditorValue() {
-            return (String) ed.getSelectedItem();
+            return ed.getSelectedItem();
         }
     }
 }

@@ -85,7 +85,7 @@ public class YassGroupsModel extends AbstractTableModel {
         if (row >= data.size()) {
             return null;
         }
-        String s = (String) data.elementAt(row);
+        String s = data.elementAt(row);
         return s;
     }
 
@@ -135,7 +135,7 @@ public class YassGroupsModel extends AbstractTableModel {
         if (i >= data.size()) {
             return null;
         }
-        return (String) data.elementAt(i);
+        return data.elementAt(i);
     }
 
 

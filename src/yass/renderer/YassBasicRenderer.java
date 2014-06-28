@@ -159,7 +159,7 @@ public class YassBasicRenderer extends JPanel implements yass.renderer.YassPlayb
      * @return The string value
      */
     public String getString(String key) {
-        String s = (String) strings.get(key);
+        String s = strings.get(key);
         if (s == null) {
             try {
                 s = yass.I18.get("renderer_" + getID() + "_" + key);
@@ -417,7 +417,7 @@ public class YassBasicRenderer extends JPanel implements yass.renderer.YassPlayb
             String s = halftime;
             int sw = metrics.stringWidth(s);
             double zoom = (currentMillis - midMillis) / 100.0;
-            int x = (int) (clip.width - 20 - sw - 12);
+            int x = clip.width - 20 - sw - 12;
             int y = clip.height - LYRICS_HEIGHT / 2 - metrics.getAscent() / 2;
             boolean nozoom = true;
             if ((zoom > -30 && zoom < -29) || (zoom > 29 && zoom < 30)) {
@@ -580,7 +580,7 @@ public class YassBasicRenderer extends JPanel implements yass.renderer.YassPlayb
      * @param g Description of the Parameter
      */
     public void paintBackground(Graphics2D g) {
-        float introSeconds = (float) Math.max(0, ((currentMillis - introMillis) / 1000f));
+        float introSeconds = Math.max(0, ((currentMillis - introMillis) / 1000f));
 
         int w = clip.width;
         int h = clip.height;
@@ -606,10 +606,10 @@ public class YassBasicRenderer extends JPanel implements yass.renderer.YassPlayb
             int height = h;
             if (wide) {
                 height = (int) (w * 3 / 4.0);
-                top = (int) (h / 2 - height / 2);
+                top = h / 2 - height / 2;
             } else {
                 width = (int) (h * 4 / 3.0);
-                left = (int) (w / 2 - width / 2);
+                left = w / 2 - width / 2;
             }
             g.drawImage(img, left, top, width, height, null);
         }
@@ -932,7 +932,7 @@ public class YassBasicRenderer extends JPanel implements yass.renderer.YassPlayb
                     si.y += si.vy;
                 }
                 if (si.size > 0 && si.y < bounds[t].y + bounds[t].height) {
-                    g.drawImage(noteStar[si.starIndex], (int) (si.x - si.size / 2), (int) (si.y - si.size / 2), si.size, si.size, null);
+                    g.drawImage(noteStar[si.starIndex], si.x - si.size / 2, si.y - si.size / 2, si.size, si.size, null);
                 } else {
                     flyingStars[t].removeElement(si);
                 }
@@ -1093,7 +1093,7 @@ public class YassBasicRenderer extends JPanel implements yass.renderer.YassPlayb
         }
         validateBuffer(g);
 
-        bufferGraphics = (Graphics2D) getBackBuffer().createGraphics();
+        bufferGraphics = getBackBuffer().createGraphics();
         paintBackground(bufferGraphics);
 
         int trackCount = session.getTrackCount();
@@ -1192,7 +1192,7 @@ public class YassBasicRenderer extends JPanel implements yass.renderer.YassPlayb
                 img = null;
             }
         }
-        BufferedImage imgArray[] = (BufferedImage[]) spriteVector.toArray(new BufferedImage[]{});
+        BufferedImage imgArray[] = spriteVector.toArray(new BufferedImage[]{});
         return imgArray;
     }
 

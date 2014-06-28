@@ -113,7 +113,7 @@ public class YassInstrumentFilter extends YassFilter {
 
         if (rule.equals("white")) {
             for (Enumeration<YassRow> en = t.getRows(); en.hasMoreElements(); ) {
-                YassRow r = (YassRow) en.nextElement();
+                YassRow r = en.nextElement();
                 if (!r.isNote()) {
                     continue;
                 }
@@ -126,7 +126,7 @@ public class YassInstrumentFilter extends YassFilter {
             hit = true;
         } else if (rule.equals("black")) {
             for (Enumeration<YassRow> en = t.getRows(); en.hasMoreElements(); ) {
-                YassRow r = (YassRow) en.nextElement();
+                YassRow r = en.nextElement();
                 if (!r.isNote()) {
                     continue;
                 }
@@ -141,7 +141,7 @@ public class YassInstrumentFilter extends YassFilter {
             int minHeight = 1000;
             int maxHeight = -1000;
             for (Enumeration<YassRow> en = t.getRows(); en.hasMoreElements(); ) {
-                YassRow r = (YassRow) en.nextElement();
+                YassRow r = en.nextElement();
                 if (!r.isNote()) {
                     continue;
                 }

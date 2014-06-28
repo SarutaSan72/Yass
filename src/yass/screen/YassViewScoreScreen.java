@@ -85,7 +85,7 @@ public class YassViewScoreScreen extends YassScreen {
         Vector<YassScore> scores = getDatabase().getScore(session.getArtist(), session.getTitle());
         if (scores != null) {
             for (Enumeration<YassScore> en = scores.elements(); en.hasMoreElements() && i <= 5; i++) {
-                YassScore s = (YassScore) en.nextElement();
+                YassScore s = en.nextElement();
                 int score = s.getScore();
                 String name = s.getPlayer();
                 System.out.println(name + "/" + score);
@@ -218,7 +218,7 @@ public class YassViewScoreScreen extends YassScreen {
             int noteScore = (int) session.getTrack(t).getPlayerNoteScore();
             int goldenScore = (int) session.getTrack(t).getPlayerGoldenScore();
             int lineScore = (int) session.getTrack(t).getPlayerLineScore();
-            int playerScore = (int) session.getTrack(t).getPlayerScore();
+            int playerScore = session.getTrack(t).getPlayerScore();
 
             x = 20 + colw1 + n * colw2;
             y = Math.max(margin + 3 * colh, margin + yspace / 2);

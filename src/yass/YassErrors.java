@@ -272,7 +272,7 @@ public class YassErrors extends JPanel {
             table.zoomPage();
         }
 
-        YassRow r = (YassRow) table.getRowAt(i);
+        YassRow r = table.getRowAt(i);
 
         String msg = getMessage(r, id);
         popupLabel.setText(msg);
@@ -307,7 +307,7 @@ public class YassErrors extends JPanel {
         }
         int i = rows[0];
 
-        YassRow r = (YassRow) table.getRowAt(i);
+        YassRow r = table.getRowAt(i);
         if (!r.hasMessage()) {
             hideMessage();
             return;
@@ -443,7 +443,7 @@ public class YassErrors extends JPanel {
                 if (msg != null) {
                     int id = 0;
                     for (Enumeration<String[]> en = msg.elements(); en.hasMoreElements(); id++) {
-                        String[] m = (String[]) en.nextElement();
+                        String[] m = en.nextElement();
                         String m18 = I18.get(m[0]);
                         tm.addRow(new Object[]{m18, line, note, new Integer(i), txt, new Integer(id)});
                     }

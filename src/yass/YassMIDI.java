@@ -6,7 +6,6 @@ import javax.sound.midi.*;
  * Description of the Class
  *
  * @author Saruta
- * @created 28. April 2009
  */
 public class YassMIDI {
     Synthesizer synth = null;
@@ -80,7 +79,7 @@ public class YassMIDI {
      * @param argv Description of the Parameter
      */
     public static void main(String argv[]) {
-        YassMIDI m = new YassMIDI();
+        new YassMIDI();
     }
 
     /**

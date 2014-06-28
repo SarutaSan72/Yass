@@ -52,7 +52,7 @@ public class YassYearFilter extends YassFilter {
         }
         Collections.sort(years);
 
-        return (String[]) years.toArray(new String[]{});
+        return years.toArray(new String[]{});
     }
 
 

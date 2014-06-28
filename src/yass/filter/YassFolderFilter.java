@@ -40,7 +40,7 @@ public class YassFolderFilter extends YassFilter {
 
         Vector<String> folders = new Vector<>();
         for (Enumeration<YassSong> e = data.elements(); e.hasMoreElements(); ) {
-            YassSong s = (YassSong) e.nextElement();
+            YassSong s = e.nextElement();
             String folder = s.getFolder();
             if (folder == null || folder.length() < 1) {
                 continue;
@@ -51,7 +51,7 @@ public class YassFolderFilter extends YassFilter {
         }
         Collections.sort(folders);
 
-        return (String[]) folders.toArray(new String[]{});
+        return folders.toArray(new String[]{});
     }
 
 

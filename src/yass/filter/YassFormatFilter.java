@@ -87,7 +87,7 @@ public class YassFormatFilter extends YassFilter {
                 try {
                     AudioFileFormat baseFileFormat = AudioSystem.getAudioFileFormat(file);
                     if (baseFileFormat instanceof TAudioFileFormat) {
-                        Map properties = ((TAudioFileFormat) baseFileFormat).properties();
+                        Map properties = baseFileFormat.properties();
                         Boolean vbr = (Boolean) properties.get("mp3.vbr");
                         if (vbr == null) {
                             vbr = (Boolean) properties.get("vbr");

@@ -196,13 +196,13 @@ public class CoverGenerator {
 			BufferedImage img2 = null;
 			BufferedImage img3 = null;
 			try {
-				img = (BufferedImage)javax.imageio.ImageIO.read(new File(image));
+				img = ImageIO.read(new File(image));
 			} catch(Exception e){}			
 			try {
-				img2 = (BufferedImage)javax.imageio.ImageIO.read(new File(overlay));
+				img2 = ImageIO.read(new File(overlay));
 			} catch(Exception e){}			
 			try {
-				img3 = (BufferedImage)javax.imageio.ImageIO.read(new File(overlay2));
+				img3 = ImageIO.read(new File(overlay2));
 			} catch(Exception e){}			
 
 

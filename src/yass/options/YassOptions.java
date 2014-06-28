@@ -173,7 +173,7 @@ public class YassOptions extends JDialog {
      * @return The panel value
      */
     public OptionsPanel getPanel(String id) {
-        return (OptionsPanel) panels.get(id);
+        return panels.get(id);
     }
 
     /**

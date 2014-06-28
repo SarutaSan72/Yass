@@ -4,7 +4,6 @@ package yass;
  * Description of the Interface
  *
  * @author Saruta
- * @created 19. September 2007
  */
 public interface TabChangeListener {
     /**

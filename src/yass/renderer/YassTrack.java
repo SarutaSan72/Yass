@@ -481,7 +481,7 @@ public class YassTrack implements Cloneable {
             return;
         }
 
-        YassPlayerNote lastNote = (YassPlayerNote) playerNotes.lastElement();
+        YassPlayerNote lastNote = playerNotes.lastElement();
         long lastEndMillis = lastNote.getEndMillis();
         lastNote.setEndMillis(currentMillis);
         if (lastNote.getHeight() != height) {

@@ -99,7 +99,7 @@ public class YassCaptureAudio {
                 }
             }
         }
-        return (String[]) m.toArray(new String[]{});
+        return m.toArray(new String[]{});
     }
 
     /**
@@ -331,7 +331,7 @@ public class YassCaptureAudio {
      * @return The channels value
      */
     public int getChannels(String name) {
-        return ((Integer) channelsHash.get(name)).intValue();
+        return channelsHash.get(name).intValue();
     }
 
     /**
@@ -373,7 +373,7 @@ public class YassCaptureAudio {
      * @param name Description of the Parameter
      */
     public void stopQuery(String name) {
-        TargetDataLine line = (TargetDataLine) linesHash.get(name);
+        TargetDataLine line = linesHash.get(name);
         if (line == null) {
             return;
         }
@@ -394,7 +394,7 @@ public class YassCaptureAudio {
         YassPlayerNote left = new YassPlayerNote(YassPlayerNote.NOISE, 0, 0);
         YassPlayerNote right = new YassPlayerNote(YassPlayerNote.NOISE, 0, 0);
 
-        TargetDataLine line = (TargetDataLine) linesHash.get(name);
+        TargetDataLine line = linesHash.get(name);
         try {
             if (line.available() < buffer.length) {
                 // try {
@@ -493,10 +493,10 @@ public class YassCaptureAudio {
                 return;
             }
 
-            YassPlayerNote currentLeft = (YassPlayerNote) (notesLeft
-                    .lastElement());
-            YassPlayerNote currentRight = (YassPlayerNote) (notesRight
-                    .lastElement());
+            YassPlayerNote currentLeft = notesLeft
+                    .lastElement();
+            YassPlayerNote currentRight = notesRight
+                    .lastElement();
 
             double levelLeft = currentLeft.getLevel();
             double levelRight = currentRight.getLevel();
@@ -564,7 +564,7 @@ public class YassCaptureAudio {
             int lastpy = -10;
             for (Enumeration<YassPlayerNote> en = notesLeft.elements(); en
                     .hasMoreElements(); ) {
-                YassPlayerNote n = (YassPlayerNote) en.nextElement();
+                YassPlayerNote n = en.nextElement();
                 if (n.getHeight() == YassPlayerNote.NOISE) {
                     last = YassPlayerNote.NOISE;
                     x += 4;
@@ -593,7 +593,7 @@ public class YassCaptureAudio {
             g.setColor(rightColor);
             for (Enumeration<YassPlayerNote> en = notesRight.elements(); en
                     .hasMoreElements(); ) {
-                YassPlayerNote n = (YassPlayerNote) en.nextElement();
+                YassPlayerNote n = en.nextElement();
                 if (n.getHeight() == YassPlayerNote.NOISE) {
                     last = YassPlayerNote.NOISE;
                     x += 4;

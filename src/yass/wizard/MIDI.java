@@ -78,7 +78,7 @@ public class MIDI extends JPanel {
         } else {
             gui = new JTextPane();
             ((JTextPane) gui).setText(convert.createTable(voiceTrack));
-            ((JTextPane) gui).setEnabled(false);
+            gui.setEnabled(false);
         }
 
         JRootPane root = SwingUtilities.getRootPane(content);

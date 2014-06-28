@@ -99,9 +99,9 @@ public class YassTimeStats extends YassStats {
         int dlen = lengths.size();
         int dlen2 = dlen / 2;
         for (int d = 0; d < dlen2; d++) {
-            beatCount1 += ((Integer) (lengths.elementAt(d))).intValue();
-            beatCount2 += ((Integer) (lengths.elementAt(d + dlen / 4))).intValue();
-            beatCount3 += ((Integer) (lengths.elementAt((int) Math.min(d + dlen2, dlen)))).intValue();
+            beatCount1 += lengths.elementAt(d).intValue();
+            beatCount2 += lengths.elementAt(d + dlen / 4).intValue();
+            beatCount3 += lengths.elementAt((int) Math.min(d + dlen2, dlen)).intValue();
         }
 
         float beat_to_sec = (4 * bpm) / 60f;
@@ -166,9 +166,9 @@ public class YassTimeStats extends YassStats {
         int dlen = ratios.size();
         int dlen2 = dlen / 2;
         for (int d = 0; d < dlen2; d++) {
-            ratio1 += ((Float) (ratios.elementAt(d))).floatValue();
-            ratio2 += ((Float) (ratios.elementAt(d + dlen / 4))).floatValue();
-            ratio3 += ((Float) (ratios.elementAt((int) Math.min(d + dlen2, dlen)))).floatValue();
+            ratio1 += ratios.elementAt(d).floatValue();
+            ratio2 += ratios.elementAt(d + dlen / 4).floatValue();
+            ratio3 += ratios.elementAt(Math.min(d + dlen2, dlen)).floatValue();
         }
 
         float beat_to_sec = (4 * bpm) / 60f;

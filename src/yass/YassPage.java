@@ -7,7 +7,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 6. September 2007
  */
 public class YassPage implements Comparable<Object> {
     private Vector<YassRow> rows = null;
@@ -81,7 +80,7 @@ public class YassPage implements Comparable<Object> {
     public int getMinBeat() {
         int min = Integer.MAX_VALUE;
         for (Enumeration<YassRow> en = rows.elements(); en.hasMoreElements(); ) {
-            YassRow r = (YassRow) en.nextElement();
+            YassRow r = en.nextElement();
             if (r.isNote()) {
                 min = Math.min(min, r.getBeatInt());
             }
@@ -98,7 +97,7 @@ public class YassPage implements Comparable<Object> {
     public int getMaxBeat() {
         int max = -1;
         for (Enumeration<YassRow> en = rows.elements(); en.hasMoreElements(); ) {
-            YassRow r = (YassRow) en.nextElement();
+            YassRow r = en.nextElement();
             if (r.isNote()) {
                 max = Math.max(max, r.getBeatInt() + r.getLengthInt());
             }
@@ -164,12 +163,12 @@ public class YassPage implements Comparable<Object> {
         Enumeration<YassRow> en2 = p.getRows().elements();
 
         while (en.hasMoreElements() && en2.hasMoreElements()) {
-            YassRow r = (YassRow) en.nextElement();
+            YassRow r = en.nextElement();
             if (!r.isNote()) {
                 break;
             }
 
-            YassRow r2 = (YassRow) en2.nextElement();
+            YassRow r2 = en2.nextElement();
             if (!r2.isNote()) {
                 break;
             }
@@ -180,13 +179,13 @@ public class YassPage implements Comparable<Object> {
         }
 
         while (en.hasMoreElements()) {
-            YassRow r = (YassRow) en.nextElement();
+            YassRow r = en.nextElement();
             if (r.isNote()) {
                 return false;
             }
         }
         while (en2.hasMoreElements()) {
-            YassRow r2 = (YassRow) en2.nextElement();
+            YassRow r2 = en2.nextElement();
             if (r2.isNote()) {
                 return false;
             }

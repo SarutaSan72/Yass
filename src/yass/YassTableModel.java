@@ -88,7 +88,7 @@ public class YassTableModel extends AbstractTableModel {
             return "";
         }
         // concurrency problem at startup
-        YassRow r = (YassRow) data.elementAt(row);
+        YassRow r = data.elementAt(row);
         if (r == null) {
             return "";
         }
@@ -116,7 +116,7 @@ public class YassTableModel extends AbstractTableModel {
      * @return The cellEditable value
      */
     public boolean isCellEditable(int row, int col) {
-        YassRow r = (YassRow) data.elementAt(row);
+        YassRow r = data.elementAt(row);
         if (col == 0) {
             return false;
         }
@@ -141,11 +141,11 @@ public class YassTableModel extends AbstractTableModel {
      * @param col   The new valueAt value
      */
     public void setValueAt(Object value, int row, int col) {
-        YassRow r = (YassRow) data.elementAt(row);
+        YassRow r = data.elementAt(row);
         if (r.isNoteOrPageBreak()) {
             if (col >= 1 && col <= 3) {
                 try {
-                    value = (String) (Integer.parseInt((String) value) + "");
+                    value = Integer.parseInt((String) value) + "";
                 } catch (Exception e) {
                     return;
                 }
@@ -237,7 +237,7 @@ public class YassTableModel extends AbstractTableModel {
      * @param i      The new rowAt value
      */
     public void setRowAt(String type, String time, String length, String height, String txt, int i) {
-        YassRow r = (YassRow) data.elementAt(i);
+        YassRow r = data.elementAt(i);
         r.setRow(type, time, length, height, txt);
     }
 
@@ -262,7 +262,7 @@ public class YassTableModel extends AbstractTableModel {
         if (row < 0 || row >= data.size()) {
             return null;
         }
-        return (YassRow) data.elementAt(row);
+        return data.elementAt(row);
     }
 
 
@@ -276,7 +276,7 @@ public class YassTableModel extends AbstractTableModel {
         int n = data.size();
         int i = 0;
         while (i < n) {
-            YassRow r = (YassRow) data.elementAt(i++);
+            YassRow r = data.elementAt(i++);
             if (r.isComment() && r.getCommentTag().equals(ctype)) {
                 return r;
             }
@@ -294,7 +294,7 @@ public class YassTableModel extends AbstractTableModel {
         int n = data.size();
         int i = n - 1;
         while (i > 0) {
-            YassRow r = (YassRow) data.elementAt(i--);
+            YassRow r = data.elementAt(i--);
             if (r.isEnd()) {
                 return r;
             }
@@ -311,7 +311,7 @@ public class YassTableModel extends AbstractTableModel {
     public Hashtable<String, Vector<YassRow>> collectMessages() {
         Hashtable<String, Vector<YassRow>> t = new Hashtable<>();
         for (Enumeration<YassRow> e = data.elements(); e.hasMoreElements(); ) {
-            YassRow r = (YassRow) e.nextElement();
+            YassRow r = e.nextElement();
             if (!r.hasMessage()) {
                 continue;
             }
@@ -319,7 +319,7 @@ public class YassTableModel extends AbstractTableModel {
             for (Enumeration<?> e2 = messages.elements(); e2.hasMoreElements(); ) {
                 String[] msg = (String[]) e2.nextElement();
 
-                Vector<YassRow> list = (Vector<YassRow>) t.get(msg[0]);
+                Vector<YassRow> list = t.get(msg[0]);
                 if (list == null) {
                     t.put(msg[0], list = new Vector<>());
                 }

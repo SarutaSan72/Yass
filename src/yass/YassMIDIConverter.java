@@ -301,16 +301,16 @@ public class YassMIDIConverter implements DropTargetListener {
                 duration = Math.max(t, duration);
 
                 MidiMessage m = e.getMessage();
-                int status = (int) (m.getStatus() & 0xFF);
+                int status = m.getStatus() & 0xFF;
                 int len = m.getLength();
                 byte[] bmsg = m.getMessage();
                 int[] msg = new int[len];
                 for (int k = 0; k < len; k++) {
-                    msg[k] = (int) (bmsg[k] & 0xFF);
+                    msg[k] = bmsg[k] & 0xFF;
                 }
 
-                int eventType = (int) (status / 16);
-                int channel = (int) (status / 15);
+                int eventType = status / 16;
+                int channel = status / 15;
 
                 if (msg[0] == 255) {
                     // special
@@ -651,9 +651,9 @@ public class YassMIDIConverter implements DropTargetListener {
                 int ntn = 0;
                 for (Enumeration<Long> tmap = tempos.elements(); ++ntn < 5
                         && tmap.hasMoreElements(); ) {
-                    long tick = ((Long) (tmap.nextElement())).longValue();
-                    long mpq = ((Long) (tmap.nextElement())).longValue();
-                    double bpm2 = (double) 60000000.0 / mpq;
+                    long tick = tmap.nextElement().longValue();
+                    long mpq = tmap.nextElement().longValue();
+                    double bpm2 = 60000000.0 / mpq;
                     info[bb] += " "
                             + at.format(new Object[]{new Integer((int) bpm2),
                             new Integer((int) tickToTime(tick))});
@@ -1498,11 +1498,11 @@ public class YassMIDIConverter implements DropTargetListener {
         double diffTime = 0;
         long changeTick = 0;
         long lastTick = 0;
-        long microsecondsPerQuarterNote = (long) (60000000L / 120);
+        long microsecondsPerQuarterNote = 60000000L / 120;
         // default bpm = 120
         for (Enumeration<Long> tmap = tempos.elements(); tmap.hasMoreElements(); ) {
             lastTick = changeTick;
-            changeTick = ((Long) (tmap.nextElement())).longValue();
+            changeTick = tmap.nextElement().longValue();
             if (tick < changeTick) {
                 break;
             }
@@ -1513,7 +1513,7 @@ public class YassMIDIConverter implements DropTargetListener {
             // +" ("+changeTick+")");
             time += diffTime;
 
-            microsecondsPerQuarterNote = ((Long) (tmap.nextElement()))
+            microsecondsPerQuarterNote = tmap.nextElement()
                     .longValue();
         }
         diffTime = (tick - lastTick) / (double) ticksPerQuarterNote
@@ -1536,11 +1536,11 @@ public class YassMIDIConverter implements DropTargetListener {
         double diffTime = 0;
         long changeTick = 0;
         long lastTick = 0;
-        long microsecondsPerQuarterNote = (long) (60000000L / 120);
+        long microsecondsPerQuarterNote = 60000000L / 120;
         // default bpm = 120
         for (Enumeration<Long> tmap = tempos.elements(); tmap.hasMoreElements(); ) {
             lastTick = changeTick;
-            changeTick = ((Long) (tmap.nextElement())).longValue();
+            changeTick = tmap.nextElement().longValue();
 
             diffTime = (changeTick - lastTick) / (double) ticksPerQuarterNote
                     * microsecondsPerQuarterNote / 1000000.0;
@@ -1549,7 +1549,7 @@ public class YassMIDIConverter implements DropTargetListener {
             }
             mytime += diffTime;
             // System.out.println("  +"+ diffTime +" ("+changeTick+")");
-            microsecondsPerQuarterNote = ((Long) (tmap.nextElement()))
+            microsecondsPerQuarterNote = tmap.nextElement()
                     .longValue();
         }
         diffTime = time - mytime;
@@ -1708,7 +1708,7 @@ public class YassMIDIConverter implements DropTargetListener {
                         sheet.refreshImage();
                     }
 
-                    Graphics2D gb = (Graphics2D) sheet.getBackBuffer()
+                    Graphics2D gb = sheet.getBackBuffer()
                             .createGraphics();
                     gb.drawImage(sheet.getPlainBuffer(), 0, 0, null);
                     if (sheet.getPlainBuffer().contentsLost()) {

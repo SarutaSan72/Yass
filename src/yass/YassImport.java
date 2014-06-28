@@ -446,7 +446,7 @@ public class YassImport {
                         String[] oldDirShortName = new String[ntarget];
                         File[] oldDir = new File[ntarget];
                         for (Enumeration<YassSong> en = targets.elements(); en.hasMoreElements(); ) {
-                            YassSong song = (YassSong) en.nextElement();
+                            YassSong song = en.nextElement();
                             oldDirName[m] = song.getDirectory();
                             oldDirShortName[m] = oldDirName[m].substring(songdir.length() + 1);
                             oldDir[m] = new File(oldDirName[m]);

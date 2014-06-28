@@ -273,7 +273,7 @@ public class PrintDetails implements PrintPlugin {
             // bug: cannot add chapter to multicolumntext;
 
             for (Enumeration<YassSong> e = songList.elements(); e.hasMoreElements(); ) {
-                YassSong s = (YassSong) e.nextElement();
+                YassSong s = e.nextElement();
                 String nr = i + "";
                 i++;
                 String complete = s.getComplete();
@@ -405,7 +405,7 @@ public class PrintDetails implements PrintPlugin {
     PdfPTable createPDFTable() {
         PdfPTable datatable = new PdfPTable(ncol);
         try {
-            float twidth = (float) rect.getRight() - mleft - mright;
+            float twidth = rect.getRight() - mleft - mright;
             if (pageColNum == 2) {
                 twidth -= mcol;
                 twidth /= 2;

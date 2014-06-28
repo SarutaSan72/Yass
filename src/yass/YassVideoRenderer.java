@@ -215,7 +215,7 @@ public class YassVideoRenderer implements VideoRenderer, FrameGrabbingControl {
      * @return The component value
      */
     public Component getComponent() {
-        return (Component) comp;
+        return comp;
     }
 
 

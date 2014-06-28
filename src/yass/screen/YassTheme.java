@@ -79,7 +79,7 @@ public class YassTheme {
             rgba = rgba | (a << 24);
             cols.addElement(new Color(rgba, true));
         }
-        colors = (Color[]) cols.toArray(new Color[]{});
+        colors = cols.toArray(new Color[]{});
 
         i = 1;
         cols.clear();
@@ -100,7 +100,7 @@ public class YassTheme {
             rgba = rgba | (a << 24);
             cols.addElement(new Color(rgba, true));
         }
-        pcolors = (Color[]) cols.toArray(new Color[]{});
+        pcolors = cols.toArray(new Color[]{});
 
         i = 0;
         cols.clear();
@@ -121,7 +121,7 @@ public class YassTheme {
             rgba = rgba | (a << 24);
             cols.addElement(new Color(rgba, true));
         }
-        rcolors = (Color[]) cols.toArray(new Color[]{});
+        rcolors = cols.toArray(new Color[]{});
     }
 
     /**
@@ -352,7 +352,7 @@ public class YassTheme {
      */
     public void interruptAll() {
         for (Enumeration<String> en = threads.keys(); en.hasMoreElements(); ) {
-            interruptSample((String) en.nextElement());
+            interruptSample(en.nextElement());
         }
     }
 
@@ -361,7 +361,7 @@ public class YassTheme {
      */
     public void unloadAll() {
         for (Enumeration<String> en = threads.keys(); en.hasMoreElements(); ) {
-            unloadSample((String) en.nextElement());
+            unloadSample(en.nextElement());
         }
     }
 
@@ -571,7 +571,7 @@ public class YassTheme {
                 threads.remove(sampleName);
                 return;
             }
-            AudioFormat format = (AudioFormat) formats.get(sampleName);
+            AudioFormat format = formats.get(sampleName);
             Vector<?> buffer = (Vector<?>) buffers.get(sampleName);
 
             if (format == null || buffer == null) {
@@ -598,7 +598,7 @@ public class YassTheme {
             }
 
             double framePos = 1;
-            int lengthInFrames = (int) (buffer.size() / frameSize) - 1;
+            int lengthInFrames = buffer.size() / frameSize - 1;
             tmpBuff = new byte[BUFFER_SIZE];
 
             boolean once = true;
@@ -608,7 +608,7 @@ public class YassTheme {
                     int bufferPos = 0;
                     while (!interrupt && (bufferPos < BUFFER_SIZE) & (Math.floor(framePos) <= lengthInFrames)) {
                         int noFrame = (int) Math.floor(framePos);
-                        int pos = (int) ((noFrame - 1) * frameSize);
+                        int pos = (noFrame - 1) * frameSize;
                         for (int i = 0; i < frameSize && !interrupt; i++) {
                             Byte sample = (Byte) buffer.get(pos + i + 1);
                             tmpBuff[bufferPos++] = sample.byteValue();
@@ -633,7 +633,7 @@ public class YassTheme {
                                 break;
                             }
                             int n = Math.min(available, len);
-                            n = ((int) (n / frameSize)) * frameSize;
+                            n = n / frameSize * frameSize;
                             line.write(tmpBuff, i, n);
                             i += n;
                             len -= n;

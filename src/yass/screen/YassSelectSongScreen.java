@@ -169,7 +169,7 @@ public class YassSelectSongScreen extends YassScreen {
         song.clearStats();
         table.loadFile(sd.getKaraokeData().getPath());
         for (Enumeration<YassStats> en = stats.elements(); en.hasMoreElements(); ) {
-            YassStats st = (YassStats) en.nextElement();
+            YassStats st = en.nextElement();
             st.calcStats(song, table);
         }
     }

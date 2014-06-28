@@ -79,7 +79,7 @@ public class YassFilesFilter extends YassFilter {
                 String artist = s.getArtist();
                 String at = artist + " - " + title;
 
-                YassSong s2 = (YassSong) hash.get(at);
+                YassSong s2 = hash.get(at);
                 if (s2 != null) {
                     if (!songs.contains(s2)) {
                         songs.addElement(s2);

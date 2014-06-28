@@ -107,7 +107,7 @@ public class WizardModel {
         
     }  
     WizardPanelDescriptor getPanel(Object id) {
-        return (WizardPanelDescriptor) panelHashmap.get(id);
+        return panelHashmap.get(id);
     }
     
     /**
@@ -121,7 +121,7 @@ public class WizardModel {
         //  be displayed.
         
         WizardPanelDescriptor nextPanel =
-            (WizardPanelDescriptor)panelHashmap.get(id);
+                panelHashmap.get(id);
         
         //  If we couldn't find the panel that should be displayed, return
         //  false.
@@ -179,7 +179,7 @@ public class WizardModel {
     } 
     
     Icon getBackButtonIcon() {
-        return (Icon)buttonIconHashmap.get(BACK_BUTTON_ICON_PROPERTY);
+        return buttonIconHashmap.get(BACK_BUTTON_ICON_PROPERTY);
     }
     
     void setBackButtonIcon(Icon newIcon) {
@@ -192,7 +192,7 @@ public class WizardModel {
     }
 
     Icon getNextFinishButtonIcon() {
-        return (Icon)buttonIconHashmap.get(NEXT_FINISH_BUTTON_ICON_PROPERTY);
+        return buttonIconHashmap.get(NEXT_FINISH_BUTTON_ICON_PROPERTY);
     }
     
     public void setNextFinishButtonIcon(Icon newIcon) {
@@ -205,7 +205,7 @@ public class WizardModel {
     }
 
     Icon getCancelButtonIcon() {
-        return (Icon)buttonIconHashmap.get(CANCEL_BUTTON_ICON_PROPERTY);
+        return buttonIconHashmap.get(CANCEL_BUTTON_ICON_PROPERTY);
     }
     
     void setCancelButtonIcon(Icon newIcon) {
@@ -219,7 +219,7 @@ public class WizardModel {
         
     
     Boolean getBackButtonEnabled() {
-        return (Boolean)buttonEnabledHashmap.get(BACK_BUTTON_ENABLED_PROPERTY);
+        return buttonEnabledHashmap.get(BACK_BUTTON_ENABLED_PROPERTY);
     }
     
     void setBackButtonEnabled(Boolean newValue) {
@@ -232,7 +232,7 @@ public class WizardModel {
     }
 
     Boolean getNextFinishButtonEnabled() {
-        return (Boolean)buttonEnabledHashmap.get(NEXT_FINISH_BUTTON_ENABLED_PROPERTY);
+        return buttonEnabledHashmap.get(NEXT_FINISH_BUTTON_ENABLED_PROPERTY);
     }
     
     void setNextFinishButtonEnabled(Boolean newValue) {
@@ -245,7 +245,7 @@ public class WizardModel {
     }
     
     Boolean getCancelButtonEnabled() {
-        return (Boolean)buttonEnabledHashmap.get(CANCEL_BUTTON_ENABLED_PROPERTY);
+        return buttonEnabledHashmap.get(CANCEL_BUTTON_ENABLED_PROPERTY);
     }
     
     void setCancelButtonEnabled(Boolean newValue) {

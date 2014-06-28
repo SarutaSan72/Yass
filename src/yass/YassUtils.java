@@ -140,7 +140,7 @@ public class YassUtils {
         try {
             AudioFileFormat baseFileFormat = AudioSystem.getAudioFileFormat(f);
             if (baseFileFormat instanceof TAudioFileFormat) {
-                Map<?, ?> properties = ((TAudioFileFormat) baseFileFormat).properties();
+                Map<?, ?> properties = baseFileFormat.properties();
                 String artist = (String) properties.get("author");
                 String title = (String) properties.get("title");
 
@@ -825,7 +825,7 @@ public class YassUtils {
         Object hint = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
 
         int type = (img.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
-        BufferedImage ret = (BufferedImage) img;
+        BufferedImage ret = img;
         int w;
         int h;
         if (higherQuality) {

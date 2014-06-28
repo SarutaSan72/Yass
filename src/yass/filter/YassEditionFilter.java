@@ -34,7 +34,7 @@ public class YassEditionFilter extends YassFilter {
     public String[] getGenericRules(Vector<YassSong> data) {
         Vector<String> editions = new Vector<>();
         for (Enumeration<YassSong> e = data.elements(); e.hasMoreElements(); ) {
-            YassSong s = (YassSong) e.nextElement();
+            YassSong s = e.nextElement();
             String edition = s.getEdition();
             if (edition == null || edition.length() < 1) {
                 continue;
@@ -45,7 +45,7 @@ public class YassEditionFilter extends YassFilter {
         }
         Collections.sort(editions);
 
-        return (String[]) editions.toArray(new String[]{});
+        return editions.toArray(new String[]{});
     }
 
 

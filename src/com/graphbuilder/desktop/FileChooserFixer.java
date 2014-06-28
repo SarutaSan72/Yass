@@ -246,7 +246,7 @@ public class FileChooserFixer implements KeyListener, MouseListener, Runnable {
 		Stack<Component> s = new Stack<>();
 		s.push(fc);
 		while (!s.isEmpty()) {
-			Component c = (Component) s.pop();
+			Component c = s.pop();
 
 			if (c instanceof Container) {
 				Container d = (Container) c;
@@ -280,7 +280,7 @@ public class FileChooserFixer implements KeyListener, MouseListener, Runnable {
 		Stack<Component> s = new Stack<>();
 		s.push(fc);
 		while (!s.isEmpty()) {
-			Component c = (Component) s.pop();
+			Component c = s.pop();
 
 			if (c instanceof Container) {
 				Container d = (Container) c;
@@ -314,7 +314,7 @@ public class FileChooserFixer implements KeyListener, MouseListener, Runnable {
 		Stack<Component> s = new Stack<>();
 		s.push(fc);
 		while (!s.isEmpty()) {
-			Component c = (Component) s.pop();
+			Component c = s.pop();
 
 			if (c instanceof Container) {
 				Container d = (Container) c;

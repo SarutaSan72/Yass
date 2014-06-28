@@ -282,7 +282,7 @@ public class YassSelectGroupScreen extends YassScreen {
         g2.setColor(getTheme().getColor(2));
         g2.setFont(getSubTextFont());
         YassScreenGroup sg = getGroupAt(selectedItem);
-        Rectangle clip = (Rectangle) g2.getClipBounds();
+        Rectangle clip = g2.getClipBounds();
         int cx = clip.x;
         int cw = clip.width;
         int n = sg.getSongs().size();
