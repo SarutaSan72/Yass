@@ -14,7 +14,6 @@ import java.util.StringTokenizer;
  * Description of the Class
  *
  * @author Saruta
- * @created 25. August 2007
  */
 public class Header extends JPanel {
     /**
@@ -144,7 +143,7 @@ public class Header extends JPanel {
             try {
                 int n = Integer.parseInt(s);
                 s = genres[n];
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         fileTable.setValueAt(s, 2, 1);
@@ -166,7 +165,7 @@ public class Header extends JPanel {
      *
      * @param s The new langage value
      */
-    public void setLangage(String s) {
+    public void setLanguage(String s) {
         fileTable.setValueAt(s, 3, 1);
     }
 
@@ -260,7 +259,7 @@ public class Header extends JPanel {
         URL url = I18.getResource("create_header.html");
         try {
             txt.setPage(url);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         content.add("Center", new JScrollPane(txt));
 
@@ -280,7 +279,6 @@ public class Header extends JPanel {
                         }
                     }
                 };
-        ;
         fileTable.setValueAt(I18.get("create_header_title"), 0, 0);
         fileTable.setValueAt(I18.get("create_header_artist"), 1, 0);
         fileTable.setValueAt(I18.get("create_header_genre"), 2, 0);

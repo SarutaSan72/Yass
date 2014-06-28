@@ -7,7 +7,6 @@ import yass.stats.YassStats;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. M�rz 2008
  */
 public class YassStatsFilter extends YassFilter {
     private YassStats stats = null;
@@ -81,7 +80,7 @@ public class YassStatsFilter extends YassFilter {
      * @return Description of the Return Value
      */
     public boolean accept(YassSong s) {
-        boolean hit = false;
+        boolean hit;
 
         if (rule.equals("all")) {
             hit = true;

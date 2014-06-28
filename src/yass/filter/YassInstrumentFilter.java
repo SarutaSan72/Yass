@@ -11,7 +11,6 @@ import java.util.Enumeration;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. M�rz 2008
  */
 public class YassInstrumentFilter extends YassFilter {
 
@@ -73,10 +72,7 @@ public class YassInstrumentFilter extends YassFilter {
             n += 12;
         }
         n = n % 12;
-        if (n == 0 || n == 2 || n == 4 || n == 5 || n == 7 || n == 9 || n == 11) {
-            return true;
-        }
-        return false;
+        return n == 0 || n == 2 || n == 4 || n == 5 || n == 7 || n == 9 || n == 11;
     }
 
     /**
@@ -98,8 +94,7 @@ public class YassInstrumentFilter extends YassFilter {
         boolean hit = false;
 
         if (rule.equals("all")) {
-            hit = true;
-            return hit;
+            return true;
         }
 
         if (t == null) {

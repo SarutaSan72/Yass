@@ -4,7 +4,6 @@ package yass.renderer;
  * Description of the Interface
  *
  * @author Saruta
- * @created 22. M�rz 2010
  */
 public class YassSession {
     /**
@@ -71,8 +70,8 @@ public class YassSession {
         start = startMillis;
         end = endMillis;
 
-        for (int i = 0; i < tracks.length; i++) {
-            tracks[i].session = this;
+        for (YassTrack track : tracks) {
+            track.session = this;
         }
         ratings = ratingText;
     }
@@ -92,9 +91,7 @@ public class YassSession {
      */
     public void addTrack() {
         YassTrack[] tracks2 = new YassTrack[tracks.length + 1];
-        for (int i = 0; i < tracks.length; i++) {
-            tracks2[i] = tracks[i];
-        }
+        System.arraycopy(tracks, 0, tracks2, 0, tracks.length);
         tracks2[tracks.length] = (YassTrack) tracks[0].clone();
         tracks = tracks2;
     }
@@ -233,8 +230,7 @@ public class YassSession {
         maxGoldenScore = golden;
         maxLineScore = line;
 
-        for (int k = 0; k < tracks.length; k++) {
-            YassTrack t = tracks[k];
+        for (YassTrack t : tracks) {
             int lineCount = t.getLineCount();
             int noteCount = t.getNoteCount();
 

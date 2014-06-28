@@ -6,7 +6,6 @@ import yass.I18;
  * Description of the Class
  *
  * @author Saruta
- * @created 22. August 2007
  */
 public class ColorPanel extends OptionsPanel {
     private static final long serialVersionUID = -3441746602050223699L;

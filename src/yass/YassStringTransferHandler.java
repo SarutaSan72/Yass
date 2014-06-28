@@ -11,7 +11,6 @@ import java.io.IOException;
  * Description of the Class
  *
  * @author Saruta
- * @created 22. September 2007
  */
 public abstract class YassStringTransferHandler extends TransferHandler {
 
@@ -80,8 +79,7 @@ public abstract class YassStringTransferHandler extends TransferHandler {
                 String str = (String) t.getTransferData(DataFlavor.stringFlavor);
                 importString(c, str);
                 return true;
-            } catch (UnsupportedFlavorException ufe) {
-            } catch (IOException ioe) {
+            } catch (UnsupportedFlavorException | IOException ignored) {
             }
         }
 
@@ -109,8 +107,8 @@ public abstract class YassStringTransferHandler extends TransferHandler {
      * @return Description of the Return Value
      */
     public boolean canImport(JComponent c, DataFlavor[] flavors) {
-        for (int i = 0; i < flavors.length; i++) {
-            if (DataFlavor.stringFlavor.equals(flavors[i])) {
+        for (DataFlavor flavor : flavors) {
+            if (DataFlavor.stringFlavor.equals(flavor)) {
                 return true;
             }
         }

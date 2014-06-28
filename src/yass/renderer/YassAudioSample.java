@@ -9,7 +9,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 9. Juli 2009
  */
 public class YassAudioSample {
     private static int channels = 1;
@@ -49,7 +48,7 @@ public class YassAudioSample {
         try {
             Thread.currentThread();
             Thread.sleep(20000);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         closeLine();
@@ -119,7 +118,7 @@ public class YassAudioSample {
             try {
                 stream.close();
                 ostream.close();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     }
@@ -153,7 +152,7 @@ public class YassAudioSample {
             try {
                 Thread.currentThread();
                 Thread.sleep(100);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     }
@@ -169,7 +168,7 @@ public class YassAudioSample {
 
         int framePos = (frameNum - 1) * frameSize;
         byte[] frame = new byte[frameSize];
-        Byte sample = null;
+        Byte sample;
         for (int i = 0; i < frameSize; i++) {
             sample = buffer.get(framePos + i + 1);
             frame[i] = sample.byteValue();
@@ -197,11 +196,11 @@ public class YassAudioSample {
 
         interrupt = false;
         finished = false;
-        double soundFramePos = 1;
+        double soundFramePos;
         int frameLength = sampleAudioFormat.getFrameSize();
         int lengthInFrames = buffer.size() / frameLength - 1;
 
-        byte[] sample = null;
+        byte[] sample;
 
         dataLine.flush();
 

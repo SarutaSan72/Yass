@@ -24,7 +24,6 @@ import java.util.*;
  * Description of the Class
  *
  * @author Saruta
- * @created 22. August 2007
  */
 public class YassSongList extends JTable {
     /**
@@ -4723,10 +4722,6 @@ public class YassSongList extends JTable {
     /**
      * Description of the Method
      *
-     * @param s        Description of the Parameter
-     * @param rowIndex Description of the Parameter
-     * @author Saruta
-     * @created 1. August 2008
      */
     class CacheCover extends Thread {
         YassSong s;
@@ -5054,9 +5049,6 @@ public class YassSongList extends JTable {
     /**
      * Constructor for the ThumbnailerThread object
      *
-     * @param d Description of the Parameter
-     * @author Saruta
-     * @created 1. August 2008
      */
     class ThumbnailerThread extends Thread {
         String dir = null;
@@ -5165,8 +5157,6 @@ public class YassSongList extends JTable {
     /**
      * Description of the Class
      *
-     * @author Saruta
-     * @created 22. August 2007
      */
     class CorrectorThread extends Thread {
         /**
@@ -5192,7 +5182,7 @@ public class YassSongList extends JTable {
          */
         public void run() {
             Vector<YassSong> data = sm.getData();
-            String filename = null;
+            String filename;
             int i = 0;
 
             int n = allsongs ? data.size() : getSelectedRows().length;
@@ -5296,8 +5286,6 @@ public class YassSongList extends JTable {
     /**
      * Description of the Class
      *
-     * @author Saruta
-     * @created 22. August 2007
      */
     class DefaultSongHeaderRenderer extends JLabel implements TableCellRenderer {
         private static final long serialVersionUID = -1846744957956407987L;
@@ -5393,8 +5381,6 @@ public class YassSongList extends JTable {
     /**
      * Description of the Class
      *
-     * @author Saruta
-     * @created 22. August 2007
      */
     class SongHeaderRenderer extends JLabel implements TableCellRenderer {
         private static final long serialVersionUID = -7168701811270714078L;
@@ -5655,8 +5641,6 @@ public class YassSongList extends JTable {
     /**
      * Description of the Class
      *
-     * @author Saruta
-     * @created 22. August 2007
      */
     class SongRenderer extends JLabel implements TableCellRenderer {
         private static final long serialVersionUID = -3155315980103953013L;
@@ -5801,8 +5785,6 @@ public class YassSongList extends JTable {
     /**
      * Description of the Class
      *
-     * @author Saruta
-     * @created 22. August 2007
      */
     class SongArtistRenderer extends JLabel implements TableCellRenderer {
         private static final long serialVersionUID = 3421629804624478692L;
@@ -5927,8 +5909,6 @@ public class YassSongList extends JTable {
     /**
      * Description of the Class
      *
-     * @author Saruta
-     * @created 22. August 2007
      */
     class SongTitleRenderer extends JLabel implements TableCellRenderer {
         private static final long serialVersionUID = -1054349571120736221L;
@@ -5970,7 +5950,7 @@ public class YassSongList extends JTable {
                 return this;
             }
             t = s.getTitle();
-            String key = null;
+            String key;
             if (t == null || t.length() < 1) {
                 key = "songlist_no_3";
                 t = i18Labels.get(key);
@@ -6106,7 +6086,7 @@ public class YassSongList extends JTable {
                 locked = s.isLocked();
                 video = s.getComplete().equals("V");
                 nobackground = s.getComplete().equals("b");
-                perfect = e.indexOf("[SC]") >= 0;
+                perfect = e.contains("[SC]");
 
                 langIndex = -1;
                 for (int i = 0; i < langArray.length; i++) {
@@ -6235,7 +6215,7 @@ public class YassSongList extends JTable {
                 int sec = 0;
                 try {
                     sec = Integer.parseInt(len);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
 
                 int min = sec / 60;
@@ -6250,7 +6230,6 @@ public class YassSongList extends JTable {
             if (ch) {
                 extra += "...";
             }
-            ch = false;
 
             g2d.setColor(Color.black);
             g2.drawString(t, x_text, sh);
@@ -6322,8 +6301,6 @@ public class YassSongList extends JTable {
     /**
      * Description of the Class
      *
-     * @author Saruta
-     * @created 22. August 2007
      */
     class SongMessageRenderer extends SongRenderer {
         private static final long serialVersionUID = -4287036798468224688L;
@@ -6355,7 +6332,6 @@ public class YassSongList extends JTable {
             int sw = fm.stringWidth(getText());
 
             if (big) {
-                big = getText().length() > 2;
                 g2d.drawString(getText(), width / 2 - sw / 2, 10);
             } else {
                 g2d.drawString(getText(), width / 2 - sw / 2, 11);
@@ -6366,8 +6342,6 @@ public class YassSongList extends JTable {
     /**
      * Description of the Class
      *
-     * @author Saruta
-     * @created 13. Oktober 2008
      */
     class FilterThread extends Thread {
         boolean isInterrupted = false;

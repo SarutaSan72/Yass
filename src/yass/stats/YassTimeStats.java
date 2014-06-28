@@ -10,7 +10,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. M�rz 2008
  */
 public class YassTimeStats extends YassStats {
 
@@ -101,7 +100,7 @@ public class YassTimeStats extends YassStats {
         for (int d = 0; d < dlen2; d++) {
             beatCount1 += lengths.elementAt(d).intValue();
             beatCount2 += lengths.elementAt(d + dlen / 4).intValue();
-            beatCount3 += lengths.elementAt((int) Math.min(d + dlen2, dlen)).intValue();
+            beatCount3 += lengths.elementAt(Math.min(d + dlen2, dlen)).intValue();
         }
 
         float beat_to_sec = (4 * bpm) / 60f;
@@ -109,8 +108,7 @@ public class YassTimeStats extends YassStats {
         float middle = (dlen2 / (float) beatCount2) * beat_to_sec;
         float secondhalf = (dlen2 / (float) beatCount3) * beat_to_sec;
 
-        float speed = Math.max(firsthalf, Math.max(middle, secondhalf));
-        return speed;
+        return Math.max(firsthalf, Math.max(middle, secondhalf));
     }
 
 
@@ -176,8 +174,7 @@ public class YassTimeStats extends YassStats {
         float middle = ratio2 / dlen2 * beat_to_sec;
         float secondhalf = ratio3 / dlen2 * beat_to_sec;
 
-        float speed = Math.max(firsthalf, Math.max(middle, secondhalf));
-        return speed;
+        return Math.max(firsthalf, Math.max(middle, secondhalf));
     }
 
 
@@ -190,8 +187,8 @@ public class YassTimeStats extends YassStats {
     public void calcStats(YassSong s, YassTable t) {
         int pagelenmax = 0;
         float notelen = 0;
-        float pagelensec = 0;
-        float notelenms = 0;
+        float pagelensec;
+        float notelenms;
 
         float holds1sec = 0;
         float holds3sec = 0;
@@ -199,9 +196,9 @@ public class YassTimeStats extends YassStats {
         float shorts50ms = 0;
 
         float notesgap = 0;
-        float notesgapms = 0;
-        float speedlen = 0;
-        float speeddist = 0;
+        float notesgapms;
+        float speedlen;
+        float speeddist;
 
         int i = 0;
         int n = t.getRowCount() - 1;

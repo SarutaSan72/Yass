@@ -10,7 +10,6 @@ import java.awt.image.BufferedImage;
  * Description of the Interface
  *
  * @author Saruta
- * @created 22. M�rz 2010
  */
 public interface YassPlaybackRenderer {
 

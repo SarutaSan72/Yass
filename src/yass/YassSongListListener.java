@@ -6,7 +6,6 @@ import java.util.EventListener;
  * Description of the Class
  *
  * @author Saruta
- * @created 10. Oktober 2007
  */
 public interface YassSongListListener extends EventListener {
 

@@ -12,7 +12,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. M�rz 2008
  */
 public class YassLanguageFilter extends YassFilter {
     private Vector<String> multiple = null;
@@ -49,7 +48,7 @@ public class YassLanguageFilter extends YassFilter {
         }
         Collections.sort(langs);
 
-        return langs.toArray(new String[]{});
+        return langs.toArray(new String[langs.size()]);
     }
 
 
@@ -143,7 +142,7 @@ public class YassLanguageFilter extends YassFilter {
      */
     public boolean accept(YassSong s) {
         String t = s.getLanguage();
-        boolean hit = false;
+        boolean hit;
 
         if (rule.equals("all")) {
             hit = true;

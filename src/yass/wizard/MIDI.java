@@ -15,7 +15,6 @@ import java.net.URL;
  * Description of the Class
  *
  * @author Saruta
- * @created 28. April 2009
  */
 public class MIDI extends JPanel {
     /**
@@ -51,7 +50,7 @@ public class MIDI extends JPanel {
         URL url = I18.getResource("create_midi.html");
         try {
             txt.setPage(url);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         txt.setEditable(false);
         content.add("North", new JScrollPane(txt));
@@ -128,8 +127,7 @@ public class MIDI extends JPanel {
      * @return The maxBPM value
      */
     public String getMaxBPM() {
-        String bpm = convert.getMaxBPM() + "";
-        return bpm;
+        return convert.getMaxBPM() + "";
     }
 }
 

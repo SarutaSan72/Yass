@@ -8,7 +8,6 @@ import java.util.*;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. M�rz 2008
  */
 public class YassArtistFilter extends YassFilter {
     private static boolean moveArticles = true;
@@ -65,7 +64,7 @@ public class YassArtistFilter extends YassFilter {
         }
         Collections.sort(artists);
 
-        return artists.toArray(new String[]{});
+        return artists.toArray(new String[artists.size()]);
     }
 
     /**
@@ -174,7 +173,7 @@ public class YassArtistFilter extends YassFilter {
      */
     public boolean accept(YassSong s) {
         String t = s.getArtist();
-        boolean hit = false;
+        boolean hit;
 
         if (moveArticles)
             t = getSortedArtist(t, s.getLanguage());

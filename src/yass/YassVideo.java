@@ -11,7 +11,6 @@ import java.awt.image.BufferedImage;
  * Description of the Class
  *
  * @author Saruta
- * @created 21. August 2007
  */
 public class YassVideo {
     YassProperties prop;
@@ -196,7 +195,7 @@ public class YassVideo {
         }
 
         boolean result = waitForState(mediaPlayer, Processor.Configured);
-        if (result == false) {
+        if (!result) {
             System.out.println("Cannot configure video player");
             noVideo();
             return;
@@ -207,22 +206,22 @@ public class YassVideo {
         TrackControl[] tc = mediaPlayer.getTrackControls();
         if (tc != null) {
             TrackControl vtc = null;
-            for (int i = 0; i < tc.length; i++) {
-                if (tc[i].getFormat() instanceof VideoFormat) {
-                    vtc = tc[i];
+            for (TrackControl aTc : tc) {
+                if (aTc.getFormat() instanceof VideoFormat) {
+                    vtc = aTc;
                     break;
                 }
             }
             if (vtc != null) {
                 try {
                     vtc.setRenderer(renderer);
-                } catch (Throwable e) {
+                } catch (Throwable ignored) {
                 }
             }
         }
 
         result = waitForState(mediaPlayer, Processor.Realized);
-        if (result == false) {
+        if (!result) {
             System.out.println("Cannot realize video player");
             noVideo();
             return;
@@ -314,11 +313,7 @@ public class YassVideo {
                 }
             }
         }
-        if (failed) {
-            return false;
-        } else {
-            return true;
-        }
+        return !failed;
     }
 
 
@@ -326,7 +321,6 @@ public class YassVideo {
      * Description of the Class
      *
      * @author Saruta
-     * @created 31. Juli 2008
      */
     class StateListener implements ControllerListener {
         /**
@@ -338,10 +332,8 @@ public class YassVideo {
             if (ce instanceof ControllerClosedEvent) {
                 setFailed();
             }
-            if (ce instanceof ControllerEvent) {
-                synchronized (getStateLock()) {
-                    getStateLock().notifyAll();
-                }
+            synchronized (getStateLock()) {
+                getStateLock().notifyAll();
             }
         }
     }

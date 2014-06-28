@@ -13,7 +13,6 @@ import java.net.URL;
  * Description of the Class
  *
  * @author Saruta
- * @created 26. August 2007
  */
 public class Edition extends JPanel {
     /**
@@ -23,7 +22,6 @@ public class Edition extends JPanel {
     private static final long serialVersionUID = -2933153105162906931L;
     private JComboBox<String> fc;
     private JTextField eField;
-    private String d = "";
 
 
     /**
@@ -59,9 +57,9 @@ public class Edition extends JPanel {
         if (folders == null) {
             return;
         }
-        for (int i = 0; i < folders.length; i++) {
-            if (folders[i].isDirectory()) {
-                fc.addItem(folders[i].getName());
+        for (File folder : folders) {
+            if (folder.isDirectory()) {
+                fc.addItem(folder.getName());
             }
         }
     }
@@ -83,8 +81,7 @@ public class Edition extends JPanel {
      * @param s The new folder value
      */
     public void setFolder(String s) {
-        d = s;
-        fc.getEditor().setItem(d);
+        fc.getEditor().setItem(s);
     }
 
 
@@ -123,7 +120,7 @@ public class Edition extends JPanel {
         URL url = I18.getResource("create_edition.html");
         try {
             txt.setPage(url);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         content.add("Center", new JScrollPane(txt));
 

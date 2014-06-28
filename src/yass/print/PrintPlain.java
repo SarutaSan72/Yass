@@ -136,8 +136,8 @@ public class PrintPlain implements PrintPlugin {
         show[7] = ed == 4;
         show[8] = ed == 5;
         ncol = 0;
-        for (int i = 0; i < show.length; i++) {
-            if (show[i]) {
+        for (boolean aShow : show) {
+            if (aShow) {
                 ncol++;
             }
         }
@@ -148,7 +148,6 @@ public class PrintPlain implements PrintPlugin {
         if (showCovers) {
             Document.compress = false;
         }
-        ;
 
         rect = PageSize.A4;
         if (format.equals(I18.get("print_plain_format_1"))) {
@@ -175,9 +174,9 @@ public class PrintPlain implements PrintPlugin {
 
 
                         public void onChapter(PdfWriter writer, Document document, float paragraphPosition, Paragraph title) {
-                            StringBuffer buf = new StringBuffer();
-                            for (Iterator<?> i = title.getChunks().iterator(); i.hasNext(); ) {
-                                Chunk chunk = (Chunk) i.next();
+                            StringBuilder buf = new StringBuilder();
+                            for (Object o : title.getChunks()) {
+                                Chunk chunk = (Chunk) o;
                                 buf.append(chunk.getContent());
                             }
                             if (act != null) {
@@ -211,7 +210,7 @@ public class PrintPlain implements PrintPlugin {
                                         sdf.setTimeZone(java.util.TimeZone.getDefault());
                                         String currentTime = sdf.format(cal.getTime());
                                         foot.addCell(new Phrase(new Chunk(currentTime, FontFactory.getFont(FontFactory.HELVETICA, 7, Font.PLAIN, new Color(100, 100, 100)))));
-                                    } catch (Exception e) {
+                                    } catch (Exception ignored) {
                                     }
                                 }
                                 foot.setTotalWidth(page.getWidth() - document.leftMargin() - document.rightMargin());
@@ -255,7 +254,7 @@ public class PrintPlain implements PrintPlugin {
 
             int i = 1;
             String alpha = "";
-            String tmpAlpha = "";
+            String tmpAlpha;
             String lastAlpha = "$";
             boolean firstChapter = true;
 
@@ -392,7 +391,7 @@ public class PrintPlain implements PrintPlugin {
                         img = com.lowagie.text.Image.getInstance(cacheFile);
                         img.scalePercent(50);
                         img.setAlignment(Image.LEFT | Image.UNDERLYING);
-                    } catch (Exception ex) {
+                    } catch (Exception ignored) {
                     }
                     if (img != null) {
                         ph.add(new Chunk(img, 0f, 0f));
@@ -403,7 +402,7 @@ public class PrintPlain implements PrintPlugin {
                 }
 
                 if (show[2]) {
-                    Phrase phr = null;
+                    Phrase phr;
                     phr = new Phrase(new Chunk(title, FontFactory.getFont(FontFactory.HELVETICA, 9, Font.PLAIN, new Color(0, 0, 0))));
                     if (version != null) {
                         phr.add(new Chunk("  " + version, FontFactory.getFont(FontFactory.HELVETICA, 7, Font.ITALIC, new Color(84, 84, 84))));
@@ -455,7 +454,6 @@ public class PrintPlain implements PrintPlugin {
         PdfPTable datatable = new PdfPTable(ncol);
         try {
             float twidth = rect.getRight() - mleft - mright;
-            float ttwidth = twidth;
 
             float headerwidths[] = new float[ncol];
             int i = 0;

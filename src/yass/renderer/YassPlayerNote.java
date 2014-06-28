@@ -4,7 +4,6 @@ package yass.renderer;
  * Description of the Class
  *
  * @author Saruta
- * @created 26. M�rz 2010
  */
 public class YassPlayerNote {
     /**

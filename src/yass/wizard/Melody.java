@@ -18,7 +18,6 @@ import java.net.URL;
  * Description of the Class
  *
  * @author Saruta
- * @created 26. August 2007
  */
 public class Melody extends JPanel {
     /**
@@ -69,7 +68,7 @@ public class Melody extends JPanel {
         txtField.setText(s);
         wizard.setValue("melody", s);
 
-        if (check.isSelected() || (s != null && (new File(s).exists()))) {
+        if (check.isSelected() || ((new File(s).exists()))) {
             wizard.setNextFinishButtonEnabled(true);
         } else {
             wizard.setNextFinishButtonEnabled(false);
@@ -91,7 +90,7 @@ public class Melody extends JPanel {
         URL url = I18.getResource("create_melody.html");
         try {
             txt.setPage(url);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         txt.setEditable(false);
         content.add("Center", new JScrollPane(txt));

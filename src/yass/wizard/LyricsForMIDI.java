@@ -17,7 +17,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 25. August 2007
  */
 public class LyricsForMIDI extends JPanel {
     /**
@@ -62,7 +61,7 @@ public class LyricsForMIDI extends JPanel {
         URL url = I18.getResource("create_lyrics_midi.html");
         try {
             txt.setPage(url);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         txt.setEditable(false);
         content.add("North", new JScrollPane(txt));
@@ -102,7 +101,7 @@ public class LyricsForMIDI extends JPanel {
                 });
 
         JPanel sp = new JPanel(new BorderLayout());
-        JScrollPane txtScroll = null;
+        JScrollPane txtScroll;
         sp.add("West", txtScroll = new JScrollPane(table = new YassTable()));
         txtScroll.setPreferredSize(new Dimension(150, 100));
         txtScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);

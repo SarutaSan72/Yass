@@ -11,7 +11,6 @@ import java.util.*;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. M�rz 2008
  */
 public class YassStats implements Cloneable {
     /**
@@ -36,15 +35,11 @@ public class YassStats implements Cloneable {
     public static YassStats allstats[] = null;
     private static Hashtable<String, Integer> hash = null;
     private static Vector<YassStats> plugins = null;
-    private static int index = -1;
+
     /**
      * Description of the Field
      */
     private static Properties prop = null;
-    /**
-     * Description of the Field
-     */
-    private String label = null;
 
 
     /**
@@ -110,19 +105,19 @@ public class YassStats implements Cloneable {
         for (Enumeration<YassStats> en = plugins.elements(); en.hasMoreElements(); ) {
             YassStats stats = en.nextElement();
             String s[] = stats.getIDs();
-            for (int i = 0; i < s.length; i++) {
+            for (String value : s) {
                 allstats[k] = stats;
-                allids[k] = s[i];
-                alllabels[k] = I18.get("stats_" + s[i] + "_title");
-                alldesc[k] = I18.get("stats_" + s[i] + "_msg");
-                hash.put(s[i], new Integer(k));
+                allids[k] = value;
+                alllabels[k] = I18.get("stats_" + value + "_title");
+                alldesc[k] = I18.get("stats_" + value + "_msg");
+                hash.put(value, new Integer(k));
                 k++;
             }
         }
     }
 
     private static void addPlugin(String classname) {
-        YassStats stats = null;
+        YassStats stats;
         try {
             Class<?> c = YassUtils.forName(classname);
             stats = (YassStats) c.newInstance();

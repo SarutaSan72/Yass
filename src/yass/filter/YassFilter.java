@@ -12,7 +12,6 @@ import java.util.*;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. M�rz 2008
  */
 public class YassFilter implements Cloneable {
     /**
@@ -60,7 +59,7 @@ public class YassFilter implements Cloneable {
      * @return Description of the Return Value
      */
     private static YassFilter addPlugin(String filtername) {
-        YassFilter f = null;
+        YassFilter f;
         try {
             Class<?> c = YassUtils.forName(filtername);
             f = (YassFilter) c.newInstance();
@@ -148,8 +147,7 @@ public class YassFilter implements Cloneable {
         }
         try {
             YassFilter f = hash.get(group);
-            YassFilter f2 = (YassFilter) f.clone();
-            return f2;
+            return (YassFilter) f.clone();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -168,10 +166,7 @@ public class YassFilter implements Cloneable {
             return false;
         }
         f = f.toLowerCase();
-        if (f.indexOf(str) >= 0) {
-            return true;
-        }
-        return false;
+        return f.indexOf(str) >= 0;
     }
 
     /**
@@ -367,14 +362,13 @@ public class YassFilter implements Cloneable {
      */
     public boolean accept(YassSong s) {
         String t = s.getDirectory() + File.separator + s.getFilename();
-        boolean hit = containsIgnoreCase(t, rule) ||
+        return containsIgnoreCase(t, rule) ||
                 containsIgnoreCase(s.getTitle(), rule) ||
                 containsIgnoreCase(s.getArtist(), rule) ||
                 containsIgnoreCase(s.getLanguage(), rule) ||
                 containsIgnoreCase(s.getEdition(), rule) ||
                 containsIgnoreCase(s.getGenre(), rule) ||
                 containsIgnoreCase(s.getVersion(), rule);
-        return hit;
     }
 }
 

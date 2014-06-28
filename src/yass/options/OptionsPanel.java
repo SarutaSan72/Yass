@@ -18,7 +18,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 22. August 2007
  */
 public class OptionsPanel extends JPanel {
     private static final long serialVersionUID = -5593710558109233649L;

@@ -30,7 +30,6 @@ import java.util.*;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. September 2006
  */
 public class YassTable extends JTable {
     /**

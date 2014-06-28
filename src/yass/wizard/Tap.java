@@ -16,7 +16,6 @@ import java.net.URL;
  * Description of the Class
  *
  * @author Saruta
- * @created 26. August 2007
  */
 public class Tap extends JPanel {
     /**
@@ -59,7 +58,7 @@ public class Tap extends JPanel {
         URL url = I18.getResource("create_tap.html");
         try {
             txt.setPage(url);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         txt.setEditable(false);
         content.add("North", new JScrollPane(txt));

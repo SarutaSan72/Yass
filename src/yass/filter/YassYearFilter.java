@@ -12,7 +12,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. M�rz 2008
  */
 public class YassYearFilter extends YassFilter {
 
@@ -52,7 +51,7 @@ public class YassYearFilter extends YassFilter {
         }
         Collections.sort(years);
 
-        return years.toArray(new String[]{});
+        return years.toArray(new String[years.size()]);
     }
 
 
@@ -180,7 +179,7 @@ public class YassYearFilter extends YassFilter {
     public boolean accept(YassSong s) {
         String year = s.getYear();
 
-        int y = -1;
+        int y;
         try {
             y = Integer.parseInt(year);
         } catch (Exception e) {

@@ -13,7 +13,6 @@ import java.io.File;
  * Description of the Class
  *
  * @author Saruta
- * @created 25. August 2007
  */
 public class CreateSongWizard extends Wizard {
     MP3 mp3 = null;

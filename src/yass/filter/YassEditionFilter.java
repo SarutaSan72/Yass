@@ -11,7 +11,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. M�rz 2008
  */
 public class YassEditionFilter extends YassFilter {
 
@@ -45,7 +44,7 @@ public class YassEditionFilter extends YassFilter {
         }
         Collections.sort(editions);
 
-        return editions.toArray(new String[]{});
+        return editions.toArray(new String[editions.size()]);
     }
 
 

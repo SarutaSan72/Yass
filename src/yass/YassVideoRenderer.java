@@ -17,7 +17,6 @@ import java.awt.image.*;
  * Description of the Class
  *
  * @author Saruta
- * @created 27. Juli 2008
  */
 public class YassVideoRenderer implements VideoRenderer, FrameGrabbingControl {
     private JComponent comp = null;
@@ -274,8 +273,7 @@ public class YassVideoRenderer implements VideoRenderer, FrameGrabbingControl {
      * @return The controls value
      */
     public Object[] getControls() {
-        Object[] obj = {this};
-        return obj;
+        return new Object[]{this};
     }
 
 

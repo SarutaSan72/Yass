@@ -8,7 +8,6 @@ import java.awt.*;
  * Description of the Class
  *
  * @author Saruta
- * @created 19. September 2007
  */
 public class YassTableRenderer extends DefaultTableCellRenderer {
     private static final long serialVersionUID = -8540061131858129154L;

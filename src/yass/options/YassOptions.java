@@ -18,11 +18,9 @@ import java.util.Hashtable;
  * Description of the Class
  *
  * @author Saruta
- * @created 22. August 2007
  */
 public class YassOptions extends JDialog {
     private static final long serialVersionUID = -3946878493552010967L;
-    private YassProperties prop = null;
     private JTree tree = null;
     private Hashtable<String, OptionsPanel> panels = null;
     private JPanel main = null;
@@ -36,7 +34,7 @@ public class YassOptions extends JDialog {
     public YassOptions(YassActions a) {
         super(new OwnerFrame());
 
-        this.prop = a.getProperties();
+        YassProperties prop = a.getProperties();
         panels = new Hashtable<>();
 
         DefaultMutableTreeNode top = new DefaultMutableTreeNode("Yass");
@@ -117,8 +115,6 @@ public class YassOptions extends JDialog {
                             return;
                         }
 
-                        boolean ok = true;
-
                         JOptionPane optionPane = (JOptionPane) e.getSource();
                         Object val = optionPane.getValue();
                         if (val == null || val == JOptionPane.UNINITIALIZED_VALUE) {
@@ -127,16 +123,10 @@ public class YassOptions extends JDialog {
                         int value = ((Integer) val).intValue();
                         if (value == JOptionPane.OK_OPTION) {
 
-                            boolean changed = true;
-                            if (changed) {
-                                OptionsPanel.storeProperties();
-                                //System.out.println("store");
-                            }
+                            OptionsPanel.storeProperties();
+                            //System.out.println("store");
                         }
 
-                        if (!ok) {
-                            return;
-                        }
                         dispose();
                     }
                 });

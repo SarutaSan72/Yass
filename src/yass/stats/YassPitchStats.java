@@ -8,7 +8,6 @@ import yass.YassTable;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. M�rz 2008
  */
 public class YassPitchStats extends YassStats {
 
@@ -38,7 +37,7 @@ public class YassPitchStats extends YassStats {
      * @param s Description of the Parameter
      */
     public void calcStats(YassSong s, YassTable t) {
-        int pitchrange = 0;
+        int pitchrange;
         int pitchrangepage = 0;
         float pitchdistance = 0;
         float pitchleaps3 = 0;

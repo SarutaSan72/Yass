@@ -19,7 +19,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 21. August 2007
  */
 public class PrintBlocks implements PrintPlugin {
     String foottext = "", dformat = null;
@@ -118,12 +117,12 @@ public class PrintBlocks implements PrintPlugin {
         options.put("format", formatBox.getSelectedItem());
         options.put("dateformat", dateformat.getText());
         options.put("footnote", footnote.getText());
-        options.put("nr", new Boolean(nr.isSelected()));
-        options.put("co", new Boolean(co.isSelected()));
-        options.put("chapters", new Boolean(index.isSelected()));
+        options.put("nr", Boolean.valueOf(nr.isSelected()));
+        options.put("co", Boolean.valueOf(co.isSelected()));
+        options.put("chapters", Boolean.valueOf(index.isSelected()));
         options.put("ed", new Integer(ed.getSelectedIndex()));
         options.put("order", new Integer(order.getSelectedIndex()));
-        options.put("downscale", new Boolean(downscale.isSelected()));
+        options.put("downscale", Boolean.valueOf(downscale.isSelected()));
     }
 
     /**
@@ -160,8 +159,8 @@ public class PrintBlocks implements PrintPlugin {
         show[7] = ed == 5;
         show[8] = ed == 6;
         ncol = 0;
-        for (int i = 0; i < show.length; i++) {
-            if (show[i]) {
+        for (boolean aShow : show) {
+            if (aShow) {
                 ncol++;
             }
         }
@@ -205,7 +204,7 @@ public class PrintBlocks implements PrintPlugin {
                                         sdf.setTimeZone(java.util.TimeZone.getDefault());
                                         String currentTime = sdf.format(cal.getTime());
                                         foot.addCell(new Phrase(new Chunk(currentTime, FontFactory.getFont(FontFactory.HELVETICA, fsFoot, Font.PLAIN, new Color(100, 100, 100)))));
-                                    } catch (Exception e) {
+                                    } catch (Exception ignored) {
                                     }
                                 }
                                 foot.setTotalWidth(page.getWidth() - document.leftMargin() - document.rightMargin());
@@ -219,8 +218,6 @@ public class PrintBlocks implements PrintPlugin {
             document.open();
 
             int i = 1;
-
-            PdfPTable datatable = createPDFTable();
 
             MultiColumnText mct = new MultiColumnText();
             mcol = 20;
@@ -250,9 +247,9 @@ public class PrintBlocks implements PrintPlugin {
             Collections.sort(songList);
             YassSong.ordering = ordering;
 
-            datatable = createPDFTable();
+            PdfPTable datatable = createPDFTable();
             datatable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_LEFT);
-            Paragraph para = null;
+            Paragraph para;
 
             String videoString = I18.get("print_block_video");
 
@@ -396,7 +393,7 @@ public class PrintBlocks implements PrintPlugin {
 				 *  }
 				 *  System.out.println(stringWidth);
 				 */
-                Chunk ch = null;
+                Chunk ch;
 
 				/*
 				 *  BaseFont helvetica = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);

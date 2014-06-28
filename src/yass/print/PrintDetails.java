@@ -23,7 +23,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 23. Januar 2008
  */
 public class PrintDetails implements PrintPlugin {
     String foottext = "", dformat = null;
@@ -346,7 +345,7 @@ public class PrintDetails implements PrintPlugin {
                         img = com.lowagie.text.Image.getInstance(cacheFile);
                         img.scalePercent(50);
                         img.setAlignment(Image.LEFT | Image.UNDERLYING);
-                    } catch (Exception ex) {
+                    } catch (Exception ignored) {
                     }
                     if (img != null) {
                         para.add(new Chunk(img, 0f, 0f));
@@ -357,7 +356,7 @@ public class PrintDetails implements PrintPlugin {
                 }
 
                 if (show[2]) {
-                    Phrase phr = null;
+                    Phrase phr;
                     phr = new Phrase(new Chunk(title, FontFactory.getFont(FontFactory.HELVETICA, 9, Font.PLAIN, new Color(0, 0, 0))));
                     if (version != null) {
                         phr.add(new Chunk("  " + version, FontFactory.getFont(FontFactory.HELVETICA, 7, Font.ITALIC, new Color(84, 84, 84))));
@@ -410,7 +409,6 @@ public class PrintDetails implements PrintPlugin {
                 twidth -= mcol;
                 twidth /= 2;
             }
-            float ttwidth = twidth;
 
             float headerwidths[] = new float[ncol];
             int i = 0;

@@ -7,24 +7,11 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 11. September 2007
  */
 public class YassUndoElement {
-    /**
-     * Description of the Field
-     */
     public Vector<YassRow> data = null;
-    /**
-     * Description of the Field
-     */
     public int[] selectedRows = null;
-    /**
-     * Description of the Field
-     */
     public Point sheetViewPosition = new Point(0, 0);
-    /**
-     * Description of the Field
-     */
     public double sheetBeatSize = 0;
 
 

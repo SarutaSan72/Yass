@@ -3143,7 +3143,7 @@ public class YassActions implements DropTargetListener {
                 if (currentView == VIEW_EDIT) {
                     stopPlaying();
                     stopRecording();
-                    YassTapNotes.evaluateTaps(tab, table,
+                    YassTapNotes.evaluateTaps(table,
                             sheet.getTemporaryNotes());
                 } else if (currentView == VIEW_LIBRARY) {
                     if (!soonStarting) {

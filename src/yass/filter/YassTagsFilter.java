@@ -7,7 +7,6 @@ import yass.YassSongList;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. M�rz 2008
  */
 public class YassTagsFilter extends YassFilter {
 
@@ -66,7 +65,7 @@ public class YassTagsFilter extends YassFilter {
             try {
                 double d = Double.parseDouble(g);
                 hit = d >= 60000;
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         } else if (rule.equals("gap>30")) {
             String g = s.getGap();
@@ -76,7 +75,7 @@ public class YassTagsFilter extends YassFilter {
             try {
                 double d = Double.parseDouble(g);
                 hit = d >= 30000;
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         } else if (rule.equals("gap<10")) {
             String g = s.getGap();
@@ -86,7 +85,7 @@ public class YassTagsFilter extends YassFilter {
             try {
                 double d = Double.parseDouble(g);
                 hit = d < 10000;
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         } else if (rule.equals("gap<5")) {
             String g = s.getGap();
@@ -96,7 +95,7 @@ public class YassTagsFilter extends YassFilter {
             try {
                 double d = Double.parseDouble(g);
                 hit = d < 5000;
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         } else if (rule.equals("bpm<200")) {
             String g = s.getBPM();
@@ -106,7 +105,7 @@ public class YassTagsFilter extends YassFilter {
             try {
                 double d = Double.parseDouble(g);
                 hit = d < 200;
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         } else if (rule.equals("bpm>400")) {
             String g = s.getBPM();
@@ -116,7 +115,7 @@ public class YassTagsFilter extends YassFilter {
             try {
                 double d = Double.parseDouble(g);
                 hit = d > 400;
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
 

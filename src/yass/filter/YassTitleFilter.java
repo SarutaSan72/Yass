@@ -6,7 +6,6 @@ import yass.YassSong;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. M�rz 2008
  */
 public class YassTitleFilter extends YassFilter {
 
@@ -52,7 +51,7 @@ public class YassTitleFilter extends YassFilter {
             t = "";
         }
 
-        boolean hit = false;
+        boolean hit;
 
         if (rule.equals("all")) {
             hit = true;

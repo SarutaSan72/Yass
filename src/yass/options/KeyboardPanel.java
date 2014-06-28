@@ -6,7 +6,6 @@ import yass.I18;
  * Description of the Class
  *
  * @author Saruta
- * @created 22. August 2007
  */
 public class KeyboardPanel extends OptionsPanel {
 

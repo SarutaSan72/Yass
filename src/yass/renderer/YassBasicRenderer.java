@@ -25,7 +25,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. September 2006
  */
 public class YassBasicRenderer extends JPanel implements yass.renderer.YassPlaybackRenderer {
 
@@ -131,7 +130,6 @@ public class YassBasicRenderer extends JPanel implements yass.renderer.YassPlayb
                     public void mouseClicked(MouseEvent e) {
                         boolean twice = e.getClickCount() > 1;
 
-                        JComponent c = getComponent();
                         if (twice) {
                             resetRatio();
                         }
@@ -164,7 +162,7 @@ public class YassBasicRenderer extends JPanel implements yass.renderer.YassPlayb
             try {
                 s = yass.I18.get("renderer_" + getID() + "_" + key);
                 strings.put(key, s);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         if (s == null) {
@@ -393,7 +391,7 @@ public class YassBasicRenderer extends JPanel implements yass.renderer.YassPlayb
         j = track.getLine(currentLine[t] + 1).getFirstNote();
         k = track.getLine(currentLine[t] + 1).getLastNote();
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = j; i <= k; i++) {
             String str = track.getNote(i).getText();
             sb.append(str);
@@ -405,7 +403,6 @@ public class YassBasicRenderer extends JPanel implements yass.renderer.YassPlayb
         g.setColor(colors[2]);
         metrics = g.getFontMetrics();
         strwidth = metrics.stringWidth(str);
-        int strh = metrics.getHeight();
         float sx = clip.width / 2 - strwidth / 2;
         g.drawString(str, sx, sh);
 

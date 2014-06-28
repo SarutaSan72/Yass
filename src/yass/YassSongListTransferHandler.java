@@ -14,7 +14,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 22. September 2007
  */
 public class YassSongListTransferHandler extends TransferHandler {
     private static final long serialVersionUID = 100465417509492151L;
@@ -93,8 +92,7 @@ public class YassSongListTransferHandler extends TransferHandler {
                 String str = (String) t.getTransferData(DataFlavor.stringFlavor);
                 importString(c, str);
                 return true;
-            } catch (UnsupportedFlavorException ufe) {
-            } catch (IOException ioe) {
+            } catch (UnsupportedFlavorException | IOException ignored) {
             }
         }
         return false;
@@ -109,8 +107,8 @@ public class YassSongListTransferHandler extends TransferHandler {
      * @return Description of the Return Value
      */
     public boolean canImport(JComponent c, DataFlavor[] flavors) {
-        for (int i = 0; i < flavors.length; i++) {
-            if (DataFlavor.stringFlavor.equals(flavors[i])) {
+        for (DataFlavor flavor : flavors) {
+            if (DataFlavor.stringFlavor.equals(flavor)) {
                 return true;
             }
             //if (DataFlavor.javaFileListFlavor.equals(flavors[i])) {
@@ -129,8 +127,8 @@ public class YassSongListTransferHandler extends TransferHandler {
      * @return Description of the Return Value
      */
     public boolean canImportFileList(JComponent c, DataFlavor[] flavors) {
-        for (int i = 0; i < flavors.length; i++) {
-            if (DataFlavor.javaFileListFlavor.equals(flavors[i])) {
+        for (DataFlavor flavor : flavors) {
+            if (DataFlavor.javaFileListFlavor.equals(flavor)) {
                 return true;
             }
         }
@@ -156,8 +154,8 @@ public class YassSongListTransferHandler extends TransferHandler {
 
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-        for (int i = 0; i < rows.length; i++) {
-            YassSong s = sm.getRowAt(rows[i]);
+        for (int row : rows) {
+            YassSong s = sm.getRowAt(row);
             String a = s.getArtist();
             String t = s.getTitle();
             String v = s.getVersion();
@@ -168,8 +166,7 @@ public class YassSongListTransferHandler extends TransferHandler {
             }
         }
         pw.close();
-        String s = sw.toString();
-        return s;
+        return sw.toString();
     }
 
 
@@ -260,7 +257,7 @@ public class YassSongListTransferHandler extends TransferHandler {
                 }
             }
             br.close();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         if (lc > 0) {

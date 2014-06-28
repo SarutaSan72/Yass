@@ -14,7 +14,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. M�rz 2008
  */
 public class YassPlaylistFilter extends YassFilter {
 
@@ -49,7 +48,7 @@ public class YassPlaylistFilter extends YassFilter {
 
         String plcacheName = getProperties().getProperty("playlist-cache");
         if (plcacheName == null) {
-            return pl.toArray(new String[]{});
+            return pl.toArray(new String[pl.size()]);
         }
         File plcache = new File(plcacheName);
         if (plcache.exists()) {
@@ -62,11 +61,11 @@ public class YassPlaylistFilter extends YassFilter {
                     playlists.put(plf.getName(), plf);
                 }
                 inputStream.close();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
 
-        return pl.toArray(new String[]{});
+        return pl.toArray(new String[pl.size()]);
     }
 
     // copied from yassplaylist
@@ -84,14 +83,14 @@ public class YassPlaylistFilter extends YassFilter {
 
             StringWriter sw = new StringWriter();
             char[] buffer = new char[1024];
-            int readCount = 0;
+            int readCount;
             while ((readCount = fr.read(buffer)) > 0) {
                 sw.write(buffer, 0, readCount);
             }
             fr.close();
 
             return getPlayList(sw.toString());
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return null;
     }
@@ -112,7 +111,7 @@ public class YassPlaylistFilter extends YassFilter {
             while ((l = inputStream.readLine()) != null) {
                 StringTokenizer ll = new StringTokenizer(l, ":");
                 String artist = null;
-                String title = null;
+                String title;
 
                 if (ll.hasMoreTokens()) {
                     artist = ll.nextToken().trim();
@@ -130,7 +129,6 @@ public class YassPlaylistFilter extends YassFilter {
                             int k = artist.indexOf(':');
                             pl.setName(artist.substring(k + 1).trim());
                         }
-                        artist = null;
                         continue;
                     }
                 }

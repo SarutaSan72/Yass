@@ -5,7 +5,6 @@ package yass.options;
  * Description of the Class
  *
  * @author Saruta
- * @created 22. August 2007
  */
 public class PluginPanel extends OptionsPanel {
 

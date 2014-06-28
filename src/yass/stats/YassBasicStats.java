@@ -8,7 +8,6 @@ import yass.YassTable;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. M�rz 2008
  */
 public class YassBasicStats extends YassStats {
 

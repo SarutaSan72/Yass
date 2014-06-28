@@ -6,7 +6,6 @@ import java.util.EventObject;
  * Description of the Class
  *
  * @author Saruta
- * @created 10. Oktober 2007
  */
 public class YassSongListEvent extends EventObject {
     /**

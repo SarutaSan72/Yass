@@ -7,7 +7,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 22. September 2007
  */
 public class YassTableTransferHandler extends YassStringTransferHandler {
     private static final long serialVersionUID = -8972312557589267911L;

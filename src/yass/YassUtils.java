@@ -26,25 +26,11 @@ import java.util.Map;
  * Description of the Class
  *
  * @author Saruta
- * @created 22. August 2007
  */
 public class YassUtils {
-
-    /**
-     * Description of the Field
-     */
     public final static int NORTH = 0;
-    /**
-     * Description of the Field
-     */
     public final static int SOUTH = 1;
-    /**
-     * Description of the Field
-     */
     public final static int EAST = 2;
-    /**
-     * Description of the Field
-     */
     public final static int WEST = 3;
     private static String msg = null;
 
@@ -106,15 +92,15 @@ public class YassUtils {
         title = title.toLowerCase().trim();
 
         File dFiles[] = new File(songdir).listFiles();
-        for (int i = 0; i < dFiles.length; i++) {
-            if (dFiles[i].isDirectory()) {
-                String fd = dFiles[i].getName().toLowerCase();
+        for (File dFile : dFiles) {
+            if (dFile.isDirectory()) {
+                String fd = dFile.getName().toLowerCase();
                 if (fd.startsWith(artist)) {
                     if (fd.indexOf(title, artist.length()) > 0) {
-                        return dFiles[i].getAbsolutePath();
+                        return dFile.getAbsolutePath();
                     }
                 }
-                String dir = findSong(dFiles[i].getAbsolutePath(), title, artist);
+                String dir = findSong(dFile.getAbsolutePath(), title, artist);
                 if (dir != null) {
                     return dir;
                 }
@@ -144,7 +130,7 @@ public class YassUtils {
                 String artist = (String) properties.get("author");
                 String title = (String) properties.get("title");
 
-                String genre = "";
+                String genre;
                 s = f.getName();
                 int i = s.indexOf(" - ");
                 if (i >= 0) {
@@ -175,7 +161,7 @@ public class YassUtils {
                 data[2] = genre;
                 return data;
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return null;
     }
@@ -221,7 +207,7 @@ public class YassUtils {
             songdir = chooser.getSelectedFile().getAbsolutePath();
         }
 
-        File dir = null;
+        File dir;
         if (folder != null) {
             dir = new File(songdir + File.separator + folder);
             if (!dir.exists()) {
@@ -272,35 +258,33 @@ public class YassUtils {
     public static boolean copyFile(File in, File out) {
         FileInputStream fis = null;
         FileOutputStream fos = null;
-        boolean success = false;
         try {
             fis = new FileInputStream(in);
             fos = new FileOutputStream(out);
             byte[] buf = new byte[1024];
-            int i = 0;
+            int i;
             while ((i = fis.read(buf)) != -1) {
                 fos.write(buf, 0, i);
             }
-            success = true;
+            return true;
         } catch (Exception e) {
             System.out.println("Cannot copy file: " + in.getName());
             e.printStackTrace();
+            return false;
         } finally {
             if (fis != null) {
                 try {
                     fis.close();
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
             if (fos != null) {
                 try {
                     fos.close();
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
-            success = false;
         }
-        return success;
     }
 
     /**
@@ -401,14 +385,14 @@ public class YassUtils {
         String absFilename = t.getDir() + File.separator + t.getFilename();
 
         File dFiles[] = new File(t.getDir()).listFiles();
-        for (int i = 0; i < dFiles.length; i++) {
-            if (dFiles[i].getName().toLowerCase().endsWith(".txt")) {
+        for (File dFile : dFiles) {
+            if (dFile.getName().toLowerCase().endsWith(".txt")) {
                 YassTable tt = new YassTable();
-                tt.loadFile(dFiles[i].getAbsolutePath());
+                tt.loadFile(dFile.getAbsolutePath());
                 YassTableModel ttm = (YassTableModel) tt.getModel();
                 YassRow tr = ttm.getCommentRow("TITLE:");
                 if (tr.hasVersion()) {
-                    dFiles[i].delete();
+                    dFile.delete();
                 }
             }
         }
@@ -442,8 +426,7 @@ public class YassUtils {
         if (n2 < 0) {
             return null;
         }
-        String res = s.substring(n1 + id1.length(), n2);
-        return res;
+        return s.substring(n1 + id1.length(), n2);
     }
 
     /**
@@ -471,23 +454,23 @@ public class YassUtils {
             return null;
         }
 
-        for (int i = 0; i < files.length; i++) {
-            String filename = files[i].getName().toLowerCase();
+        for (File file : files) {
+            String filename = file.getName().toLowerCase();
 
             for (int j = 0; j < ext.length; j++) {
                 if (filename.endsWith(ext[j])) {
                     if (id == null) {
-                        return files[i];
+                        return file;
                     }
 
                     int idn = filename.lastIndexOf(id);
                     if (id2 != null) {
                         if (idn > 0 && filename.indexOf(id2, idn + 1) > 0) {
-                            return files[i];
+                            return file;
                         }
                     }
                     if (idn > 0) {
-                        return files[i];
+                        return file;
                     }
                 }
             }
@@ -516,7 +499,7 @@ public class YassUtils {
         String cover = t.getCover();
         String background = t.getBackgroundTag();
         String video = t.getVideo();
-        String videogap = new Double(t.getVideoGap()).toString().replace('.', ',');
+        String videogap = Double.toString(t.getVideoGap()).replace('.', ',');
         if (videogap.endsWith(",0")) {
             videogap = videogap.substring(0, videogap.length() - 2);
         }
@@ -543,8 +526,8 @@ public class YassUtils {
             }
         }
 
-        String extension = null;
-        int i = 0;
+        String extension;
+        int i;
         String filename = dir + File.separator + text;
         File file = new File(filename);
         if (file.exists()) {
@@ -665,22 +648,22 @@ public class YassUtils {
     public static boolean deleteDir(File dir) {
         if (dir.isDirectory()) {
             String[] children = dir.list();
-            for (int i = 0; i < children.length; i++) {
+            for (String child : children) {
                 boolean success = false;
                 int trials = 4;
                 while (!success && trials-- > 0) {
-                    success = deleteDir(new File(dir, children[i]));
+                    success = deleteDir(new File(dir, child));
                     if (!success) {
                         //System.out.println("cannot delete " + children[i]);
                         try {
                             Thread.currentThread();
                             Thread.sleep(100);
-                        } catch (Exception e) {
+                        } catch (Exception ignored) {
                         }
                     }
                 }
                 if (!success) {
-                    msg = MessageFormat.format(I18.get("utils_msg_remove_error"), children[i]);
+                    msg = MessageFormat.format(I18.get("utils_msg_remove_error"), child);
                     return false;
                 }
             }
@@ -697,7 +680,7 @@ public class YassUtils {
      */
     public static Class<?> forName(String s)
             throws ClassNotFoundException {
-        Class<?> classDefinition = null;
+        Class<?> classDefinition;
         try {
             classDefinition = Class.forName(s, true, ClassLoader.getSystemClassLoader());
         } catch (Throwable cls) {
@@ -806,7 +789,7 @@ public class YassUtils {
             try {
                 System.out.println("wait ");
                 Thread.sleep(50);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ignored) {
 
             }
         }
@@ -878,8 +861,8 @@ public class YassUtils {
      */
     public static String replace(String str, String pattern, String replace) {
         int s = 0;
-        int e = 0;
-        StringBuffer result = new StringBuffer();
+        int e;
+        StringBuilder result = new StringBuilder();
 
         while ((e = str.indexOf(pattern, s)) >= 0) {
             result.append(str.substring(s, e));
@@ -899,8 +882,8 @@ public class YassUtils {
      */
     public static String replace(String str, Hashtable<?, ?> t) {
         int s = 0;
-        int e = 0;
-        StringBuffer result = new StringBuffer();
+        int e;
+        StringBuilder result = new StringBuilder();
 
         while ((e = str.indexOf('$', s)) >= 0) {
             int e2 = e + 1;
@@ -957,7 +940,6 @@ public class YassUtils {
         int i;
         int j;
 
-        j = 0;
         size = Math.max(size, 2);
         mid = (size / 2) - 1;
 

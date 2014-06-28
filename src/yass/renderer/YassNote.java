@@ -4,7 +4,6 @@ package yass.renderer;
  * Description of the Interface
  *
  * @author Saruta
- * @created 22. M�rz 2010
  */
 public class YassNote implements Cloneable {
     /**

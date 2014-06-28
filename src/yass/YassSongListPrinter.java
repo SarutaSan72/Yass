@@ -17,7 +17,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 16. Februar 2009
  */
 public class YassSongListPrinter {
     YassProperties prop = null;
@@ -235,7 +234,7 @@ public class YassSongListPrinter {
 
         public void addPlugin(String s) {
             int n = (plugins == null) ? 0 : plugins.size();
-            PrintPlugin p = null;
+            PrintPlugin p;
             String fullname = (plugindir != null) ? plugindir + "." + s : s;
             try {
                 Class<?> c = YassUtils.forName(fullname);

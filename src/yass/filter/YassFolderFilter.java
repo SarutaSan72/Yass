@@ -13,7 +13,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. M�rz 2008
  */
 public class YassFolderFilter extends YassFilter {
     static String songdir = null;
@@ -51,7 +50,7 @@ public class YassFolderFilter extends YassFilter {
         }
         Collections.sort(folders);
 
-        return folders.toArray(new String[]{});
+        return folders.toArray(new String[folders.size()]);
     }
 
 
@@ -63,13 +62,9 @@ public class YassFolderFilter extends YassFilter {
      */
     public boolean accept(YassSong s) {
         String t = s.getFolder();
-        boolean hit = false;
+        boolean hit;
 
-        if (rule.equals("all")) {
-            hit = true;
-        } else {
-            hit = t.equals(rule);
-        }
+        hit = rule.equals("all") || t.equals(rule);
 
         return hit;
     }

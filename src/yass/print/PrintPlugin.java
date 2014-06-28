@@ -10,7 +10,6 @@ import java.util.Vector;
  * Description of the Interface
  *
  * @author Saruta
- * @created 16. Februar 2009
  */
 public interface PrintPlugin {
     /**

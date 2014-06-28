@@ -1,10 +1,9 @@
 package yass;
 
-import java.awt.*;
 import java.util.Vector;
 
 public class YassTapNotes {
-    public static void evaluateTaps(Component parent, YassTable table, Vector<Long> taps) {
+    public static void evaluateTaps(YassTable table, Vector<Long> taps) {
         if (taps == null) return;
         int n = taps.size();
         if (n < 2) {
@@ -35,18 +34,15 @@ public class YassTapNotes {
         while (k < n && t < tn) {
             YassRow r = table.getRowAt(t++);
             if (r.isNote()) {
-                int beat = r.getBeatInt();
-                int length = r.getLengthInt();
-
                 long tapBeat = taps.elementAt(k++).longValue();
                 long tapBeat2 = taps.elementAt(k++).longValue();
 
                 double ms = tapBeat / 1000.0 - gap;
                 double ms2 = tapBeat2 / 1000.0 - gap;
-                beat = (int) Math.round((4 * bpm * ms / (60 * 1000)));
+                int beat = (int) Math.round((4 * bpm * ms / (60 * 1000)));
                 int beat2 = (int) Math.round((4 * bpm * ms2 / (60 * 1000)));
 
-                length = beat2 - beat;
+                int length = beat2 - beat;
 
                 if (length < 1) length = 1;
                 r.setBeat(beat);

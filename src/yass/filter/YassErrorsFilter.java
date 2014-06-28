@@ -7,7 +7,6 @@ import yass.YassSong;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. M�rz 2008
  */
 public class YassErrorsFilter extends YassFilter {
 

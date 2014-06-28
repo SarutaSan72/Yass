@@ -17,7 +17,6 @@ import java.util.StringTokenizer;
  * Description of the Class
  *
  * @author Saruta
- * @created 26. August 2007
  */
 public class Lyrics extends JPanel {
     /**
@@ -59,7 +58,7 @@ public class Lyrics extends JPanel {
         URL url = I18.getResource("create_lyrics.html");
         try {
             txt.setPage(url);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         txt.setEditable(false);
         content.add("Center", new JScrollPane(txt));

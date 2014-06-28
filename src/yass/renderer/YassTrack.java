@@ -6,7 +6,6 @@ import java.util.Vector;
  * Description of the Interface
  *
  * @author Saruta
- * @created 22. M�rz 2010
  */
 public class YassTrack implements Cloneable {
     /**

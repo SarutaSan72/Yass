@@ -13,7 +13,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 22. August 2007
  */
 public class YassVideoUtils {
 
@@ -29,7 +28,7 @@ public class YassVideoUtils {
      * @return The videoInited value
      */
     public static boolean isVideoInited(Vector<Object> rendList) {
-        String rname = null;
+        String rname;
         for (int i = 0; i < rendList.size(); i++) {
             rname = (String) (rendList.elementAt(i));
             if (rname.equals("org.llama.jmf.ByteBufferRenderer")) {
@@ -49,13 +48,13 @@ public class YassVideoUtils {
         if (!TRY_TO_USE_FOBS)
             return false;
 
-        Vector<Object> rendererlist = PlugInManager.getPlugInList(null, null, PlugInManager.RENDERER);
-        if (isVideoInited(rendererlist)) {
+        Vector plugInList = PlugInManager.getPlugInList(null, null, PlugInManager.RENDERER);
+        if (isVideoInited(plugInList)) {
             return true;
         }
 
         com.sun.media.Log.isEnabled = false;
-        Registry.set("secure.allowLogging", new Boolean(false));
+        Registry.set("secure.allowLogging", Boolean.FALSE);
 
         System.out.println("Looking for FOBS...");
         try {
@@ -157,7 +156,7 @@ public class YassVideoUtils {
             javax.media.Format[] alinear = new AudioFormat[]{new AudioFormat("LINEAR")};
 
             PlugInManager.addPlugIn("org.llama.jmf.ByteBufferRenderer", frgb, null, PlugInManager.RENDERER);
-            Vector<Object> plist = PlugInManager.getPlugInList(null, null, PlugInManager.RENDERER);
+            Vector plist = PlugInManager.getPlugInList(null, null, PlugInManager.RENDERER);
             //move the plugin to the top of the list
             Object last = plist.lastElement();
             plist.insertElementAt(last, 0);
@@ -210,7 +209,7 @@ public class YassVideoUtils {
             //System.out.println("CODECS\n" + plist.toString());
 
             //registre le package
-            Vector<String> packagePrefix = PackageManager.getProtocolPrefixList();
+            Vector packagePrefix = PackageManager.getProtocolPrefixList();
             String myPackagePrefix = new String("com.omnividea");
             packagePrefix.add(0, myPackagePrefix);
             PackageManager.setProtocolPrefixList(packagePrefix);

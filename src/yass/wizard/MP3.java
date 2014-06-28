@@ -19,7 +19,6 @@ import java.net.URL;
  * Description of the Class
  *
  * @author Saruta
- * @created 26. August 2007
  */
 public class MP3 extends JPanel {
     /**
@@ -124,7 +123,7 @@ public class MP3 extends JPanel {
         URL url = I18.getResource("create_mp3.html");
         try {
             txt.setPage(url);
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         txt.setEditable(false);
         content.add("Center", new JScrollPane(txt));

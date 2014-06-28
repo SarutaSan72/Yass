@@ -13,7 +13,6 @@ import java.util.Vector;
  * Description of the Class
  *
  * @author Saruta
- * @created 9. Juli 2009
  */
 public class YassSynth {
     /**
@@ -55,7 +54,7 @@ public class YassSynth {
 
         loadWav();
 
-        long t = 0;
+        long t;
 
         long s = System.nanoTime() / 1000000L;
 
@@ -69,7 +68,6 @@ public class YassSynth {
 
         openLine();
         openWavLine();
-        t = 0;
         s = System.nanoTime() / 1000000L;
         for (int i = 60; i < 128; i++) {
             t = System.nanoTime() / 1000000L - s;
@@ -151,7 +149,7 @@ public class YassSynth {
 
         int sampleLength = data.length / bytesPerSample;
         for (int i = 0; i < sampleLength; i++) {
-            double value = 0;
+            double value;
             if (i % 8 < 4) {
                 value = 1;
             } else {
@@ -337,8 +335,7 @@ public class YassSynth {
 		 */
         try {
             InputStream byteArrayInputStream = new ByteArrayInputStream(audioData);
-            AudioInputStream stream = new AudioInputStream(byteArrayInputStream, audioFormat, audioData.length / audioFormat.getFrameSize());
-            return stream;
+            return new AudioInputStream(byteArrayInputStream, audioFormat, audioData.length / audioFormat.getFrameSize());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -364,7 +361,7 @@ public class YassSynth {
         // To read the 'j'th frame in the file:
         int framePos = (frameNum - 1) * frame_size;
         byte[] frame = new byte[frame_size];
-        Byte sample = null;
+        Byte sample;
         for (int i = 0; i < frame_size; i++) {
             // System.out.println("   -frameNum: "+frameNum+" framePos "+framePos+" i "+i);
             sample = buffer.get(framePos + i + 1);
@@ -395,7 +392,7 @@ public class YassSynth {
         int length_in_frames = buffer.size() / frame_length - 1;
         //System.out.println("   -frame length " + frame_length + " length_in_frames " + length_in_frames);
 
-        byte[] sample = null;
+        byte[] sample;
 
         wavsourceDataLine.flush();
 

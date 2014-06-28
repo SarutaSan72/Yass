@@ -7,7 +7,6 @@ import yass.YassSongList;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. M�rz 2008
  */
 public class YassLengthFilter extends YassFilter {
 
@@ -127,7 +126,7 @@ public class YassLengthFilter extends YassFilter {
     public boolean accept(YassSong s) {
         String length = s.getLength();
 
-        int len = -1;
+        int len;
         try {
             len = Integer.parseInt(length);
         } catch (Exception e) {

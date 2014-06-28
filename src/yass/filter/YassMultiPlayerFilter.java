@@ -7,7 +7,6 @@ import yass.YassSongList;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. M�rz 2008
  */
 public class YassMultiPlayerFilter extends YassFilter {
 
@@ -44,7 +43,7 @@ public class YassMultiPlayerFilter extends YassFilter {
             return true;
         }
 
-        int pn = 1;
+        int pn;
         String p = s.getMultiplayer();
         try {
             pn = Integer.parseInt(p);

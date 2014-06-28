@@ -14,7 +14,6 @@ import java.util.Map;
  * Description of the Class
  *
  * @author Saruta
- * @created 4. M�rz 2008
  */
 public class YassFormatFilter extends YassFilter {
 
@@ -73,11 +72,7 @@ public class YassFormatFilter extends YassFilter {
             hit = enc != null && enc.equals("Cp1252");
         } else if (rule.equals("encoding_other")) {
             String enc = s.getEncoding();
-            if (enc == null) {
-                hit = true;
-            } else {
-                hit = !(enc.equals("Cp1252") || enc.equals("UTF8") || enc.equals("UTF16"));
-            }
+            hit = enc == null || !(enc.equals("Cp1252") || enc.equals("UTF8") || enc.equals("UTF16"));
         } else if (rule.equals("audio_vbr")) {
             String dir = s.getDirectory();
             String mp3 = s.getMP3();
@@ -96,7 +91,7 @@ public class YassFormatFilter extends YassFilter {
                             isVBR = vbr.booleanValue();
                         }
                     }
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
             hit = isVBR;
@@ -110,7 +105,7 @@ public class YassFormatFilter extends YassFilter {
                 if (aff.getType() == VorbisFileFormatType.OGG) {
                     ogg = true;
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             hit = ogg;
         }
