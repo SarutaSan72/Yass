@@ -164,8 +164,8 @@ public class PrintPlainLandscape implements PrintPlugin {
         show[7] = ed == 4;
         show[8] = ed == 5;
         ncol = 0;
-        for (int i = 0; i < show.length; i++) {
-            if (show[i]) {
+        for (boolean aShow : show) {
+            if (aShow) {
                 ncol++;
             }
         }

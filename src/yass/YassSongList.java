@@ -1702,8 +1702,8 @@ public class YassSongList extends JTable {
         if (rows == null) {
             return null;
         }
-        for (int i = 0; i < rows.length; i++) {
-            v.add(sm.getRowAt(rows[i]));
+        for (int row : rows) {
+            v.add(sm.getRowAt(row));
         }
         return v;
     }
@@ -1905,8 +1905,8 @@ public class YassSongList extends JTable {
             return null;
         }
         Vector<String> filenames = new Vector<>();
-        for (int i = 0; i < rows.length; i++) {
-            YassSong s = sm.getRowAt(rows[i]);
+        for (int row : rows) {
+            YassSong s = sm.getRowAt(row);
             if (s == null) {
                 return null;
             }
@@ -2349,8 +2349,8 @@ public class YassSongList extends JTable {
     public void setSelectionLanguage(String language) {
         int rows[] = getSelectedRows();
         boolean changed = false;
-        for (int i = 0; i < rows.length; i++) {
-            YassSong s = sm.getRowAt(rows[i]);
+        for (int row : rows) {
+            YassSong s = sm.getRowAt(row);
             if (s.isOpened()) {
                 if (s.getTable().setLanguage(language)) {
                     changed = true;
@@ -2362,7 +2362,7 @@ public class YassSongList extends JTable {
                 changed = true;
                 s.setSaved(false);
             }
-            sm.fireTableRowsUpdated(rows[i], rows[i]);
+            sm.fireTableRowsUpdated(row, row);
         }
         if (changed) {
             setSaved(false);
@@ -2392,8 +2392,8 @@ public class YassSongList extends JTable {
     public void setSelectionGenre(String genre) {
         int rows[] = getSelectedRows();
         boolean changed = false;
-        for (int i = 0; i < rows.length; i++) {
-            YassSong s = sm.getRowAt(rows[i]);
+        for (int row : rows) {
+            YassSong s = sm.getRowAt(row);
             if (s.isOpened()) {
                 if (s.getTable().setGenre(genre)) {
                     changed = true;
@@ -2405,7 +2405,7 @@ public class YassSongList extends JTable {
                 changed = true;
                 s.setSaved(false);
             }
-            sm.fireTableRowsUpdated(rows[i], rows[i]);
+            sm.fireTableRowsUpdated(row, row);
         }
         if (changed) {
             setSaved(false);
@@ -2422,8 +2422,8 @@ public class YassSongList extends JTable {
     public void setSelectionEdition(String edition) {
         int rows[] = getSelectedRows();
         boolean changed = false;
-        for (int i = 0; i < rows.length; i++) {
-            YassSong s = sm.getRowAt(rows[i]);
+        for (int row : rows) {
+            YassSong s = sm.getRowAt(row);
             if (s.isOpened()) {
                 if (s.getTable().setEdition(edition)) {
                     changed = true;
@@ -2435,7 +2435,7 @@ public class YassSongList extends JTable {
                 changed = true;
                 s.setSaved(false);
             }
-            sm.fireTableRowsUpdated(rows[i], rows[i]);
+            sm.fireTableRowsUpdated(row, row);
         }
         if (changed) {
             setSaved(false);
@@ -2518,8 +2518,8 @@ public class YassSongList extends JTable {
             File fdir = new File(dir);
             File files[] = fdir.listFiles();
             int k = 0;
-            for (int j = 0; j < files.length; j++) {
-                if (YassActions.isKaraokeFile(files[j])) {
+            for (File file : files) {
+                if (YassActions.isKaraokeFile(file)) {
                     k++;
                 }
             }
@@ -2805,8 +2805,8 @@ public class YassSongList extends JTable {
     private boolean removeDir(File dir) {
         if (dir.isDirectory()) {
             String[] children = dir.list();
-            for (int i = 0; i < children.length; i++) {
-                boolean success = YassUtils.deleteDir(new File(dir, children[i]));
+            for (String aChildren : children) {
+                boolean success = YassUtils.deleteDir(new File(dir, aChildren));
                 if (!success) {
                     return false;
                 }
@@ -3108,8 +3108,8 @@ public class YassSongList extends JTable {
         storeCache();
 
         clearSelection();
-        for (int i = 0; i < rows.length; i++) {
-            addRowSelectionInterval(rows[i], rows[i]);
+        for (int row : rows) {
+            addRowSelectionInterval(row, row);
         }
 
         Vector<YassSong> data = sm.getData();
@@ -3142,8 +3142,8 @@ public class YassSongList extends JTable {
         updateSelectionEdition();
 
         clearSelection();
-        for (int i = 0; i < rows.length; i++) {
-            addRowSelectionInterval(rows[i], rows[i]);
+        for (int row : rows) {
+            addRowSelectionInterval(row, row);
         }
 
         Vector<YassSong> data = sm.getData();
@@ -3177,8 +3177,8 @@ public class YassSongList extends JTable {
         updateSelectionEdition();
 
         clearSelection();
-        for (int i = 0; i < rows.length; i++) {
-            addRowSelectionInterval(rows[i], rows[i]);
+        for (int row : rows) {
+            addRowSelectionInterval(row, row);
         }
         setSaved(true);
     }
@@ -3333,8 +3333,7 @@ public class YassSongList extends JTable {
             String at = artist + " - " + title + " [" + version + "] [VD#";
             File tmpfile = new File(tmp);
             File files[] = tmpfile.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                File file2 = files[i];
+            for (File file2 : files) {
                 String name = file2.getName();
                 if (name.startsWith(at)) {
                     if (name.indexOf("@ " + folder + ".") > 0) {
@@ -4952,19 +4951,19 @@ public class YassSongList extends JTable {
             if (dirs == null) {
                 return false;
             }
-            for (int i = 0; i < dirs.length; i++) {
+            for (File dir1 : dirs) {
                 if (!notInterrupted) {
                     return true;
                 }
-                String name = dirs[i].getName();
+                String name = dir1.getName();
                 String namelow = name.toLowerCase();
-                if (dirs[i].isDirectory()) {
-                    if (hasNewSongs(t, dirs[i], d.getName())) {
+                if (dir1.isDirectory()) {
+                    if (hasNewSongs(t, dir1, d.getName())) {
                         return true;
                     }
                 } else {
-                    if (namelow.endsWith(".txt") && quickCheck(dirs[i])) {
-                        if (t.get(dirs[i].getAbsolutePath()) == null) {
+                    if (namelow.endsWith(".txt") && quickCheck(dir1)) {
+                        if (t.get(dir1.getAbsolutePath()) == null) {
                             //System.out.println("new file: " + dirs[i].getAbsolutePath());
                             return true;
                         }

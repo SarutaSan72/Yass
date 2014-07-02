@@ -21,12 +21,13 @@ import java.util.Locale;
  */
 public class YassMain extends JApplet {
 
-    public final static boolean COMBINED_LYRICS = true;
-    public final static boolean COMBINED_LIBRARY = true;
     public final static boolean NO_GAME = true;
     private static final long serialVersionUID = 777825370133814283L;
     private static final boolean PRELOAD_FOBS = false;
-    private static boolean convert = false, lib = true, edit = false, correct = false, play = false;
+    private static boolean convert = false;
+    private static boolean edit = false;
+    private static boolean correct = false;
+    private static boolean play = false;
     private static String midiFile = null, txtFile = null;
     // APPLICATION-SPECIFIC
     private static String[] app_argv = null;
@@ -35,8 +36,6 @@ public class YassMain extends JApplet {
     private YassSheet sheet = null;
     private YassActions actions = null;
     private YassPlayer mp3 = null;
-    private YassErrors errors = null;
-    private YassVideo video = null;
     private YassLyrics lyrics = null;
     private YassSongList songList = null;
     private YassSongInfo songInfo = null;
@@ -225,9 +224,7 @@ public class YassMain extends JApplet {
         actions.interruptPlay();
 
         sheet.updateHeight();
-        if (COMBINED_LYRICS) {
-            actions.revalidateLyricsArea();
-        }
+        actions.revalidateLyricsArea();
         sheet.update();
         sheet.repaint();
     }
@@ -322,42 +319,34 @@ public class YassMain extends JApplet {
 
         JPanel songListPanel = createSongListPanel();
 
-        JPanel lyricsPanel = COMBINED_LYRICS ? (new JPanel()) : createLyricsPanel();
-
         final JPanel sheetPanel = createSheetPanel();
 
-        video = new YassVideo(prop, sheet);
+        YassVideo video = new YassVideo(prop, sheet);
         actions.setVideo(video);
         mp3.setVideo(video);
-
-        JPanel infoPanel = new JPanel(new BorderLayout());
 
         String layout = prop.getProperty("editor-layout");
         if (layout == null) {
             layout = "East";
         }
 
-        if (COMBINED_LYRICS) {
-            String lyricsWidthString = prop.getProperty("lyrics-width");
-            String lyricsHeightString = prop.getProperty("lyrics-min-height");
-            int lyricsWidth = Integer.parseInt(lyricsWidthString);
-            int lyricsMinHeight = Integer.parseInt(lyricsHeightString);
+        String lyricsWidthString = prop.getProperty("lyrics-width");
+        String lyricsHeightString = prop.getProperty("lyrics-min-height");
+        int lyricsWidth = Integer.parseInt(lyricsWidthString);
+        int lyricsMinHeight = Integer.parseInt(lyricsHeightString);
 
-            // LYRICS POSITION
-            if (layout.equals("East")) {
-                lyrics.setBounds(500, 30, lyricsWidth, lyricsMinHeight);
-            } else if (layout.equals("West")) {
-                lyrics.setBounds(0, 30, lyricsWidth, lyricsMinHeight);
-            }
-
-            lyrics.setOpaque(false);
-            sheet.setLayout(null);
-            sheet.add(lyrics);
-        } else {
-            infoPanel.add("Center", lyricsPanel);
+        // LYRICS POSITION
+        if (layout.equals("East")) {
+            lyrics.setBounds(500, 30, lyricsWidth, lyricsMinHeight);
+        } else if (layout.equals("West")) {
+            lyrics.setBounds(0, 30, lyricsWidth, lyricsMinHeight);
         }
 
-        errors = new YassErrors(actions, prop, actions.createErrorToolbar());
+        lyrics.setOpaque(false);
+        sheet.setLayout(null);
+        sheet.add(lyrics);
+
+        YassErrors errors = new YassErrors(actions, prop, actions.createErrorToolbar());
         actions.setErrors(errors);
         //actions.setRaw(raw);
         //actions.setMP3Info(mp3info);
@@ -365,41 +354,7 @@ public class YassMain extends JApplet {
         //actions.setCover(cover);
         //actions.setBackground(background);
 
-        JPanel p = new JPanel(new BorderLayout());
-        //p.add("East", errorPanel);
-        //p.add("Center", infoPanel);
-
-        String dv = prop.getProperty("split-vertical");
-        if (dv == null) {
-            dv = "300";
-        }
-
-        if (!COMBINED_LYRICS) {
-            final JSplitPane splitPaneV = new JSplitPane(JSplitPane.VERTICAL_SPLIT, sheetPanel, p);
-            splitPaneV.setOneTouchExpandable(true);
-            splitPaneV.setDividerLocation(Integer.parseInt(dv));
-            splitPaneV.setResizeWeight(0);
-            splitPaneV.setContinuousLayout(true);
-            splitPaneV.addPropertyChangeListener(
-                    new PropertyChangeListener() {
-                        public void propertyChange(PropertyChangeEvent evt) {
-                            if (evt.getPropertyName() == JSplitPane.DIVIDER_LOCATION_PROPERTY) {
-                                int dl = splitPaneV.getDividerLocation();
-                                if (dl > 0 && dl < splitPaneV.getMaximumDividerLocation()) {
-                                    prop.setProperty("split-vertical", dl + "");
-                                }
-                                splitPaneV.validate();
-                                sheet.revalidate();
-                                sheet.init();
-                                sheet.update();
-                                sheet.repaint();
-                            }
-                        }
-                    });
-            actions.setPanels(this, mainPanel, songListPanel, songInfo, groupsPanel, songPanel, playlistPanel, splitPaneV);
-        } else {
-            actions.setPanels(this, mainPanel, songListPanel, songInfo, groupsPanel, songPanel, playlistPanel, sheetPanel);
-        }
+        actions.setPanels(this, mainPanel, songListPanel, songInfo, groupsPanel, songPanel, playlistPanel, sheetPanel);
 
         Container c = getContentPane();
         c.setLayout(new BorderLayout());
@@ -415,14 +370,10 @@ public class YassMain extends JApplet {
         if (argv == null) {
             return;
         }
-        for (int i = 0; i < argv.length; i++) {
-            String arg = argv[i];
+        for (String arg : argv) {
             String low = arg.toLowerCase();
             if (low.equals("-convert")) {
                 convert = true;
-            }
-            if (low.equals("-lib")) {
-                lib = true;
             }
             if (low.equals("-play")) {
                 play = true;
@@ -561,98 +512,88 @@ public class YassMain extends JApplet {
         JPanel sheetPanel = new JPanel(new BorderLayout());
         JScrollPane sheetPane = new JScrollPane(sheet);
 
-        if (COMBINED_LYRICS) {
-            sheetPane.getHorizontalScrollBar().addMouseListener(
-                    new MouseAdapter() {
-                        public void mousePressed(MouseEvent e) {
-                            YassTable t = sheet.getActiveTable();
-                            if (t != null && t.getMultiSize() == 1) {
-                                YassTable.setZoomMode(YassTable.ZOOM_MULTI);
-                                sheet.enablePan(false);
-                                actions.revalidateLyricsArea();
-                                sheet.repaint();
-                            }
+        sheetPane.getHorizontalScrollBar().addMouseListener(
+                new MouseAdapter() {
+                    public void mousePressed(MouseEvent e) {
+                        YassTable t = sheet.getActiveTable();
+                        if (t != null && t.getMultiSize() == 1) {
+                            YassTable.setZoomMode(YassTable.ZOOM_MULTI);
+                            sheet.enablePan(false);
+                            actions.revalidateLyricsArea();
+                            sheet.repaint();
                         }
-                    });
-            sheetPane.getViewport().addChangeListener(
-                    new ChangeListener() {
-                        public void stateChanged(ChangeEvent e) {
-                            JViewport v = (JViewport) e.getSource();
-                            Point p = v.getViewPosition();
-                            Dimension r = v.getExtentSize();
+                    }
+                });
+        sheetPane.getViewport().addChangeListener(
+                new ChangeListener() {
+                    public void stateChanged(ChangeEvent e) {
+                        JViewport v = (JViewport) e.getSource();
+                        Point p = v.getViewPosition();
+                        Dimension r = v.getExtentSize();
 
-                            // LYRICS POSITION
-                            String layout = prop.getProperty("editor-layout");
-                            if (layout == null) {
-                                layout = "East";
-                            }
-
-                            String lyricsWidthString = prop.getProperty("lyrics-width");
-                            int lyricsWidth = Integer.parseInt(lyricsWidthString);
-
-                            int newx = (int) p.getX() + r.width - lyricsWidth;
-                            if (layout.equals("East")) {
-                                newx = (int) p.getX() + r.width - lyricsWidth;
-                            } else if (layout.equals("West")) {
-                                newx = (int) p.getX();
-                            }
-                            int newy = (int) p.getY() + 20;
-                            Point p2 = lyrics.getLocation();
-                            if (p2.x != newx || p2.y != newy) {
-                                lyrics.setLocation(newx, newy);
-                                sheet.revalidate();
-                                sheet.update();
-                            }
+                        // LYRICS POSITION
+                        String layout = prop.getProperty("editor-layout");
+                        if (layout == null) {
+                            layout = "East";
                         }
-                    });
-            sheetPane.getViewport().addComponentListener(
-                    new ComponentAdapter() {
-                        public void componentResized(ComponentEvent e) {
-                            actions.stopPlaying();
 
-                            JViewport v = (JViewport) e.getSource();
-                            Point p = v.getViewPosition();
-                            Dimension r = v.getExtentSize();
+                        String lyricsWidthString = prop.getProperty("lyrics-width");
+                        int lyricsWidth = Integer.parseInt(lyricsWidthString);
 
-                            //System.out.println("RESIZE " + v.getExtentSize());
-
-                            // LYRICS POSITION
-                            String layout = prop.getProperty("editor-layout");
-                            if (layout == null) {
-                                layout = "East";
-                            }
-
-                            String lyricsWidthString = prop.getProperty("lyrics-width");
-                            int lyricsWidth = Integer.parseInt(lyricsWidthString);
-
-                            int newx = (int) p.getX() + r.width - lyricsWidth;
-                            if (layout.equals("East")) {
-                                newx = (int) p.getX() + r.width - lyricsWidth;
-                            } else if (layout.equals("West")) {
-                                newx = (int) p.getX();
-                            }
-                            int newy = (int) p.getY() + 20;
-                            Point p2 = lyrics.getLocation();
-                            if (p2.x != newx || p2.y != newy) {
-                                lyrics.setLocation(newx, newy);
-                                sheet.revalidate();
-                                sheet.update();
-                            } else {
-                                sheet.updateHeight();
-                                actions.revalidateLyricsArea();
-                            }
+                        int newx = (int) p.getX() + r.width - lyricsWidth;
+                        if (layout.equals("East")) {
+                            newx = (int) p.getX() + r.width - lyricsWidth;
+                        } else if (layout.equals("West")) {
+                            newx = (int) p.getX();
                         }
-                    });
-        } else {
-            sheetPane.getViewport().addChangeListener(
-                    new ChangeListener() {
-                        public void stateChanged(ChangeEvent e) {
-                            if (!sheet.isTemporaryStop()) {
-                                actions.stopPlaying();
-                            }
+                        int newy = (int) p.getY() + 20;
+                        Point p2 = lyrics.getLocation();
+                        if (p2.x != newx || p2.y != newy) {
+                            lyrics.setLocation(newx, newy);
+                            sheet.revalidate();
+                            sheet.update();
                         }
-                    });
-        }
+                    }
+                });
+        sheetPane.getViewport().addComponentListener(
+                new ComponentAdapter() {
+                    public void componentResized(ComponentEvent e) {
+                        actions.stopPlaying();
+
+                        JViewport v = (JViewport) e.getSource();
+                        Point p = v.getViewPosition();
+                        Dimension r = v.getExtentSize();
+
+                        //System.out.println("RESIZE " + v.getExtentSize());
+
+                        // LYRICS POSITION
+                        String layout = prop.getProperty("editor-layout");
+                        if (layout == null) {
+                            layout = "East";
+                        }
+
+                        String lyricsWidthString = prop.getProperty("lyrics-width");
+                        int lyricsWidth = Integer.parseInt(lyricsWidthString);
+
+                        int newx = (int) p.getX() + r.width - lyricsWidth;
+                        if (layout.equals("East")) {
+                            newx = (int) p.getX() + r.width - lyricsWidth;
+                        } else if (layout.equals("West")) {
+                            newx = (int) p.getX();
+                        }
+                        int newy = (int) p.getY() + 20;
+                        Point p2 = lyrics.getLocation();
+                        if (p2.x != newx || p2.y != newy) {
+                            lyrics.setLocation(newx, newy);
+                            sheet.revalidate();
+                            sheet.update();
+                        } else {
+                            sheet.updateHeight();
+                            actions.revalidateLyricsArea();
+                        }
+                    }
+                });
+
 
         sheetPane.setWheelScrollingEnabled(false);
         sheetPane.addMouseWheelListener(
@@ -681,18 +622,6 @@ public class YassMain extends JApplet {
         sheetPane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
 
         return sheetPanel;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-    public JPanel createLyricsPanel() {
-        JPanel lyricsPanel = new JPanel(new BorderLayout());
-        lyricsPanel.add("Center", lyrics);
-        lyricsPanel.add("West", actions.createLyricsToolbar());
-        return lyricsPanel;
     }
 
     /**
@@ -928,93 +857,74 @@ public class YassMain extends JApplet {
                     }
                 });
 
-        songList.getSelectionModel().addListSelectionListener(
-                new ListSelectionListener() {
-                    public void valueChanged(ListSelectionEvent e) {
-                        YassSong s = songList.getFirstSelectedSong();
-                        boolean isEmpty = songList.getRowCount() < 1;
+        songList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                YassSong s = songList.getFirstSelectedSong();
+                boolean isEmpty = songList.getRowCount() < 1;
 
-                        if (s != null) {
-                            playList.repaint();
-                        }
-                        if (s != null && songList.getShowLyrics() && s.getLyrics() == null) {
-                            songList.loadSongDetails(s, new YassTable());
-                        }
+                if (s != null) {
+                    playList.repaint();
+                }
+                if (s != null && songList.getShowLyrics() && s.getLyrics() == null) {
+                    songList.loadSongDetails(s, new YassTable());
+                }
 
-                        if (s != null || isEmpty) {
-                            songInfo.setSong(s);
-                            songInfo.repaint();
-                        }
-                    }
-                });
-        playList.getList().getSelectionModel().addListSelectionListener(
-                new ListSelectionListener() {
-                    public void valueChanged(ListSelectionEvent e) {
-                        YassSong s = playList.getList().getFirstSelectedSong();
-                        boolean isEmpty = playList.getList().getRowCount() < 1;
+                if (s != null || isEmpty) {
+                    songInfo.setSong(s);
+                    songInfo.repaint();
+                }
+            }
+        });
+        playList.getList().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                YassSong s = playList.getList().getFirstSelectedSong();
+                boolean isEmpty = playList.getList().getRowCount() < 1;
 
-                        if (s == null) {
-                            return;
-                        }
+                if (s == null) {
+                    return;
+                }
 
-                        if (s != null) {
-                            songList.repaint();
-                        }
-                        if (s != null && songList.getShowLyrics() && s.getLyrics() == null) {
-                            songList.loadSongDetails(s, new YassTable());
-                        }
-                        if (s != null || isEmpty) {
-                            songInfo.setSong(s);
-                            songInfo.repaint();
-                        }
-                    }
-                });
+                songList.repaint();
+                if (songList.getShowLyrics() && s.getLyrics() == null) {
+                    songList.loadSongDetails(s, new YassTable());
+                }
+                if (isEmpty) {
+                    songInfo.setSong(s);
+                    songInfo.repaint();
+                }
+            }
+        });
 
-        if (COMBINED_LIBRARY) {
-            songInfo.add(playlistPanel, 0);
-            songInfo.add(songPanel, 0);
-            songInfo.add(groupsPanel, 0);
-            songInfo.validate();
+        songInfo.add(playlistPanel, 0);
+        songInfo.add(songPanel, 0);
+        songInfo.add(groupsPanel, 0);
+        songInfo.validate();
 
-            songInfo.addComponentListener(
-                    new ComponentAdapter() {
-                        public void componentResized(ComponentEvent e) {
-                            int ww = songInfo.getWidth();
-                            int hh = songInfo.getHeight();
+        songInfo.addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent e) {
+                int ww = songInfo.getWidth();
+                int hh = songInfo.getHeight();
 
-                            int bb = 10;
-                            int w2 = groupsPanel.getPreferredSize().width;
+                int bb = 10;
+                int w2 = groupsPanel.getPreferredSize().width;
 
-                            groupsPanel.setBounds(bb, bb, w2, hh - 20);
+                groupsPanel.setBounds(bb, bb, w2, hh - 20);
 
-                            int min = 200;
-                            int max = 500;
-                            int sw = ww / 4;
-                            sw = Math.max(min, Math.min(sw, max));
-                            songPanel.setBounds(bb + w2 + bb, bb, sw, hh - 20);
+                int min = 200;
+                int max = 500;
+                int sw = ww / 4;
+                sw = Math.max(min, Math.min(sw, max));
+                songPanel.setBounds(bb + w2 + bb, bb, sw, hh - 20);
 
-                            int w3 = ww - bb - 250;
-                            songInfo.updateTextBounds(w3, bb + 250 + bb + 32, 250, hh - 250 - 3 * bb - 32);
+                int w3 = ww - bb - 250;
+                songInfo.updateTextBounds(w3, bb + 250 + bb + 32, 250, hh - 250 - 3 * bb - 32);
 
-                            int w4 = bb + w2 + bb + sw + bb;
-                            playlistPanel.setBounds(w4, bb, 200, hh - 20);
+                int w4 = bb + w2 + bb + sw + bb;
+                playlistPanel.setBounds(w4, bb, 200, hh - 20);
 
-                            actions.updateDetails();
-                        }
-                    });
-        } else {
-            //libMainPanel.setLayout(new BorderLayout());
-            //libMainPanel.add("Center", songPanel);
-            //libMainPanel.add("West", groupsPanel);
-
-            //JPanel libinfo = new JPanel(new BorderLayout());
-            //libinfo.add("North", songInfo);
-            //libinfo.add("Center", flow ? tab : playlistPanel);
-
-            //libinfoPanel = new JPanel(new BorderLayout());
-            //libinfoPanel.add("Center", libinfo);
-            // panel.add("East", libinfoPanel);
-        }
+                actions.updateDetails();
+            }
+        });
 
         actions.registerLibraryActions(panel);
         return panel;

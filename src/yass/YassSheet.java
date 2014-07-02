@@ -25,20 +25,16 @@ import java.util.Vector;
  */
 public class YassSheet extends JPanel implements Scrollable,
         yass.renderer.YassPlaybackRenderer {
-    /**
-     * Description of the Field
-     */
+
     public final static int NORM_HEIGHT = 20;
-    protected static final boolean USE_EQUALS_KEY = false;
     private static final long serialVersionUID = 3284920111520989009L;
     private final static int ACTION_CONTROL = 1, ACTION_ALT = 2,
             ACTION_CONTROL_ALT = 4, ACTION_NONE = 0;
 
-    private final static int SKETCH_HORIZONTAL = -1, SKETCH_VERTICAL = -2;
     private final static int SKETCH_LENGTH = 30;
-
     private final static int SKETCH_UP = 1, SKETCH_DOWN = 2, SKETCH_LEFT = 3,
             SKETCH_RIGHT = 4, SKETCH_NONE = 0;
+    private final static int SKETCH_HORIZONTAL = -1, SKETCH_VERTICAL = -2;
     private final static int[] GESTURE_UP = new int[]{SKETCH_VERTICAL,
             SKETCH_UP};
     private final static int[] GESTURE_UP_DOWN = new int[]{SKETCH_VERTICAL,
@@ -49,7 +45,6 @@ public class YassSheet extends JPanel implements Scrollable,
             SKETCH_VERTICAL, SKETCH_UP, SKETCH_DOWN, SKETCH_UP};
     private final static int[] GESTURE_DOWN_UP_DOWN = new int[]{
             SKETCH_VERTICAL, SKETCH_DOWN, SKETCH_UP, SKETCH_DOWN};
-
     private final static int[] GESTURE_LEFT = new int[]{SKETCH_HORIZONTAL,
             SKETCH_LEFT};
     private final static int[] GESTURE_RIGHT = new int[]{SKETCH_HORIZONTAL,
@@ -66,21 +61,6 @@ public class YassSheet extends JPanel implements Scrollable,
             SKETCH_DOWN};
     private final static int fs = 14;
 
-    // {KeyEvent.VK_0, KeyEvent.VK_1, KeyEvent.VK_3, KeyEvent.VK_8,
-    // KeyEvent.VK_2, KeyEvent.VK_6, KeyEvent.VK_4, KeyEvent.VK_7,
-    // KeyEvent.VK_9, KeyEvent.VK_5};
-    // private int keycodes[] = new int[]{KeyEvent.VK_0, KeyEvent.VK_MULTIPLY,
-    // KeyEvent.VK_DIVIDE, KeyEvent.VK_SUBTRACT, KeyEvent.VK_ADD,
-    // KeyEvent.VK_DECIMAL, KeyEvent.VK_BACK_SPACE, KeyEvent.VK_H,
-    // KeyEvent.VK_J, KeyEvent.VK_K};
-    // private int keycodes[] = new
-    // int[]{AWTKeyStroke.getAWTKeyStroke("0").getKeyCode(),
-    // AWTKeyStroke.getAWTKeyStroke("MULTIPLY").getKeyCode(),
-    // AWTKeyStroke.getAWTKeyStroke("DIVIDE").getKeyCode(),
-    // AWTKeyStroke.getAWTKeyStroke("SUBTRACT").getKeyCode(),
-    // AWTKeyStroke.getAWTKeyStroke("ADD").getKeyCode(),
-    // AWTKeyStroke.getAWTKeyStroke("DECIMAL").getKeyCode(),
-    // AWTKeyStroke.getAWTKeyStroke("BACK_SPACE").getKeyCode()};
     private Font font = new Font("SansSerif", Font.BOLD, fs);
     private Font fontv = new Font("SansSerif", Font.PLAIN, fs);
     private Font fonti = new Font("SansSerif", Font.ITALIC, fs);
@@ -128,11 +108,11 @@ public class YassSheet extends JPanel implements Scrollable,
     private int dragDir = UNDEFINED;
     private int hiliteCue = UNDEFINED, dragMode = UNDEFINED;
 
-	/*
+    /*
      * new Color(1f, 1f, 1f, .7f), new Color(.7f, .7f, .7f, .7f), new Color(.4f,
-	 * .6f, .8f, .8f), new Color(.8f, .8f, .5f, .7f), new Color(.8f, .5f, .8f,
-	 * .7f), new Color(.9f, .7f, .7f, .7f)
-	 */
+     * .6f, .8f, .8f), new Color(.8f, .8f, .5f, .7f), new Color(.8f, .5f, .8f,
+     * .7f), new Color(.9f, .7f, .7f, .7f)
+     */
     private final static int VERTICAL = 1;
     private final static int HORIZONTAL = 2;
     private final static int LEFT = 1;
@@ -191,12 +171,10 @@ public class YassSheet extends JPanel implements Scrollable,
     private Color playBlue = new Color(.4f, .6f, .8f, 1f);
     private Color gray = new Color(.7f, .7f, .7f, .7f);
     Color darkShadow = gray;
-    // private Color oddpageColor = new Color(.9f, .9f, .9f, .9f), evenpageColor
-    // = new Color(.8f, .8f, .8f, .9f);
     private Color hiGray = new Color(.6f, .6f, .6f, 1f);
     private Color hiGray2 = new Color(.9f, .9f, .9f, 1f);
-    private Color dkGray = new Color(.4f, .4f, .4f, .7f);
     private Color oddpageColor = gray, evenpageColor = hiGray2;
+    private Color dkGray = new Color(.4f, .4f, .4f, .7f);
     private Color blue = new Color(.4f, .6f, .8f, .7f);
     private Color blueDrag = new Color(.8f, .9f, 1f, .5f);
     private Color dkRed = new Color(.8f, .4f, .4f, .7f);
@@ -207,7 +185,6 @@ public class YassSheet extends JPanel implements Scrollable,
     private Color inoutColor = new Color(.9f, .9f, 1f, .5f);
     private Color inoutSnapshotBarColor = new Color(.3f, .3f, .5f, .7f);
     private Color inoutBarColor = new Color(.5f, .5f, .7f, .7f);
-    private Color panelbg = new JPanel().getBackground();
     private Paint tex = null, bgtex = null;
     private BufferedImage bgImage = null;
     private boolean showVideo = false, showBackground = false;
@@ -216,11 +193,11 @@ public class YassSheet extends JPanel implements Scrollable,
             showPlayerButtons = true, showText = true;
     private int hiliteAction = 0;
 
-	/*
-	 * Description of the Method
-	 * 
-	 * @return Description of the Return Value
-	 */
+    /*
+     * Description of the Method
+     *
+     * @return Description of the Return Value
+     */
     private long lastTime = -1;
     private String lastTimeString = "";
     private int LEFT_BORDER = 36, RIGHT_BORDER = 36;
@@ -228,7 +205,7 @@ public class YassSheet extends JPanel implements Scrollable,
             TOP_PLAYER_BUTTONS;
     private Point[] sketch = null;
     private int sketchPos = 0, dirPos = 0;
-    private long sketchStartTime = 0, sketchEndTime = 0;
+    private long sketchStartTime = 0;
     private int[] sketchDirs = null;
     private boolean sketchStarted = false;
     private BasicStroke thinStroke = new BasicStroke(0.5f),
@@ -266,10 +243,10 @@ public class YassSheet extends JPanel implements Scrollable,
     private Graphics2D pgb = null;
     private int ppos = 0;
     private Point psheetpos = null;
-    private boolean drawsub = true;
     private boolean pisinterrupted = false;
     private BufferedImage videoFrame = null;
     private YassSession session = null;
+
     /**
      * Constructor for the YassSheet object
      */
@@ -299,6 +276,7 @@ public class YassSheet extends JPanel implements Scrollable,
         Graphics2D g = im.createGraphics();
         g.setColor(white);
         g.fillRect(0, 0, w, w);
+        Color panelbg = new JPanel().getBackground();
         g.setColor(panelbg);
         g.fillRect(0, 0, w2, w2);
         g.fillRect(w2, w2, w2, w2);
@@ -332,12 +310,6 @@ public class YassSheet extends JPanel implements Scrollable,
                 char c = e.getKeyChar();
                 int code = e.getKeyCode();
 
-                if (c == '=' && !isPlaying && USE_EQUALS_KEY) {
-                    equalsKeyMillis = System.currentTimeMillis();
-                    repaint();
-                    e.consume();
-                    return;
-                }
                 if (equalsKeyMillis > 0) {
                     if (code == KeyEvent.VK_BACK_SPACE) {
                         equalsDigits = equalsDigits.substring(0,
@@ -511,8 +483,7 @@ public class YassSheet extends JPanel implements Scrollable,
                     boolean lengthen = code == keycodes[10];
                     boolean changed = false;
                     int rows[] = table.getSelectedRows();
-                    for (int i = 0; i < rows.length; i++) {
-                        int next = rows[i];
+                    for (int next : rows) {
                         YassRow row = table.getRowAt(next);
                         if (!row.isNote()) {
                             continue;
@@ -545,8 +516,7 @@ public class YassSheet extends JPanel implements Scrollable,
                     boolean right = code == keycodes[6];
                     boolean changed = false;
                     int rows[] = table.getSelectedRows();
-                    for (int i = 0; i < rows.length; i++) {
-                        int next = rows[i];
+                    for (int next : rows) {
                         YassRow row = table.getRowAt(next);
                         if (!row.isNote()) {
                             continue;
@@ -579,8 +549,7 @@ public class YassSheet extends JPanel implements Scrollable,
                     boolean up = code == keycodes[8];
                     boolean changed = false;
                     int rows[] = table.getSelectedRows();
-                    for (int i = 0; i < rows.length; i++) {
-                        int next = rows[i];
+                    for (int next : rows) {
                         YassRow row = table.getRowAt(next);
                         if (!row.isNote()) {
                             continue;
@@ -617,14 +586,14 @@ public class YassSheet extends JPanel implements Scrollable,
                         try {
                             int n = Integer.parseInt(cstr);
                             table.gotoPageNumber(n);
-                        } catch (Exception ex) {
+                        } catch (Exception ignored) {
                         }
                     } else {
                         lastTimeString = cstr;
                         try {
                             int n = Integer.parseInt(cstr);
                             table.gotoPageNumber(n);
-                        } catch (Exception ex) {
+                        } catch (Exception ignored) {
                         }
                     }
                     lastTime = currentTime;
@@ -642,8 +611,7 @@ public class YassSheet extends JPanel implements Scrollable,
 
                     if (initCurrent) {
                         int rows[] = table.getSelectedRows();
-                        for (int i = 0; i < rows.length; i++) {
-                            int next = rows[i];
+                        for (int next : rows) {
                             YassRow row = table.getRowAt(next);
                             if (!row.isNote()) {
                                 continue;
@@ -708,7 +676,7 @@ public class YassSheet extends JPanel implements Scrollable,
                     int n = -1;
                     try {
                         n = Integer.parseInt(cstr);
-                    } catch (Exception ex) {
+                    } catch (Exception ignored) {
                     }
 
                     long currentMillis = System.currentTimeMillis();
@@ -718,8 +686,7 @@ public class YassSheet extends JPanel implements Scrollable,
                     lastDigit = n;
 
                     int rows[] = table.getSelectedRows();
-                    for (int i = 0; i < rows.length; i++) {
-                        int next = rows[i];
+                    for (int next : rows) {
                         YassRow row = table.getRowAt(next);
                         if (!row.isNote()) {
                             continue;
@@ -799,7 +766,7 @@ public class YassSheet extends JPanel implements Scrollable,
                 }
 
 				/*
-				 * if (table.getPreventZoom()) { table.setPreventZoom(false);
+                 * if (table.getPreventZoom()) { table.setPreventZoom(false);
 				 * table.zoomPage(); }
 				 */
                 if (hiliteCue == MOVE_REMAINDER) {
@@ -911,9 +878,7 @@ public class YassSheet extends JPanel implements Scrollable,
                             pan ? (hiliteHeight - 2) : hiliteHeight));
                     return;
                 }
-                if (twice) {
-                    table.selectLine();
-                }
+                table.selectLine();
             }
 
             public void mousePressed(MouseEvent e) {
@@ -957,7 +922,7 @@ public class YassSheet extends JPanel implements Scrollable,
                             y = dim.height;
                         }
 
-                        int dy = 0;
+                        int dy;
                         if (pan) {
                             dy = (int) Math.round(hhPageMin
                                     + (dim.height - y - BOTTOM_BORDER) / hSize);
@@ -1048,7 +1013,6 @@ public class YassSheet extends JPanel implements Scrollable,
                     return;
                 }
                 YassRectangle next = null;
-                r = null;
 
                 rect.size();
                 hit = -1;
@@ -1260,7 +1224,7 @@ public class YassSheet extends JPanel implements Scrollable,
                                 y = dim.height;
                             }
 
-                            int dy = 0;
+                            int dy;
                             if (pan) {
                                 dy = (int) Math.round(hhPageMin
                                         + (dim.height - y - BOTTOM_BORDER)
@@ -1357,7 +1321,7 @@ public class YassSheet extends JPanel implements Scrollable,
                 }
 
                 YassRectangle next = null;
-                YassRectangle r = null;
+                YassRectangle r;
 
                 int i = 0;
                 for (Enumeration<?> en = rect.elements(); en.hasMoreElements(); i++) {
@@ -1585,7 +1549,7 @@ public class YassSheet extends JPanel implements Scrollable,
                             py = dim.height;
                         }
 
-                        int dy = 0;
+                        int dy;
                         if (pan) {
                             dy = (int) Math
                                     .round(hhPageMin
@@ -1686,17 +1650,15 @@ public class YassSheet extends JPanel implements Scrollable,
                         select.width = Math.abs(outPoint - inPoint);
                         select.height = clip.height;
                     } else {
-                        double sx = px;
-                        double sy = py;
 
                         Point p2 = new Point((int) selectX, (int) selectY);
                         SwingUtilities.convertPointFromScreen(p2,
                                 YassSheet.this);
 
-                        select.x = Math.min(p2.getX(), sx);
-                        select.y = Math.min(p2.getY(), sy);
-                        select.width = Math.abs(p2.getX() - sx);
-                        select.height = Math.abs(p2.getY() - sy);
+                        select.x = Math.min(p2.getX(), (double) px);
+                        select.y = Math.min(p2.getY(), (double) py);
+                        select.width = Math.abs(p2.getX() - (double) px);
+                        select.height = Math.abs(p2.getY() - (double) py);
                     }
 
                     int n = rect.size();
@@ -1758,7 +1720,7 @@ public class YassSheet extends JPanel implements Scrollable,
 
                 // updateFromRow: rr.y = dim.height - (height - minHeight) *
                 // hSize - hSize-4;
-                int dy = 0;
+                int dy;
                 if (pan) {
                     dy = (int) Math.round(pageMin
                             + (dim.height - y - hSize - BOTTOM_BORDER + 1)
@@ -1852,10 +1814,6 @@ public class YassSheet extends JPanel implements Scrollable,
                                 firePropertyChange("relBeat", null,
                                         new Integer(dx - oldx));
                             }
-
-                            // table.updatePlayerPosition();
-
-                            return;
                         }
                     }
                 } else if (dragMode == LEFT) {
@@ -1866,8 +1824,6 @@ public class YassSheet extends JPanel implements Scrollable,
                             dragDir = HORIZONTAL;
                             firePropertyChange("relLeft", null, new Integer(dx
                                     - oldx));
-                            // table.updatePlayerPosition();
-                            return;
                         }
                     }
                 } else {
@@ -1884,7 +1840,6 @@ public class YassSheet extends JPanel implements Scrollable,
                             dragDir = HORIZONTAL;
                             firePropertyChange("relRight", null, new Integer(dx
                                     - oldx));
-                            return;
                         }
                     }
                 }
@@ -1902,15 +1857,6 @@ public class YassSheet extends JPanel implements Scrollable,
     }
 
     /**
-     * Sets the keyCodes attribute of the YassSheet object
-     *
-     * @param k The new keyCodes value
-     */
-    public void setKeyCodes(int k[]) {
-        keycodes = k;
-    }
-
-    /**
      * Sets the lyricsWidth attribute of the YassSheet object
      *
      * @param w The new lyricsWidth value
@@ -1920,30 +1866,12 @@ public class YassSheet extends JPanel implements Scrollable,
     }
 
     /**
-     * Gets the lyricsVisible attribute of the YassSheet object
-     *
-     * @return The lyricsVisible value
-     */
-    public boolean isLyricsVisible() {
-        return lyricsVisible;
-    }
-
-    /**
      * Sets the lyricsVisible attribute of the YassSheet object
      *
      * @param onoff The new lyricsVisible value
      */
     public void setLyricsVisible(boolean onoff) {
         lyricsVisible = onoff;
-    }
-
-    /**
-     * Gets the messageMemory attribute of the YassSheet object
-     *
-     * @return The messageMemory value
-     */
-    public boolean getDebugMemory() {
-        return messageMemory;
     }
 
     /**
@@ -1961,18 +1889,7 @@ public class YassSheet extends JPanel implements Scrollable,
      * @param c The new colorSets value
      */
     public void setColors(Color[] c) {
-        for (int i = 0; i < colorSet.length; i++) {
-            colorSet[i] = c[i];
-        }
-    }
-
-    /**
-     * Gets the colorSets attribute of the YassSheet object
-     *
-     * @return The colorSets value
-     */
-    public Color[] getNoteColors() {
-        return colorSet;
+        System.arraycopy(c, 0, colorSet, 0, colorSet.length);
     }
 
     /**
@@ -2009,33 +1926,6 @@ public class YassSheet extends JPanel implements Scrollable,
      */
     public int getTopLine() {
         return TOP_LINE;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-    public boolean showArrows() {
-        return showArrows;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-    public boolean showPlayerButtons() {
-        return showPlayerButtons;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-    public boolean showText() {
-        return showText;
     }
 
     /**
@@ -2168,7 +2058,7 @@ public class YassSheet extends JPanel implements Scrollable,
             return true;
         }
 
-        sketchEndTime = System.currentTimeMillis();
+        long sketchEndTime = System.currentTimeMillis();
 
         long ms = sketchEndTime - sketchStartTime;
         boolean intime = ms < 300;
@@ -2193,8 +2083,7 @@ public class YassSheet extends JPanel implements Scrollable,
         if (sketchDirs == null) {
             sketchDirs = new int[SKETCH_LENGTH];
         }
-        sketchDirs[0] = vertical ? SKETCH_VERTICAL
-                : (horizontal ? SKETCH_HORIZONTAL : SKETCH_NONE);
+        sketchDirs[0] = vertical ? SKETCH_VERTICAL : SKETCH_HORIZONTAL;
         dirPos = 1;
         Point s = sketch[1];
         for (int i = 2; i < sketchPos; i++) {
@@ -2220,7 +2109,7 @@ public class YassSheet extends JPanel implements Scrollable,
         sketchDirs[dirPos] = SKETCH_NONE;
 
 		/*
-		 * System.out.print("p.x"); for (int i = 0; i < sketchPos; i++) {
+         * System.out.print("p.x"); for (int i = 0; i < sketchPos; i++) {
 		 * System.out.print(" " + sketch[i].x); } System.out.println();
 		 * System.out.print("p.y"); for (int i = 0; i < sketchPos; i++) {
 		 * System.out.print(" " + sketch[i].y); } System.out.println();
@@ -2335,15 +2224,6 @@ public class YassSheet extends JPanel implements Scrollable,
     }
 
     /**
-     * Sets the mouseOver attribute of the YassSheet object
-     *
-     * @return Description of the Return Value
-     */
-    public boolean setMouseOver() {
-        return mouseover;
-    }
-
-    /**
      * Sets the actions attribute of the YassSheet object
      *
      * @param a The new actions value
@@ -2408,15 +2288,6 @@ public class YassSheet extends JPanel implements Scrollable,
      */
     public void showSnapshot(boolean onoff) {
         paintSnapshot = onoff;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-    public boolean hasSnapshot() {
-        return snapshot != null;
     }
 
     /**
@@ -2489,7 +2360,7 @@ public class YassSheet extends JPanel implements Scrollable,
      */
     public void addTable(YassTable t) {
         tables.addElement(t);
-        rects.addElement(new Vector<>(3000, 1000));
+        rects.addElement(new Vector<YassRectangle>(3000, 1000));
     }
 
     /**
@@ -2555,18 +2426,6 @@ public class YassSheet extends JPanel implements Scrollable,
         init();
     }
 
-    /**
-     * Gets the tables attribute of the YassSheet object
-     *
-     * @return The tables value
-     */
-    public Vector<YassTable> getTables() {
-        return tables;
-    }
-
-    /**
-     * Description of the Method
-     */
     public void removeAll() {
         tables.clear();
         rects.clear();
@@ -2583,34 +2442,12 @@ public class YassSheet extends JPanel implements Scrollable,
     }
 
     /**
-     * Description of the Method
-     *
-     * @param i Description of the Parameter
-     */
-    public void scrollRectToVisible(int i) {
-        scrollRectToVisible(i, i);
-    }
-
-    /**
-     * Gets the noteLengthVisible attribute of the YassSheet object
-     *
-     * @return The noteLengthVisible value
-     */
-    public boolean isNoteLengthVisible() {
-        return showNoteLength;
-    }
-
-    /**
      * Sets the noteLengthVisible attribute of the YassSheet object
      *
      * @param onoff The new noteLengthVisible value
      */
     public void setNoteLengthVisible(boolean onoff) {
         showNoteLength = onoff;
-    }
-
-    public boolean isNoteHeightVisible() {
-        return showNoteHeight;
     }
 
     public void setNoteHeightVisible(boolean onoff) {
@@ -2629,13 +2466,7 @@ public class YassSheet extends JPanel implements Scrollable,
             return false;
         }
 
-        if (r.x < getLeftX()) {
-            return false;
-        }
-        if (r.x + r.width > clip.x + clip.width - RIGHT_BORDER) {
-            return false;
-        }
-        return true;
+        return r.x >= getLeftX() && r.x + r.width <= clip.x + clip.width - RIGHT_BORDER;
     }
 
     /**
@@ -2671,7 +2502,7 @@ public class YassSheet extends JPanel implements Scrollable,
                 x = beatToTimeline(outgap);
             } else if (r.isType(YassRectangle.UNDEFINED)) {
                 continue;
-            } else if (r == null || r.y < 0) {
+            } else if (r.y < 0) {
                 continue;
             }
 
@@ -2920,77 +2751,76 @@ public class YassSheet extends JPanel implements Scrollable,
             imageChanged = clip.x != imageX;
         }
 
-        if (true || imageChanged) {
-            paintEmptySheet(db);
+        paintEmptySheet(db);
 
-            paintInfoArea(db);
+        paintInfoArea(db);
 
-            YassPlayer mp3 = actions != null ? actions.getMP3() : null;
-            if (mp3 != null && mp3.createWaveform()) {
-                paintWaveform(db);
-            }
-
-            if (!showVideo() && !showBackground()) {
-                paintBeatLines(db);
-            }
-            paintLines(db);
-            if (!live) {
-                paintBeats(db);
-                paintInOut(db);
-                if (paintSnapshot) {
-                    paintSnapshot(db);
-                }
-            }
-
-            paintRectangles(db);
-            if (paintHeights) {
-                paintHeightBox(db);
-            }
-
-            paintVersionsText(db);
-            if (showArrows && !live) {
-                paintArrows(db);
-            }
-
-            if (messageMemory && !live) {
-                db.setFont(font);
-                int maxHeap = (int) (Runtime.getRuntime().maxMemory() / 1024 / 1024);
-                int occHeap = (int) (Runtime.getRuntime().totalMemory() / 1024 / 1024);
-                int freeHeap = (int) (Runtime.getRuntime().freeMemory() / 1024 / 1024);
-                int usedHeap = occHeap - freeHeap;
-                String info = usedHeap + " of " + maxHeap + "Mb in use" + ", "
-                        + occHeap + "Mb reserved.";
-                if (layout.equals("East")) {
-                    db.drawString(info, clip.x + 10, 40);
-                } else if (layout.equals("West")) {
-                    db.drawString(info, clip.x + 10 + lyricsWidth, 40);
-                }
-            }
-
-            // message:
-            // LYRICS POSITION
-            if (YassMain.COMBINED_LYRICS && getComponentCount() > 0
-                    && lyricsVisible) {
-                YassLyrics c = (YassLyrics) getComponent(0);
-                Rectangle cr = c.getBounds();
-
-                if (layout.equals("East")) {
-                    db.translate(
-                            clip.x + clip.width - cr.width + cr.getX()
-                                    - c.getX(), cr.getY() - c.getY() + 20);
-                } else if (layout.equals("West")) {
-                    db.translate(clip.x, cr.getY() - c.getY() + 20);
-                }
-
-                // System.out.println("refresh print");
-                c.print(db);
-                // System.out.println("refresh print done");
-            }
-            // paintText(db);
-
-            imageChanged = false;
-            imageX = clip.x;
+        YassPlayer mp3 = actions != null ? actions.getMP3() : null;
+        if (mp3 != null && mp3.createWaveform()) {
+            paintWaveform(db);
         }
+
+        if (!showVideo() && !showBackground()) {
+            paintBeatLines(db);
+        }
+        paintLines(db);
+        if (!live) {
+            paintBeats(db);
+            paintInOut(db);
+            if (paintSnapshot) {
+                paintSnapshot(db);
+            }
+        }
+
+        paintRectangles(db);
+        if (paintHeights) {
+            paintHeightBox(db);
+        }
+
+        paintVersionsText(db);
+        if (showArrows && !live) {
+            paintArrows(db);
+        }
+
+        if (messageMemory && !live) {
+            db.setFont(font);
+            int maxHeap = (int) (Runtime.getRuntime().maxMemory() / 1024 / 1024);
+            int occHeap = (int) (Runtime.getRuntime().totalMemory() / 1024 / 1024);
+            int freeHeap = (int) (Runtime.getRuntime().freeMemory() / 1024 / 1024);
+            int usedHeap = occHeap - freeHeap;
+            String info = usedHeap + " of " + maxHeap + "Mb in use" + ", "
+                    + occHeap + "Mb reserved.";
+            if (layout.equals("East")) {
+                db.drawString(info, clip.x + 10, 40);
+            } else if (layout.equals("West")) {
+                db.drawString(info, clip.x + 10 + lyricsWidth, 40);
+            }
+        }
+
+        // message:
+        // LYRICS POSITION
+        if (getComponentCount() > 0
+                && lyricsVisible) {
+            YassLyrics c = (YassLyrics) getComponent(0);
+            Rectangle cr = c.getBounds();
+
+            if (layout.equals("East")) {
+                db.translate(
+                        clip.x + clip.width - cr.width + cr.getX()
+                                - c.getX(), cr.getY() - c.getY() + 20);
+            } else if (layout.equals("West")) {
+                db.translate(clip.x, cr.getY() - c.getY() + 20);
+            }
+
+            // System.out.println("refresh print");
+            c.print(db);
+            // System.out.println("refresh print done");
+        }
+        // paintText(db);
+
+        imageChanged = false;
+        imageX = clip.x;
+
         db.dispose();
 
         Graphics2D gc = backVolImage.createGraphics();
@@ -3425,16 +3255,16 @@ public class YassSheet extends JPanel implements Scrollable,
         g2.setColor(Color.darkGray);
         g2.setFont(smallFont);
         FontMetrics metrics = g2.getFontMetrics();
-        String str = "";
-        int strw = 0;
-        int ms = 0;
+        String str;
+        int strw;
+        int ms;
         Line2D.Double timeLine = new Line2D.Double(0, 0, 0, 8);
         double leftx = clip.x;
         double rightx = clip.x + clip.width;
 
         g2.setStroke(thinStroke);
         int i = 0;
-        int j = 0;
+        int j;
         double lastx_ms = -1000;
         while (true) {
             timeLine.x1 = timeLine.x2 = (beatgap + i) * wSize + off;
@@ -3483,7 +3313,7 @@ public class YassSheet extends JPanel implements Scrollable,
         g2.setStroke(thinStroke);
         g2.setColor(hiGray);
         double miny = dim.height - BOTTOM_BORDER;
-        double maxy = 0;
+        double maxy;
         if (pan) {
             maxy = dim.height - BOTTOM_BORDER
                     - (2 * (NORM_HEIGHT - 1) / 2) * hSize + 1;
@@ -3508,7 +3338,7 @@ public class YassSheet extends JPanel implements Scrollable,
             off += heightBoxWidth;
         }
         int i = 0;
-        int j = 0;
+        int j;
         while (true) {
             line.x1 = line.x2 = (beatgap + i) * wSize + off;
             if (line.x1 < leftx) {
@@ -3607,10 +3437,7 @@ public class YassSheet extends JPanel implements Scrollable,
      */
     public boolean isWhiteNote(int n) {
         n = n % 12;
-        if (n == 0 || n == 2 || n == 4 || n == 5 || n == 7 || n == 9 || n == 11) {
-            return true;
-        }
-        return false;
+        return n == 0 || n == 2 || n == 4 || n == 5 || n == 7 || n == 9 || n == 11;
     }
 
     /**
@@ -3633,15 +3460,7 @@ public class YassSheet extends JPanel implements Scrollable,
 
         int blackw = 24;
         int whitew = 40;
-		/*
-		 * g2.setColor(disabledColor); g2.drawLine(x, y, x, y + hh - 1);
-		 * g2.drawLine(x + 1, y, x + w - 2, y); g2.setColor(highlight);
-		 * g2.drawLine(x + 1, y + 1, x + 1, y + hh - 3); g2.drawLine(x + 2, y +
-		 * 1, x + w - 3, y + 1); g2.setColor(shadow); g2.drawLine(x + 1, y + hh
-		 * - 2, x + w - 2, y + hh - 2); g2.drawLine(x + w - 2, y + 1, x + w - 2,
-		 * y + hh - 3); g2.setColor(darkShadow); g2.drawLine(x, y + hh - 1, x +
-		 * w - 1, y + hh - 1); g2.drawLine(x + w - 1, y + hh - 1, x + w - 1, y);
-		 */
+
         Line2D.Double line = new Line2D.Double(clip.x + heightBoxWidth,
                 TOP_LINE - 10, clip.x + clip.width, clip.height - TOP_LINE + 10
                 - BOTTOM_BORDER);
@@ -3924,7 +3743,7 @@ public class YassSheet extends JPanel implements Scrollable,
                 0, 0, 0, 0);
         RoundRectangle2D.Double cutRect = new RoundRectangle2D.Double(0, 0, 0,
                 0, 10, 10);
-        YassRectangle prev = null;
+        YassRectangle prev;
         YassRectangle next = null;
 
         int rows[] = table != null ? table.getSelectedRows() : null;
@@ -4357,7 +4176,7 @@ public class YassSheet extends JPanel implements Scrollable,
      * @param g2 Description of the Parameter
      */
     public void paintPlainRectangles(Graphics2D g2) {
-        YassRectangle r = null;
+        YassRectangle r;
         new YassRectangle();
         Color borderCol = dkGray;
 
@@ -4445,8 +4264,8 @@ public class YassSheet extends JPanel implements Scrollable,
 
         double timelineGap = table.getGap() * 4 / (60 * 1000 / table.getBPM());
 
-        YassRectangle r = null;
-        YassRow row = null;
+        YassRectangle r;
+        YassRow row;
         int startx = -1;
         for (Enumeration<Cloneable> e = snapshotRect.elements(), te = snapshot
                 .elements(); e.hasMoreElements() && te.hasMoreElements(); ) {
@@ -4551,17 +4370,17 @@ public class YassSheet extends JPanel implements Scrollable,
      */
     public void paintTableText(Graphics2D g2, YassTable t, Vector<?> re,
                                Color c1, Color c2, int off, int offx, boolean info) {
-        String str = "";
-        String ostr = "";
-        int strw = 0;
-        int strh = 0;
-        YassRectangle r = null;
+        String str;
+        String ostr;
+        int strw;
+        int strh;
+        YassRectangle r;
         YassRectangle next = null;
-        FontMetrics metrics = null;
+        FontMetrics metrics;
 
         int pn = 1;
-        float sx = 0;
-        float sh = 0;
+        float sx;
+        float sh;
 
         Rectangle2D.Double lastStringBounds = null;
         Rectangle2D.Double strBounds = new Rectangle2D.Double(0, 0, 0, 0);
@@ -4657,7 +4476,6 @@ public class YassSheet extends JPanel implements Scrollable,
 
             sx = (float) Math.round(r.x + r.width / 2f - strw / 2f + offx + 1);
             strh = metrics.getAscent();
-            sh = 0;
             if (off == 0) {
                 sh = (float) (r.y + r.height / 2 + strh / 2f);
             } else {
@@ -4769,9 +4587,9 @@ public class YassSheet extends JPanel implements Scrollable,
      * @param g2 Description of the Parameter
      */
     public void paintPlayerText(Graphics2D g2) {
-        String str = "";
-        int strw = 0;
-        int strh = 0;
+        String str;
+        int strw;
+        int strh;
         YassRectangle r = null;
         YassRow row = null;
         FontMetrics metrics = null;
@@ -4875,7 +4693,6 @@ public class YassSheet extends JPanel implements Scrollable,
 
             g2.setFont(big[24]);
             g2.setColor(colorSet[1]);
-            strh = metrics.getHeight();
 
             float sx = clip.width / 2 - strwidth / 2;
             g2.drawString(str, sx, sh);
@@ -5081,15 +4898,6 @@ public class YassSheet extends JPanel implements Scrollable,
     }
 
     /**
-     * Gets the messageInfo attribute of the YassSheet object
-     *
-     * @return The messageInfo value
-     */
-    public String getErrorMessage() {
-        return message;
-    }
-
-    /**
      * Sets the messageInfo attribute of the YassSheet object
      *
      * @param s The new messageInfo value
@@ -5118,17 +4926,14 @@ public class YassSheet extends JPanel implements Scrollable,
 
     /**
      * Description of the Method
-     *
      * @param t    Description of the Parameter
-     * @param vr   Description of the Parameter
      * @param i    Description of the Parameter
      * @param prev Description of the Parameter
      * @param r    Description of the Parameter
-     * @param next Description of the Parameter
      * @param rr   Description of the Parameter
      */
-    private void updateFromRow(YassTable t, Vector<?> vr, int i, YassRow prev,
-                               YassRow r, YassRow next, YassRectangle rr) {
+    private void updateFromRow(YassTable t, int i, YassRow prev,
+                               YassRow r, YassRectangle rr) {
         double timelineGap = t.getGap() * 4 / (60 * 1000 / t.getBPM());
 
         if (r.isNote()) {
@@ -5273,19 +5078,6 @@ public class YassSheet extends JPanel implements Scrollable,
     }
 
     /**
-     * Sets the heightRange attribute of the YassSheet object
-     */
-    public void setHeightRange() {
-        int minmax[] = getHeightRange();
-        if (minHeight != minmax[0] || maxHeight != minmax[1]) {
-            minHeight = minmax[0];
-            maxHeight = minmax[1];
-            update();
-            repaint();
-        }
-    }
-
-    /**
      * Gets the heightRange attribute of the YassSheet object
      *
      * @return The heightRange value
@@ -5300,7 +5092,7 @@ public class YassSheet extends JPanel implements Scrollable,
             e.nextElement();
             YassTable t = et.nextElement();
             int n = t.getRowCount();
-            YassRow row = null;
+            YassRow row;
             for (int i = 0; i < n; i++) {
                 row = t.getRowAt(i);
                 if (row.isNote()) {
@@ -5342,7 +5134,7 @@ public class YassSheet extends JPanel implements Scrollable,
             try {
                 Thread.currentThread();
                 Thread.sleep(100);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
 
@@ -5430,7 +5222,7 @@ public class YassSheet extends JPanel implements Scrollable,
             Enumeration<?> ten = ((YassTableModel) t.getModel()).getData()
                     .elements();
             YassRow row = null;
-            YassRow prev = null;
+            YassRow prev;
             YassRow next = null;
             while (ren.hasMoreElements()) {
                 prev = row;
@@ -5453,7 +5245,7 @@ public class YassSheet extends JPanel implements Scrollable,
                     outgap = Math.max(outgap, row.getSecondBeatInt());
                 }
                 YassRectangle rr = (YassRectangle) ren.nextElement();
-                updateFromRow(t, r, i++, prev, row, next, rr);
+                updateFromRow(t, i++, prev, row, rr);
                 if (rr.isPageBreak()) {
                     rr.setPageNumber(++pn);
                     // should better add PAGE_BREAK type
@@ -5489,7 +5281,7 @@ public class YassSheet extends JPanel implements Scrollable,
         Enumeration<?> ten = ((YassTableModel) table.getModel()).getData()
                 .elements();
         YassRow row = null;
-        YassRow prev = null;
+        YassRow prev;
         YassRow next = null;
         while (ren.hasMoreElements() && ten.hasMoreElements()) {
             prev = row;
@@ -5512,7 +5304,7 @@ public class YassSheet extends JPanel implements Scrollable,
                 outgap = Math.max(outgap, row.getSecondBeatInt());
             }
             YassRectangle rr = (YassRectangle) ren.nextElement();
-            updateFromRow(table, rect, i++, prev, row, next, rr);
+            updateFromRow(table, i++, prev, row, rr);
             if (rr.isPageBreak()) {
                 rr.setPageNumber(++pn);
             }
@@ -5545,35 +5337,6 @@ public class YassSheet extends JPanel implements Scrollable,
 		 * Rectangle(playerPos,0,clip.width-1,clip.height-1));
 		 * imageChanged=true; refreshImage(); }
 		 */
-    }
-
-    /**
-     * Gets the playerPositionVisible attribute of the YassSheet object
-     *
-     * @return The playerPositionVisible value
-     */
-    public boolean isPlayerPositionVisible() {
-        boolean isVisible = playerPos < clip.x + clip.width
-                && playerPos > clip.x;
-        return isVisible;
-    }
-
-    /**
-     * Gets the inPoint attribute of the YassSheet object
-     *
-     * @return The inPoint value
-     */
-    public int getInPoint() {
-        return inPoint;
-    }
-
-    /**
-     * Gets the outPoint attribute of the YassSheet object
-     *
-     * @return The outPoint value
-     */
-    public int getOutPoint() {
-        return outPoint;
     }
 
     /**
@@ -5664,8 +5427,7 @@ public class YassSheet extends JPanel implements Scrollable,
      * @return Description of the Return Value
      */
     public int toBeat(double ms) {
-        int beat = (int) ((ms - gap) * 4 * bpm / (60 * 1000));
-        return beat;
+        return (int) ((ms - gap) * 4 * bpm / (60 * 1000));
     }
 
     /**
@@ -5680,16 +5442,6 @@ public class YassSheet extends JPanel implements Scrollable,
     /**
      * Description of the Method
      *
-     * @param type Description of the Parameter
-     * @return Description of the Return Value
-     */
-    public int nextElementWithType(int type) {
-        return nextElementWithType(playerPos, type);
-    }
-
-    /**
-     * Description of the Method
-     *
      * @param pos Description of the Parameter
      * @return Description of the Return Value
      */
@@ -5699,42 +5451,6 @@ public class YassSheet extends JPanel implements Scrollable,
         for (Enumeration<?> e = rect.elements(); e.hasMoreElements(); i++) {
             r = (YassRectangle) e.nextElement();
             if (r.x - 1 >= pos || r.x + r.width >= pos) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @param pos  Description of the Parameter
-     * @param type Description of the Parameter
-     * @return Description of the Return Value
-     */
-    public int nextElementWithType(int pos, int type) {
-        YassRectangle r;
-        int i = 0;
-        for (Enumeration<?> e = rect.elements(); e.hasMoreElements(); i++) {
-            r = (YassRectangle) e.nextElement();
-            if ((r.x - 1 >= pos || r.x + r.width >= pos) && r.hasType(type)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-    public int currentElement() {
-        YassRectangle r;
-        int i = 0;
-        for (Enumeration<?> e = rect.elements(); e.hasMoreElements(); i++) {
-            r = (YassRectangle) e.nextElement();
-            if (r.x - 1 <= playerPos && playerPos <= r.x + r.width - 1) {
                 return i;
             }
         }
@@ -5991,16 +5707,13 @@ public class YassSheet extends JPanel implements Scrollable,
             GraphicsDevice[] gs = ge.getScreenDevices();
 
             // Get current amount of available memory in bytes for each screen
-            for (int i = 0; i < gs.length; i++) {
+            for (GraphicsDevice g : gs) {
                 // Workaround; see description
-                VolatileImage im = gs[i].getDefaultConfiguration()
+                VolatileImage im = g.getDefaultConfiguration()
                         .createCompatibleVolatileImage(1, 1);
 
                 // Retrieve available free accelerated image memory
-                int bytes = gs[i].getAvailableAcceleratedMemory();
-                if (bytes < 0) {
-                    // Amount of memory is unlimited
-                }
+                int bytes = g.getAvailableAcceleratedMemory();
 
                 // Release the temporary volatile image
                 im.flush();
@@ -6108,7 +5821,7 @@ public class YassSheet extends JPanel implements Scrollable,
             try {
                 Thread.currentThread();
                 Thread.sleep(10);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
 
@@ -6199,16 +5912,11 @@ public class YassSheet extends JPanel implements Scrollable,
                 paintPlainRectangles(pgb);
                 pgb.translate(clip.x, 0);
             } else {
-                if (drawsub) {
                     int top = getTopLine() - 10;
                     int w = plain.getWidth();
                     int h = plain.getHeight() - top;
                     pgb.drawImage(plain, 0, top, w, top + h, 0, top, w,
                             top + h, null);
-                } else {
-                    pgb.drawImage(plain, 0, 0, null);
-                }
-
             }
 
             if (getPlainBuffer().contentsLost()) {
@@ -6230,12 +5938,11 @@ public class YassSheet extends JPanel implements Scrollable,
             paintRecordedNotes();
 
             Graphics2D pg2 = (Graphics2D) getGraphics();
-            if (drawsub && !showVideo()) {
+            if (!showVideo()) {
                 int top = getTopLine() - 10;
                 int w = plain.getWidth();
                 int h = plain.getHeight() - top;
                 paintBackBuffer(pg2, 0, top, w, top + h);
-                // System.out.println("   xy " + w + " " + h);
             } else {
                 paintBackBuffer(pg2);
             }

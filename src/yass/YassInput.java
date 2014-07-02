@@ -33,7 +33,7 @@ public class YassInput {
         try {
             // JInput bug: list is never refreshed
             ControllerEnvironment ce = ControllerEnvironment.getDefaultEnvironment();
-            Controller[] cs = ce.getControllers();
+            ce.getControllers();
         } catch (java.lang.UnsatisfiedLinkError e) {
             System.out.println("No jinput-raw in java.library.path");
         }
@@ -100,38 +100,13 @@ public class YassInput {
         int controllerCount = 0;
         for (int d = 0; d < cs.length; d++) {
             Controller.Type type = cs[d].getType();
-            if ((type == Controller.Type.GAMEPAD) || (type == Controller.Type.STICK) || cs[d].getName().toLowerCase().indexOf("wiimote") >= 0 || cs[d].getName().toLowerCase().indexOf("shuttle") >= 0) {
+            if ((type == Controller.Type.GAMEPAD) || (type == Controller.Type.STICK) || cs[d].getName().toLowerCase().contains("wiimote") || cs[d].getName().toLowerCase().contains("shuttle")) {
                 if (controllerCount == index) {
                     return d;
                 }
                 controllerCount++;
             }
         }
-
-		/*
-         *  for (int d = 0; d < cs.length; d++) {
-		 *  Controller.Type type = cs[d].getType();
-		 *  if ((type == Controller.Type.KEYBOARD) || (type == Controller.Type.GAMEPAD) || (type == Controller.Type.STICK) || cs[d].getName().toLowerCase().indexOf("wiimote") >= 0) {
-		 *  continue;
-		 *  }
-		 *  System.out.println(d + ": " + type + "   " + cs[d].getName());
-		 *  int buttonCount = 0;
-		 *  Component[] comps = cs[d].getComponents();
-		 *  for (int c = 0; c < comps.length && buttonCount <= 4; c++) {
-		 *  if (!(comps[c].getIdentifier() instanceof Component.Identifier.Axis)) {
-		 *  System.out.println(buttonCount + " is button " + comps[c].getIdentifier());
-		 *  buttonCount++;
-		 *  }
-		 *  }
-		 *  if (buttonCount >= 5) {
-		 *  if (controllerCount == index) {
-		 *  System.out.println("   with index " + index);
-		 *  return d;
-		 *  }
-		 *  controllerCount++;
-		 *  }
-		 *  }
-		 */
         return -1;
     }
 
@@ -369,9 +344,9 @@ public class YassInput {
     public Controller getController(String s) {
         ControllerEnvironment ce = ControllerEnvironment.getDefaultEnvironment();
         Controller[] cs = ce.getControllers();
-        for (int d = 0; d < cs.length; d++) {
-            if (cs[d].getName().equals(s)) {
-                return cs[d];
+        for (Controller c : cs) {
+            if (c.getName().equals(s)) {
+                return c;
             }
         }
         return null;
@@ -407,9 +382,9 @@ public class YassInput {
      */
     public Component getComponent(Controller d, String s) {
         Component[] comps = d.getComponents();
-        for (int c = 0; c < comps.length; c++) {
-            if (comps[c].getName().equals(s)) {
-                return comps[c];
+        for (Component comp : comps) {
+            if (comp.getName().equals(s)) {
+                return comp;
             }
         }
         return null;
@@ -422,16 +397,16 @@ public class YassInput {
     public void pollAllButtons() {
         ControllerEnvironment ce = ControllerEnvironment.getDefaultEnvironment();
         Controller[] cs = ce.getControllers();
-        for (int c = 0; c < cs.length; c++) {
-            Controller cc = cs[c];
+        for (Controller cc : cs) {
             Controller.Type type = cc.getType();
-            if (type == Controller.Type.MOUSE || type == Controller.Type.KEYBOARD) {
-                continue;
-            } else if (type == Controller.Type.GAMEPAD || type == Controller.Type.STICK) {
+            //if (type == Controller.Type.MOUSE || type == Controller.Type.KEYBOARD) {
+                // continue;
+            //} else
+            if (type == Controller.Type.GAMEPAD || type == Controller.Type.STICK) {
                 cc.poll();
             } else if (type == Controller.Type.UNKNOWN) {
                 cc.poll();
-            } else if (cs[c].getName().toLowerCase().indexOf("wiimote") >= 0) {
+            } else if (cc.getName().toLowerCase().contains("wiimote")) {
                 cc.poll();
             }
         }
@@ -487,12 +462,12 @@ public class YassInput {
 
 
         public void run() {
-            float cur = 0;
+            float cur;
 
             while (!interrupt) {
                 try {
                     Thread.sleep(10);
-                } catch (Exception ex) {
+                } catch (Exception ignored) {
                 }
 
                 Enumeration<Controller> dEnum = controllers.elements();

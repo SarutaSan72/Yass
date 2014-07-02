@@ -17,7 +17,6 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import javax.swing.text.html.HTMLDocument;
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.*;
@@ -255,6 +254,12 @@ public class YassActions implements DropTargetListener {
             lyrics.spellLyrics();
         }
     };
+    JPanel main = null;
+    JComponent libComponent = null, groupsComponent = null,
+            songComponent = null, songinfoComponent = null,
+            playlistComponent = null, editComponent = null;
+    JApplet menuHolder = null;
+    Rectangle songBounds = null;
     // , correctFileNamesButton, correctTagsButton;
     JProgressBar progressBar = null;
     JComponent tab = null;
@@ -327,7 +332,7 @@ public class YassActions implements DropTargetListener {
                 return;
             }
 
-            Vector<String> msg = new Vector<>();
+            Vector<String> msg = new Vector<String>();
             msg.addElement(YassRow.TOO_MUCH_SPACES);
             msg.addElement(YassRow.UNCOMMON_SPACING);
             songList.batchProcess(false, msg);
@@ -671,54 +676,7 @@ public class YassActions implements DropTargetListener {
             groups.setIgnoreChange(false);
         }
     };
-    /**
-     * Sets the view attribute of the YassActions object
-     *
-     * @param n
-     * The new view value
-     */
 
-    JPanel main = null;
-    JComponent libComponent = null, groupsComponent = null,
-            songComponent = null, songinfoComponent = null,
-            playlistComponent = null, editComponent = null;
-    JApplet menuHolder = null;
-    Rectangle songBounds = null;
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-	/*
-	 * public JComponent createMP3Toolbar() { JToolBar t = new JToolBar();
-	 * t.setFloatable(false); AbstractButton b; t.add(b = new JButton());
-	 * b.setAction(openMP3); b.setToolTipText(b.getText()); b.setText("");
-	 * b.setIcon(getIcon("grayOpen24Icon")); b.setFocusable(false);
-	 * t.addSeparator(); startSpinner = new TimeSpinner("Start:", 0, 10000);
-	 * t.add(startSpinner); startSpinner.getSpinner().setFocusable(false);
-	 * startSpinner.getSpinner().addChangeListener( new ChangeListener() {
-	 * public void stateChanged(ChangeEvent e) { if (!isUpdating) {
-	 * setStart(startSpinner.getTime()); } } }); Dimension d =
-	 * startSpinner.getPreferredSize(); d.height = t.getPreferredSize().height;
-	 * startSpinner.setMaximumSize(d); t.add(b = new JButton());
-	 * b.setAction(setStartHere); b.setToolTipText(b.getText()); b.setText("");
-	 * b.setIcon(getIcon("paste24Icon")); b.setFocusable(false); t.add(b = new
-	 * JButton()); b.setAction(removeStart); b.setToolTipText(b.getText());
-	 * b.setText(""); b.setIcon(getIcon("delete24Icon")); b.setFocusable(false);
-	 * t.add(Box.createRigidArea(new Dimension(30, 0))); endSpinner = new
-	 * TimeSpinner("End:", 10000, 10000); t.add(endSpinner);
-	 * endSpinner.getSpinner().setFocusable(false);
-	 * endSpinner.getSpinner().addChangeListener( new ChangeListener() { public
-	 * void stateChanged(ChangeEvent e) { if (!isUpdating) {
-	 * setEnd(endSpinner.getTime()); } } }); d = endSpinner.getPreferredSize();
-	 * d.height = t.getPreferredSize().height; endSpinner.setMaximumSize(d);
-	 * t.add(b = new JButton()); b.setAction(setEndHere);
-	 * b.setToolTipText(b.getText()); b.setText("");
-	 * b.setIcon(getIcon("paste24Icon")); b.setFocusable(false); t.add(b = new
-	 * JButton()); b.setAction(removeEnd); b.setToolTipText(b.getText());
-	 * b.setText(""); b.setIcon(getIcon("delete24Icon")); b.setFocusable(false);
-	 * t.add(Box.createHorizontalGlue()); return t; }
-	 */
     TimeSpinner gapSpinner = null, startSpinner = null, endSpinner = null,
             vgapSpinner = null;
     Action setGapHere = new AbstractAction(I18.get("tool_lyrics_start_here")) {
@@ -872,13 +830,6 @@ public class YassActions implements DropTargetListener {
             playList.down();
         }
     };
-    Action openPlayList = new AbstractAction(I18.get("mlib_playlist_open")) {
-        private static final long serialVersionUID = 1L;
-
-        public void actionPerformed(ActionEvent e) {
-            playList.openPlayList();
-        }
-    };
     Action removePlayList = new AbstractAction(
             I18.get("mlib_playlist_remove_disk")) {
         private static final long serialVersionUID = 1L;
@@ -920,13 +871,6 @@ public class YassActions implements DropTargetListener {
             saveLibrary.setEnabled(false);
             undoAllLibraryChanges.setEnabled(false);
             refreshLibrary.setEnabled(false);
-        }
-    };
-    Action saveLibrarySelected = new AbstractAction("not used") {
-        private static final long serialVersionUID = 1L;
-
-        public void actionPerformed(ActionEvent e) {
-            // not used
         }
     };
     JDialog seDialog = null;
@@ -1068,8 +1012,7 @@ public class YassActions implements DropTargetListener {
                     String s = bpmField.getText();
                     double bpm = table.getBPM();
                     try {
-                        double val = Double.parseDouble(s);
-                        bpm = val;
+                        bpm = Double.parseDouble(s);
                     } catch (Exception ex) {
                         bpmField.setText(bpm + "");
                     }
@@ -1136,8 +1079,7 @@ public class YassActions implements DropTargetListener {
             // ImageIcon(YassActions.this.getClass().getResource("/yass/yass-icon-16.png")).getImage());
             fh.setVisible(true);
 
-            long time = 0;
-            time = sheet.fromTimeline(sheet.getPlayerPosition());
+            long time = sheet.fromTimeline(sheet.getPlayerPosition());
             video.setTime((int) time);
         }
     };
@@ -1258,7 +1200,7 @@ public class YassActions implements DropTargetListener {
             URL url = I18.getResource("help.html");
             try {
                 helpPane.setPage(url);
-            } catch (Exception ex) {
+            } catch (Exception ignored) {
             }
 
             helpPane.addHyperlinkListener(new HyperlinkListener() {
@@ -1267,7 +1209,7 @@ public class YassActions implements DropTargetListener {
                         URL url = I18.getResource(event.getDescription());
                         try {
                             helpPane.setPage(url);
-                        } catch (IOException ioe) {
+                        } catch (IOException ignored) {
                         }
                     }
                 }
@@ -1602,13 +1544,6 @@ public class YassActions implements DropTargetListener {
             playAll(false);
         }
     };
-    Action previewLib = new AbstractAction(I18.get("mlib_maximize")) {
-        private static final long serialVersionUID = 1L;
-
-        public void actionPerformed(ActionEvent e) {
-            previewLib();
-        }
-    };
     Action fullscreen = new AbstractAction(I18.get("mlib_fullscreen")) {
         private static final long serialVersionUID = 1L;
 
@@ -1644,7 +1579,6 @@ public class YassActions implements DropTargetListener {
             endPlayer(3);
         }
     };
-    DisplayMode dispModeOld = null;
     Action recordAll = new AbstractAction(I18.get("medit_record_all")) {
         private static final long serialVersionUID = 1L;
 
@@ -1669,14 +1603,6 @@ public class YassActions implements DropTargetListener {
             snapshotButton.setSelected(false);
             sheet.showSnapshot(false);
             sheet.repaint();
-        }
-    };
-    Action insertPageBreak = new AbstractAction(I18.get("medit_break")) {
-        private static final long serialVersionUID = 1L;
-
-        public void actionPerformed(ActionEvent e) {
-            interruptPlay();
-            table.insertPageBreak(false);
         }
     };
     Action insertNote = new AbstractAction(I18.get("medit_add")) {
@@ -2003,7 +1929,7 @@ public class YassActions implements DropTargetListener {
             closeAllTables();
             mp3.closeMP3();
             openFile(filename);
-            openEditor(selectRow < 0 ? false : true);
+            openEditor(selectRow >= 0);
 
             SwingUtilities.invokeLater(new Thread() {
                 @Override
@@ -2135,7 +2061,7 @@ public class YassActions implements DropTargetListener {
         }
     };
     /*
-	 * Action importFiles = new AbstractAction(I18.get("mlib_import")) { public
+     * Action importFiles = new AbstractAction(I18.get("mlib_import")) { public
 	 * void actionPerformed(ActionEvent e) { String songdir =
 	 * YassUtils.getSongDir(table, prop); if (songdir == null) { return; }
 	 * JFileChooser fileChooser = new JFileChooser(".");
@@ -2257,26 +2183,6 @@ public class YassActions implements DropTargetListener {
             trimPageBreaks();
         }
     };
-    Action joinLeft = new AbstractAction(I18.get("medit_join_left")) {
-        private static final long serialVersionUID = 1L;
-
-        public void actionPerformed(ActionEvent e) {
-            table.joinLeft();
-        }
-    };    Action detailLibrary = new AbstractAction(I18.get("mlib_details_toggle")) {
-        private static final long serialVersionUID = 1L;
-
-        public void actionPerformed(ActionEvent e) {
-            updateSongInfo(detailLibrary);
-        }
-    };
-    Action joinRight = new AbstractAction(I18.get("medit_join_right")) {
-        private static final long serialVersionUID = 1L;
-
-        public void actionPerformed(ActionEvent e) {
-            table.joinRight();
-        }
-    };
     Action golden = new AbstractAction(I18.get("medit_golden")) {
         private static final long serialVersionUID = 1L;
 
@@ -2301,6 +2207,13 @@ public class YassActions implements DropTargetListener {
             table.setType("F");
         }
     };
+    Action detailLibrary = new AbstractAction(I18.get("mlib_details_toggle")) {
+        private static final long serialVersionUID = 1L;
+
+        public void actionPerformed(ActionEvent e) {
+            updateSongInfo(detailLibrary);
+        }
+    };
     Action standard = new AbstractAction(I18.get("medit_normal")) {
         private static final long serialVersionUID = 1L;
 
@@ -2320,27 +2233,26 @@ public class YassActions implements DropTargetListener {
             table.shiftRightEndian(+1);
         }
     };
-
-	/*
-	 * static class OptionsUI extends BasicComboBoxUI { public static
-	 * ComponentUI createUI(JComponent c) { return new OptionsUI(); } protected
-	 * JButton createArrowButton() { JButton b = new
-	 * BasicArrowButton(BasicArrowButton.SOUTH,
-	 * UIManager.getColor("ComboBox.buttonBackground"),
-	 * UIManager.getColor("ComboBox.buttonShadow"),
-	 * UIManager.getColor("ComboBox.buttonDarkShadow"),
-	 * UIManager.getColor("ComboBox.buttonHighlight")); b.setFocusable(false);
-	 * return b; } protected LayoutManager createLayoutManager() { return new
-	 * OptionsLayoutManager(); } public class OptionsLayoutManager extends
-	 * ComboBoxLayoutManager { public void layoutContainer(Container parent) {
-	 * JComboBox cb = (JComboBox) parent; int width = cb.getWidth(); int height
-	 * = cb.getHeight(); Insets insets = getInsets(); int buttonSize = 20;
-	 * Rectangle cvb; System.out.println(width); if (arrowButton != null) {
-	 * arrowButton.setBounds(width - (insets.right + buttonSize), insets.top,
-	 * buttonSize, height - insets.top - insets.bottom); } if (filter != null) {
-	 * cvb = rectangleForCurrentValue();
-	 * filter.getEditor().getEditorComponent().setBounds(cvb); } } } }
-	 */
+    /*
+     * static class OptionsUI extends BasicComboBoxUI { public static
+     * ComponentUI createUI(JComponent c) { return new OptionsUI(); } protected
+     * JButton createArrowButton() { JButton b = new
+     * BasicArrowButton(BasicArrowButton.SOUTH,
+     * UIManager.getColor("ComboBox.buttonBackground"),
+     * UIManager.getColor("ComboBox.buttonShadow"),
+     * UIManager.getColor("ComboBox.buttonDarkShadow"),
+     * UIManager.getColor("ComboBox.buttonHighlight")); b.setFocusable(false);
+     * return b; } protected LayoutManager createLayoutManager() { return new
+     * OptionsLayoutManager(); } public class OptionsLayoutManager extends
+     * ComboBoxLayoutManager { public void layoutContainer(Container parent) {
+     * JComboBox cb = (JComboBox) parent; int width = cb.getWidth(); int height
+     * = cb.getHeight(); Insets insets = getInsets(); int buttonSize = 20;
+     * Rectangle cvb; System.out.println(width); if (arrowButton != null) {
+     * arrowButton.setBounds(width - (insets.right + buttonSize), insets.top,
+     * buttonSize, height - insets.top - insets.bottom); } if (filter != null) {
+     * cvb = rectangleForCurrentValue();
+     * filter.getEditor().getEditorComponent().setBounds(cvb); } } } }
+     */
     Action minus = new AbstractAction(I18.get("medit_minus")) {
         private static final long serialVersionUID = 1L;
 
@@ -2353,13 +2265,6 @@ public class YassActions implements DropTargetListener {
 
         public void actionPerformed(ActionEvent e) {
             lyrics.enter(YassRow.SPACE + "");
-        }
-    };
-    Action enableHyphenKeys = new AbstractAction(I18.get("medit_lock")) {
-        private static final long serialVersionUID = 1L;
-
-        public void actionPerformed(ActionEvent e) {
-            lyrics.enableHyphenKeys(!lyrics.hyphenKeysEnabled());
         }
     };
     Action incGap = new AbstractAction(I18.get("medit_gap_add_10")) {
@@ -2388,13 +2293,6 @@ public class YassActions implements DropTargetListener {
 
         public void actionPerformed(ActionEvent e) {
             table.addGap(-1000);
-        }
-    };
-    Action gotoGap = new AbstractAction(I18.get("medit_gap_select")) {
-        private static final long serialVersionUID = 1L;
-
-        public void actionPerformed(ActionEvent e) {
-            table.gotoGap();
         }
     };
     Action selectLine = new AbstractAction(I18.get("medit_select_line")) {
@@ -2587,13 +2485,7 @@ public class YassActions implements DropTargetListener {
             checkData(table, false, true);
         }
     };
-    private YassSheet sheet = null;    Action showSongInfo = new AbstractAction(I18.get("mlib_info_toggle")) {
-        private static final long serialVersionUID = 1L;
-
-        public void actionPerformed(ActionEvent e) {
-            updateSongInfo(showSongInfo);
-        }
-    };
+    private YassSheet sheet = null;
     Action showCopiedRows = new AbstractAction(I18.get("medit_copy_show")) {
         private static final long serialVersionUID = 1L;
 
@@ -2608,13 +2500,6 @@ public class YassActions implements DropTargetListener {
                 sheet.repaint();
             }
         }
-    };    Action showSongInfoBackground = new AbstractAction(
-            I18.get("mlib_background_toggle")) {
-        private static final long serialVersionUID = 1L;
-
-        public void actionPerformed(ActionEvent e) {
-            updateSongInfo(showSongInfoBackground);
-        }
     };
     Action removeCopy = new AbstractAction(I18.get("medit_copy_remove")) {
         private static final long serialVersionUID = 1L;
@@ -2626,26 +2511,27 @@ public class YassActions implements DropTargetListener {
                 sheet.repaint();
             }
         }
-    };    Action showPlaylist = new AbstractAction(I18.get("mlib_playlist_toggle")) {
-        private static final long serialVersionUID = 1L;
-
-        public void actionPerformed(ActionEvent e) {
-            updateSongInfo(showPlaylist);
-        }
     };
-    private YassLyrics lyrics = null;    Action showPlaylistMenu = new AbstractAction(
-            I18.get("mlib_playlist_toggle")) {
-        private static final long serialVersionUID = 1L;
-
-        public void actionPerformed(ActionEvent e) {
-            playlistToggle.setSelected(!playlistToggle.isSelected());
-            updateSongInfo(showPlaylist);
-        }
-    };
+    private YassLyrics lyrics = null;
     private YassPlayer mp3 = null;
+    Action showSongInfo = new AbstractAction(I18.get("mlib_info_toggle")) {
+        private static final long serialVersionUID = 1L;
+
+        public void actionPerformed(ActionEvent e) {
+            updateSongInfo(showSongInfo);
+        }
+    };
     private YassPlayList playList = null;
     private YassSongInfo songInfo = null;
     private YassVideo video = null;
+    Action showSongInfoBackground = new AbstractAction(
+            I18.get("mlib_background_toggle")) {
+        private static final long serialVersionUID = 1L;
+
+        public void actionPerformed(ActionEvent e) {
+            updateSongInfo(showSongInfoBackground);
+        }
+    };
     private YassErrors errors = null;
     Action showErrors = new AbstractAction(I18.get("medit_errors")) {
         private static final long serialVersionUID = 1L;
@@ -2684,6 +2570,13 @@ public class YassActions implements DropTargetListener {
         }
     };
     private YassProperties prop = null;
+    Action showPlaylist = new AbstractAction(I18.get("mlib_playlist_toggle")) {
+        private static final long serialVersionUID = 1L;
+
+        public void actionPerformed(ActionEvent e) {
+            updateSongInfo(showPlaylist);
+        }
+    };
     Action showOptions = new AbstractAction(I18.get("mlib_prefs_title")) {
         private static final long serialVersionUID = 1L;
 
@@ -2707,7 +2600,7 @@ public class YassActions implements DropTargetListener {
             loadKeys();
             loadScreenKeys();
             loadLayout();
-            auto.init(prop, YassActions.this);
+            auto.init(prop);
 
             String layout = prop.getProperty("editor-layout");
             if (layout == null) {
@@ -2725,7 +2618,7 @@ public class YassActions implements DropTargetListener {
             try {
                 mp3.setSeekInOffset(Integer.parseInt(seekInOffset));
                 mp3.setSeekOutOffset(Integer.parseInt(seekOutOffset));
-            } catch (Exception ex) {
+            } catch (Exception ignored) {
             }
 
             String newDir = prop.getProperty("song-directory");
@@ -2733,7 +2626,6 @@ public class YassActions implements DropTargetListener {
 
             String importDir = prop.getProperty("import-directory");
             if (newDir != null && !importDir.startsWith(newDir)) {
-                importDir = newDir;
                 prop.setProperty("import-directory", newDir);
                 prop.store();
                 JOptionPane.showMessageDialog(tab,
@@ -2797,40 +2689,21 @@ public class YassActions implements DropTargetListener {
         }
     };
     private YassAutoCorrect auto = null;
+    Action showPlaylistMenu = new AbstractAction(
+            I18.get("mlib_playlist_toggle")) {
+        private static final long serialVersionUID = 1L;
+
+        public void actionPerformed(ActionEvent e) {
+            playlistToggle.setSelected(!playlistToggle.isSelected());
+            updateSongInfo(showPlaylist);
+        }
+    };
     private YassSongList songList = null;
     Action setLibrary = new AbstractAction(I18.get("mlib_set_library")) {
         private static final long serialVersionUID = 1L;
 
         public void actionPerformed(ActionEvent e) {
-            // songList.setLibrary();
             new YassLibOptions(prop, YassActions.this, songList, mp3);
-        }
-    };
-    Action importText = new AbstractAction("Import From Clipboard") {
-        private static final long serialVersionUID = 1L;
-
-        public void actionPerformed(ActionEvent e) {
-            try {
-                Clipboard system = Toolkit.getDefaultToolkit()
-                        .getSystemClipboard();
-                String trstring = (String) (system.getContents(this)
-                        .getTransferData(DataFlavor.stringFlavor));
-                StringTokenizer st = new StringTokenizer(trstring, "\n");
-                YassTable t = new YassTable();
-                t.init(prop);
-                while (st.hasMoreTokens()) {
-                    String s = st.nextToken();
-                    if (!t.addRow(s)) {
-                        break;
-                    }
-                }
-                String fn = YassImport.importTable(songList, prop, t);
-                if (fn != null) {
-                    openFile(fn);
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
         }
     };
     private YassGroups groups = null;
@@ -4320,7 +4193,7 @@ public class YassActions implements DropTargetListener {
         mp3.useWav(useWav);
 
         auto = new YassAutoCorrect();
-        auto.init(prop, this);
+        auto.init(prop);
         lyrics.setAutoCorrect(auto);
 
         String seekInOffset = prop.getProperty("seek-in-offset");
@@ -4328,7 +4201,7 @@ public class YassActions implements DropTargetListener {
             try {
                 int off = Integer.parseInt(seekInOffset);
                 mp3.setSeekInOffset(off);
-            } catch (Exception ex) {
+            } catch (Exception ignored) {
             }
         }
         String seekOutOffset = prop.getProperty("seek-out-offset");
@@ -4336,7 +4209,7 @@ public class YassActions implements DropTargetListener {
             try {
                 int off = Integer.parseInt(seekOutOffset);
                 mp3.setSeekOutOffset(off);
-            } catch (Exception ex) {
+            } catch (Exception ignored) {
             }
         }
 
@@ -5367,62 +5240,6 @@ public class YassActions implements DropTargetListener {
      *
      * @return Description of the Return Value
      */
-    public JComponent createPlaybackToolbar() {
-        JToolBar t = new JToolBar(I18.get("tool_playback"));
-        t.setOrientation(SwingConstants.HORIZONTAL);
-
-        boolean floatable = prop.getProperty("floatable").equals("true");
-        t.setFloatable(floatable);
-
-        JButton b = null;
-
-		/*
-		 * t.add(b = new JButton()); b.setAction(prevPage);
-		 * b.setToolTipText(b.getText()); b.setText("");
-		 * b.setIcon(getIcon("stepb24Icon")); b.setFocusable(false);
-		 * b.setAlignmentY(b.CENTER_ALIGNMENT);
-		 * b.setAlignmentX(b.LEFT_ALIGNMENT); t.add(b = new JButton());
-		 * b.setAction(nextPage); b.setToolTipText(b.getText()); b.setText("");
-		 * b.setIcon(getIcon("stepf24Icon")); b.setFocusable(false);
-		 * b.setAlignmentY(b.CENTER_ALIGNMENT);
-		 * b.setAlignmentX(b.LEFT_ALIGNMENT); t.addSeparator();
-		 */
-		/*
-		 * t.add(b = new JButton()); b.setAction(playSelection);
-		 * b.setToolTipText(b.getText()); b.setText("");
-		 * b.setIcon(getIcon("play24Icon")); b.setFocusable(false); t.add(b =
-		 * new JButton()); b.setAction(playPage); b.setToolTipText(b.getText());
-		 * b.setText(""); b.setIcon(getIcon("playvis24Icon"));
-		 * b.setFocusable(false);
-		 */
-		/*
-		 * t.add(b = new JButton()); b.setAction(interruptPlay);
-		 * b.setToolTipText(b.getText()); b.setText("");
-		 * b.setIcon(getIcon("stop24Icon")); b.setFocusable(false);
-		 *
-		 * t.addSeparator(); t.add(b = new JButton());
-		 * b.setAction(recordSelection); b.setToolTipText(b.getText());
-		 * b.setText(""); b.setIcon(getIcon("record24Icon"));
-		 * b.setFocusable(false);
-		 */
-        t.add(Box.createHorizontalGlue());
-        t.add(Box.createVerticalGlue());
-
-        t.add(b = new JButton());
-        b.setAction(morePages);
-        b.setToolTipText(b.getText());
-        b.setText("");
-        b.setIcon(getIcon("zoomin24Icon"));
-        b.setFocusable(false);
-
-        return t;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
     public JComponent createFileEditToolbar() {
         JToolBar t = new JToolBar(I18.get("tool_edit"));
         edittools = t;
@@ -5636,58 +5453,6 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("zoomin24Icon"));
         b.setFocusable(false);
-
-        return t;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-    public JComponent createListTransferToolbar() {
-        JToolBar t = new JToolBar(I18.get("tool_playlist_transfer"));
-        t.setFloatable(false);
-        t.setOrientation(SwingConstants.VERTICAL);
-
-        t.add(Box.createVerticalGlue());
-
-        JButton b = null;
-
-        t.add(b = new JButton());
-        b.setAction(addToPlayList);
-        b.setToolTipText(b.getText());
-        b.setText("");
-        b.setIcon(getIcon("stepr24Icon"));
-        b.setFocusable(false);
-
-        t.addSeparator();
-
-        t.add(b = new JButton());
-        b.setAction(removeFromPlayList);
-        b.setToolTipText(b.getText());
-        b.setText("");
-        b.setIcon(getIcon("stepl24Icon"));
-        b.setFocusable(false);
-
-        t.addSeparator();
-        t.addSeparator();
-
-        t.add(b = new JButton());
-        b.setAction(movePlayListUp);
-        b.setToolTipText(b.getText());
-        b.setText("");
-        b.setIcon(getIcon("stepb24Icon"));
-        b.setFocusable(false);
-
-        t.add(b = new JButton());
-        b.setAction(movePlayListDown);
-        b.setToolTipText(b.getText());
-        b.setText("");
-        b.setIcon(getIcon("stepf24Icon"));
-        b.setFocusable(false);
-
-        t.add(Box.createVerticalGlue());
 
         return t;
     }
@@ -6048,16 +5813,7 @@ public class YassActions implements DropTargetListener {
 		 * b.setIcon(getIcon("setArtist24Icon")); b.setFocusable(false);
 		 */
         return t;
-    }    Action enableLyrics = new AbstractAction(I18.get("mlib_lyrics_toggle")) {
-        private static final long serialVersionUID = 1L;
-
-        public void actionPerformed(ActionEvent e) {
-            clearFilter();
-            updateSongInfo(enableLyrics);
-
-            songList.requestFocus();
-        }
-    };
+    }
 
     /**
      * Description of the Method
@@ -6449,6 +6205,17 @@ public class YassActions implements DropTargetListener {
 
         return t;
     }
+
+    Action enableLyrics = new AbstractAction(I18.get("mlib_lyrics_toggle")) {
+        private static final long serialVersionUID = 1L;
+
+        public void actionPerformed(ActionEvent e) {
+            clearFilter();
+            updateSongInfo(enableLyrics);
+
+            songList.requestFocus();
+        }
+    };
 
     /**
      * Description of the Method
@@ -7591,53 +7358,12 @@ public class YassActions implements DropTargetListener {
                 video.setTime(vmark);
                 return;
             }
-            long time = 0;
+            long time;
             time = sheet.fromTimeline(sheet.getPlayerPosition());
             if (!sheet.isLive()) {
                 video.setTime((int) time);
             }
         }
-    }
-
-    /**
-     * Adds a feature to the ToPlayList attribute of the YassActions object
-     *
-     * @param s The feature to be added to the ToPlayList attribute
-     */
-    public void addToPlayList(YassSong s) {
-        Vector<YassSong> v = new Vector<>();
-        v.addElement(s);
-        playList.addSongs(v);
-        songList.repaint();
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @param s Description of the Parameter
-     */
-    public void removeFromPlayList(YassSong s) {
-        int i = ((YassSongListModel) playList.getList().getModel()).getData()
-                .indexOf(s);
-        if (i < 0) {
-            return;
-        }
-        int rows[] = new int[1];
-        rows[0] = i;
-        playList.removeSongs(rows);
-        songList.repaint();
-    }
-
-    /**
-     * Sets the dropTarget attribute of the YassActions object
-     *
-     * @param c The new dropTarget value
-     */
-    public void setDropTarget(JComponent c) {
-        if (dropTarget == null) {
-            dropTarget = c;
-        }
-        new DropTarget(c, this);
     }
 
     /**
@@ -7712,10 +7438,10 @@ public class YassActions implements DropTargetListener {
                         if (insideSongDir) {
                             File[] files = file.listFiles();
                             file = null;
-                            for (int i = 0; i < files.length; i++) {
-                                String str = files[i].getAbsolutePath();
+                            for (File file1 : files) {
+                                String str = file1.getAbsolutePath();
                                 if (str.toLowerCase().endsWith(".txt")) {
-                                    file = files[i];
+                                    file = file1;
                                     // load STANDARD version, if possible
                                     if (file.getName().indexOf("[") < 0) {
                                         break;
@@ -7807,7 +7533,7 @@ public class YassActions implements DropTargetListener {
      * @return The info value
      */
     public String getInfo() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("Yet Another Songeditor by Saruta\nVersion: " + VERSION
                 + " (" + DATE + ")\nmail@yass-along.com\n\n");
 
@@ -8257,49 +7983,6 @@ public class YassActions implements DropTargetListener {
 
     /**
      * Description of the Method
-     */
-    public void previewLib() {
-        boolean debug = false;
-        if (debug) {
-            return;
-        }
-
-        boolean onoff = libMenu != null && libMenu.isVisible();
-        if (onoff) {
-            libMenu.setVisible(false);
-            if (libtools != null) {
-                libtools.setVisible(false);
-            }
-        } else if (libMenu != null) {
-            libMenu.setVisible(true);
-            if (libtools != null) {
-                libtools.setVisible(true);
-            }
-        }
-    }
-
-    /**
-     * Description of the Method
-     */
-    public void fullscreenPlayer_unused() {
-        Component c = SwingUtilities.getRoot(main);
-        if (!(c instanceof JFrame)) {
-            return;
-        }
-
-        JFrame f = (JFrame) c;
-
-        if (f.getExtendedState() == Frame.NORMAL) {
-            playerMenu.setVisible(false);
-            enterFullscreen();
-        } else {
-            playerMenu.setVisible(true);
-            leaveFullscreen();
-        }
-    }
-
-    /**
-     * Description of the Method
      *
      * @param onoff Description of the Parameter
      */
@@ -8684,9 +8367,9 @@ public class YassActions implements DropTargetListener {
                     }
                 };
                 File txts[] = file.listFiles(filter);
-                for (int i = 0; i < txts.length; i++) {
-                    if (isKaraokeFile(txts[i])) {
-                        filenames2.addElement(txts[i].getAbsolutePath());
+                for (File txt : txts) {
+                    if (isKaraokeFile(txt)) {
+                        filenames2.addElement(txt.getAbsolutePath());
                     }
                 }
             } else if (isKaraokeFile(file)) {
@@ -8818,16 +8501,16 @@ public class YassActions implements DropTargetListener {
         YassTable ot = null;
         int ncol = 1;
         File files[] = file.getParentFile().listFiles();
-        for (int i = 0; i < files.length; i++) {
-            files[i].getAbsolutePath();
-            if (!isKaraokeFile(files[i])) {
+        for (File file1 : files) {
+            file1.getAbsolutePath();
+            if (!isKaraokeFile(file1)) {
                 continue;
             }
 
             YassTable t = createNextTable();
             if (t != null) {
                 t.removeAllRows();
-                t.loadFile(files[i].getAbsolutePath());
+                t.loadFile(file1.getAbsolutePath());
 
                 String v = t.getVersion();
                 if (v == null || v.length() < 1) {
@@ -8837,7 +8520,7 @@ public class YassActions implements DropTargetListener {
                 } else {
                     t.setTableColor(getTableColor(ncol++));
                 }
-                if (files[i].equals(file)) {
+                if (file1.equals(file)) {
                     ot = t;
                 }
             }
@@ -9193,8 +8876,8 @@ public class YassActions implements DropTargetListener {
         String device = prop.getProperty("control-mic");
         String[] devices = YassCaptureAudio.getDeviceNames();
         boolean found = false;
-        for (int i = 0; i < devices.length; i++) {
-            if (devices[i].equals(device)) {
+        for (String device1 : devices) {
+            if (device1.equals(device)) {
                 found = true;
                 break;
             }
@@ -9550,7 +9233,7 @@ public class YassActions implements DropTargetListener {
 
         // create tables
         Vector<YassTable> tables = new Vector<>(version.length);
-        for (int i = 0; i < version.length; i++) {
+        for (String aVersion : version) {
             YassTable res = new YassTable();
             tables.addElement(res);
         }
@@ -9604,38 +9287,38 @@ public class YassActions implements DropTargetListener {
                 notes[p - 1].addElement(new YassRow(r));
             }
             if (r.isNote() && p == 0) {
-                for (int i = 0; i < notes.length; i++) {
-                    notes[i].addElement(new YassRow(r));
+                for (Vector<YassRow> note : notes) {
+                    note.addElement(new YassRow(r));
                 }
             }
             if (r.isPageBreak()) {
-                for (int i = 0; i < notes.length; i++) {
-                    int lastn = notes[i].size() - 1;
+                for (Vector<YassRow> note : notes) {
+                    int lastn = note.size() - 1;
                     YassRow last = null;
                     if (lastn >= 0) {
-                        last = notes[i].elementAt(lastn);
+                        last = note.elementAt(lastn);
                     }
 
                     if (last != null && last.isNote()) {// skip other-player
                         // page breaks
-                        notes[i].addElement(new YassRow(r));
+                        note.addElement(new YassRow(r));
                     }
                 }
                 p = 0;
             }
             if (r.isEnd()) {
-                for (int i = 0; i < notes.length; i++) {
+                for (Vector<YassRow> note : notes) {
                     // skip other-player page breaks
-                    int lastn = notes[i].size() - 1;
-                    YassRow last = notes[i].elementAt(lastn);
+                    int lastn = note.size() - 1;
+                    YassRow last = note.elementAt(lastn);
                     while (last.isPageBreak()) {
-                        notes[i].removeElementAt(lastn--);
+                        note.removeElementAt(lastn--);
                         if (lastn == 0) {
                             break;
                         }
-                        last = notes[i].elementAt(lastn);
+                        last = note.elementAt(lastn);
                     }
-                    notes[i].addElement(new YassRow(r));
+                    note.addElement(new YassRow(r));
                 }
             }
         }
@@ -9856,7 +9539,6 @@ public class YassActions implements DropTargetListener {
         }
 
         // @todo does not work with different bpm
-        double mingap = minbeat * 4 / (60 * 1000 / mintable.getBPM());
 
         // move first beat to zero
         for (Enumeration<YassTable> en = tables.elements(); en
@@ -10421,8 +10103,8 @@ public class YassActions implements DropTargetListener {
 
             if (rows != null) {
                 table.clearSelection();
-                for (int i = 0; i < rows.length; i++) {
-                    table.addRowSelectionInterval(rows[i], rows[i]);
+                for (int row : rows) {
+                    table.addRowSelectionInterval(row, row);
                 }
             }
             checkData(table, false, true);
@@ -11586,9 +11268,6 @@ public class YassActions implements DropTargetListener {
         }
     }
 
-    // http://java.sun.com/products/jfc/tsc/special_report/kestrel/keybindings.html
-    // http://java.sun.com/docs/books/tutorial/uiswing/misc/keybinding.html
-
     private class OwnerFrame extends JFrame {
         private static final long serialVersionUID = 1L;
 
@@ -11604,14 +11283,8 @@ public class YassActions implements DropTargetListener {
     }
 
 
-
-
-
-
-
-
-
-
+    // http://java.sun.com/products/jfc/tsc/special_report/kestrel/keybindings.html
+    // http://java.sun.com/docs/books/tutorial/uiswing/misc/keybinding.html
 
 
 }

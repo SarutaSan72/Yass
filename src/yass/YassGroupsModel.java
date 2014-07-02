@@ -4,7 +4,7 @@ import javax.swing.table.AbstractTableModel;
 import java.util.Vector;
 
 /**
- * Descriptinoutn of the Class
+ * Description of the Class
  *
  * @author Saruta
  */
@@ -65,7 +65,7 @@ public class YassGroupsModel extends AbstractTableModel {
     /**
      * Gets the columnName attribute of the MyTableModel object
      *
-     * @param col Descriptinoutn of the Parameter
+     * @param col Description of the Parameter
      * @return The columnName value
      */
     public String getColumnName(int col) {
@@ -84,15 +84,14 @@ public class YassGroupsModel extends AbstractTableModel {
         if (row >= data.size()) {
             return null;
         }
-        String s = data.elementAt(row);
-        return s;
+        return data.elementAt(row);
     }
 
 
     /**
      * Gets the columnClass attribute of the MyTableModel object
      *
-     * @param c Descriptinoutn of the Parameter
+     * @param c Description of the Parameter
      * @return The columnClass value
      */
     public Class<?> getColumnClass(int c) {
@@ -103,8 +102,8 @@ public class YassGroupsModel extends AbstractTableModel {
     /**
      * Gets the cellEditable attribute of the MyTableModel object
      *
-     * @param row Descriptinoutn of the Parameter
-     * @param col Descriptinoutn of the Parameter
+     * @param row Description of the Parameter
+     * @param col Description of the Parameter
      * @return The cellEditable value
      */
     public boolean isCellEditable(int row, int col) {
@@ -120,7 +119,6 @@ public class YassGroupsModel extends AbstractTableModel {
      * @param col   The new valueAt value
      */
     public void setValueAt(Object value, int row, int col) {
-        return;
     }
 
 

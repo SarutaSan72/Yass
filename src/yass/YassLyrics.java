@@ -180,7 +180,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 	public YassLyrics(YassProperties p) {
 		prop = p;
 
-		spellCheckers = new Hashtable<>();
+		spellCheckers = new Hashtable<Object,Object>();
 		StringTokenizer st = new StringTokenizer(prop.getProperty("dicts"), "|");
 		while (st.hasMoreTokens()) {
 			StringTokenizer st2 = new StringTokenizer(st.nextToken(), "()-_");
@@ -210,7 +210,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 
 				try {
 					super.paintComponent(g);
-				} catch (Exception e) {
+				} catch (Exception ignored) {
 				}
 
 				long currentTime = System.currentTimeMillis();
@@ -254,8 +254,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 		StyleConstants.setForeground(notSelectStyle, fontColor);
 		StyleConstants.setBackground(
 				notSelectStyle,
-				YassMain.COMBINED_LYRICS ? nofontBG : lyricsArea
-						.getBackground());
+				nofontBG);
 		// selected
 		selectStyle = sc.addStyle(null, null);
 		StyleConstants.setForeground(selectStyle, Color.black);
@@ -637,14 +636,14 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 							try {
 								int n = Integer.parseInt(cstr);
 								table.gotoPageNumber(n);
-							} catch (Exception ex) {
+							} catch (Exception ignored) {
 							}
 						} else {
 							lastTimeString = cstr;
 							try {
 								int n = Integer.parseInt(cstr);
 								table.gotoPageNumber(n);
-							} catch (Exception ex) {
+							} catch (Exception ignored) {
 							}
 						}
 						lastTime = currentTime;
@@ -681,8 +680,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 						|| keyCode == KeyEvent.VK_BACK_SPACE
 						|| keyCode == KeyEvent.VK_MINUS) {
 					e.consume();
-					return;
-				}
+                }
 			}
 
 			public void keyReleased(KeyEvent e) {
@@ -845,7 +843,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 			if (sc != null) {
 				if (sc instanceof String) {
 					try {
-						InputStream is = null;
+						InputStream is;
 						File f = new File(userdir + File.separator + sc
 								+ ".dic");
 						if (f.exists()) {
@@ -962,8 +960,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 		lyricsArea.setEditable(true);
 		StyleConstants.setBackground(
 				notSelectStyle,
-				YassMain.COMBINED_LYRICS ? nofontBG : lyricsArea
-						.getBackground());
+				nofontBG);
 		lyricsArea.getCaret().setVisible(true);
 		lyricsArea.getCaret().setBlinkRate(initialBlinkRate);
 		lyricsArea.getStyledDocument().setCharacterAttributes(0,
@@ -983,8 +980,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 		lyricsArea.setEditable(false);
 		StyleConstants.setBackground(
 				notSelectStyle,
-				YassMain.COMBINED_LYRICS ? nofontBG : lyricsArea
-						.getBackground());
+				nofontBG);
 		lyricsArea.getCaret().setVisible(true);
 		lyricsArea.getCaret().setBlinkRate(0);
 		lyricsArea.getStyledDocument().setCharacterAttributes(0,
@@ -1080,7 +1076,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 			try {
 				d.remove(0, d.getLength());
 				d.insertString(0, table.getText(), notLongStyle);
-			} catch (BadLocationException ex) {
+			} catch (BadLocationException ignored) {
 			}
 
 			updateSelection();
@@ -1207,7 +1203,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 					errLines.addElement(new Integer(si));
 					errLines.addElement(new Integer(ei));
 				}
-			} catch (BadLocationException ex) {
+			} catch (BadLocationException ignored) {
 			}
 		}
 
@@ -1259,7 +1255,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 		int mismatch = syllables - notes;
 
 		// spread syllables
-		String txt = "";
+		String txt;
 		int k = 0;
 		boolean changed = false;
 		for (i = 0; i < n; i++) {
@@ -1304,61 +1300,6 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 	}
 
 	/**
-	 * Adds a feature to the Notes attribute of the YassLyrics object
-	 */
-	public void addNotes() {
-		YassTableModel tm = (YassTableModel) table.getModel();
-		int i = 0;
-		int notes = 0;
-		int n = table.getRowCount() - 1;
-		while (i <= n) {
-			YassRow r = table.getRowAt(i);
-			if (r.isNote() || r.isPageBreak()) {
-				notes++;
-			}
-			i++;
-		}
-
-		Vector<String> hyph = getSyllables();
-		int syllables = hyph.size();
-
-		int mismatch = syllables - notes;
-
-		if (mismatch > 0) {
-			// more syllables than notes
-			int t = 0;
-			// more syllables than notes
-			int h = 6;
-			i = n;
-			while (i > 0) {
-				YassRow r = table.getRowAt(i);
-				if (r.isNote()) {
-					t = r.getBeatInt() + r.getLengthInt();
-					h = r.getHeightInt();
-					break;
-				} else if (r.isPageBreak()) {
-					t = r.getSecondBeatInt();
-					break;
-				} else {
-					tm.removeRowAt(i);
-				}
-				i--;
-			}
-			while (mismatch > 0) {
-				tm.addRow(":", t + "", "1", h + "", "");
-				t += 2;
-				mismatch--;
-			}
-			tm.addRow("E", "", "", "", "");
-			tm.fireTableDataChanged();
-			table.addUndo();
-			table.repaint();
-
-			applyLyrics();
-		}
-	}
-
-	/**
 	 * Description of the Method
 	 */
 	public void find() {
@@ -1367,25 +1308,6 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 			frDialog = new FindReplace();
 		}
 		frDialog.locateAndShow();
-	}
-
-	/**
-	 * Description of the Method
-	 */
-	public void hyphenate() {
-		if (hyphenator == null) {
-			return;
-		}
-
-		String txt = lyricsArea.getText();
-		txt = hyphenator.hyphenateText(txt);
-		try {
-			if (spellCheckerComp != null && lyricsArea.isVisible()) {
-				spellCheckerComp.getHandler().markupSpelling(lyricsArea);
-			}
-		} catch (Exception e) {
-			// System.out.println("startup bug spellchecker during hyphenate");
-		}
 	}
 
 	Vector<String> h = new Vector<>();
@@ -1416,7 +1338,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 				}
 
 				StringTokenizer st3 = new StringTokenizer(word, "-", true);
-				boolean last = false;
+				boolean last;
 				boolean delim = false;
 				while (st3.hasMoreTokens()) {
 					String syll = st3.nextToken();
@@ -1486,7 +1408,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 			return;
 		}
 
-		int in = 0;
+		int in;
 
 		int i = 0;
 
@@ -1561,7 +1483,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 					lyricsArea.getCaret().moveDot(out);
 					preventFireUpdate = false;
 				}
-			} catch (Exception e) {
+			} catch (Exception ignored) {
 			}
 		}
 	}
@@ -1611,7 +1533,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 		}
 
 		boolean hit = false;
-		int i = 0;
+		int i;
 		int syll = 0;
 		for (i = 0; i < min; i++) {
 			if (txt.charAt(i) == '-' || txt.charAt(i) == ' '
@@ -1770,7 +1692,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 								break;
 							}
 						}
-					} catch (Exception ex) {
+					} catch (Exception ignored) {
 					}
 
 				}
@@ -1825,7 +1747,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 								break;
 							}
 						}
-					} catch (Exception ex) {
+					} catch (Exception ignored) {
 					}
 				}
 			});
@@ -1873,7 +1795,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 								break;
 							}
 						}
-					} catch (Exception ex) {
+					} catch (Exception ignored) {
 					}
 				}
 			});
@@ -1956,7 +1878,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 					g2.setStroke(stdStroke);
 					g2.drawRect(0, r.y - p.y, multiBarWidth, h);
 				}
-			} catch (Exception ex) {
+			} catch (Exception ignored) {
 			}
 		}
 	}
@@ -1986,12 +1908,6 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 
 		public void actionPerformed(ActionEvent e) {
 			find();
-		}
-	};
-	Action noop = new AbstractAction("Noop") {
-		private static final long serialVersionUID = 9204421718151964163L;
-
-		public void actionPerformed(ActionEvent e) {
 		}
 	};
 
@@ -2165,7 +2081,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 				Rectangle r = lyricsArea.modelToView(in);
 				r.add(lyricsArea.modelToView(out));
 				lyricsArea.scrollRectToVisible(r);
-			} catch (Exception e) {
+			} catch (Exception ignored) {
 			}
 
 			selectSyllables(in, out);
@@ -2184,8 +2100,8 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 
 			StringBuffer sb = new StringBuffer();
 			String rep = replaceInput.getText();
-			int in = 0;
-			int out = 0;
+			int in;
+			int out;
 			try {
 				in = m.start();
 				out = in + rep.length();
@@ -2210,7 +2126,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 				Rectangle r = lyricsArea.modelToView(in);
 				r.add(lyricsArea.modelToView(out));
 				lyricsArea.scrollRectToVisible(r);
-			} catch (Exception e) {
+			} catch (Exception ignored) {
 			}
 
 			selectSyllables(in, out);

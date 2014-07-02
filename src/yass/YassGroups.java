@@ -44,7 +44,6 @@ public class YassGroups extends JTable implements DropTargetListener {
     private Hashtable<String, ImageIcon> covers = new Hashtable<>();
     private Hashtable<String, YassFilter> filters = new Hashtable<>();
     private String group = null, rule = null;
-    private String coverDir = null;
     private YassSongList songList = null;
     private Vector<Integer> counters = new Vector<>();
     private RefresherThread refresher = null;
@@ -155,8 +154,8 @@ public class YassGroups extends JTable implements DropTargetListener {
                 if (gf != null) {
                     String rules[] = gf.getGenericRules(songList.getUnfilteredData());
                     if (rules != null) {
-                        for (int k = 0; k < rules.length; k++) {
-                            t = rules[k];
+                        for (String rule1 : rules) {
+                            t = rule1;
                             gm.addRow(t);
 
                             YassFilter f = filters.get(group + "-" + t);
@@ -202,7 +201,7 @@ public class YassGroups extends JTable implements DropTargetListener {
                 try {
                     Thread.currentThread();
                     Thread.sleep(100);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         }
@@ -218,8 +217,7 @@ public class YassGroups extends JTable implements DropTargetListener {
      * @return The filter value
      */
     public YassFilter getFilter(String rule) {
-        YassFilter f = filters.get(group + "-" + rule);
-        return f;
+        return filters.get(group + "-" + rule);
     }
 
     /**
@@ -287,8 +285,8 @@ public class YassGroups extends JTable implements DropTargetListener {
                     if (gf != null) {
                         String rules[] = gf.getGenericRules(songList.getUnfilteredData());
                         if (rules != null) {
-                            for (int k = 0; k < rules.length; k++) {
-                                t = rules[k];
+                            for (String rule1 : rules) {
+                                t = rule1;
                                 YassFilter f = YassFilter.createFilter(g);
                                 f.setRule(t);
 
@@ -304,7 +302,7 @@ public class YassGroups extends JTable implements DropTargetListener {
                                 }
                                 f.stop();
                                 if (matches.size() > 0) {
-                                    subgroups.add(new yass.screen.YassScreenGroup(g, t, matches));
+                                    subgroups.add(new YassScreenGroup(g, t, matches));
                                 }
                             }
                         }
@@ -404,10 +402,10 @@ public class YassGroups extends JTable implements DropTargetListener {
             s = s.replace('>', '_');
             s = s.replace('|', '_');
 
-            coverDir = prop.getProperty("cover-directory");
+            String coverDir = prop.getProperty("cover-directory");
 
             File file = new File(coverDir + File.separator + s + ".jpg");
-            BufferedImage img = null;
+            BufferedImage img;
             if (file.exists()) {
                 img = javax.imageio.ImageIO.read(file);
             } else {
@@ -523,7 +521,6 @@ public class YassGroups extends JTable implements DropTargetListener {
      */
     public synchronized void drop(DropTargetDropEvent dropTargetDropEvent) {
         YassGroupsModel gm = (YassGroupsModel) getModel();
-        Vector<?> data = gm.getData();
 
         Point p = dropTargetDropEvent.getLocation();
         int row = rowAtPoint(p);
@@ -594,7 +591,6 @@ public class YassGroups extends JTable implements DropTargetListener {
                 dropTargetDropEvent.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
 
                 if (f.allowCoverDrop(rule)) {
-                    Vector<?> fileVector = new Vector<>();
                     java.util.List fileList = (java.util.List) tr.getTransferData(DataFlavor.javaFileListFlavor);
                     Iterator<?> iterator = fileList.iterator();
                     File file = null;
@@ -669,8 +665,6 @@ public class YassGroups extends JTable implements DropTargetListener {
     class RefresherThread extends Thread {
         public boolean finished = false;
         public boolean notInterrupted = true;
-        public boolean stopped = true;
-
 
         public void run() {
             counters.removeAllElements();
@@ -691,8 +685,6 @@ public class YassGroups extends JTable implements DropTargetListener {
                 f.start(all);
                 for (Enumeration<?> e = all.elements(); e.hasMoreElements() && notInterrupted; ) {
                     YassSong s = (YassSong) e.nextElement();
-                    boolean add = false;
-
                     if (f.accept(s)) {
                         n++;
                     }
@@ -713,7 +705,6 @@ public class YassGroups extends JTable implements DropTargetListener {
      */
     class GroupRenderer extends JLabel implements TableCellRenderer {
         private static final long serialVersionUID = 8499609874569104902L;
-        Font bigFont = null;
         String title = "";
         boolean selected = false;
         boolean renderTitle = false;
@@ -795,11 +786,9 @@ public class YassGroups extends JTable implements DropTargetListener {
             }
             setIcon(i);
 
-            String tooltip = s;
             if (rowIndex < counters.size()) {
                 int n = counters.elementAt(rowIndex).intValue();
                 if (n >= 0) {
-                    tooltip += " " + msgtip.format(new Object[]{new Integer(n)});
                     counterString = n + "";
                 } else {
                     counterString = null;
@@ -812,7 +801,6 @@ public class YassGroups extends JTable implements DropTargetListener {
             selected = isSelected && YassGroups.this.isFocusOwner();
 
             setOpaque(true);
-            //setToolTipText(tooltip);
             return this;
         }
 

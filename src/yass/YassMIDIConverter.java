@@ -841,10 +841,10 @@ public class YassMIDIConverter implements DropTargetListener {
             synthesizer.open();
             synthesizer.loadInstrument(instr[0]);
             MidiChannel[] mc = synthesizer.getChannels();
-            for (int i = 0; i < mc.length; i++) {
-                if (mc[i] != null) {
-                    mc[i].programChange(0);
-                    mc[i].controlChange(7, 127);
+            for (MidiChannel aMc : mc) {
+                if (aMc != null) {
+                    aMc.programChange(0);
+                    aMc.controlChange(7, 127);
                 }
             }
             sequencer.open();

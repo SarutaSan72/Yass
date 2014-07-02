@@ -80,7 +80,7 @@ public class YassHyphenator {
         if (hy != null) {
             if (hy instanceof String) {
                 try {
-                    InputStream is = null;
+                    InputStream is;
                     File f = new File(userdir + File.separator + hy + ".tex");
                     if (f.exists()) {
                         is = new FileInputStream(f);
@@ -123,7 +123,7 @@ public class YassHyphenator {
      */
     public String hyphenateText(String txt) {
         StringTokenizer st = new StringTokenizer(txt, "\n");
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         while (st.hasMoreTokens()) {
             String line = st.nextToken();
             StringTokenizer st2 = new StringTokenizer(line, " ");

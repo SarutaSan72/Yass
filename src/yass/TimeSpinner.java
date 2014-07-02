@@ -17,7 +17,6 @@ public class TimeSpinner extends JPanel {
     public final static int POSITIVE = 1, NEGATIVE = 2;
     private static final long serialVersionUID = -1220107624676188602L;
     private int duration;
-    private String ms;
     private JSpinner msSpinner = null;
     private SpinnerNumberModel msModel = null;
     private JLabel lab1 = null, lab2 = null;
@@ -72,13 +71,12 @@ public class TimeSpinner extends JPanel {
      */
     public TimeSpinner(String label, int init, int dur, String mss, int type) {
         duration = dur;
-        ms = mss;
 
         msModel = new SpinnerNumberModel(init, (type == POSITIVE ? 0 : -duration), duration, 10);
         msSpinner = new JSpinner(msModel);
 
         JTextField tf = ((JSpinner.DefaultEditor) msSpinner.getEditor()).getTextField();
-        tf.setColumns(new String(duration + "").length());
+        tf.setColumns((duration + "").length());
         tf.setHorizontalAlignment(JTextField.RIGHT);
         tf.addKeyListener(
                 new KeyAdapter() {
@@ -105,8 +103,8 @@ public class TimeSpinner extends JPanel {
         boxPanel.add(msSpinner);
         msSpinner.setToolTipText(I18.get("time_spinner_tip"));
 
-        if (ms != null) {
-            lab2 = new JLabel(ms, JLabel.LEFT);
+        if (mss != null) {
+            lab2 = new JLabel(mss, JLabel.LEFT);
             lab2.setOpaque(false);
             boxPanel.add(Box.createRigidArea(new Dimension(5, 0)));
             boxPanel.add(lab2);

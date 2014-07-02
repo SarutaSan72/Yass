@@ -88,18 +88,6 @@ public class YassSongListPrinter {
         }
 
 
-        public void removeAllStyles() {
-            images.removeAllElements();
-            titles.removeAllElements();
-            tooltips.removeAllElements();
-        }
-
-
-        public int getPluginCount() {
-            return titles.size();
-        }
-
-
         public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             if (value == null) {
                 return this;
@@ -219,10 +207,6 @@ public class YassSongListPrinter {
             setSize(500, 400);
             setLocation(dim.width / 2 - 200, dim.height / 2 - 150);
             setTitle(I18.get("print_title"));
-        }
-
-        public void setPluginDir(String s) {
-            plugindir = s;
         }
 
         public PrintPlugin getSelectedPlugin() {

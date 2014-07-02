@@ -288,8 +288,8 @@ public class YassSelectDeviceScreen extends YassScreen {
 
 
         public void run() {
-            for (int i = 0; i < devices.length; i++) {
-                capture.startQuery(devices[i]);
+            for (String device1 : devices) {
+                capture.startQuery(device1);
             }
             while (!interrupt) {
                 try {
@@ -307,8 +307,8 @@ public class YassSelectDeviceScreen extends YassScreen {
                 }
                 repaint();
             }
-            for (int i = 0; i < devices.length; i++) {
-                capture.stopQuery(devices[i]);
+            for (String device : devices) {
+                capture.stopQuery(device);
             }
         }
     }

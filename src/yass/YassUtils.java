@@ -457,8 +457,8 @@ public class YassUtils {
         for (File file : files) {
             String filename = file.getName().toLowerCase();
 
-            for (int j = 0; j < ext.length; j++) {
-                if (filename.endsWith(ext[j])) {
+            for (String anExt : ext) {
+                if (filename.endsWith(anExt)) {
                     if (id == null) {
                         return file;
                     }

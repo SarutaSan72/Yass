@@ -56,7 +56,7 @@ public class I18 {
             try {
                 bundle = ResourceBundle.getBundle("yass", loc,
                         java.net.URLClassLoader
-                                .newInstance(new URL[]{new File(userdir).toURL()}));
+                                .newInstance(new URL[]{new File(userdir).toURI().toURL()}));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -76,7 +76,7 @@ public class I18 {
             File f = new File(userdir + File.separator + lang + File.separator
                     + s);
             try {
-                return f.toURL();
+                return f.toURI().toURL();
             } catch (Exception e) {
                 // e.printStackTrace();
             }
@@ -100,6 +100,7 @@ public class I18 {
                     uc.getInputStream().close();
                 }
             } catch (Exception e) {
+                //e.printStackTrace();
             }
         }
         filename = "/i18/default/" + s;
@@ -112,9 +113,10 @@ public class I18 {
      *
      * @return The copyright value
      */
+    @SuppressWarnings("StringConcatenationInsideStringBufferAppend")
     public static String getCopyright(String version, String date) {
         if (lang.equals("de")) {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append("<html><body><font size=+2><u>Yass</u>&#161;</font> by Saruta<br>Version: "
                     + version + " (" + date + ")<br>mail@yass-along.com<br>");
             sb.append("<a href=\"http://www.yass-along.com\">http://www.yass-along.com</a><br><br>");
@@ -133,24 +135,21 @@ public class I18 {
             sb.append("Lizensen finden Sie im Hilfebereich.");
             return sb.toString();
         } else if (lang.equals("es")) {
-            // TODO UTF-8
             StringBuilder sb = new StringBuilder();
-            sb.append("<html><body><font size=+2><u>Yass</u>&#161;</font> de Saruta<br>Versi�n: "
+            sb.append("<html><body><font size=+2><u>Yass</u>&#161;</font> de Saruta<br>Versión: "
                     + version + " (" + date + ")<br>mail@yass-along.com<br>");
-            //sb.append("<html><body>Otro Sistema de Canciones M�s de Saruta<br>Versi�n: "
-            //		+ version + " (" + date + ")<br>mail@yass-along.com<br>");
             sb.append("<a href=\"http://www.yass-along.com\">http://www.yass-along.com</a><br><br>");
             sb.append("Yass es freeware, puedes usarlo sin costo. <br><br>");
-            sb.append("Est� prohibido comercializar, distribuir o conjuntar Yass a otros productos<br>");
-            sb.append("sin mi permiso expl�cito. Sin embargo, puedes enlazar a este programa.<br>");
-            sb.append("Por favor, cont�ctame para mayor informaci�n.<br><br>");
+            sb.append("Está prohibido comercializar, distribuir o conjuntar Yass a otros productos<br>");
+            sb.append("sin mi permiso explícito. Sin embargo, puedes enlazar a este programa.<br>");
+            sb.append("Por favor, contáctame para mayor información.<br><br>");
             sb.append("Yass usa: ");
-            sb.append("Repositorio de Gr�ficos Java Look & Feel, JavaZoom JLayer/MP3SPI/VorbisSPI<br>");
-            sb.append("y Secuenciador Tritonus, iText, Corrector Ortogr�fico Jazzy, Silabificador TeX, JInput,<br>");
-            sb.append("Objetos VFFMpeg (fobs), Entorno de Trabajo Multimedia de Java (JMF), c�digo Wizard de Robert Eckstein.<br>");
-            sb.append("Medici�n de velocidad 'Inverse Duration' basada en el enfoque de Marcel Taeumel (http://uman.sf.net).<br>");
-            sb.append("Traducci�n al espa�ol por Pantero.<br>");
-            sb.append("Las licencias se muestran en la secci�n de ayuda.");
+            sb.append("Repositorio de Gráficos Java Look & Feel, JavaZoom JLayer/MP3SPI/VorbisSPI<br>");
+            sb.append("y Secuenciador Tritonus, iText, Corrector Ortográfico Jazzy, Silabificador TeX, JInput,<br>");
+            sb.append("Objetos VFFMpeg (fobs), Entorno de Trabajo Multimedia de Java (JMF), código Wizard de Robert Eckstein.<br>");
+            sb.append("Medición de velocidad 'Inverse Duration' basada en el enfoque de Marcel Taeumel (http://uman.sf.net).<br>");
+            sb.append("Traducción al español por Pantero.<br>");
+            sb.append("Las licencias se muestran en la sección de ayuda.");
             return sb.toString();
         }
 

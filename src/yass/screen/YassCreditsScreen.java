@@ -98,8 +98,7 @@ public class YassCreditsScreen extends YassScreen {
 
         g2.setColor(getTheme().getColor(2));
         if (lines != null) {
-            for (int i = 0; i < lines.length; i++) {
-                String s = lines[i];
+            for (String s : lines) {
                 int sw = fm.stringWidth(s);
                 g2.drawString(s, w / 2 - sw / 2, y);
                 y += dy;

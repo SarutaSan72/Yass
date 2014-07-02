@@ -15,25 +15,14 @@ import java.util.*;
  */
 public class YassAutoCorrect {
     private static int FIXED_PAGE_BREAK = 0;
-    /**
-     * from Ultrastar/Code/TextGL.glTextWidth() : real
-     * Fonts[ActFont].Width[Ord(Letter)] * Fonts[ActFont].Tex.H / 30 *
-     * Fonts[ActFont].AspectW; where initially Fonts[].Tex.H := 30; and
-     * Fonts[].AspectW := 0.95; and Outline / Outline2 Fonts[2].Outline := 5;
-     * and Fonts[3].Outline := 4; for i := 0 to 255 do Fonts[2].Width[i] :=
-     * Fonts[2].Width[i] div 2 + 2; // ganzzahlige Division Fonts[3].Width[i] :=
-     * Fonts[3].Width[i] + 1; procedure SetFontSize(Size: real);
-     * Fonts[ActFont].Tex.H := 30 * (Size/10); where Size is 14 for biggest font
-     * "Oline2" -----------UGraphics.pas case Ini.Resolution of 0: W := 640 *
-     * Screens; H := 480; 1: W := 800 * Screens; H := 600; 2: W := 1024 *
-     * Screens; H := 768;
-     */
 
     byte[] fontWidth = null;
     int fontSize = 14, outline = 3;
     private YassProperties prop = null;
     private String[] audioExtensions, imageExtensions, videoExtensions;
-    private String coverID, backgroundID, videoID, videodirID;
+    private String coverID;
+    private String backgroundID;
+    private String videoID;
 
     /**
      * Constructor for the YassAutoCorrect object
@@ -352,15 +341,14 @@ public class YassAutoCorrect {
 
     /**
      * Description of the Method
+     *  @param p Description of the Parameter
      *
-     * @param p Description of the Parameter
-     * @param a Description of the Parameter
      */
-    public void init(YassProperties p, YassActions a) {
+    public void init(YassProperties p) {
         prop = p;
         YassRow.setValidTags(prop.getProperty("valid-tags"));
         YassRow.setValidLines(prop.getProperty("valid-lines"));
-        loadFont(prop.getProperty("font-file"));
+        loadFont();
 
         String ext = prop.getProperty("audio-files");
         StringTokenizer st = new StringTokenizer(ext, "|");
@@ -389,7 +377,6 @@ public class YassAutoCorrect {
         coverID = prop.getProperty("cover-id").toLowerCase();
         backgroundID = prop.getProperty("background-id").toLowerCase();
         videoID = prop.getProperty("video-id").toLowerCase();
-        videodirID = prop.getProperty("videodir-id").toLowerCase();
     }
 
     /**
@@ -491,7 +478,7 @@ public class YassAutoCorrect {
             return false;
         }
 
-        boolean match = false;
+        boolean match;
         int n = 1;
         boolean changed = true;
         boolean changedAny = true;
@@ -543,34 +530,6 @@ public class YassAutoCorrect {
      * @param table Description of the Parameter
      * @return Description of the Return Value
      */
-    public boolean autoCorrectAllFileNames(YassTable table) {
-        // quick hack; should loop until no change is made
-        int n = 1;
-        boolean changed = true;
-        boolean changedAny = false;
-        while (changed && n++ < 10) {
-            changed = false;
-            for (int i = 0; i < YassRow.ALL_MESSAGES.length; i++) {
-                if (isAutoCorrectionFileName(YassRow.ALL_MESSAGES[i])) {
-                    if (!checkData(table, true, true)) {
-                        return changedAny;
-                    }
-                    if (autoCorrect(table, true, YassRow.ALL_MESSAGES[i])) {
-                        changed = true;
-                        changedAny = true;
-                    }
-                }
-            }
-        }
-        return changedAny;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @param table Description of the Parameter
-     * @return Description of the Return Value
-     */
     public boolean autoCorrectSpacing(YassTable table) {
         // quick hack; should loop until no change is made
         int n = 1;
@@ -592,38 +551,6 @@ public class YassAutoCorrect {
         }
         return changedAny;
     }
-
-    /**
-     * Description of the Method
-     *
-     * @param table Description of the Parameter
-     * @return Description of the Return Value
-     */
-    public boolean autoCorrectTags(YassTable table) {
-        // quick hack; should loop until no change is made
-        int n = 1;
-        boolean changed = true;
-        boolean changedAny = false;
-        while (changed && n++ < 10) {
-            changed = false;
-            for (int i = 0; i < YassRow.ALL_MESSAGES.length; i++) {
-                if (isAutoCorrectionTags(YassRow.ALL_MESSAGES[i])) {
-                    if (!checkData(table, true, true)) {
-                        return changedAny;
-                    }
-                    if (autoCorrect(table, true, YassRow.ALL_MESSAGES[i])) {
-                        changed = true;
-                        changedAny = true;
-                    }
-                }
-            }
-        }
-        return changedAny;
-    }
-
-    // return percentage of filled screen width
-
-    // negative for text that doesn't fit on screen
 
     /**
      * Description of the Method
@@ -678,7 +605,7 @@ public class YassAutoCorrect {
             String dir = table.getDir();
             boolean inHeader = true;
             int lastTagPos = -1;
-            int tagPos = -1;
+            int tagPos;
 
             int durationNormal = 0;
 
@@ -707,7 +634,7 @@ public class YassAutoCorrect {
                 r.removeAllMessages();
 
                 String type = r.getType();
-                if (YassRow.getValidLines().indexOf(type) < 0) {
+                if (!YassRow.getValidLines().contains(type)) {
                     r.addMessage(YassRow.INVALID_LINE);
                     table.addMessage(YassRow.INVALID_LINE);
                 }
@@ -940,7 +867,7 @@ public class YassAutoCorrect {
                     boolean startswithspace = txt
                             .startsWith(YassRow.SPACE + "");
                     boolean endswithspace = txt.endsWith(YassRow.SPACE + "");
-                    if (txt.indexOf(YassRow.SPACE + "" + YassRow.SPACE) >= 0) {
+                    if (txt.contains(YassRow.SPACE + "" + YassRow.SPACE)) {
                         r.addMessage(YassRow.TOO_MUCH_SPACES);
                         table.addMessage(YassRow.TOO_MUCH_SPACES);
                     } else if (endswithspace) {
@@ -998,7 +925,7 @@ public class YassAutoCorrect {
                         if (i > 0 && r2.isComment()) {
                             int minH = 128;
                             int maxH = 0;
-                            YassRow r3 = null;
+                            YassRow r3;
                             for (int j = 0; j < n; j++) {
                                 r3 = table.getRowAt(j);
                                 if (r3.isNote()) {
@@ -1012,19 +939,18 @@ public class YassAutoCorrect {
                                     || (range <= 48 && (minH < -12 || maxH > 36))) {
                                 int minHd = minH / 12 * 12;
                                 int bias = minH - minHd;
-                                int newMin = bias;
                                 int newMax = maxH - minH + bias;
                                 r.addMessage(YassRow.TRANSPOSED_NOTES,
                                         MessageFormat.format(
                                                 I18.get("correct_transposed"),
-                                                minH, maxH, newMin, newMax));
+                                                minH, maxH, bias, newMax));
                                 table.addMessage(YassRow.TRANSPOSED_NOTES);
                             }
                         }
                         if (i > 0 && (!(r2.isNote()))) {
-                            int ij[] = null;
+                            int ij[];
                             ij = table.enlargeToPages(i, i);
-                            StringBuffer sb = new StringBuffer();
+                            StringBuilder sb = new StringBuilder();
                             while (ij[0] <= ij[1]) {
                                 r2 = table.getRowAt(ij[0]);
                                 if (r2.isNote()) {
@@ -1209,7 +1135,7 @@ public class YassAutoCorrect {
         String dir = table.getDir();
 
         int rows[];
-        int n = 0;
+        int n;
 
         if (all) {
             n = table.getRowCount();
@@ -1253,7 +1179,7 @@ public class YassAutoCorrect {
             if (currentMessage.equals(YassRow.TRANSPOSED_NOTES)) {
                 int minH = 128;
                 int maxH = 0;
-                YassRow r3 = null;
+                YassRow r3;
                 n = table.getRowCount();
                 for (int j = 0; j < n; j++) {
                     r3 = table.getRowAt(j);
@@ -1286,7 +1212,7 @@ public class YassAutoCorrect {
                 gap = ((int) (gap * 100)) / 100.0;
                 table.setGap(gap);
 
-                YassRow r3 = null;
+                YassRow r3;
                 n = table.getRowCount();
                 for (int j = 0; j < n; j++) {
                     r3 = table.getRowAt(j);
@@ -1298,141 +1224,149 @@ public class YassAutoCorrect {
                 }
                 return true;
             }
-            if (currentMessage.equals(YassRow.EMPTY_LINE)) {
-                tm.getData().remove(r);
-                return true;
-            } else if (currentMessage.equals(YassRow.FILE_FOUND)) {
-                String tag = r.getCommentTag();
-
-                boolean isTitle = tag.equals("TITLE:");
-                if (isTitle || tag.equals("MP3:")) {
-                    File f = YassUtils.getFileWithExtension(dir, null,
-                            audioExtensions);
-                    if (f != null) {
-                        table.setMP3(f.getName());
-                        changed = true;
-                    }
-                }
-                if (isTitle || tag.equals("COVER:")) {
-                    File f = YassUtils.getFileWithExtension(dir, coverID,
-                            imageExtensions);
-                    if (f != null) {
-                        table.setCover(f.getName());
-                        changed = true;
-                    }
-                }
-                if (isTitle || tag.equals("BACKGROUND:")) {
-                    File f = YassUtils.getFileWithExtension(dir, backgroundID,
-                            imageExtensions);
-                    if (f != null) {
-                        table.setBackground(f.getName());
-                        changed = true;
-                    }
-                }
-                if (isTitle || tag.equals("VIDEO:")) {
-                    File f = YassUtils.getFileWithExtension(dir, videoID,
-                            imageExtensions);
-                    if (f != null) {
-                        table.setVideo(f.getName());
-                        changed = true;
-                    }
-                }
-                if (isTitle) {
-                    n = data.size();
-                }
-                return true;
-            } else if (currentMessage.equals(YassRow.MISSING_TAG)) {
-                YassRow r2 = tm.getCommentRow("LANGUAGE:");
-                if (r2 == null) {
-                    table.setLanguage("Other");
-                    changed = true;
-                }
-                r2 = tm.getCommentRow("GENRE:");
-                if (r2 == null) {
-                    table.setGenre("Other");
-                    changed = true;
-                }
-                if (changed) {
+            switch (currentMessage) {
+                case YassRow.EMPTY_LINE:
+                    tm.getData().remove(r);
                     return true;
-                }
-            } else if (currentMessage.equals(YassRow.WRONG_VIDEOGAP)) {
-                // msg set on video tag, so comment is filename
-                String filename = r.getComment();
-                String vg = YassUtils.getWildcard(filename, videoID);
-                if (vg != null) {
-                    table.setVideoGap(vg);
-                }
-                return true;
-            } else if (currentMessage.equals(YassRow.UNCOMMON_SPACING)) {
-                if (r.isNote()) {
-                    String txt = r.getText();
-                    if (txt.endsWith(YassRow.SPACE + "")) {
-                        r.setText(txt.substring(0, txt.length() - 1));
-                        if (i + 1 < n) {
-                            YassRow r2 = table.getRowAt(i + 1);
-                            if (r2.isNote()) {
-                                r2.setText(YassRow.SPACE + r2.getText());
-                            }
+                case YassRow.FILE_FOUND:
+                    String tag = r.getCommentTag();
+
+                    boolean isTitle = tag.equals("TITLE:");
+                    if (isTitle || tag.equals("MP3:")) {
+                        File f = YassUtils.getFileWithExtension(dir, null,
+                                audioExtensions);
+                        if (f != null) {
+                            table.setMP3(f.getName());
+                            changed = true;
                         }
+                    }
+                    if (isTitle || tag.equals("COVER:")) {
+                        File f = YassUtils.getFileWithExtension(dir, coverID,
+                                imageExtensions);
+                        if (f != null) {
+                            table.setCover(f.getName());
+                            changed = true;
+                        }
+                    }
+                    if (isTitle || tag.equals("BACKGROUND:")) {
+                        File f = YassUtils.getFileWithExtension(dir, backgroundID,
+                                imageExtensions);
+                        if (f != null) {
+                            table.setBackground(f.getName());
+                            changed = true;
+                        }
+                    }
+                    if (isTitle || tag.equals("VIDEO:")) {
+                        File f = YassUtils.getFileWithExtension(dir, videoID,
+                                imageExtensions);
+                        if (f != null) {
+                            table.setVideo(f.getName());
+                            changed = true;
+                        }
+                    }
+                    if (isTitle) {
+                        n = data.size();
+                    }
+                    return true;
+                case YassRow.MISSING_TAG:
+                    YassRow r2 = tm.getCommentRow("LANGUAGE:");
+                    if (r2 == null) {
+                        table.setLanguage("Other");
                         changed = true;
                     }
-                }
-            } else if (currentMessage.equals(YassRow.INVALID_NOTE_LENGTH)) {
-                if (r.isNote()) {
-                    r.setLength(1);
-                    changed = true;
-                }
-            } else if (currentMessage.equals(YassRow.NOTES_TOUCHING)) {
-                if (r.isNote()) {
-                    int len = r.getLengthInt();
-                    if (len > 1) {
-                        r.setLength(len - 1);
+                    r2 = tm.getCommentRow("GENRE:");
+                    if (r2 == null) {
+                        table.setGenre("Other");
                         changed = true;
                     }
-                }
-            } else if (currentMessage.equals(YassRow.TOO_MUCH_SPACES)) {
-                if (r.isNote()) {
-                    String txt = r.getText();
-                    int j = 0;
-                    while ((j = txt.indexOf(YassRow.SPACE + "" + YassRow.SPACE)) > 0) {
-                        txt = txt.substring(0, j) + txt.substring(j + 1);
+                    if (changed) {
+                        return true;
                     }
-                    while (txt.startsWith(YassRow.SPACE + "" + YassRow.SPACE)) {
-                        txt = txt.substring(1);
+                    break;
+                case YassRow.WRONG_VIDEOGAP:
+                    // msg set on video tag, so comment is filename
+                    String filename = r.getComment();
+                    String vg = YassUtils.getWildcard(filename, videoID);
+                    if (vg != null) {
+                        table.setVideoGap(vg);
                     }
-                    if (txt.startsWith(YassRow.SPACE + "") && i > 0) {
-                        YassRow r2 = table.getRowAt(i - 1);
-                        if (!(r2.isNote())) {
+                    return true;
+                case YassRow.UNCOMMON_SPACING:
+                    if (r.isNote()) {
+                        String txt = r.getText();
+                        if (txt.endsWith(YassRow.SPACE + "")) {
+                            r.setText(txt.substring(0, txt.length() - 1));
+                            if (i + 1 < n) {
+                                YassRow r3 = table.getRowAt(i + 1);
+                                if (r3.isNote()) {
+                                    r3.setText(YassRow.SPACE + r3.getText());
+                                }
+                            }
+                            changed = true;
+                        }
+                    }
+                    break;
+                case YassRow.INVALID_NOTE_LENGTH:
+                    if (r.isNote()) {
+                        r.setLength(1);
+                        changed = true;
+                    }
+                    break;
+                case YassRow.NOTES_TOUCHING:
+                    if (r.isNote()) {
+                        int len = r.getLengthInt();
+                        if (len > 1) {
+                            r.setLength(len - 1);
+                            changed = true;
+                        }
+                    }
+                    break;
+                case YassRow.TOO_MUCH_SPACES:
+                    if (r.isNote()) {
+                        String txt = r.getText();
+                        int j = 0;
+                        while ((j = txt.indexOf(YassRow.SPACE + "" + YassRow.SPACE)) > 0) {
+                            txt = txt.substring(0, j) + txt.substring(j + 1);
+                        }
+                        while (txt.startsWith(YassRow.SPACE + "" + YassRow.SPACE)) {
                             txt = txt.substring(1);
                         }
+                        if (txt.startsWith(YassRow.SPACE + "") && i > 0) {
+                            YassRow r3 = table.getRowAt(i - 1);
+                            if (!(r3.isNote())) {
+                                txt = txt.substring(1);
+                            }
+                        }
+                        r.setText(txt);
+                        changed = true;
                     }
-                    r.setText(txt);
+                    break;
+                case YassRow.OUT_OF_ORDER:
+                    int beat = r.getBeatInt();
+                    int j = i - 1;
+                    int beat2 = table.getRowAt(j).getBeatInt();
+                    while (beat > beat2) {
+                        beat2 = table.getRowAt(--j).getBeatInt();
+                    }
+                    r.setBeat(beat2 + table.getRowAt(j).getLengthInt());
                     changed = true;
-                }
-            } else if (currentMessage.equals(YassRow.OUT_OF_ORDER)) {
-                int beat = r.getBeatInt();
-                int j = i - 1;
-                int beat2 = table.getRowAt(j).getBeatInt();
-                while (beat > beat2) {
-                    beat2 = table.getRowAt(--j).getBeatInt();
-                }
-                r.setBeat(beat2 + table.getRowAt(j).getLengthInt());
-                changed = true;
-            } else if (currentMessage.equals(YassRow.PAGE_OVERLAP)
-                    || currentMessage.equals(YassRow.EARLY_PAGE_BREAK)
-                    || currentMessage.equals(YassRow.LATE_PAGE_BREAK)
-                    || currentMessage.equals(YassRow.UNCOMMON_PAGE_BREAK)) {
+                    break;
+                case YassRow.PAGE_OVERLAP:
+                case YassRow.EARLY_PAGE_BREAK:
+                case YassRow.LATE_PAGE_BREAK:
+                case YassRow.UNCOMMON_PAGE_BREAK:
 
-                int comm[] = new int[2];
-                comm[0] = table.getRowAt(i - 1).getBeatInt()
-                        + table.getRowAt(i - 1).getLengthInt();
-                comm[1] = table.getRowAt(i + 1).getBeatInt();
-                int pause = getCommonPageBreak(comm, table.getBPM(), null);
-                if (pause >= 0) {
-                    r.setBeat(comm[0]);
-                    r.setSecondBeat(comm[1]);
-                    changed = true;
-                }
+                    int comm[] = new int[2];
+                    comm[0] = table.getRowAt(i - 1).getBeatInt()
+                            + table.getRowAt(i - 1).getLengthInt();
+                    comm[1] = table.getRowAt(i + 1).getBeatInt();
+                    int pause = getCommonPageBreak(comm, table.getBPM(), null);
+                    if (pause >= 0) {
+                        r.setBeat(comm[0]);
+                        r.setSecondBeat(comm[1]);
+                        changed = true;
+                    }
+                    break;
             }
         }
         return changed;
@@ -1441,14 +1375,13 @@ public class YassAutoCorrect {
     /**
      * Description of the Method
      *
-     * @param fname Description of the Parameter
      */
-    public void loadFont(String fname) {
+    public void loadFont() {
         fontWidth = new byte[256];
         try {
             InputStream is = getClass().getResourceAsStream(
                     prop.getProperty("font-file"));
-            int numRead = is.read(fontWidth, 0, fontWidth.length);
+            is.read(fontWidth, 0, fontWidth.length);
             is.close();
         } catch (Exception e) {
             System.out.println("Font file not found: "
@@ -1481,14 +1414,13 @@ public class YassAutoCorrect {
         double fontH = fontSize / 10.0;
 
         char c[] = s.toCharArray();
-        int n = c.length;
-        int ascii = 0;
-        int fw = 0;
-        double cw = 0;
+        int ascii;
+        int fw;
+        double cw;
         double w = 0;
         double aspectW = 0.95;
-        for (int i = 0; i < n; i++) {
-            ascii = (int) (c[i]);
+        for (char aC : c) {
+            ascii = (int) (aC);
             if (ascii > 255) {
                 if (ascii >= 8216 && ascii <= 8218) {
                     ascii = (int) '\'';
@@ -1514,14 +1446,5 @@ public class YassAutoCorrect {
 
         w = w + (2 * outline);
         return (int) w;
-    }
-
-    /**
-     * Sets the fontSize attribute of the YassAutoCorrect object
-     *
-     * @param size The new fontSize value
-     */
-    public void setFontSize(int size) {
-        fontSize = size;
     }
 }

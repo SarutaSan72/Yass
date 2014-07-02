@@ -73,10 +73,6 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
      * Description of the Field
      */
     public final int SHOW_ERRORS = 3;
-    /**
-     * Description of the Field
-     */
-    public final int SHOW_COVER = 4;
     protected boolean hiliteTitleRect = false;
     YassProperties prop;
     YassSong song = null;
@@ -159,7 +155,6 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
     Rectangle titlerect = new Rectangle();
     LoaderThread loader = null;
     javax.media.Player mediaPlayer = null;
-    double vd_duration = 0;
     Component video = null;
     boolean closed = true;
     JDialog updateDialog = null;
@@ -254,7 +249,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                 try {
                     s = txt.getDocument().getText(0,
                             txt.getDocument().getLength());
-                } catch (Exception ex) {
+                } catch (Exception ignored) {
                 }
 
                 int count = 0;
@@ -279,18 +274,25 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                     URL url = e.getURL();
                     String s = url.toExternalForm();
                     s = s.substring(7);
-                    if (s.equals("txt")) {
-                        s = getProperty("full-txt-path");
-                    } else if (s.equals("co")) {
-                        s = getProperty("full-co-path");
-                    } else if (s.equals("bg")) {
-                        s = getProperty("full-bg-path");
-                    } else if (s.equals("mp3")) {
-                        s = getProperty("full-mp3-path");
-                    } else if (s.equals("vd")) {
-                        s = getProperty("full-vd-path");
-                    } else if (s.equals("dir")) {
-                        s = getProperty("full-dir-path");
+                    switch (s) {
+                        case "txt":
+                            s = getProperty("full-txt-path");
+                            break;
+                        case "co":
+                            s = getProperty("full-co-path");
+                            break;
+                        case "bg":
+                            s = getProperty("full-bg-path");
+                            break;
+                        case "mp3":
+                            s = getProperty("full-mp3-path");
+                            break;
+                        case "vd":
+                            s = getProperty("full-vd-path");
+                            break;
+                        case "dir":
+                            s = getProperty("full-dir-path");
+                            break;
                     }
                     // System.out.println(s);
                     YassActions.openURLFile(s);
@@ -307,14 +309,14 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
             URL url = I18.getResource("SongInfoTemplate.html");
             reader = new BufferedReader(isr = new InputStreamReader(
                     url.openStream()));
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             String nextLine = reader.readLine();
             while (nextLine != null) {
                 sb.append(nextLine);
                 nextLine = reader.readLine();
             }
             template = sb.toString();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         } finally {
             try {
                 if (isr != null) {
@@ -323,7 +325,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                 if (reader != null) {
                     reader.close();
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
 
@@ -399,10 +401,9 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
         txt.addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseMoved(MouseEvent e) {
                 if (showChildren) {
-                    boolean newHiliteTitleRect = false;
-                    boolean changed = newHiliteTitleRect != hiliteTitleRect;
+                    boolean changed = hiliteTitleRect;
                     if (changed) {
-                        hiliteTitleRect = newHiliteTitleRect;
+                        hiliteTitleRect = false;
                         repaint();
                     }
                 }
@@ -418,7 +419,6 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                     } else if (infoMode == SHOW_FILES) {
                         filepopup.show(e.getComponent(), e.getX(), e.getY());
                     }
-                    return;
                 }
             }
         });
@@ -589,7 +589,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
             setOpaque(true);
         }
 
-        boolean onoff = false;
+        boolean onoff;
         try {
             onoff = Toolkit.getDefaultToolkit().getSystemClipboard()
                     .getContents(null) != null;
@@ -614,18 +614,9 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
         showChildren = onoff;
 
         Component[] comps = getComponents();
-        for (int i = 0; i < comps.length; i++) {
-            comps[i].setVisible(onoff);
+        for (Component comp : comps) {
+            comp.setVisible(onoff);
         }
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-    public boolean showChildren() {
-        return showChildren;
     }
 
     /**
@@ -642,28 +633,20 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
         int tx = scroll.getX();
         int ty = scroll.getY();
 
-        Insets in = txt.getInsets();
-        //int b = td.width - in.left - in.right;
-
-        // g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-        // RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        // g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
-        // RenderingHints.VALUE_RENDER_QUALITY);
         g2d.setColor(bgColor);
         g2d.fillRect(0, 0, d.width, d.height);
 
         int dw = getWidth();
         int dh = getHeight();
 
-        int w = dw;
-        int h = (int) (w * 3 / 4.0);
+        int h = (int) (dw * 3 / 4.0);
 
         // correct zoom would be:
 		/*
 		 * if (dw > (int) (dh * 4 / 3.0)) { w = (int) dw; h = (int) (w * 3 /
 		 * 4.0); } else { h = dh; w = (int) (h * 4 / 3.0); }
 		 */
-        int xx = dw / 2 - w / 2;
+        int xx = 0;
         int yy = dh / 2 - h / 2;
 
         g2d.setColor(bgColor);
@@ -674,24 +657,24 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
         }
 
         if (alpha >= 1 && curbg != null) {
-            g2d.drawImage(curbg, xx, yy, w, h, null);
+            g2d.drawImage(curbg, xx, yy, dw, h, null);
         } else if (alpha > 0 && alpha < 1 && imgbg != null) {
             Composite oldComposite = g2d.getComposite();
 
             if (fadebg != null) {
                 g2d.setComposite(AlphaComposite.getInstance(
                         AlphaComposite.SRC_OVER, 1));
-                g2d.drawImage(fadebg, xx, yy, w, h, null);
+                g2d.drawImage(fadebg, xx, yy, dw, h, null);
             }
 
             g2d.setComposite(AlphaComposite.getInstance(
                     AlphaComposite.SRC_OVER, Math.max(Math.min(alpha, 1), 0)));
-            g2d.drawImage(curbg = imgbg, xx, yy, w, h, null);
+            g2d.drawImage(curbg = imgbg, xx, yy, dw, h, null);
             g2d.setComposite(oldComposite);
         } else {
             curbg = null;
             if (standardbg != null) {
-                g2d.drawImage(curbg = standardbg, xx, yy, w, h, null);
+                g2d.drawImage(curbg = standardbg, xx, yy, dw, h, null);
             }
             g2d.translate(dw / 2, dh / 2);
             g2d.rotate(-Math.PI / 6);
@@ -714,7 +697,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
             return;
         }
 
-        bgrect.setBounds(0, yy, w, h);
+        bgrect.setBounds(0, yy, dw, h);
 
         g2d.setColor(Color.black);
         g2d.setFont(font);
@@ -732,7 +715,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
             }
         }
 
-        String s = "";
+        String s;
 
         if (infoMode == SHOW_FILES && scroll.isVisible()) {
             GradientPaint gp = new GradientPaint(tx, ty, color1, td.width,
@@ -790,15 +773,14 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
 
         g2d.setColor(Color.white);
         g2d.setFont(bigfont);
-        FontMetrics metrics = g2d.getFontMetrics();
+        FontMetrics metrics;
         s = song.getTitle();
-        int strw = metrics.stringWidth(s);
+        int strw;
         g2d.drawString(s, titlerect.x + 5, titlerect.y + titlerect.height - 18);
 
         g2d.setFont(font);
         metrics = g2d.getFontMetrics();
         s = song.getArtist();
-        strw = metrics.stringWidth(s);
         g2d.drawString(s, titlerect.x + 5, titlerect.y + titlerect.height - 4);
 
         // g2d.rotate(Math.PI / 2);
@@ -829,8 +811,8 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
 
         int maxleftx = 0;
         Component comp[] = getComponents();
-        for (int i = 0; i < comp.length; i++) {
-            Rectangle bc = comp[i].getBounds();
+        for (Component aComp : comp) {
+            Rectangle bc = aComp.getBounds();
             if (bc.x < corect.x) {
                 maxleftx = Math.max(maxleftx, bc.x + bc.width);
             }
@@ -992,23 +974,6 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
 
     /**
      * Description of the Method
-     */
-    public void editCover() {
-        if (coString == null) {
-            return;
-        }
-
-        try {
-            if (System.getProperty("os.name").startsWith("Windows")) {
-                Runtime.getRuntime().exec(
-                        "rundll32 url.dll,FileProtocolHandler " + coString);
-            }
-        } catch (Exception ex) {
-        }
-    }
-
-    /**
-     * Description of the Method
      *
      * @param local Description of the Parameter
      */
@@ -1030,7 +995,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
         if (local == null) {
             try {
                 javax.imageio.ImageIO.write(origco, "jpg", file);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         } else {
             YassUtils.copyFile(local, file);
@@ -1070,7 +1035,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
             BufferedImage img = null;
             try {
                 img = YassUtils.readImage(file);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             return img;
         }
@@ -1150,8 +1115,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
 
         String at = artist + " - " + title + " [" + version + "] [VD#";
         File files[] = tmpfile.listFiles();
-        for (int i = 0; i < files.length; i++) {
-            File file = files[i];
+        for (File file : files) {
             String name = file.getName();
             if (name.startsWith(at)) {
                 if (name.indexOf("@ " + folder + ".") > 0) {
@@ -1173,7 +1137,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
             BufferedImage img = null;
             try {
                 img = YassUtils.readImage(file);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             return img;
         }
@@ -1204,7 +1168,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
         if (local == null) {
             try {
                 javax.imageio.ImageIO.write(origbg, "jpg", file);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         } else {
             YassUtils.copyFile(local, file);
@@ -1246,80 +1210,6 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                 + version + "] [VD#" + vg + "] @ " + folder + ext;
         File file = new File(filename);
         YassUtils.copyFile(local, file);
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @param local Description of the Parameter
-     */
-    public void backupText(File local) {
-        String tmp = prop.getProperty("temp-dir");
-        File tmpfile = new File(tmp);
-        if (!tmpfile.exists()) {
-            tmpfile.mkdirs();
-        }
-
-        String title = YassSong.toFilename(song.getTitle());
-        String artist = YassSong.toFilename(song.getArtist());
-        String version = YassSong.toFilename(song.getVersion());
-        String folder = song.getFolder();
-        String filename = tmp + File.separator + artist + " - " + title + " ["
-                + version + "] @ " + folder + ".txt";
-
-        String dir = song.getDirectory();
-        String txtname = song.getFilename();
-
-        File file = new File(filename);
-        File orig = new File(dir + File.separator + txtname);
-        YassUtils.copyFile(orig, file);
-    }
-
-    /**
-     * Gets the textBackupFile attribute of the YassSongInfo object
-     *
-     * @return The textBackupFile value
-     */
-    public File getTextBackupFile() {
-        String tmp = prop.getProperty("temp-dir");
-        File tmpfile = new File(tmp);
-        if (!tmpfile.exists()) {
-            tmpfile.mkdirs();
-        }
-
-        String title = YassSong.toFilename(song.getTitle());
-        String artist = YassSong.toFilename(song.getArtist());
-        String version = YassSong.toFilename(song.getVersion());
-        String folder = song.getFolder();
-        String filename = tmp + File.separator + artist + " - " + title + " ["
-                + version + "] @ " + folder + ".txt";
-
-        return new File(filename);
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @param cofilename Description of the Parameter
-     * @param bgfilename Description of the Parameter
-     */
-    public void storeSongInfo(String cofilename, String bgfilename) {
-        if (cofilename != null) {
-            File file = new File(cofilename);
-            try {
-                javax.imageio.ImageIO.write(origco, "jpg", file);
-            } catch (Exception e) {
-            }
-        }
-        if (bgfilename != null) {
-            File file = new File(bgfilename);
-            try {
-                javax.imageio.ImageIO.write(origbg, "jpg", file);
-            } catch (Exception e) {
-            }
-        }
-        storeAction.setEnabled(false);
-        reloadAction.setEnabled(false);
     }
 
     /**
@@ -1421,7 +1311,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                 pasteAction.setEnabled(true);
             }
         } else if (sel == COVER) {
-            File f = null;
+            File f;
             if (!song.isSaved()) {
                 f = getCoverBackupFile();
                 if (f == null) {
@@ -1445,7 +1335,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                     .setContents(imgSel, null);
             pasteAction.setEnabled(true);
         } else if (sel == BACKGROUND) {
-            File f = null;
+            File f;
             if (!song.isSaved()) {
                 f = getBackgroundBackupFile();
                 if (f == null) {
@@ -1544,8 +1434,8 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                 reloadAllAction.setEnabled(true);
                 storeAction.setEnabled(true);
             }
-        } catch (UnsupportedFlavorException e) {
-        } catch (IOException e) {
+        } catch (UnsupportedFlavorException ignored) {
+        } catch (IOException ignored) {
         }
         try {
             if (t != null
@@ -1586,7 +1476,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                         img = YassUtils.readImage(file);
                         ow = img.getWidth();
                         oh = img.getHeight();
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                     }
                     if (ow > 10 && Math.abs(ow - oh) < 50) {
                         isCO = true;
@@ -1700,8 +1590,8 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                 repaint();
                 return;
             }
-        } catch (UnsupportedFlavorException e) {
-        } catch (IOException e) {
+        } catch (UnsupportedFlavorException ignored) {
+        } catch (IOException ignored) {
         }
         setSong(song);
     }
@@ -1716,7 +1606,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
             while (!loader.isFinished && --n > 0) {
                 try {
                     Thread.currentThread().wait(100);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         }
@@ -1738,7 +1628,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
             try {
                 Thread.currentThread();
                 Thread.sleep(100);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
 
@@ -1780,20 +1670,11 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
             while (!loader.isFinished && --n > 0) {
                 try {
                     Thread.currentThread().wait(100);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         }
         preventLoad = onoff;
-    }
-
-    /**
-     * Gets the infoMode attribute of the YassSongInfo object
-     *
-     * @return The infoMode value
-     */
-    public int getMode() {
-        return infoMode;
     }
 
     /**
@@ -1850,18 +1731,18 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
             }
             int ms = -1;
             int me = -1;
-            double ps = -1;
+            double ps;
             int psBeat = 0;
             try {
                 ps = Double.parseDouble(psl);
                 if (table != null)
                     psBeat = (int) ((ps - table.getGap() / 1000) * 4 * table.getBPM() / 60);
-            } catch (Exception ex) {
+            } catch (Exception ignored) {
             }
             try {
                 ms = Integer.parseInt(msl);
                 me = Integer.parseInt(mel);
-            } catch (Exception ex) {
+            } catch (Exception ignored) {
             }
             boolean psBeatFound = false;
             String medleyStyle = "<p style='margin-top:0;margin-bottom:0;color:black;background:white;'>";
@@ -1951,7 +1832,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                     System.out.println("waiting until mediaplayer closed");
                     Thread.currentThread();
                     Thread.sleep(100);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
             closed = true;
@@ -2345,12 +2226,12 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
         checks = new Vector<>();
         int h = t.getRowHeight();
         JPanel updatePanel = new JPanel(new GridLayout(t.getRowCount() + 1, 1));
-        JLabel label = null;
+        JLabel label;
         updatePanel.add(label = new JLabel(I18.get("mpop_update_label")));
         label.setPreferredSize(new Dimension(140, h));
         i = 0;
         isHeader = true;
-        JCheckBox notes = null;
+        JCheckBox notes;
         boolean allNotesSame = true;
         n = t.getRowCount();
         int changedTags = 0;
@@ -2434,9 +2315,9 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
         }
         boolean needsOk = !allNotesSame || changedTags > 0;
 
-        JScrollPane scroll = null;
-        JScrollPane scroll2 = null;
-        JScrollPane scroll3 = null;
+        JScrollPane scroll;
+        JScrollPane scroll2;
+        JScrollPane scroll3;
         cmp.add("West", scroll = new JScrollPane(t));
         cmp.add("Center", scroll2 = new JScrollPane(t2));
         cmp.add("East", scroll3 = new JScrollPane(updatePanel));
@@ -2581,9 +2462,9 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
 
                 if (isTXT) {
                     StringBuilder sb = new StringBuilder();
-                    unicode.UnicodeReader r = null;
-                    BufferedReader inputStream = null;
-                    FileInputStream fis = null;
+                    unicode.UnicodeReader r;
+                    BufferedReader inputStream;
+                    FileInputStream fis;
                     try {
                         r = new unicode.UnicodeReader(
                                 fis = new FileInputStream(file), null);
@@ -2691,7 +2572,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                         img = YassUtils.readImage(file);
                         ow = img.getWidth();
                         oh = img.getHeight();
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                     }
                     if (ow > 10 && Math.abs(ow - oh) < 50) {
                         isCO = true;
@@ -2705,9 +2586,9 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                 if (isTXT) {
                     StringBuffer sb = new StringBuffer();
                     String encoding = null;
-                    unicode.UnicodeReader r = null;
-                    BufferedReader inputStream = null;
-                    FileInputStream fis = null;
+                    unicode.UnicodeReader r;
+                    BufferedReader inputStream;
+                    FileInputStream fis;
                     try {
                         r = new unicode.UnicodeReader(
                                 fis = new FileInputStream(file), null);
@@ -3060,16 +2941,12 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                     // System.out.println("Source Format : " +
                     // baseFormat.toString());
                     //}
-                } catch (Exception e) {
-                    String s = e.getMessage();
-                    //if (s == null || !s.equals("Resetting to invalid mark")) {
-                    // e.printStackTrace();
-                    //}
+                } catch (Exception ignored) {
                 } finally {
                     if (in != null) {
                         try {
                             in.close();
-                        } catch (Exception e) {
+                        } catch (Exception ignored) {
                         }
                     }
                 }
@@ -3343,7 +3220,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
             try {
                 Thread.currentThread();
                 Thread.sleep(200);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             if (isInterrupted) {
                 isFinished = true;
@@ -3359,7 +3236,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                     try {
                         Thread.currentThread();
                         Thread.sleep(20);
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                     }
                     if (isInterrupted) {
                         alpha = 1;

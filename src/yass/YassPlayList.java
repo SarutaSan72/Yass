@@ -22,7 +22,6 @@ public class YassPlayList extends JPanel implements TabChangeListener {
     private YassActions actions = null;
     private YassProperties prop;
     private YassSongList list = null;
-    private JPanel panel = null;
     private YassSongList lib = null;
     private Vector<YassPlayListModel> playlists = null;
     private String listFilename = null;
@@ -50,7 +49,7 @@ public class YassPlayList extends JPanel implements TabChangeListener {
         setOpaque(false);
 
         setLayout(new BorderLayout());
-        panel = new JPanel();
+        JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         panel.setOpaque(false);
 
@@ -75,8 +74,8 @@ public class YassPlayList extends JPanel implements TabChangeListener {
                 });
 
         KeyListener[] key = list.getKeyListeners();
-        for (int k = 0; k < key.length; k++) {
-            list.removeKeyListener(key[k]);
+        for (KeyListener aKey : key) {
+            list.removeKeyListener(aKey);
         }
         list.addKeyListener(
                 new KeyAdapter() {
@@ -84,12 +83,11 @@ public class YassPlayList extends JPanel implements TabChangeListener {
                         if (e.getKeyChar() == KeyEvent.VK_DELETE) {
                             removeSongs();
                             e.consume();
-                            return;
                         }
                     }
                 });
-        for (int k = 0; k < key.length; k++) {
-            list.addKeyListener(key[k]);
+        for (KeyListener aKey : key) {
+            list.addKeyListener(aKey);
         }
 
         if (lib != null) {
@@ -259,9 +257,9 @@ public class YassPlayList extends JPanel implements TabChangeListener {
                     String filename = pf.getCanonicalPath();
                     if (!filename.startsWith(sd.getCanonicalPath())) {
                         File pfiles[] = pf.listFiles();
-                        for (int i = 0; i < pfiles.length; i++) {
-                            if (pfiles[i].getName().toLowerCase().endsWith(playlistFileType) && isPlayList(pfiles[i])) {
-                                YassPlayListModel pl = getPlayListFile(pfiles[i].getAbsolutePath());
+                        for (File pfile : pfiles) {
+                            if (pfile.getName().toLowerCase().endsWith(playlistFileType) && isPlayList(pfile)) {
+                                YassPlayListModel pl = getPlayListFile(pfile.getAbsolutePath());
                                 if (!containsFile(playlists, pl.getFileName())) {
                                     playlists.addElement(pl);
                                 }

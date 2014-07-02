@@ -118,24 +118,6 @@ public class YassSongListTransferHandler extends TransferHandler {
         return false;
     }
 
-
-    /**
-     * Description of the Method
-     *
-     * @param c       Description of the Parameter
-     * @param flavors Description of the Parameter
-     * @return Description of the Return Value
-     */
-    public boolean canImportFileList(JComponent c, DataFlavor[] flavors) {
-        for (DataFlavor flavor : flavors) {
-            if (DataFlavor.javaFileListFlavor.equals(flavor)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
     /**
      * Description of the Method
      *
@@ -281,10 +263,6 @@ public class YassSongListTransferHandler extends TransferHandler {
             return;
 
         boolean remove = action == MOVE;
-
-        if (isLib) {
-            return;
-        }
 
         YassSongList source = (YassSongList) c;
         if (remove && rows != null) {

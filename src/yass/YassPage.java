@@ -119,13 +119,7 @@ public class YassPage implements Comparable<Object> {
         int max = getMaxBeat();
         int max2 = p.getMaxBeat();
 
-        if (min <= min2 && max > min2) {
-            return true;
-        }
-        if (min2 <= min && max2 > min) {
-            return true;
-        }
-        return false;
+        return min <= min2 && max > min2 || min2 <= min && max2 > min;
     }
 
 

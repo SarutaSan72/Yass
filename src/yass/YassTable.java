@@ -1828,9 +1828,9 @@ public class YassTable extends JTable {
             dis = new DataInputStream(new FileInputStream(file));
             dis.readFully(fileData);
             dis.close();
-            for (int i = 0; i < fileData.length; i++) {
+            for (byte aFileData : fileData) {
                 // System.out.print((char) fileData[i]);
-                if (fileData[i] > 127 || fileData[i] < 0) {
+                if (aFileData > 127 || aFileData < 0) {
                     // System.out.print((int)fileData[i] + "  " + (char)
                     // fileData[i] + "  ");
                     return true;
@@ -2567,8 +2567,8 @@ public class YassTable extends JTable {
         }
         int minb = Integer.MAX_VALUE;
         int maxb = -1;
-        for (int i = 0; i < rows.length; i++) {
-            row = rows[i];
+        for (int row1 : rows) {
+            row = row1;
             YassRow r = getRowAt(row);
             if (r.isNote()) {
                 int db = r.getBeatInt() + b;
@@ -2857,8 +2857,8 @@ public class YassTable extends JTable {
 		 * if (rows.length==1) { row = rows[0]; YassRow r = getRowAt(row); if
 		 * (r.isNote()) { int n = r.getHeightInt() + h; midi.play(n); } }
 		 */
-        for (int i = 0; i < rows.length; i++) {
-            row = rows[i];
+        for (int row1 : rows) {
+            row = row1;
             YassRow r = getRowAt(row);
             if (r.isNote()) {
                 r.setHeight(r.getHeightInt() + h);
@@ -2894,12 +2894,12 @@ public class YassTable extends JTable {
         } else {
             int minb = Integer.MAX_VALUE;
             int dd = d;
-            for (int i = 0; i < rows.length; i++) {
-                YassRow r = getRowAt(rows[i]);
+            for (int row1 : rows) {
+                YassRow r = getRowAt(row1);
                 if (!r.isNote()) {
                     continue;
                 }
-                int k = rows[i] - 1;
+                int k = row1 - 1;
                 YassRow r2 = getRowAt(k);
                 while (r2.isPageBreak() && (k > 0)) {
                     r2 = getRowAt(--k);
@@ -3038,13 +3038,13 @@ public class YassTable extends JTable {
             row = rows[0];
         } else {
             int maxb = -1;
-            for (int i = 0; i < rows.length; i++) {
-                YassRow r = getRowAt(rows[i]);
+            for (int row1 : rows) {
+                YassRow r = getRowAt(row1);
                 if (!r.isNote()) {
                     continue;
                 }
 
-                int k = rows[i] + 1;
+                int k = row1 + 1;
                 YassRow r2 = getRowAt(k);
                 while (r2.isPageBreak() && (k < n - 1)) {
                     r2 = getRowAt(++k);
@@ -3140,8 +3140,8 @@ public class YassTable extends JTable {
         }
 
         boolean changed = false;
-        for (int i = 0; i < rows.length; i++) {
-            row = rows[i];
+        for (int row2 : rows) {
+            row = row2;
             YassRow r = getRowAt(row);
             if (r.isNote()) {
                 if (!r.getType().equals(s)) {
@@ -3151,8 +3151,8 @@ public class YassTable extends JTable {
             }
         }
         if (!changed) {
-            for (int i = 0; i < rows.length; i++) {
-                row = rows[i];
+            for (int row1 : rows) {
+                row = row1;
                 YassRow r = getRowAt(row);
                 if (r.isNote()) {
                     r.setType(":");
@@ -5038,17 +5038,17 @@ public class YassTable extends JTable {
         }
         Arrays.sort(rows);
         String txt = null;
-        for (int i = 0; i < rows.length; i++) {
-            sbf.append((String) getValueAt(rows[i], 0));
+        for (int row : rows) {
+            sbf.append((String) getValueAt(row, 0));
             sbf.append("\t");
-            sbf.append((String) getValueAt(rows[i], 1));
+            sbf.append((String) getValueAt(row, 1));
             sbf.append("\t");
-            sbf.append((String) getValueAt(rows[i], 2));
+            sbf.append((String) getValueAt(row, 2));
             sbf.append("\t");
-            sbf.append((String) getValueAt(rows[i], 3));
+            sbf.append((String) getValueAt(row, 3));
             sbf.append("\t");
 
-            txt = (String) getValueAt(rows[i], 4);
+            txt = (String) getValueAt(row, 4);
             txt = txt.replace(YassRow.SPACE, ' ');
             sbf.append(txt);
             sbf.append("\n");

@@ -15,14 +15,17 @@ import java.util.StringTokenizer;
  */
 public class YassLibOptions extends JDialog {
     private static final long serialVersionUID = -7342966934700458895L;
-    private JTextField songdirInput, playlistdirInput, coverdirInput, importdirInput, creatorInput, seekInOffsetInput, seekOutOffsetInput;
-    private JButton songdirBrowse = null, playlistdirBrowse = null, coverdirBrowse = null, importdirBrowse = null;
-    private JComboBox defaults = null;
+    private JTextField songdirInput, playlistdirInput, coverdirInput;
+    private JComboBox<String> defaults = null;
     private YassProperties prop = null;
     private YassSongList songList = null;
     private YassPlayer mp3 = null;
-    private String songdir = null, playlistdir = null, coverdir = null, importdir = null;
-    private JLabel songdirlabel, playlistdirlabel, coverdirlabel, importdirlabel;
+    private String songdir = null;
+    private String playlistdir = null;
+    private String coverdir = null;
+    private JLabel songdirlabel;
+    private JLabel playlistdirlabel;
+    private JLabel coverdirlabel;
     private Color fgColor = new JLabel().getForeground();
 
     private YassActions actions = null;
@@ -55,7 +58,7 @@ public class YassLibOptions extends JDialog {
         left.add(new JLabel(""));
         right.add(new JLabel(""));
         left.add(new JLabel(I18.get("tool_prefs_programs") + " "));
-        defaults = new JComboBox();
+        defaults = new JComboBox<>();
         defaults.setEditable(false);
         String def = p.getProperty("default-programs");
         def = def.replaceAll("[/\\\\]+", "\\" + File.separator);
@@ -98,13 +101,13 @@ public class YassLibOptions extends JDialog {
                 });
 
         ActionListener[] listeners = defaults.getActionListeners();
-        for (int k = 0; k < listeners.length; k++) {
-            defaults.removeActionListener(listeners[k]);
+        for (ActionListener listener : listeners) {
+            defaults.removeActionListener(listener);
         }
         defaults.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        JComboBox cb = (JComboBox) e.getSource();
+                        JComboBox<String> cb = (JComboBox<String>) e.getSource();
                         String s = (String) cb.getSelectedItem();
 
                         if (cb.isEditable()) {
@@ -120,7 +123,7 @@ public class YassLibOptions extends JDialog {
                         boolean exists = false;
                         int ic = cb.getItemCount();
                         for (int i = 0; i < ic; i++) {
-                            String def = (String) cb.getItemAt(i);
+                            String def = cb.getItemAt(i);
                             if (def.equals(s)) {
                                 exists = true;
                                 break;
@@ -200,6 +203,7 @@ public class YassLibOptions extends JDialog {
 
         songdirInput = new JTextField(songdir != null ? songdir : "");
         JPanel sdbPanel = new JPanel(new GridLayout(1, 0));
+        JButton songdirBrowse;
         sdbPanel.add(songdirBrowse = new JButton(I18.get("tool_prefs_browse")));
 
         JPanel sdPanel = new JPanel(new BorderLayout());
@@ -250,7 +254,7 @@ public class YassLibOptions extends JDialog {
         left.add(playlistdirlabel = new JLabel(I18.get("tool_prefs_playlists")));
 
         playlistdirInput = new JTextField(playlistdir != null ? playlistdir : "");
-        playlistdirBrowse = new JButton(I18.get("tool_prefs_browse"));
+        JButton playlistdirBrowse = new JButton(I18.get("tool_prefs_browse"));
         JPanel pldPanel = new JPanel(new BorderLayout());
         pldPanel.add("Center", playlistdirInput);
         pldPanel.add("East", playlistdirBrowse);
@@ -283,7 +287,7 @@ public class YassLibOptions extends JDialog {
         left.add(coverdirlabel = new JLabel(I18.get("tool_prefs_covers")));
 
         coverdirInput = new JTextField(coverdir != null ? coverdir : "");
-        coverdirBrowse = new JButton(I18.get("tool_prefs_browse"));
+        JButton coverdirBrowse = new JButton(I18.get("tool_prefs_browse"));
         JPanel cdPanel = new JPanel(new BorderLayout());
         cdPanel.add("Center", coverdirInput);
         cdPanel.add("East", coverdirBrowse);
@@ -329,9 +333,6 @@ public class YassLibOptions extends JDialog {
                             return;
                         }
 
-                        boolean ok = true;
-
-                        boolean needSongDirUpdate = false;
                         JOptionPane optionPane = (JOptionPane) e.getSource();
                         Object val = optionPane.getValue();
                         if (val == null || val == JOptionPane.UNINITIALIZED_VALUE) {
@@ -344,23 +345,16 @@ public class YassLibOptions extends JDialog {
                             File f = new File(songdir);
                             songdir = f.getAbsolutePath();
                             songdirlabel.setForeground(f.exists() ? fgColor : Color.red);
-                            ok = f.exists();
 
                             playlistdir = playlistdirInput.getText();
                             f = new File(playlistdir);
                             playlistdir = f.getAbsolutePath();
                             playlistdirlabel.setForeground(f.exists() ? fgColor : Color.red);
-                            if (ok) {
-                                ok = f.exists();
-                            }
 
                             coverdir = coverdirInput.getText();
                             f = new File(coverdir);
                             coverdir = f.getAbsolutePath();
                             coverdirlabel.setForeground(f.exists() ? fgColor : Color.red);
-                            if (ok) {
-                                ok = f.exists();
-                            }
 
                             String oldDir = prop.getProperty("song-directory");
                             String oldpDir = prop.getProperty("playlist-directory");
@@ -376,15 +370,12 @@ public class YassLibOptions extends JDialog {
                             }
                             if (songdir != null && !songdir.equals(oldDir)) {
                                 prop.setProperty("song-directory", songdir);
-                                needSongDirUpdate = true;
                             }
                             if (playlistdir != null && !playlistdir.equals(oldpDir)) {
                                 prop.setProperty("playlist-directory", playlistdir);
-                                needSongDirUpdate = true;
                             }
                             if (coverdir != null && !coverdir.equals(oldcDir)) {
                                 prop.setProperty("cover-directory", coverdir);
-                                needSongDirUpdate = true;
                             }
 
                             prop.setProperty("import-directory", songdir);
@@ -440,7 +431,6 @@ public class YassLibOptions extends JDialog {
 
         String newString = "";
         StringTokenizer st = new StringTokenizer(def, "|");
-        int i = 0;
         boolean changed = false;
         while (st.hasMoreTokens()) {
             def = st.nextToken();

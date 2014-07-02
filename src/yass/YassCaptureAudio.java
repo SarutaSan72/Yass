@@ -72,21 +72,21 @@ public class YassCaptureAudio {
         Vector<String> m = new Vector<>();
         Line.Info targetLineInfo = new Line.Info(TargetDataLine.class);
         Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
-        for (int i = 0; i < mixerInfo.length; i++) {
-            Mixer mixer = AudioSystem.getMixer(mixerInfo[i]);
+        for (Mixer.Info aMixerInfo : mixerInfo) {
+            Mixer mixer = AudioSystem.getMixer(aMixerInfo);
             if (mixer.isLineSupported(targetLineInfo)) {
-                String name = mixerInfo[i].getName();
+                String name = aMixerInfo.getName();
                 Line.Info[] lineInfo = mixer.getTargetLineInfo();
-                for (int j = 0; j < lineInfo.length; j++) {
-                    if (!(lineInfo[j] instanceof DataLine.Info)) continue;
+                for (Line.Info aLineInfo : lineInfo) {
+                    if (!(aLineInfo instanceof DataLine.Info)) continue;
 
-                    AudioFormat[] formats = ((DataLine.Info) lineInfo[j])
+                    AudioFormat[] formats = ((DataLine.Info) aLineInfo)
                             .getFormats();
-                    for (int k = 0; k < formats.length; k++) {
-                        int channels = formats[k].getChannels();
-                        int sampleSizeInBits = formats[k].getSampleSizeInBits();
-                        int frameSize = formats[k].getFrameSize();
-                        boolean pcmSigned = formats[k].getEncoding().equals(
+                    for (AudioFormat format : formats) {
+                        int channels = format.getChannels();
+                        int sampleSizeInBits = format.getSampleSizeInBits();
+                        int frameSize = format.getFrameSize();
+                        boolean pcmSigned = format.getEncoding().equals(
                                 AudioFormat.Encoding.PCM_SIGNED);
                         if (sampleSizeInBits == 8 && frameSize == 2
                                 && pcmSigned) {

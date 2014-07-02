@@ -328,36 +328,6 @@ public class YassSong implements Cloneable, Comparable<Object> {
     /**
      * Sets the song attribute of the YassSong object
      *
-     * @param dir      The new song value
-     * @param folder   The new song value
-     * @param filename The new song value
-     * @param artist   The new song value
-     * @param title    The new song value
-     * @param edition  The new song value
-     * @param genre    The new song value
-     * @param language The new song value
-     * @param year     The new song value
-     */
-    public void setSong(String dir, String folder, String filename, String artist, String title, String edition, String genre, String language, String year) {
-        s[0] = "";
-        s[1] = dir;
-        s[2] = folder;
-        s[3] = filename;
-        s[4] = artist;
-        s[5] = title;
-        s[6] = edition;
-        s[7] = genre;
-        s[8] = language;
-        s[9] = year;
-        for (int i = 10; i < s.length; i++) {
-            s[i] = "";
-        }
-        updateComplete();
-    }
-
-    /**
-     * Sets the song attribute of the YassSong object
-     *
      * @param r The new song value
      */
     public void setSong(YassSong r) {
@@ -399,21 +369,6 @@ public class YassSong implements Cloneable, Comparable<Object> {
         if (st.hasMoreTokens()) {
             setTimestamp(st.nextToken());
         }
-        /*
-		 *  if (st.hasMoreTokens()) {
-		 *  i = 0;
-		 *  if (messages == null) {
-		 *  messages = new String[YassRow.ALL_MESSAGES.length];
-		 *  }
-		 *  while (st.hasMoreTokens() && i < messages.length) {
-		 *  messages[i] = st.nextToken();
-		 *  if (messages[i].equals("-")) {
-		 *  messages[i] = null;
-		 *  }
-		 *  i++;
-		 *  }
-		 *  }
-		 */
     }
 
     /**
@@ -1076,17 +1031,6 @@ public class YassSong implements Cloneable, Comparable<Object> {
         }
         sb.append(timestamp + "");
 
-		/*
-		 *  if (hasMessages()) {
-		 *  sb.append("\t");
-		 *  for (int i = 0; i < messages.length; i++) {
-		 *  sb.append(messages[i] == null || messages[i].trim().length() < 1 ? "-" : messages[i]);
-		 *  if (i < messages.length - 1) {
-		 *  sb.append("\t");
-		 *  }
-		 *  }
-		 *  }
-		 */
         return sb.toString();
     }
 
@@ -1097,15 +1041,6 @@ public class YassSong implements Cloneable, Comparable<Object> {
      */
     public boolean hasMessages() {
         return messages != null;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-    public boolean hasStats() {
-        return stats != null;
     }
 
     /**
@@ -1565,10 +1500,10 @@ public class YassSong implements Cloneable, Comparable<Object> {
             if (messages == null && r.messages == null) {
                 return 0;
             }
-            if (messages == null && r.messages != null) {
+            if (messages == null) {
                 return 1;
             }
-            if (messages != null && r.messages == null) {
+            if (r.messages == null) {
                 return -1;
             }
 
@@ -1606,10 +1541,10 @@ public class YassSong implements Cloneable, Comparable<Object> {
             if (stats == null && r.stats == null) {
                 return 0;
             }
-            if (stats == null && r.stats != null) {
+            if (stats == null) {
                 return 1;
             }
-            if (stats != null && r.stats == null) {
+            if (r.stats == null) {
                 return -1;
             }
 
@@ -1676,52 +1611,52 @@ public class YassSong implements Cloneable, Comparable<Object> {
         int year = -1;
         try {
             year = Integer.parseInt(getYear());
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         int length = -1;
         try {
             length = Integer.parseInt(getLength().replace(',', '.'));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         int start = -1;
         try {
             start = Integer.parseInt(getStart().replace(',', '.'));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         int end = -1;
         try {
             end = Integer.parseInt(getEnd().replace(',', '.'));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         double bpm = -1;
         try {
             bpm = Double.parseDouble(getBPM().replace(',', '.'));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         int gap = -1;
         try {
             gap = (int) Double.parseDouble(getGap().replace(',', '.'));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         int medleyStartBeat = -1;
         try {
             medleyStartBeat = Integer.parseInt(getMedleyStartBeat());
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         int medleyEndBeat = -1;
         try {
             medleyEndBeat = Integer.parseInt(getMedleyEndBeat());
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         int previewStart = -1;
         try {
             previewStart = Integer.parseInt(getPreviewStart().replace(',', '.'));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         int multiplayer = -1;
         try {
             multiplayer = Integer.parseInt(getMultiplayer());
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         String dir = getDirectory();

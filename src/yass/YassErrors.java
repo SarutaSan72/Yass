@@ -20,16 +20,11 @@ public class YassErrors extends JPanel {
     YassProperties prop;
     JPanel errorPanel = null;
     JTable errTable;
-    String template = null;
-    Color bgColor = null;
     JPanel msgPanel = null, msgButtonPanel = null;
     DefaultTableModel tm = null;
-    Color stdColor = new Color(.3f, .3f, 0.3f, .7f);
     private YassActions actions = null;
     private JLabel popupLabel = null;
-    private JComponent toolbar = null;
 
-    private JButton okButton = null, allButton = null, cancelButton = null;
     private JToolBar buttons = null;
 
     private YassAutoCorrect auto = null;
@@ -43,12 +38,11 @@ public class YassErrors extends JPanel {
      *
      * @param p    Description of the Parameter
      * @param a    Description of the Parameter
-     * @param tool Description of the Parameter
+     * @param toolbar Description of the Parameter
      */
-    public YassErrors(YassActions a, YassProperties p, JComponent tool) {
+    public YassErrors(YassActions a, YassProperties p, JComponent toolbar) {
         actions = a;
         prop = p;
-        toolbar = tool;
         setLayout(new BorderLayout());
         add("Center", errorPanel = new JPanel(new BorderLayout()));
 
@@ -118,8 +112,11 @@ public class YassErrors extends JPanel {
 
         buttons = new JToolBar(I18.get("tool_correct"));
         buttons.setFloatable(false);
+        JButton okButton;
         buttons.add(okButton = new JButton(I18.get("tool_correct_ok")));
+        JButton allButton;
         buttons.add(allButton = new JButton(I18.get("tool_correct_all")));
+        JButton cancelButton;
         buttons.add(cancelButton = new JButton(I18.get("tool_correct_cancel")));
 
         okButton.addActionListener(
@@ -233,15 +230,6 @@ public class YassErrors extends JPanel {
 
     /**
      * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-    public boolean preventTableUpdate() {
-        return preventTableUpdate;
-    }
-
-    /**
-     * Description of the Method
      */
     public void updateMessage() {
         if (table == null) {
@@ -332,7 +320,6 @@ public class YassErrors extends JPanel {
         for (Enumeration<?> en = data.elements(); en.hasMoreElements(); k++) {
             Vector<?> v = (Vector<?>) en.nextElement();
             int ii = ((Integer) (v.elementAt(3))).intValue();
-            int idv = ((Integer) (v.elementAt(5))).intValue();
             if (i == ii) {
                 preventTableUpdate(true);
                 errTable.setRowSelectionInterval(k, k);
@@ -366,7 +353,7 @@ public class YassErrors extends JPanel {
             return null;
         }
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("<html><font size=+1 color=red>");
         String mess[] = r.getMessageWithDetail(i);
         sb.append(I18.get(mess[0]));
@@ -380,22 +367,10 @@ public class YassErrors extends JPanel {
             sb.append(mess[1]);
         }
         if (!auto.isAutoCorrectionSafe(r.getMessage()) && auto.autoCorrectionSupported(r.getMessage())) {
-            sb.append("</font><br><font size=-2 color=red>" + I18.get("tool_correct_unsafe"));
+            sb.append("</font><br><font size=-2 color=red>").append(I18.get("tool_correct_unsafe"));
         }
         sb.append("</font></html>");
         return sb.toString();
-    }
-
-    /**
-     * Description of the Method
-     */
-    public void selectFirstError() {
-        if (isEmpty()) {
-            return;
-        }
-
-        errTable.setRowSelectionInterval(0, 0);
-        updateMessage();
     }
 
     /**

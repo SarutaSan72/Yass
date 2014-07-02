@@ -275,25 +275,5 @@ public class YassSongListModel extends AbstractTableModel {
         }
         return data.elementAt(i);
     }
-
-
-    /**
-     * Description of the Method
-     *
-     * @param tm Description of the Parameter
-     * @return Description of the Return Value
-     */
-    public boolean equalsData(YassSongListModel tm) {
-        if (data.size() != tm.data.size()) {
-            return false;
-        }
-        int n = data.size();
-        for (int i = 0; i < n; i++) {
-            if (!getRowAt(i).equals(tm.getRowAt(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
 }
 

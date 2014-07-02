@@ -171,8 +171,8 @@ public class PrintDetails implements PrintPlugin {
         show[10] = showCovers;
         // cover
         ncol = 0;
-        for (int i = 0; i < show.length; i++) {
-            if (show[i]) {
+        for (boolean aShow : show) {
+            if (aShow) {
                 ncol++;
             }
         }

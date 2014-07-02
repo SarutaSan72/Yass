@@ -362,16 +362,16 @@ public class YassPlayer {
         int numDumped = 0;
 
         if (lineInfo != null) {
-            for (int i = 0; i < lineInfo.length; i++) {
-                if (lineInfo[i] instanceof DataLine.Info) {
-                    AudioFormat[] formats = ((DataLine.Info) lineInfo[i])
+            for (Line.Info aLineInfo : lineInfo) {
+                if (aLineInfo instanceof DataLine.Info) {
+                    AudioFormat[] formats = ((DataLine.Info) aLineInfo)
                             .getFormats();
                     for (int j = 0; j < formats.length; j++) {
                         System.out.println(indent + formats[j]);
                     }
                     numDumped++;
-                } else if (lineInfo[i] instanceof Port.Info) {
-                    System.out.println(indent + lineInfo[i]);
+                } else if (aLineInfo instanceof Port.Info) {
+                    System.out.println(indent + aLineInfo);
                     numDumped++;
                 }
             }
