@@ -1,5 +1,8 @@
 package yass;
 
+import yass.stats.YassStats;
+
+import javax.sound.midi.MidiUnavailableException;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -10,8 +13,6 @@ import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.Locale;
 
 /**
@@ -20,19 +21,18 @@ import java.util.Locale;
  * @author Saruta
  */
 public class YassMain extends JApplet {
-
-    public final static boolean NO_GAME = true;
     private static final long serialVersionUID = 777825370133814283L;
-    private static final boolean PRELOAD_FOBS = false;
+
+    public static boolean NO_GAME = true;
+    private static boolean PRE_LOAD_FOBS = false;
+
     private static boolean convert = false;
     private static boolean edit = false;
-    private static boolean correct = false;
     private static boolean play = false;
-    private static String midiFile = null, txtFile = null;
-    // APPLICATION-SPECIFIC
-    private static String[] app_argv = null;
-    private boolean redirectOutput = false;
-    private YassProperties prop = null;
+    private static String midiFile = null;
+    private static String txtFile = null;
+
+    private YassProperties prop;
     private YassSheet sheet = null;
     private YassActions actions = null;
     private YassPlayer mp3 = null;
@@ -44,179 +44,134 @@ public class YassMain extends JApplet {
     private JPanel toolPanel = null;
     private JPanel groupsPanel, songPanel, playlistPanel;
 
-    /**
-     * Description of the Method
-     *
-     * @param argv Description of the Parameter
-     */
     public static void main(String argv[]) {
-        app_argv = argv;
+        checkAudio();
+        loadFobs();
+        initLater(argv);
+    }
 
-        try {
-            if (javax.sound.midi.MidiSystem.getSequencer() == null) {
-                System.out.println("MidiSystem sequencer unavailable.");
-            } else if (javax.sound.sampled.AudioSystem.getMixer(null) == null) {
-                System.out.println("AudioSystem unavailable.");
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        System.out.println("AudioSystem and MidiSystem Sequencer found.");
-
-
-        if (PRELOAD_FOBS) {
-            System.out.println("Library path: " + System.getProperty("java.library.path"));
-            System.loadLibrary("fobs4jmf");
-        }
-
+    private static void initLater(final String[] argv) {
         SwingUtilities.invokeLater(
                 new Runnable() {
                     public void run() {
-
                         final YassMain y = new YassMain();
-                        y.setCommandLine(YassMain.app_argv);
+                        y.parseCommandLine(argv);
 
                         System.out.println("Init...");
                         y.init();
                         System.out.println("Inited.");
 
-                        if (convert || midiFile != null) {
-                            String newf = y.getYassActions().createNewSong(midiFile, true);
-                            if (newf == null) {
-                                System.exit(0);
-                            }
-                            y.setCommandLine(new String[]{"-edit", newf});
-                        }
-
-                        if (correct) {
-                            if (txtFile != null) {
-                                y.getYassActions().openFiles(txtFile);
-                            } else {
-                                // ok
-                            }
-                            // finished
-                            System.exit(0);
-                        }
-
-                        final JFrame mainFrame = new JFrame(I18.get("yass_title"));
-                        mainFrame.setIconImage(new ImageIcon(mainFrame.getClass().getResource("/yass/yass-icon-16.png")).getImage());
-                        mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-                        mainFrame.addWindowListener(
-                                new WindowAdapter() {
-                                    public void windowClosing(WindowEvent e) {
-                                        if (!y.askStop()) {
-                                            return;
-                                        }
-
-                                        y.setDefaultSize(((Component) e.getSource()).getSize());
-                                        y.setDefaultLocation(((Component) e.getSource()).getLocation());
-
-                                        //System.out.println("closing");
-                                        e.getWindow().setVisible(false);
-                                        e.getWindow().dispose();
-                                        System.exit(0);
-                                    }
-                                });
-                        mainFrame.add("Center", y);
-                        mainFrame.pack();
+                        y.initConvert();
 
                         y.onShow();
-
-                        mainFrame.setSize(y.getDefaultSize());
-
                         y.setDefaultSize(y.getDefaultSize());
-
-                        Point p = y.getDefaultLocation();
-                        if (p != null) {
-                            mainFrame.setLocation(p);
-                        } else {
-                            mainFrame.setLocationRelativeTo(null);
-                        }
 
                         System.out.println("Starting...");
                         y.start();
                         System.out.println("Loading...");
                         y.load();
 
-                        mainFrame.setVisible(true);
+                        y.initFrame();
                         System.out.println("Ready. Let's go.");
                     }
                 });
     }
 
-    /**
-     * Description of the Method
-     */
-    public void onShow() {
+    private static void loadFobs() {
+        if (PRE_LOAD_FOBS) {
+            System.out.println("Library path: " + System.getProperty("java.library.path"));
+            System.loadLibrary("fobs4jmf");
+        }
+    }
+
+    private static void checkAudio() {
+        try {
+            if (javax.sound.midi.MidiSystem.getSequencer() == null)
+                System.out.println("MidiSystem sequencer unavailable.");
+            else if (javax.sound.sampled.AudioSystem.getMixer(null) == null)
+                System.out.println("AudioSystem unavailable.");
+        } catch (MidiUnavailableException e) {
+            e.printStackTrace();
+        }
+        System.out.println("AudioSystem and MidiSystem Sequencer found.");
+    }
+
+    private void initFrame() {
+        final JFrame frame = new JFrame(I18.get("yass_title"));
+        frame.setIconImage(new ImageIcon(frame.getClass().getResource("/yass/yass-icon-16.png")).getImage());
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.addWindowListener(
+                new WindowAdapter() {
+                    public void windowClosing(WindowEvent e) {
+                        if (!askStop())
+                            return;
+
+                        setDefaultSize(((Component) e.getSource()).getSize());
+                        setDefaultLocation(((Component) e.getSource()).getLocation());
+
+                        e.getWindow().setVisible(false);
+                        e.getWindow().dispose();
+                        System.exit(0);
+                    }
+                });
+        frame.add("Center", this);
+        frame.pack();
+        frame.setSize(getDefaultSize());
+
+        Point p = getDefaultLocation();
+        if (p != null)
+            frame.setLocation(p);
+        else
+            frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
+    private void initConvert() {
+        if (convert || midiFile != null) {
+            String newSong = actions.createNewSong(midiFile, true);
+            if (newSong == null)
+                System.exit(0);
+            parseCommandLine(new String[]{"-edit", newSong});
+        }
+    }
+
+    private void onShow() {
         JViewport v = (JViewport) songList.getTableHeader().getParent();
         if (v != null) {
             v.setVisible(false);
         }
     }
 
-    /**
-     * Gets the yassActions attribute of the YassMain object
-     *
-     * @return The yassActions value
-     */
-    public YassActions getYassActions() {
-        return actions;
-    }
-
-    /**
-     * Gets the defaultLocation attribute of the YassMain object
-     *
-     * @return The defaultLocation value
-     */
     public Point getDefaultLocation() {
         String x = prop.getProperty("frame-x");
-        if (x == null) {
-            return null;
-        }
         String y = prop.getProperty("frame-y");
-        if (y == null) {
+        if (x == null || y == null)
             return null;
-        }
         return new Point(new Integer(x), new Integer(y));
     }
 
-    /**
-     * Sets the defaultLocation attribute of the YassMain object
-     *
-     * @param p The new defaultLocation value
-     */
     public void setDefaultLocation(Point p) {
         prop.setProperty("frame-x", p.x + "");
         prop.setProperty("frame-y", p.y + "");
     }
 
-    /**
-     * Gets the defaultSize attribute of the YassMain object
-     *
-     * @return The defaultSize value
-     */
     public Dimension getDefaultSize() {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         String w = prop.getProperty("frame-width");
-        if (w == null) {
+        if (w == null)
             w = dim.width >= 1000 ? "1000" : dim.width + "";
-        } else if (Integer.parseInt(w) > dim.width) {
+        else if (Integer.parseInt(w) > dim.width)
             w = dim.width + "";
-        }
+
         String h = prop.getProperty("frame-height");
-        if (h == null) {
+        if (h == null)
             h = dim.height >= 600 ? "600" : dim.height + "";
-        } else if (Integer.parseInt(h) > dim.height) {
+        else if (Integer.parseInt(h) > dim.height)
             w = dim.height + "";
-        }
+
         return new Dimension(new Integer(w), new Integer(h));
     }
 
-    /**
-     * Sets the defaultSize attribute of the YassMain object
-     *
-     * @param d The new defaultSize value
-     */
     public void setDefaultSize(Dimension d) {
         prop.setProperty("frame-width", d.width + "");
         prop.setProperty("frame-height", d.height + "");
@@ -229,57 +184,13 @@ public class YassMain extends JApplet {
         sheet.repaint();
     }
 
-    /**
-     * Description of the Method
-     */
     public void init() {
-        final StringBuffer buf = new StringBuffer(3000);
-
-        try {
-            if (redirectOutput) {
-                PrintStream stream = new PrintStream(
-                        new OutputStream() {
-                            public void write(int b) {
-                                buf.append((char) b);
-                            }
-                        }, true, "UTF-8");
-                System.setOut(stream);
-                System.setErr(stream);
-            } else {
-                PrintStream utf8 = new PrintStream(System.out, true, "UTF-8");
-                System.setOut(utf8);
-                System.setErr(utf8);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         prop = new YassProperties();
-        prop.load();
+        YassVideoUtils.TRY_TO_USE_FOBS = prop.getBooleanProperty("use-fobs");
 
-        String lang = prop.getProperty("yass-language");
-        if (lang == null || lang.equals("default")) {
-            lang = Locale.getDefault().getLanguage();
-        }
-        System.out.println("Setting Language: " + lang);
-        I18.setLanguage(lang);
-
-        if (prop.checkVersion()) {
-            String dir = prop.getUserDir();
-            int ok = JOptionPane.showConfirmDialog(null, "<html>" + I18.get("incompatible_version") + "<br>" + dir + "<br><br>" + I18.get("remove_version"), I18.get("incompatible_version") + " - Yass", JOptionPane.OK_CANCEL_OPTION);
-            if (ok == JOptionPane.OK_OPTION) {
-                boolean verify = dir.indexOf(".yass") < 0;
-                if (verify || !(new File(dir).exists()) || !(new File(dir).isDirectory())) {
-                    JOptionPane.showMessageDialog(null, I18.get("remove_version_error"), I18.get("incompatible_version"), JOptionPane.WARNING_MESSAGE);
-                } else {
-                    YassUtils.deleteDir(new File(dir));
-                }
-                prop.load();
-            }
-        }
-
-        String fobs = prop.getProperty("use-fobs");
-        YassVideoUtils.TRY_TO_USE_FOBS = fobs != null && fobs.equals("true");
+        initLanguage();
+        checkVersion();
+        initTempDir();
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
@@ -287,18 +198,12 @@ public class YassMain extends JApplet {
         sheet = new YassSheet();
         mp3 = new YassPlayer(sheet);
 
-        File td = new File(prop.getProperty("temp-dir"));
-        if (td.exists()) {
-            YassUtils.deleteDir(td);
-        }
-        td.mkdirs();
-
         lyrics = new YassLyrics(prop);
         lyrics.setSheet(sheet);
+
         actions = new YassActions(sheet, mp3, lyrics);
         actions.init(prop);
         actions.setTab(mainPanel);
-        actions.setOutBuffer(buf);
         sheet.setActions(actions);
 
         if (!NO_GAME) {
@@ -314,45 +219,23 @@ public class YassMain extends JApplet {
         ToolTipManager.sharedInstance().setInitialDelay(200);
         ToolTipManager.sharedInstance().setReshowDelay(0);
 
-        yass.stats.YassStats.setProperties(prop);
-        yass.stats.YassStats.init();
+        YassStats.setProperties(prop);
+        YassStats.init();
 
         JPanel songListPanel = createSongListPanel();
-
-        final JPanel sheetPanel = createSheetPanel();
+        JPanel sheetPanel = createSheetPanel();
 
         YassVideo video = new YassVideo(prop, sheet);
         actions.setVideo(video);
         mp3.setVideo(video);
 
-        String layout = prop.getProperty("editor-layout");
-        if (layout == null) {
-            layout = "East";
-        }
+        initLyricsLayout();
 
-        String lyricsWidthString = prop.getProperty("lyrics-width");
-        String lyricsHeightString = prop.getProperty("lyrics-min-height");
-        int lyricsWidth = Integer.parseInt(lyricsWidthString);
-        int lyricsMinHeight = Integer.parseInt(lyricsHeightString);
-
-        // LYRICS POSITION
-        if (layout.equals("East")) {
-            lyrics.setBounds(500, 30, lyricsWidth, lyricsMinHeight);
-        } else if (layout.equals("West")) {
-            lyrics.setBounds(0, 30, lyricsWidth, lyricsMinHeight);
-        }
-
-        lyrics.setOpaque(false);
         sheet.setLayout(null);
         sheet.add(lyrics);
 
         YassErrors errors = new YassErrors(actions, prop, actions.createErrorToolbar());
         actions.setErrors(errors);
-        //actions.setRaw(raw);
-        //actions.setMP3Info(mp3info);
-        // actions.setVideo(video);
-        //actions.setCover(cover);
-        //actions.setBackground(background);
 
         actions.setPanels(this, mainPanel, songListPanel, songInfo, groupsPanel, songPanel, playlistPanel, sheetPanel);
 
@@ -361,47 +244,82 @@ public class YassMain extends JApplet {
         c.add("Center", mainPanel);
     }
 
-    /**
-     * Sets the commandLine attribute of the YassMain object
-     *
-     * @param argv The new commandLine value
-     */
-    public void setCommandLine(String argv[]) {
-        if (argv == null) {
-            return;
+    private void initLyricsLayout() {
+        String layout = prop.getProperty("editor-layout");
+        if (layout == null)
+            layout = "East";
+
+        String lyricsWidthString = prop.getProperty("lyrics-width");
+        String lyricsHeightString = prop.getProperty("lyrics-min-height");
+        int lyricsWidth = Integer.parseInt(lyricsWidthString);
+        int lyricsMinHeight = Integer.parseInt(lyricsHeightString);
+
+        if (layout.equals("East")) {
+            lyrics.setBounds(500, 30, lyricsWidth, lyricsMinHeight);
+        } else if (layout.equals("West")) {
+            lyrics.setBounds(0, 30, lyricsWidth, lyricsMinHeight);
         }
+    }
+
+    private void initTempDir() {
+        File td = new File(prop.getProperty("temp-dir"));
+        if (td.exists()) {
+            YassUtils.deleteDir(td);
+        }
+        if (! td.mkdirs()) {
+            System.out.println("Warning: Cannot create temp-dir: "+td.getAbsolutePath());
+        }
+    }
+
+    private void checkVersion() {
+        if (prop.checkVersion()) {
+            String dir = prop.getUserDir();
+            int ok = JOptionPane.showConfirmDialog(null, "<html>" + I18.get("incompatible_version") + "<br>" + dir + "<br><br>" + I18.get("remove_version"), I18.get("incompatible_version") + " - Yass", JOptionPane.OK_CANCEL_OPTION);
+            if (ok == JOptionPane.OK_OPTION) {
+                boolean verify = !dir.contains(".yass");
+                if (verify || !(new File(dir).exists()) || !(new File(dir).isDirectory())) {
+                    JOptionPane.showMessageDialog(null, I18.get("remove_version_error"), I18.get("incompatible_version"), JOptionPane.WARNING_MESSAGE);
+                } else {
+                    YassUtils.deleteDir(new File(dir));
+                }
+                prop.load();
+            }
+        }
+    }
+
+    private void initLanguage() {
+        String lang = prop.getProperty("yass-language");
+        if (lang == null || lang.equals("default")) {
+            lang = Locale.getDefault().getLanguage();
+        }
+        System.out.println("Setting Language: " + lang);
+        I18.setLanguage(lang);
+    }
+
+    public void parseCommandLine(String argv[]) {
+        if (argv == null)
+            return;
+
         for (String arg : argv) {
             String low = arg.toLowerCase();
-            if (low.equals("-convert")) {
+            if (low.equals("-convert"))
                 convert = true;
-            }
-            if (low.equals("-play")) {
+            else if (low.equals("-play"))
                 play = true;
-            }
-            if (low.equals("-edit")) {
+            else if (low.equals("-edit"))
                 edit = true;
-            }
-            if (low.equals("-correct")) {
-                correct = true;
-            }
-            if (low.endsWith(".mid") || low.endsWith(".midi") || low.endsWith(".kar")) {
+            else if (low.endsWith(".mid") || low.endsWith(".midi") || low.endsWith(".kar"))
                 midiFile = arg;
-            }
-            if (low.endsWith(".txt")) {
+            else if (low.endsWith(".txt")) {
                 edit = true;
                 txtFile = arg;
-            }
-            File f = new File(arg);
-            if (f.exists() && f.isDirectory()) {
+            } else if (new File(arg).isDirectory()) {
                 edit = true;
                 txtFile = arg;
             }
         }
     }
 
-    /**
-     * Description of the Method
-     */
     public void load() {
         String s = prop.getProperty("welcome");
         if (s != null && s.equals("true")) {
@@ -459,31 +377,17 @@ public class YassMain extends JApplet {
             return;
         }
 
-        //System.out.println("init library view");
         actions.setView(YassActions.VIEW_LIBRARY);
-        //System.out.println("library view ready");
 
-        //System.out.println("load");
         songList.load();
-        //System.out.println("filter");
         songList.filter(null);
-        //System.out.println("focus");
         songList.focusFirstVisible();
-        //System.out.println("done");
     }
 
-    /**
-     * Description of the Method
-     */
     public void stop() {
         askStop();
     }
 
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
     public boolean askStop() {
         if (actions.cancelOpen()) {
             return false;
@@ -503,11 +407,6 @@ public class YassMain extends JApplet {
         return true;
     }
 
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
     public JPanel createSheetPanel() {
         JPanel sheetPanel = new JPanel(new BorderLayout());
         JScrollPane sheetPane = new JScrollPane(sheet);
@@ -564,8 +463,6 @@ public class YassMain extends JApplet {
                         Point p = v.getViewPosition();
                         Dimension r = v.getExtentSize();
 
-                        //System.out.println("RESIZE " + v.getExtentSize());
-
                         // LYRICS POSITION
                         String layout = prop.getProperty("editor-layout");
                         if (layout == null) {
@@ -610,25 +507,16 @@ public class YassMain extends JApplet {
                     }
                 });
 
-        // boolean expert = prop.getProperty("expert").equals("true");
-
         sheetPanel.add("North", actions.createFileEditToolbar());
-        //sheetPanel.add("South", actions.createPlaybackToolbar());
         sheetPanel.add("Center", sheetPane);
 
         sheetPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        //sheetPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         sheetPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         sheetPane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
 
         return sheetPanel;
     }
 
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
     public JPanel createSongListPanel() {
         JScrollPane songScroll = new JScrollPane(songList = new YassSongList(actions));
         songScroll.setOpaque(false);
@@ -730,7 +618,6 @@ public class YassMain extends JApplet {
 
         songPanel = new JPanel(new BorderLayout());
         songPanel.add("Center", songScroll);
-        //songPanel.add("South", actions.createSongSearchToolbar());
         songPanel.setOpaque(false);
 
         JPanel panel = new JPanel(new BorderLayout());

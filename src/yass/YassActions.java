@@ -1252,58 +1252,7 @@ public class YassActions implements DropTargetListener {
             openURL("http://www.yass-along.com");
         }
     };
-    JDialog bugDialog = null;
-    JTextPane bugsPane = null;
-    JScrollPane bugsScroll = null;
-    Action showBugs = new AbstractAction("Bugs...") {
-        private static final long serialVersionUID = 1L;
 
-        public void actionPerformed(ActionEvent e) {
-            if (bugDialog != null) {
-                if (bugDialog.isShowing()) {
-                    bugDialog.setVisible(false);
-                    return;
-                }
-                bugDialog.setVisible(true);
-                new UpdateBugs().start();
-                return;
-            }
-
-            JDialog dia = bugDialog = new JDialog(new OwnerFrame());
-            dia.setTitle(I18.get("bugs_title"));
-            // dia.setAlwaysOnTop(true);
-            dia.addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent e) {
-                    e.getWindow().dispose();
-                }
-            });
-
-            bugsPane = new JTextPane();
-            bugsPane.setBackground(new JLabel().getBackground());
-            bugsPane.getEditorKitForContentType("text/html")
-                    .createDefaultDocument();
-            bugsPane.setMargin(new Insets(5, 5, 5, 5));
-            bugsPane.setEditable(false);
-
-            bugsPane.addKeyListener(new KeyAdapter() {
-                public void keyPressed(KeyEvent e) {
-                    if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                        SwingUtilities.getWindowAncestor(bugsPane).dispose();
-                    }
-                }
-            });
-
-            dia.add("Center", bugsScroll = new JScrollPane(bugsPane));
-
-            dia.pack();
-            dia.setSize(800, 400);
-            // dia.setIconImage(new
-            // ImageIcon(YassActions.this.getClass().getResource("/yass/yass-icon-16.png")).getImage());
-            dia.setVisible(true);
-
-            new UpdateBugs().start();
-        }
-    };
     Action editLyrics = new AbstractAction(I18.get("medit_lyrics_edit")) {
         private static final long serialVersionUID = 1L;
 
@@ -2869,7 +2818,6 @@ public class YassActions implements DropTargetListener {
             new Color(.6f, .3f, 0.6f, .7f), new Color(.4f, .4f, 0.6f, .7f),
             new Color(.4f, .6f, 0.4f, .7f),};
     private boolean autoTrim = false;
-    private StringBuffer buf = null;
     private JComboBox<String> plBox = null, filter = null;
     private JTextField filterEditor = null;
     private JComponent libtools = null;
@@ -3977,24 +3925,6 @@ public class YassActions implements DropTargetListener {
 		 * table.zoomPage(); Rectangle rr = table.getCellRect(i, 0, true);
 		 * table.scrollRectToVisible(rr); }
 		 */
-    }
-
-    /**
-     * Gets the outBuffer attribute of the YassActions object
-     *
-     * @return The outBuffer value
-     */
-    public StringBuffer getOutBuffer() {
-        return buf;
-    }
-
-    /**
-     * Sets the outBuffer attribute of the YassActions object
-     *
-     * @param p The new outBuffer value
-     */
-    public void setOutBuffer(StringBuffer p) {
-        buf = p;
     }
 
     /**
@@ -10129,12 +10059,6 @@ public class YassActions implements DropTargetListener {
         showHelp.putValue(AbstractAction.ACCELERATOR_KEY,
                 KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
 
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, InputEvent.SHIFT_MASK),
-                "showBugs");
-        am.put("showBugs", showBugs);
-        showBugs.putValue(AbstractAction.ACCELERATOR_KEY,
-                KeyStroke.getKeyStroke(KeyEvent.VK_F1, InputEvent.SHIFT_MASK));
-
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.ALT_MASK),
                 "fullscreen");
         c.getActionMap().put("fullscreen", fullscreen);
@@ -10214,12 +10138,6 @@ public class YassActions implements DropTargetListener {
         showHelp.putValue(AbstractAction.ACCELERATOR_KEY,
                 KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
 
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, InputEvent.SHIFT_MASK),
-                "showBugs");
-        am.put("showBugs", showBugs);
-        showBugs.putValue(AbstractAction.ACCELERATOR_KEY,
-                KeyStroke.getKeyStroke(KeyEvent.VK_F1, InputEvent.SHIFT_MASK));
-
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.ALT_MASK),
                 "fullscreen");
         c.getActionMap().put("fullscreen", fullscreen);
@@ -10283,12 +10201,6 @@ public class YassActions implements DropTargetListener {
         showHelp.putValue(AbstractAction.ACCELERATOR_KEY,
                 KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
 
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, InputEvent.SHIFT_MASK),
-                "showBugs");
-        am.put("showBugs", showBugs);
-        showBugs.putValue(AbstractAction.ACCELERATOR_KEY,
-                KeyStroke.getKeyStroke(KeyEvent.VK_F1, InputEvent.SHIFT_MASK));
-
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.ALT_MASK),
                 "fullscreen");
         c.getActionMap().put("fullscreen", fullscreen);
@@ -10343,12 +10255,6 @@ public class YassActions implements DropTargetListener {
         am.put("showHelp", showHelp);
         showHelp.putValue(AbstractAction.ACCELERATOR_KEY,
                 KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
-
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, InputEvent.SHIFT_MASK),
-                "showBugs");
-        am.put("showBugs", showBugs);
-        showBugs.putValue(AbstractAction.ACCELERATOR_KEY,
-                KeyStroke.getKeyStroke(KeyEvent.VK_F1, InputEvent.SHIFT_MASK));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0), "setTitle");
         am.put("setTitle", setTitle);
@@ -10531,12 +10437,6 @@ public class YassActions implements DropTargetListener {
         c.getActionMap().put("showHelp", showHelp);
         showHelp.putValue(AbstractAction.ACCELERATOR_KEY,
                 KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
-
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, InputEvent.SHIFT_MASK),
-                "showBugs");
-        c.getActionMap().put("showBugs", showBugs);
-        showBugs.putValue(AbstractAction.ACCELERATOR_KEY,
-                KeyStroke.getKeyStroke(KeyEvent.VK_F1, InputEvent.SHIFT_MASK));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0), "editLyrics");
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0), "editLyrics");
@@ -11159,36 +11059,6 @@ public class YassActions implements DropTargetListener {
             setFont(groupsFont);
             setText(txt);
             return this;
-        }
-    }
-
-    class UpdateBugs extends Thread {
-        int bufferLength = -1;
-
-        public void run() {
-            while (bugDialog != null && bugDialog.isShowing()) {
-                String s = getOutBuffer().toString();
-                int len = s.length();
-                if (s == null || len < 1) {
-                    s = "No errors.";
-                }
-                if (len != bufferLength) {
-                    bugsPane.setText(s);
-                    bufferLength = len;
-
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                            bugsScroll.getVerticalScrollBar().setValue(
-                                    bugsScroll.getVerticalScrollBar()
-                                            .getMaximum());
-                        }
-                    });
-                }
-                try {
-                    Thread.sleep(500);
-                } catch (Exception e) {
-                }
-            }
         }
     }
 

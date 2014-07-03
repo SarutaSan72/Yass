@@ -750,6 +750,8 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 		add("West", lineNumbers);
 		add("Center", lyricsScrollPane);
 		// sp.setPreferredSize(new Dimension(600,400));
+
+        setOpaque(false);
 	}
 
 	/**

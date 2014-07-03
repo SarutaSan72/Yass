@@ -533,7 +533,7 @@ public class YassMIDIConverter implements DropTargetListener {
 
         sheet = new YassSheet();
         YassProperties prop = new YassProperties();
-        prop.load();
+
         Color ncol[] = new Color[6];
         for (int i = 0; i < ncol.length; i++) {
             String c = prop.getProperty("note-color-" + i);
@@ -1210,7 +1210,6 @@ public class YassMIDIConverter implements DropTargetListener {
      */
     public String mergeTables(String txt1, String txt2) {
         YassProperties prop = new YassProperties();
-        prop.load();
         YassRow.setValidTags(prop.getProperty("valid-tags"));
         YassRow.setValidLines(prop.getProperty("valid-lines"));
 

@@ -17,6 +17,10 @@ public class YassProperties extends Properties {
     private String yassDir = ".yass";
     private String userProps = "user.xml";
 
+    public YassProperties() {
+        super();
+        load();
+    }
 
     /**
      * Description of the Method
@@ -543,6 +547,11 @@ public class YassProperties extends Properties {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error in storing properties to " + propFile, "Store properties", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    public boolean getBooleanProperty(String s) {
+        String p = getProperty(s);
+        return p != null && p.equals("true");
     }
 }
 
