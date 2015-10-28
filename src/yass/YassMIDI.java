@@ -1,6 +1,7 @@
 package yass;
 
 import javax.sound.midi.*;
+import javax.sound.sampled.*;
 
 /**
  * Description of the Class
@@ -11,48 +12,82 @@ public class YassMIDI {
     Synthesizer synth = null;
     MidiChannel[] mc = null;
 
+    private final boolean DEBUG = false;
+
     /**
      * Constructor for the YassMIDI object
      */
     public YassMIDI() {
         try {
-            System.out.println("Loading Soundbank...");
             Soundbank s = MidiSystem.getSoundbank(getClass().getResource(
                     "/yass/AJH_Piano.sf2"));
 
             // Soundbank s = synth.getDefaultSoundbank();
             Instrument[] instr = s.getInstruments();
+            System.out.println("Soundbank loaded with instrument: " + instr[0].getName().trim());
 
-			/*
-             * System.out.println(instr.length+" instruments"); for (int i=1;
-			 * i<instr.length; i++) {
-			 * System.out.print(i+" "+instr[i].getName().trim()+" ");
-			 * synth.loadInstrument(instr[i]); mc[4].programChange(i);
-			 * mc[4].setMute(false); mc[4].noteOn(65,100); try {
-			 * Thread.currentThread().sleep(500); } catch (InterruptedException
-			 * e) {} mc[4].setMute(true); try {
-			 * Thread.currentThread().sleep(1000); } catch (InterruptedException
-			 * e) {} }
-			 */
+//            for (int i = 1; i < instr.length; i++) {
+//                System.out.print(i + " " + instr[i].getName().trim() + " ");
+//                synth.loadInstrument(instr[i]);
+//                mc[4].programChange(i);
+//                mc[4].setMute(false);
+//                mc[4].noteOn(65, 100);
+//                try {
+//                    Thread.currentThread().sleep(500);
+//                } catch (InterruptedException e) {
+//                }
+//                mc[4].setMute(true);
+//                try {
+//                    Thread.currentThread().sleep(1000);
+//                } catch (InterruptedException e) {
+//                }
+//            }
+
+            if (DEBUG) {
+                // loop through all mixers, and all source and target lines within each mixer.
+                Mixer.Info[] mis = AudioSystem.getMixerInfo();
+                for (Mixer.Info mi : mis) {
+                    Mixer mixer = AudioSystem.getMixer(mi);
+                    // e.g. com.sun.media.sound.DirectAudioDevice
+                    System.out.println("Mixer: " + mixer.getClass().getName());
+                    Line.Info[] lis = mixer.getSourceLineInfo();
+                    for (Line.Info li : lis) {
+                        System.out.println("    Source line: " + li.toString());
+                        showFormats(li);
+                    }
+                    lis = mixer.getTargetLineInfo();
+                    for (Line.Info li : lis) {
+                        System.out.println("    Target line: " + li.toString());
+                        showFormats(li);
+                    }
+                    Control[] cs = mixer.getControls();
+                    for (Control c : cs) {
+                        System.out.println("    Control: " + c.toString());
+                    }
+                }
+            }
 
             int n = 0;// default jdk soundbank.gm 1 piano 56 trumpet
 
             synth = MidiSystem.getSynthesizer();
-            synth.open();
+            MidiDevice.Info info = synth.getDeviceInfo();
+            System.out.println("Synthesizer found: "+info.getName() + " v" + info.getVersion() + " " + info.getVendor());
 
+            // changed: load instrument before opening synthesizer
+            //synth.loadInstrument(instr[n]);
+
+            if (DEBUG) System.out.println("Open synthesizer...");
+            synth.open();
+            if (DEBUG) System.out.println("Synthesizer opened. Now load instrument...");
             synth.loadInstrument(instr[n]);
 
-			/*
-			 * Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
-			 * System.out.println("Available mixers:"); for(int cnt = 0; cnt <
-			 * mixerInfo.length; cnt++){
-			 * System.out.println(mixerInfo[cnt].getName());
-			 * /mixer.isSynchronizationSupported(new Line[] {clip, clip}, true);
-			 * }
-			 */
+            if (DEBUG) System.out.println("Getting channels...");
             mc = synth.getChannels();
+            if (DEBUG) System.out.println("Available channels: " + mc.length);
 
+            if (DEBUG) System.out.println("Program channel: set instrument");
             mc[4].programChange(n);
+            if (DEBUG) System.out.println("Program channel: set volume");
             mc[4].controlChange(7, 127);
             System.out.println("Soundbank ready.");
 
@@ -66,10 +101,40 @@ public class YassMIDI {
 //				stopPlay();
 //			}
 
-        } catch (Exception e) {
-            System.err.println("Error: Missing Soundbank.");
+        } catch (IllegalArgumentException e) {
+            /* The soft synthesizer appears to be throwing
+             * non-checked exceptions through from the sampled
+		     * audio system. Ignore them and only them. */
+            if (e.getMessage().startsWith("No line matching")) {
+                System.out.println(
+                        "Warning: Ignoring soft synthesizer exception from the sampled audio system: "+e.getMessage());
+                return;
+            }
             e.printStackTrace();
-            System.exit(0);
+        } catch (MidiUnavailableException e) {
+            Throwable t = e.getCause();
+            if (t instanceof IllegalArgumentException) {
+                IllegalArgumentException e2 = (IllegalArgumentException) t;
+                if (e2.getMessage().startsWith("No line matching")) {
+                    System.out.println(
+                            "Warning: Ignoring soft synthesizer exception from the sampled audio system: "+e2.getMessage());
+                    return;
+                }
+                e.printStackTrace();
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error: Soundbank preparation failed.");
+            e.printStackTrace();
+        }
+    }
+
+    private static void showFormats(Line.Info li) {
+        if (li instanceof DataLine.Info) {
+            AudioFormat[] afs = ((DataLine.Info) li).getFormats();
+            for (AudioFormat af : afs) {
+                System.out.println("        " + af.toString());
+            }
         }
     }
 
@@ -88,6 +153,9 @@ public class YassMIDI {
      * @return The latency value
      */
     public long getLatency() {
+        if (synth == null) {
+            return 0;
+        }
         return synth.getLatency();
     }
 
@@ -97,6 +165,9 @@ public class YassMIDI {
      * @param n Description of the Parameter
      */
     public synchronized void startPlay(int n) {
+        if (mc == null) {
+            return;
+        }
         mc[4].setMute(false);
         mc[4].noteOn(n, 127);
     }
@@ -105,6 +176,9 @@ public class YassMIDI {
      * Description of the Method
      */
     public synchronized void stopPlay() {
+        if (mc == null) {
+            return;
+        }
         mc[4].setMute(true);
     }
 

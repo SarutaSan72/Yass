@@ -57,6 +57,24 @@ public class YassProperties extends Properties {
         if (!old) {
             old = v.startsWith("1.2");
         }
+        if (!old) {
+            old = v.startsWith("1.3");
+        }
+        if (!old) {
+            old = v.startsWith("1.4");
+        }
+        if (!old) {
+            old = v.startsWith("1.5");
+        }
+        if (!old) {
+            old = v.startsWith("1.6");
+        }
+        if (!old) {
+            old = v.equals("1.7");
+        }
+        if (!old) {
+            old = v.equals("1.7.0");
+        }
         return old;
     }
 
@@ -146,7 +164,7 @@ public class YassProperties extends Properties {
         setProperty("yass-version", YassActions.VERSION);
 
         setProperty("yass-language", "default");
-        setProperty("yass-languages", "default|en|de|pl|es");
+        setProperty("yass-languages", "default|en|de|hu|pl|es");
 
         //filetype association
         setProperty("song-filetype", ".txt");
@@ -163,7 +181,7 @@ public class YassProperties extends Properties {
 
         setProperty("correct-uncommon-pagebreaks", "unknown");
 
-        setProperty("articles", "EN:the |a |an :DE:der |die |das |ein |eine :FR:le |la |les |l'|un |une |des :ES:el |la |los |las ");
+        setProperty("articles", "EN:the |a |an :DE:der |die |das |ein |eine :FR:le |la |les |l'|un |une |des :ES:el |la |los |las:HU:a |az ");
         setProperty("use-articles", "true");
 
         // print
@@ -178,7 +196,7 @@ public class YassProperties extends Properties {
 
         // metadata
         setProperty("language-tag", "English|EN|German|DE|Spanish|ES|French|FR|Other|NN");
-        setProperty("language-more-tag", "Chinese|CH|Croatian|HR|Danish|DA|Italian|IT|Japanese|JA|Korean|KR|Polish|PL|Russian|RU|Swedish|SV|Turkish|TR");
+        setProperty("language-more-tag", "Chinese|CH|Croatian|HR|Danish|DA|Hungarian|HU|Italian|IT|Japanese|JA|Korean|KR|Polish|PL|Russian|RU|Swedish|SV|Turkish|TR");
         // ISO 639-2 http|//www.loc.gov/standards/iso639-2/php/English_list.php
         setProperty("genre-tag", "Blues|Darkwave|Musical|Metal|Oldies|Pop|Punk|Reggae|Rock|Other");
         setProperty("genre-more-tag", "Acid|Alternative|Anime|Classical|Country|Dance|Death Metal|Disco|Electronic|Folk|Funk|Game|Gangsta|Gospel|Gothic|Grunge|Hip-Hop|House|Industrial|Jazz|JPop|MORE|New Age|Noise|R&B|Rave|Rap|Retro|Rock & Roll|Showtunes|Ska|Soundtrack|Soul|Techno|Trance|Tribal|Vocal");
@@ -270,7 +288,7 @@ public class YassProperties extends Properties {
 
         setProperty("hyphenations", "EN|DE|ES|PL|RU");
         setProperty("dicts", "EN|DE");
-        setProperty("dict-map", "English|EN|German|DE|French|EN|Croatian|EN|Italian|EN|Japanese|EN|Polish|EN|Russian|EN|Spanish|EN|Swedish|EN|Turkish|EN");
+        setProperty("dict-map", "English|EN|German|DE|French|EN|Croatian|EN|Hungarian|EN|Italian|EN|Japanese|EN|Polish|EN|Russian|EN|Spanish|EN|Swedish|EN|Turkish|EN");
         setProperty("user-dicts", userDir + File.separator + yassDir);
 
         setProperty("utf8-without-bom", "false");

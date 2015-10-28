@@ -9,9 +9,9 @@
 	<taskdef name="nsis" classname="com.danielreese.nsisant.Task">
 	<classpath location="lib/nsisant-1.3.jar"/>
 	</taskdef>
-	
+
 	<target name="jar">
-        <jar destfile="C:/Users/Frank/eclipse-workspace/Yass/release/yass.jar" filesetmanifest="mergewithoutmain">
+        <jar destfile="./release/yass-1.7.1.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Main-Class" value="yass.YassMain"/>
                 <attribute name="Class-Path" value="."/>

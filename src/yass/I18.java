@@ -131,7 +131,8 @@ public class I18 {
             sb.append("and Tritonus Sequencer, iText, Jazzy Spell Checker, TeX Hyphenator, JInput,<br>");
             sb.append("VFFMpeg Objects (fobs), Java Media Framework (JMF), Robert Eckstein's Wizard code.<br>");
             sb.append("Speed measure 'Inverse Duration' basiert auf Marcel Taeumels Ansatz (http://uman.sf.net).<br>");
-            sb.append("Spanisch Übersetzung von Pantera.<br>");
+            sb.append("Spanische Übersetzung von Pantera.<br>");
+            sb.append("Ungarische Übersetzung von Skyli.<br>");
             sb.append("Lizensen finden Sie im Hilfebereich.");
             return sb.toString();
         } else if (lang.equals("es")) {
@@ -149,6 +150,7 @@ public class I18 {
             sb.append("Objetos VFFMpeg (fobs), Entorno de Trabajo Multimedia de Java (JMF), código Wizard de Robert Eckstein.<br>");
             sb.append("Medición de velocidad 'Inverse Duration' basada en el enfoque de Marcel Taeumel (http://uman.sf.net).<br>");
             sb.append("Traducción al español por Pantero.<br>");
+            sb.append("Traducción al húngaro por Skyli.<br>");
             sb.append("Las licencias se muestran en la sección de ayuda.");
             return sb.toString();
         }
@@ -168,6 +170,7 @@ public class I18 {
         sb.append("VFFMpeg Objects (fobs), Java Media Framework (JMF), Robert Eckstein's Wizard code.<br>");
         sb.append("Speed measure 'Inverse Duration' based on Marcel Taeumel's approach (http://uman.sf.net).<br>");
         sb.append("Spanish translation by Pantera.<br>");
+        sb.append("Hungarian translation by Skyli.<br>");
         sb.append("Licenses are stated in the help section.");
         return sb.toString();
     }
