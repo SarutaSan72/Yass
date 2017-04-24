@@ -1,6 +1,6 @@
 Name "Yass"
 
-!define VERSION "1.7.1"
+!define VERSION "1.8.0"
 
 OutFile ".\release\yass-installer-${VERSION}.exe"
 SetCompressor lzma

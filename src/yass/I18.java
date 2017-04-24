@@ -156,14 +156,24 @@ public class I18 {
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append("<html><body><font size=+2><u>Yass</u>&#161;</font> by Saruta<br>Version: "
-                + version + " (" + date + ")<br>mail@yass-along.com<br>");
-        sb.append("<a href=\"http://www.yass-along.com\">http://www.yass-along.com</a><br><br>");
-
-        sb.append("Yass is freeware. You may use it at no cost. <br><br>");
-        sb.append("You are not allowed to commercialize, bundle, or distribute Yass<br>");
-        sb.append("without my explicit permission. You may, however, link to this software.<br>");
-        sb.append("Please contact me for further information.<br><br>");
+        sb.append("<html><body><font size=+2><u>Yass</u>&#161;</font> by Saruta<br>Version: " + version + " (" + date + ")<br>");
+        sb.append("mail@yass-along.com<br>");
+        sb.append("<a href=\"https://github.com/sarutasan72/yass\">https://github.com/sarutasan72/yass</a><br>");
+        sb.append("<br>");
+        sb.append("Copyright (C) 2014 Saruta<br>");
+        sb.append("This program is free software: you can redistribute it and/or modify<br>");
+        sb.append("it under the terms of the GNU General Public License as published by<br>");
+        sb.append("the Free Software Foundation, either version 3 of the License, or<br>");
+        sb.append("(at your option) any later version.<br>");
+        sb.append("<br>");
+        sb.append("This program is distributed in the hope that it will be useful,<br>");
+        sb.append("but WITHOUT ANY WARRANTY; without even the implied warranty of<br>");
+        sb.append("MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br>");
+        sb.append("GNU General Public License for more details.<br>");
+        sb.append("<br>");
+        sb.append("You should have received a copy of the GNU General Public License<br>");
+        sb.append("along with this program. If not, see <a href=\"http://www.gnu.org/licenses/\"><http://www.gnu.org/licenses/></a>.<br>");
+        sb.append("<br>");
         sb.append("Yass uses: ");
         sb.append("Java Look & Feel Graphics Repository, JavaZoom JLayer/MP3SPI/VorbisSPI<br>");
         sb.append("and Tritonus Sequencer, iText, Jazzy Spell Checker, TeX Hyphenator, JInput,<br>");

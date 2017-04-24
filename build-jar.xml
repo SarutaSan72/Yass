@@ -11,7 +11,7 @@
 	</taskdef>
 
 	<target name="jar">
-        <jar destfile="./release/yass-1.7.1.jar" filesetmanifest="mergewithoutmain">
+        <jar destfile="./release/yass-1.8.0.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Main-Class" value="yass.YassMain"/>
                 <attribute name="Class-Path" value="."/>
