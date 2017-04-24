@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="YassSource" pattern="src:yass..*" />
+</component>
