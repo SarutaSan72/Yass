@@ -115,6 +115,7 @@ public class I18 {
      */
     @SuppressWarnings("StringConcatenationInsideStringBufferAppend")
     public static String getCopyright(String version, String date) {
+        /*
         if (lang.equals("de")) {
             StringBuilder sb = new StringBuilder();
             sb.append("<html><body><font size=+2><u>Yass</u>&#161;</font> by Saruta<br>Version: "
@@ -154,6 +155,7 @@ public class I18 {
             sb.append("Las licencias se muestran en la sección de ayuda.");
             return sb.toString();
         }
+        */
 
         StringBuilder sb = new StringBuilder();
         sb.append("<html><body><font size=+2><u>Yass</u>&#161;</font> by Saruta<br>Version: " + version + " (" + date + ")<br>");
