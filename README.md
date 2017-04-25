@@ -2,10 +2,11 @@
 Yass is a graphical editor for creating, finetuning, organizing and printing Ultrastar karaoke songs.
 
 I developed it from 2009 to 2015. Currently I have no time for further development. 
+
 Contact me if you want to contribute to this project.
 
 Have fun! :musical_note:
-Saruta
+Saruta <mail@yass-along.com>
 
 # Downloads
 
