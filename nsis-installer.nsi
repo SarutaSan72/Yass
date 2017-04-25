@@ -10,7 +10,7 @@ Icon .\resources\icons\yass-multi-icon.ico
 UninstallIcon .\resources\icons\yass-multi-icon.ico
 InstallDir "$PROGRAMFILES\Yass Along ${VERSION}"
 RequestExecutionLevel admin
-LicenseData .\Copyright.txt
+LicenseData .\License.txt
 Page license
 Page components
 Page directory
