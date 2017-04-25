@@ -17,8 +17,8 @@ Licenses are stated in the application's help section.
 Speed measure 'Inverse Duration' based on Marcel Taeumel's approach (http://uman.sf.net).
 
 # License
-GNU GPL 3.0, see Readme.txt
+GNU GPL 3.0, see [License.txt](License.txt)
 
-Have fun!
+:musical_note: Have fun! :musical_note:
 
 Saruta
