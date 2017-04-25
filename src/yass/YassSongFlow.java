@@ -150,6 +150,7 @@ public class YassSongFlow extends JPanel {
      *
      * @return The focusTraversable value
      */
+    @SuppressWarnings("deprecation")
     public boolean isFocusTraversable() {
         return true;
     }

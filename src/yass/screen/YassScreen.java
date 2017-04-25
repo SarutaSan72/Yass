@@ -1061,12 +1061,14 @@ public class YassScreen extends JPanel {
     /**
      * Description of the Method
      */
+    @SuppressWarnings("deprecation")
     public void show() {
     }
 
     /**
      * Description of the Method
      */
+    @SuppressWarnings("deprecation")
     public void hide() {
     }
 

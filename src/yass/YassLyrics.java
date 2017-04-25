@@ -2055,6 +2055,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 		/**
 		 * Description of the Method
 		 */
+		@SuppressWarnings("deprecation")
 		public void hide() {
 			super.setVisible(false);
 			editLyrics();

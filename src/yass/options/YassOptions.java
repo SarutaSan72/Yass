@@ -219,6 +219,7 @@ public class YassOptions extends JDialog {
         }
         // This frame can never be shown.
 
+        @SuppressWarnings("deprecation")
         public void show() {
         }
     }

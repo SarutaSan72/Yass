@@ -11167,6 +11167,7 @@ public class YassActions implements DropTargetListener {
 
         // This frame can never be shown.
 
+        @SuppressWarnings("deprecation")
         public void show() {
         }
     }

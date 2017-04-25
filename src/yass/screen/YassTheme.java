@@ -205,6 +205,7 @@ public class YassTheme {
      * @param s Description of the Parameter
      * @return The resource value
      */
+    @SuppressWarnings("deprecation")
     public static URL getResource(String s) {
         if (new File(userdir).exists()) {
             File f = new File(userdir + File.separator + theme + File.separator + s);
@@ -266,6 +267,7 @@ public class YassTheme {
      *
      * @param sampleName Description of the Parameter
      */
+    @SuppressWarnings("deprecation")
     public void loadSample(String sampleName) {
         if (buffers.get(sampleName) != null) {
             return;
