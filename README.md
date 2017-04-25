@@ -29,7 +29,6 @@ Speed measure 'Inverse Duration' based on Marcel Taeumel's approach (http://uman
 
 # License
 
-Yass - Karaoke Editor
 Copyright (C) 2009 Saruta
 
 This program is free software: you can redistribute it and/or modify
