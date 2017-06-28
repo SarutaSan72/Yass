@@ -14,7 +14,7 @@ Executables can be found at [http://yass-along.com](http://yass-along.com)
 
 # Developers
 
-See here.
+Basic setup is described in the Wiki: https://github.com/SarutaSan72/Yass/wiki/Developers
 
 # Yass uses
 - Java Look & Feel Graphics Repository
