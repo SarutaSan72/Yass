@@ -12,6 +12,10 @@ Saruta <mail@yass-along.com>
 
 Executables can be found at [http://yass-along.com](http://yass-along.com)
 
+# Developers
+
+See here.
+
 # Yass uses
 - Java Look & Feel Graphics Repository
 - JavaZoom JLayer / MP3SP / VorbisSPI and Tritonus Sequencer
