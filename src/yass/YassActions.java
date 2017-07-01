@@ -4839,7 +4839,13 @@ public class YassActions implements DropTargetListener {
         menu.add(micCBI = new JCheckBoxMenuItem(enableMic));
         audioCBI.setState(true);
         clicksCBI.setState(true);
-        micCBI.setState(true);
+        if (clicksCBI != null) {
+            clicksCBI.setState(mp3.isClicksEnabled());
+        }
+        micCBI.setState(false);
+        if (micCBI != null) {
+            micCBI.setState(mp3.isCapture());
+        }
 
         menu = new JMenu(I18.get("medit_view"));
         menu.setMnemonic(KeyEvent.VK_V);
