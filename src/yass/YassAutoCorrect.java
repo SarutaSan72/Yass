@@ -1069,7 +1069,7 @@ public class YassAutoCorrect {
                                 }
                             } else if (late) {
                                 if (canchange) {
-                                    r.addMessage(YassRow.LATE_PAGE_BREAK, details);
+                                    r.addMessage(YassRow.LATE_PAGE_BREAK,  details);
                                     table.addMessage(YassRow.LATE_PAGE_BREAK);
                                 }
                                 else {
