@@ -3452,7 +3452,10 @@ public class YassSongList extends JTable {
         String encoding = "";
         boolean changed = false;
 
+        boolean oldUndo = t.getPreventUndo();
+        t.setPreventUndo(true);
         t.removeAllRows();
+        t.setPreventUndo(oldUndo);
         if (t.loadFile(filename)) {
             long timestamp = new File(filename).lastModified();
             if (timestamp != s.getTimestamp()) {

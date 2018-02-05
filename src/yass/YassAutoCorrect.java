@@ -1059,12 +1059,22 @@ public class YassAutoCorrect {
                                             new Double(((int) (ms[0] * 100)) / 100.0),
                                             new Double(((int) (ms[1] * 100)) / 100.0), FIXED_PAGE_BREAK);
 
-                            if (early && canchange) {
-                                r.addMessage(YassRow.EARLY_PAGE_BREAK, details);
-                                table.addMessage(YassRow.EARLY_PAGE_BREAK);
-                            } else if (late && canchange) {
-                                r.addMessage(YassRow.LATE_PAGE_BREAK, details);
-                                table.addMessage(YassRow.LATE_PAGE_BREAK);
+                            if (early) {
+                                if (canchange) {
+                                    r.addMessage(YassRow.EARLY_PAGE_BREAK, details);
+                                    table.addMessage(YassRow.EARLY_PAGE_BREAK);
+                                }
+                                else {
+                                    // todo: reduce last note length before page break
+                                }
+                            } else if (late) {
+                                if (canchange) {
+                                    r.addMessage(YassRow.LATE_PAGE_BREAK, details);
+                                    table.addMessage(YassRow.LATE_PAGE_BREAK);
+                                }
+                                else {
+                                    // todo: reduce last note length before page break
+                                }
                             } else if (canchange) {
                                 r.addMessage(YassRow.UNCOMMON_PAGE_BREAK,
                                         details);

@@ -448,13 +448,21 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 
 				int keyCode = e.getKeyCode();
 				if (keyCode == KeyEvent.VK_Z && e.isControlDown()) {
-					// sub-opt but workable
-					// undo should store caret state
-					finishEditing();
-					table.undoRows();
-					editLyrics();
-					lyricsArea.getCaret().setDot(0);
-					e.consume();
+					if (isEditable()) {
+						finishEditing();
+						table.undoRows();
+						editLyrics();
+						e.consume();
+					}
+					return;
+				}
+				else if (keyCode == KeyEvent.VK_Y && e.isControlDown()) {
+					if (isEditable()) {
+						finishEditing();
+						table.redoRows();
+						editLyrics();
+						e.consume();
+					}
 					return;
 				} else if (keyCode == KeyEvent.VK_F4) {
 					editLyrics();

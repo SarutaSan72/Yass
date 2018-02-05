@@ -171,7 +171,10 @@ public class YassTable extends JTable {
         setDefaultRenderer(Object.class, new YassTableRenderer());
         setAutoscrolls(true);
 
+        boolean oldUndo = preventUndo;
+        preventUndo = true;
         removeAllRows();
+        preventUndo = oldUndo;
     }
 
     /**
@@ -2264,8 +2267,11 @@ public class YassTable extends JTable {
             c.setElementAt(c.elementAt(i).clone(), i);
         }
 
+        boolean oldUndo = preventUndo;
+        preventUndo = true;
         tm.setData(c);
         tm.fireTableDataChanged();
+        preventUndo = oldUndo;
 
         ListSelectionModel sel = getSelectionModel();
         sel.setValueIsAdjusting(true);
@@ -2326,8 +2332,11 @@ public class YassTable extends JTable {
             c.setElementAt(c.elementAt(i).clone(), i);
         }
 
+        boolean oldUndo = preventUndo;
+        preventUndo = true;
         tm.setData(c);
         tm.fireTableDataChanged();
+        preventUndo = oldUndo;
 
         ListSelectionModel sel = getSelectionModel();
         sel.setValueIsAdjusting(true);

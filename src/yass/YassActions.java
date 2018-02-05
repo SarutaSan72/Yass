@@ -6963,8 +6963,8 @@ public class YassActions implements DropTargetListener {
         toggleVideo.setEnabled(onoff);
 
         enableVideoAudio.setEnabled(onoff);
-        undo.setEnabled(onoff);
-        redo.setEnabled(onoff);
+        //undo.setEnabled(onoff);
+        //redo.setEnabled(onoff);
         closeSong.setEnabled(onoff);
         reloadSong.setEnabled(onoff);
         recordSelection.setEnabled(onoff);
@@ -8367,7 +8367,10 @@ public class YassActions implements DropTargetListener {
                 if (t == null) {
                     continue;
                 }
+                boolean oldUndo = t.getPreventUndo();
+                t.setPreventUndo(true);
                 t.removeAllRows();
+                t.setPreventUndo(oldUndo);
                 t.loadFile(file.getAbsolutePath());
 
                 if (first) {
@@ -8790,7 +8793,10 @@ public class YassActions implements DropTargetListener {
         table.getColumnModel().getColumn(2).setPreferredWidth(50);
         table.getColumnModel().getColumn(3).setPreferredWidth(50);
 
-        if (!reload) table.resetUndo();
+        //if (!reload)
+        table.resetUndo();
+        undo.setEnabled(false);
+        redo.setEnabled(false);
         table.addUndo();
 
         setSaved(true);
@@ -8812,7 +8818,10 @@ public class YassActions implements DropTargetListener {
 
         isUpdating = false;
 
+        boolean oldTrim = autoTrim();
+        setAutoTrim(false);
         checkData(table, false, true);
+        setAutoTrim(oldTrim);
 
         // System.out.println("open editor 6");
 
