@@ -3934,14 +3934,8 @@ public class YassSheet extends JPanel implements Scrollable,
 
                         }
                         if (showNoteHeight) {
-                            String hstr;
                             int pitch = table.getRowAt(i).getHeightInt();
-                            if (pan)
-                                hstr = ""
-                                        + getNoteName(hhPageMin + pitch - 1
-                                        + 60);
-                            else
-                                hstr = getNoteName(minHeight + pitch + 60);
+                            String hstr = "" + getNoteName(pitch + 60);
 
                             int yoff = 4;
 
