@@ -58,11 +58,11 @@ public class YassActions implements DropTargetListener {
     /**
      * Description of the Field
      */
-    public final static String VERSION = "1.8.0";
+    public final static String VERSION = "1.8.1";
     /**
      * Description of the Field
      */
-    public final static String DATE = "4/2017";
+    public final static String DATE = "2/2018";
 
     Action showAbout = new AbstractAction(I18.get("mlib_about")) {
         private static final long serialVersionUID = 1L;
@@ -2850,8 +2850,9 @@ public class YassActions implements DropTargetListener {
     private AWTEventListener awt2 = new AWTEventListener() {
         public void eventDispatched(AWTEvent e) {
             if (e instanceof MouseWheelEvent) {
-                // bug: freezes
-                // stopPlaying();
+                // att: freezes when not consumed
+                stopPlaying();
+                ((MouseWheelEvent) e).consume();
             }
             if (e instanceof KeyEvent) {
                 KeyEvent k = (KeyEvent) e;
@@ -7767,8 +7768,8 @@ public class YassActions implements DropTargetListener {
                 AWTEvent.MOUSE_MOTION_EVENT_MASK);
         java.awt.Toolkit.getDefaultToolkit().addAWTEventListener(awt2,
                 AWTEvent.KEY_EVENT_MASK);
-        // java.awt.Toolkit.getDefaultToolkit().addAWTEventListener(awt2,
-        // AWTEvent.MOUSE_WHEEL_EVENT_MASK);
+         java.awt.Toolkit.getDefaultToolkit().addAWTEventListener(awt2,
+                AWTEvent.MOUSE_WHEEL_EVENT_MASK);
     }
 
     /**
