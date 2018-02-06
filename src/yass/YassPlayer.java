@@ -18,9 +18,11 @@
 
 package yass;
 
+import javazoom.jl.decoder.BitstreamException;
 import javazoom.jl.player.advanced.AdvancedPlayer;
 import javazoom.jl.player.advanced.PlaybackEvent;
 import javazoom.jl.player.advanced.PlaybackListener;
+import javazoom.spi.mpeg.sampled.file.MpegAudioFileReader;
 import javazoom.spi.vorbis.sampled.file.VorbisFileFormatType;
 import org.tritonus.share.sampled.file.TAudioFileFormat;
 import yass.renderer.YassNote;
@@ -625,7 +627,18 @@ public class YassPlayer {
         cacheMP3();
 
         if (createWaveform) {
-            createWaveForm(in);
+            try {
+                MpegAudioFileReader mpegAudioFileReader = new MpegAudioFileReader();
+                in = mpegAudioFileReader.getAudioInputStream(new FileInputStream(file));
+                createWaveForm(in);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (in != null) {
+                    try { in.close(); }
+                    catch (Exception e) { }
+                }
+            }
         }
 		/*
 		 * } catch (Exception e) { if (e instanceof IOException &&
@@ -951,22 +964,38 @@ public class YassPlayer {
                 audioBytesFormat.getSampleRate(), false);
         // System.out.println(decodedFormat);
 
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+
         AudioInputStream decodedStream = AudioSystem.getAudioInputStream(
                 decodedFormat, audioInputStream);
 
         try {
-            ByteArrayOutputStream bout = new ByteArrayOutputStream();
             int readP;
             byte[] bufferP = new byte[1024];
-            while ((readP = decodedStream.read(bufferP)) > -1) {
+            while ((readP = decodedStream.read(bufferP)) != -1) {
                 bout.write(bufferP, 0, readP);
             }
             audioBytes = bout.toByteArray();
             // System.out.println("len " + audioBytes.length);
-            decodedStream.close();
-            bout.close();
         } catch (Exception e) {
             e.printStackTrace();
+            if (e instanceof BitstreamException)
+            {
+                int code = ((BitstreamException)e).getErrorCode();
+                if (code == 102) {
+                    if (bout != null)  audioBytes = bout.toByteArray();
+                }
+            }
+        }
+        finally {
+            try { decodedStream.close(); } catch (Exception e) {}
+            try { bout.close(); } catch (Exception e) {}
+        }
+
+        if (audioBytes != null && audioBytes.length < 1)
+        {
+            audioBytes = null;
+            createWaveform = false;
         }
     }
 
