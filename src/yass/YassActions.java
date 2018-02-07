@@ -1494,6 +1494,25 @@ public class YassActions implements DropTargetListener {
             }
         }
     };
+    int playTimebase = 1;
+    Action setPlayTimebase = new AbstractAction(I18.get("medit_speed")) {
+        private static final long serialVersionUID = 1L;
+
+        public void actionPerformed(ActionEvent e) {
+            if (speedButton.isSelected()) playTimebase = 4;
+            else playTimebase = 1;
+        }
+    };
+
+    Action playSlower = new AbstractAction() {
+        private static final long serialVersionUID = 1L;
+
+        public void actionPerformed(ActionEvent e) {
+            if (speedButton.isSelected()) { playTimebase = 1; speedButton.setSelected(false); }
+            else { playTimebase = 4; speedButton.setSelected(true); }
+        }
+    };
+
     long playAllStart = -1;
     long playAllClicks[][] = null;
     Action playAll = new AbstractAction(I18.get("medit_play_all")) {
@@ -2680,7 +2699,7 @@ public class YassActions implements DropTargetListener {
     private Hashtable<String, ImageIcon> icons = new Hashtable<>();
     private JToggleButton mp3Button, midiButton, vmarkButton, detailToggle,
             songInfoToggle, bgToggle, playlistToggle, snapshotButton,
-            videoButton, videoAudioButton;
+            videoButton, videoAudioButton, speedButton;
     private JToggleButton errToggle = null;
     private JCheckBoxMenuItem playlistCBI = null;
     private JCheckBoxMenuItem audioCBI = null;
@@ -4690,6 +4709,13 @@ public class YassActions implements DropTargetListener {
                 new ImageIcon(getClass().getResource("/yass/NoMute24.gif")));
 
         icons.put(
+                "speedone24Icon",
+                new ImageIcon(getClass().getResource("/yass/SpeedOne24.gif")));
+        icons.put(
+                "speedfour24Icon",
+                new ImageIcon(getClass().getResource("/yass/SpeedFour24.gif")));
+
+        icons.put(
                 "info16Icon",
                 new ImageIcon(getClass().getResource(
                         "/toolbarButtonGraphics/general/Information16.gif")));
@@ -5222,6 +5248,15 @@ public class YassActions implements DropTargetListener {
         midiButton.setIcon(getIcon("nomidi24Icon"));
         midiButton.setSelectedIcon(getIcon("midi24Icon"));
         midiButton.setFocusable(false);
+
+        t.add(speedButton = new JToggleButton());
+        speedButton.setAction(setPlayTimebase);
+        speedButton.setToolTipText(speedButton.getText());
+        speedButton.setText("");
+        speedButton.setIcon(getIcon("speedone24Icon"));
+        speedButton.setSelectedIcon(getIcon("speedfour24Icon"));
+        speedButton.setSelected(playTimebase != 1);
+        speedButton.setFocusable(false);
 
         t.add(b = new JButton());
         b.setAction(showErrors);
@@ -6974,6 +7009,12 @@ public class YassActions implements DropTargetListener {
         multiply.setEnabled(onoff);
         divide.setEnabled(onoff);
 
+
+        if (speedButton != null) {
+            speedButton.setEnabled(onoff);
+            speedButton.setSelected(playTimebase != 1);
+        }
+
         saveAsFile.setEnabled(onoff);
         // saveAllFile.setEnabled(onoff);
         autoCorrect.setEnabled(onoff);
@@ -7730,7 +7771,7 @@ public class YassActions implements DropTargetListener {
             mp3.setAudioEnabled(true);
         }
 
-        mp3.playSelection(pos < 0 ? inout[0] : pos, inout[1], clicks);
+        mp3.playSelection(pos < 0 ? inout[0] : pos, inout[1], clicks, playTimebase);
     }
 
     /**
@@ -7834,7 +7875,7 @@ public class YassActions implements DropTargetListener {
             mp3.setAudioEnabled(true);
         }
 
-        mp3.playSelection(inout[0], inout[1], clicks);
+        mp3.playSelection(inout[0], inout[1], clicks, playTimebase);
     }
 
     /**
@@ -7867,7 +7908,7 @@ public class YassActions implements DropTargetListener {
                 Thread.sleep(50);
             } catch (Exception e) {
             }
-            mp3.playSelection(pausePosition, -1, null);
+            mp3.playSelection(pausePosition, -1, null, playTimebase);
             pausePosition = -1;
         }
     }
@@ -7878,7 +7919,7 @@ public class YassActions implements DropTargetListener {
     public void pausePlayer() {
         if (pausePosition >= 0) {
             mp3.getPlaybackRenderer().setPause(false);
-            mp3.playSelection(pausePosition, -1, null);
+            mp3.playSelection(pausePosition, -1, null, playTimebase);
             pausePosition = -1;
         } else {
             mp3.getPlaybackRenderer().setPause(true);
@@ -7903,7 +7944,7 @@ public class YassActions implements DropTargetListener {
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                mp3.playSelection(pausePosition, -1, null);
+                mp3.playSelection(pausePosition, -1, null, playTimebase);
                 pausePosition = -1;
             }
         });
@@ -7925,7 +7966,7 @@ public class YassActions implements DropTargetListener {
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                mp3.playSelection(pausePosition, -1, null);
+                mp3.playSelection(pausePosition, -1, null, playTimebase);
                 pausePosition = -1;
             }
         });
@@ -8144,7 +8185,7 @@ public class YassActions implements DropTargetListener {
                 boolean midiEnabled = midiButton.isSelected();
                 mp3.setMIDIEnabled(midiEnabled);
                 mp3.setAudioEnabled(mp3Enabled);
-                mp3.playSelection(playAllStart, -1, playAllClicks);
+                mp3.playSelection(playAllStart, -1, playAllClicks, playTimebase);
             }
         });
     }
@@ -8620,7 +8661,7 @@ public class YassActions implements DropTargetListener {
         main.validate();
         renderer.init(session, YassScreen.getTheme(), prop);
         renderer.getComponent().requestFocus();
-        mp3.playSelection(startMillis * 1000L, endMillis * 1000L, null);
+        mp3.playSelection(startMillis * 1000L, endMillis * 1000L, null, playTimebase);
     }
 
     /**
@@ -10352,12 +10393,6 @@ public class YassActions implements DropTargetListener {
                 .putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke
                         .getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_MASK));
 
-        // im.put(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_MASK),
-        // "importFiles");
-        // am.put("importFile", importFiles);
-        // importFiles.putValue(AbstractAction.ACCELERATOR_KEY,
-        // KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_MASK));
-
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK),
                 "saveLibrary");
         am.put("saveLibrary", saveLibrary);
@@ -10643,6 +10678,12 @@ public class YassActions implements DropTargetListener {
         c.getActionMap().put("recordSelection", recordSelection);
         recordSelection.putValue(AbstractAction.ACCELERATOR_KEY,
                 KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_MASK));
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_MASK),
+                "playSlower");
+        c.getActionMap().put("playSlower", playSlower);
+        playSlower.putValue(AbstractAction.ACCELERATOR_KEY,
+                KeyStroke.getKeyStroke(KeyEvent.VK_I, InputEvent.CTRL_MASK));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "playSelection");
         c.getActionMap().put("playSelection", playSelection);
