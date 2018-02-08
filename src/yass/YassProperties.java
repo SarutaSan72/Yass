@@ -172,7 +172,7 @@ public class YassProperties extends Properties {
      */
     public void reset() {
 
-        setProperty("default-programs", "C:/Program Files/Ultrastar Deluxe|C:/Program Files/Ultrastar|C:/Programme/Ultrastar Deluxe|C:/Ultrastar Deluxe|C:/Programme/Ultrastar|C:/Ultrastar|D:/Ultrastar|E:/Ultrastar|F:/Ultrastar|/home/.ultrastardx|/home/.ultrastar");
+        setProperty("default-programs", "C:/Program Files/Ultrastar Deluxe|C:/Program Files (x86)/UltraStar Deluxe|C:/Program Files/Ultrastar|C:/Programme/Ultrastar Deluxe|C:/Ultrastar Deluxe|C:/Programme/Ultrastar|C:/Ultrastar|D:/Ultrastar|E:/Ultrastar|F:/Ultrastar|/home/.ultrastardx|/home/.ultrastar");
         // dirs
         setProperty("song-directory", userDir + File.separator + "Songs");
         setProperty("playlist-directory", userDir + File.separator + "Playlists");
