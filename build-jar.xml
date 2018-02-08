@@ -6,6 +6,8 @@
 
 	<property name="launch4j.dir" location="C:\Program Files (x86)\Launch4j" />
 	<property name="nsis.dir" location="C:\Program Files (x86)\NSIS" />
+	<!-- !!! version: don't forget to change launch4j.xml and nsis-installer.nsi !!! -->
+	<!-- !!! version: don't forget to change launch4j.xml and nsis-installer.nsi !!! -->
 	<property name="yass.version" value="1.8.1" />
 
 	<!-- don't change anything below -->
