@@ -62,7 +62,7 @@ public class YassPlayer {
     // private Clip click;
     private byte midis[][];
     private long duration = 0, position = -1, seekInOffset = 0,
-            seekOutOffset = 0;
+            seekOutOffset = 0, seekInOffsetMs = 0, seekOutOffsetMs = 0;
     private boolean isPlaying = false;
     private String filename = null;
     private YassCaptureAudio capture = null;
@@ -464,6 +464,42 @@ public class YassPlayer {
      */
     public void setSeekOutOffset(long out) {
         seekOutOffset = out;
+    }
+
+    /**
+     * Gets the seekOffset attribute of the YassPlayer object
+     *
+     * @return The seekOffset value
+     */
+    public long getSeekInOffsetMs() {
+        return seekInOffsetMs;
+    }
+
+    /**
+     * Sets the seekInOffsetMs attribute of the YassPlayer object
+     *
+     * @param in The new seekInOffsetMs value
+     */
+    public void setSeekInOffsetMs(long in) {
+        seekInOffsetMs = in;
+    }
+
+    /**
+     * Gets the seekOutOffsetMs attribute of the YassPlayer object
+     *
+     * @return The seekOutOffset value
+     */
+    public long getSeekOutOffsetMs() {
+        return seekOutOffsetMs;
+    }
+
+    /**
+     * Sets the seekOutOffsetMs attribute of the YassPlayer object
+     *
+     * @param out The new seekOutOffsetMs value
+     */
+    public void setSeekOutOffsetMs(long out) {
+        seekOutOffsetMs = out;
     }
 
     /**
@@ -1294,9 +1330,9 @@ public class YassPlayer {
             if (playAudio && !ogg) {
                 try {
                     isPlaying = false;
-                    int skip1 = (int) Math.floor(fps * (inpoint / 1000000.0))
+                    int skip1 = (int) Math.floor(fps * ((inpoint+seekInOffsetMs*1000) / 1000000.0))
                             + (int) seekInOffset;
-                    int skip2 = (int) Math.floor(fps * (outpoint / 1000000.0))
+                    int skip2 = (int) Math.floor(fps * ((outpoint+seekOutOffsetMs*1000) / 1000000.0))
                             + (int) seekOutOffset;
                     if (skip1 < 0) {
                         skip1 = 0;
@@ -1320,7 +1356,7 @@ public class YassPlayer {
                         System.out.println("Cannot start playback.");
                     notInterrupted = false;
                 }
-                if (DEBUG) System.out.println("Waited " + nn);
+                if (DEBUG) System.out.println("Waited " + ((200-nn)*100) + " nanos");
             }
 
             long nanoStart = System.nanoTime() / 1000L;

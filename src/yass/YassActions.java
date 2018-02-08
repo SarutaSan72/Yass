@@ -2607,6 +2607,13 @@ public class YassActions implements DropTargetListener {
                 mp3.setSeekOutOffset(Integer.parseInt(seekOutOffset));
             } catch (Exception ignored) {
             }
+            String seekInOffsetMs = prop.getProperty("seek-in-offset-ms");
+            String seekOutOffsetMs = prop.getProperty("seek-out-offset-ms");
+            try {
+                mp3.setSeekInOffsetMs(Integer.parseInt(seekInOffsetMs));
+                mp3.setSeekOutOffsetMs(Integer.parseInt(seekOutOffsetMs));
+            } catch (Exception ignored) {
+            }
 
             String newDir = prop.getProperty("song-directory");
             String newpDir = prop.getProperty("playlist-directory");
@@ -4178,6 +4185,23 @@ public class YassActions implements DropTargetListener {
             try {
                 int off = Integer.parseInt(seekOutOffset);
                 mp3.setSeekOutOffset(off);
+            } catch (Exception ignored) {
+            }
+        }
+
+        String seekInOffsetMs = prop.getProperty("seek-in-offset-ms");
+        if (seekInOffsetMs != null) {
+            try {
+                int off = Integer.parseInt(seekInOffsetMs);
+                mp3.setSeekInOffsetMs(off);
+            } catch (Exception ignored) {
+            }
+        }
+        String seekOutOffsetMs = prop.getProperty("seek-out-offset-ms");
+        if (seekOutOffsetMs != null) {
+            try {
+                int off = Integer.parseInt(seekOutOffsetMs);
+                mp3.setSeekOutOffsetMs(off);
             } catch (Exception ignored) {
             }
         }

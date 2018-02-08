@@ -33,10 +33,14 @@ public class AudioPanel extends OptionsPanel {
      * Gets the body attribute of the DirPanel object
      */
     public void addRows() {
+        setLabelWidth(120);
         addSeparator(I18.get("options_audio"));
         addText(I18.get("options_seek_in"), "seek-in-offset");
         addText(I18.get("options_seek_out"), "seek-out-offset");
         addComment(I18.get("options_seek_comment"));
+        addText(I18.get("options_seek_in_ms"), "seek-in-offset-ms");
+        addText(I18.get("options_seek_out_ms"), "seek-out-offset-ms");
+        addComment(I18.get("options_seek_comment_ms"));
         addSeparator(I18.get("options_video"));
         addBoolean("", "use-fobs", I18.get("options_use_fobs"));
         addComment(I18.get("options_use_fobs_comment"));
