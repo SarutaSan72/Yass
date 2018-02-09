@@ -132,7 +132,7 @@ public class YassGroups extends JTable implements DropTargetListener {
                 });
 
         try {
-            noCover = new ImageIcon(I18.getResource("group_image.jpg"));
+            noCover = new ImageIcon(I18.getImage("group_image.jpg"));
         } catch (Exception e) {
             e.printStackTrace();
         }

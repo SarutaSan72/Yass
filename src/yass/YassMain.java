@@ -116,7 +116,7 @@ public class YassMain extends JApplet {
 
     private void initFrame() {
         final JFrame frame = new JFrame(I18.get("yass_title"));
-        frame.setIconImage(new ImageIcon(frame.getClass().getResource("/yass/yass-icon-16.png")).getImage());
+        frame.setIconImage(new ImageIcon(YassMain.this.getClass().getResource("/yass/resources/img/yass-icon-16.png")).getImage());
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(
                 new WindowAdapter() {

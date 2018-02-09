@@ -337,7 +337,7 @@ public class YassCaptureAudio {
         f.setSize(600, 400);
         f.setLocation(dim.width / 2 - 300, dim.height / 2 - 200);
         f.setIconImage(new ImageIcon(YassCaptureAudio.this.getClass()
-                .getResource("/yass/yass-icon-16.png")).getImage());
+                .getResource("/yass/resources/img/yass-icon-16.png")).getImage());
         f.setVisible(true);
     }
 

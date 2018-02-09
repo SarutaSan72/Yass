@@ -18,7 +18,14 @@
 
 package yass;
 
+import com.sun.xml.internal.ws.api.ResourceLoader;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -79,7 +86,7 @@ public class I18 {
                 e.printStackTrace();
             }
         } else {
-            bundle = ResourceBundle.getBundle("i18.yass", loc);
+            bundle = ResourceBundle.getBundle("yass.resources.i18.yass", loc);
         }
     }
 
@@ -100,8 +107,8 @@ public class I18 {
             }
         }
 
-        String filename = "/i18/" + lang + "/" + s;
-        URL url = I18.class.getClass().getResource(filename);
+        String filename = "/yass/resources/i18/" + lang + "/" + s;
+        URL url = I18.class.getResource(filename);
         java.net.URLConnection uc = null;
         try {
             uc = url.openConnection();
@@ -121,9 +128,74 @@ public class I18 {
                 //e.printStackTrace();
             }
         }
-        filename = "/i18/default/" + s;
+        filename = "/yass/resources/i18/default/" + s;
         // System.out.println("i18 " + filename);
-        return I18.class.getClass().getResource(filename);
+        return I18.class.getResource(filename);
+    }
+
+    public static InputStream getResourceAsStream(String s) {
+        if (new File(userdir).exists()) {
+            File f = new File(userdir + File.separator + lang + File.separator
+                    + s);
+            try {
+                return new FileInputStream(f);
+            } catch (Exception e) {
+                // e.printStackTrace();
+            }
+        }
+
+        String filename = "/yass/resources/i18/" + lang + "/" + s;
+        InputStream is = I18.class.getResourceAsStream(filename);
+        if (is != null) return is;
+
+        filename = "/yass/resources/i18/default/" + s;
+        // System.out.println("i18 " + filename);
+        is = I18.class.getResourceAsStream(filename);
+        if (is != null) return is;
+
+        System.out.println("not found: " + s);
+        return null;
+    }
+
+    public static Image getImage(String s) {
+        if (new File(userdir).exists()) {
+            File f = new File(userdir + File.separator + lang + File.separator + s);
+            try {
+                //System.out.println("reading " + f.getAbsolutePath());
+                return ImageIO.read(f);
+            } catch (Exception e) {}
+        }
+
+        String filename = "/yass/resources/i18/" + lang + "/" + s;
+        InputStream is = I18.class.getResourceAsStream(filename);
+        if (is != null) {
+            try {
+                //System.out.println("reading " + filename);
+                return ImageIO.read(is);
+            } catch (Exception e) {
+            } finally {
+                try {
+                    is.close();
+                } catch (Exception e) {
+                }
+            }
+        }
+        filename = "/yass/resources/i18/default/" + s;
+        is = I18.class.getResourceAsStream(filename);
+        if (is != null) {
+            try {
+                //System.out.println("reading " + filename);
+                return ImageIO.read(is);
+            } catch (Exception e) {
+            } finally {
+                try {
+                    is.close();
+                } catch (Exception e) {
+                }
+            }
+        }
+        System.out.println("not found: " + s);
+        return null;
     }
 
     /**

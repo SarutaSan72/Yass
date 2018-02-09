@@ -273,7 +273,7 @@ public class YassSheet extends JPanel implements Scrollable,
         setFocusable(true);
 
         Image image = new ImageIcon(this.getClass()
-                .getResource("/yass/cut.gif")).getImage();
+                .getResource("/yass/resources/img/cut.gif")).getImage();
         cutCursor = Toolkit.getDefaultToolkit().createCustomCursor(image,
                 new Point(0, 10), "cut");
 

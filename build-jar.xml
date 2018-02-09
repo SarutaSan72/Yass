@@ -26,8 +26,8 @@
                 <attribute name="Main-Class" value="yass.YassMain"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
-            <fileset dir="./bin"/>
-            <fileset dir="./resources"/>
+			<fileset dir="./bin"/>
+			<fileset dir="./resources"/>
         </jar>
     </target>
 	<target name="exe" description="Create Yass executable with Launch4J" depends="jar" >

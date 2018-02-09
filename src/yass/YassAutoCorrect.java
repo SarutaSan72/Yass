@@ -1407,7 +1407,7 @@ public class YassAutoCorrect {
     public void loadFont() {
         fontWidth = new byte[256];
         try {
-            InputStream is = getClass().getResourceAsStream(
+            InputStream is = getClass().getResourceAsStream("/yass/resources"+
                     prop.getProperty("font-file"));
             is.read(fontWidth, 0, fontWidth.length);
             is.close();

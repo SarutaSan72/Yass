@@ -237,7 +237,8 @@ public class YassSynth {
         }
 
         try {
-            AudioInputStream ostream = AudioSystem.getAudioInputStream(new BufferedInputStream(YassSynth.class.getClass().getResource("/samples/click.wav").openStream()));
+            InputStream istream = YassSynth.class.getResourceAsStream("/yass/resources/samples/click.wav");
+            AudioInputStream ostream = AudioSystem.getAudioInputStream(new BufferedInputStream(istream));
             //System.out.println(ostream.getFormat());
             AudioInputStream stream = AudioSystem.getAudioInputStream(wavaudioFormat, ostream);
             //System.out.println(stream.getFormat());
@@ -262,6 +263,7 @@ public class YassSynth {
             }
             stream.close();
             ostream.close();
+            istream.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

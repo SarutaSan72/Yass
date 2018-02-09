@@ -93,7 +93,7 @@ public class YassAudioSample {
         AudioInputStream ostream = null;
         AudioInputStream stream = null;
         try {
-            ostream = AudioSystem.getAudioInputStream(new BufferedInputStream(YassSynth.class.getClass().getResource("/samples/click.wav").openStream()));
+            ostream = AudioSystem.getAudioInputStream(new BufferedInputStream(YassSynth.class.getClass().getResource("/yass/resources/samples/click.wav").openStream()));
             stream = AudioSystem.getAudioInputStream(sampleAudioFormat, ostream);
             long len = stream.getFrameLength() * sampleAudioFormat.getFrameSize();
 

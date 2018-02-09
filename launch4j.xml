@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
@@ -9,20 +10,23 @@
   <priority>normal</priority>
   <downloadUrl>http://java.com/download</downloadUrl>
   <supportUrl></supportUrl>
-  <customProcName>true</customProcName>
   <stayAlive>false</stayAlive>
+  <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
-  <icon>.\resources\icons\yass-multi-icon.ico</icon>
+  <icon>.\src\yass\resources\icons\yass-multi-icon.ico</icon>
   <jre>
-    <path></path>
-    <minVersion>1.8.0</minVersion>
+    <path>..\jre</path>
+    <bundledJre64Bit>true</bundledJre64Bit>
+    <bundledJreAsFallback>false</bundledJreAsFallback>
+    <minVersion>9.0.0</minVersion>
     <maxVersion></maxVersion>
     <jdkPreference>preferJre</jdkPreference>
+    <runtimeBits>64/32</runtimeBits>
     <initialHeapSize>48</initialHeapSize>
     <maxHeapSize>512</maxHeapSize>
   </jre>
   <splash>
-    <file>.\resources\icons\yass-logo.bmp</file>
+    <file>.\src\yass\resources\icons\yass-logo.bmp</file>
     <waitForWindow>true</waitForWindow>
     <timeout>60</timeout>
     <timeoutErr>true</timeoutErr>
@@ -31,12 +35,14 @@
     <fileVersion>1.8.1.0</fileVersion>
     <txtFileVersion>Yass 1.8.1.0</txtFileVersion>
     <fileDescription>Yass - Karaoke Editor</fileDescription>
-    <copyright>(C)2014 Saruta</copyright>
+    <copyright>(C)2018 Saruta</copyright>
     <productVersion>1.8.1.0</productVersion>
     <txtProductVersion>1.8.1.0</txtProductVersion>
     <productName>Yass</productName>
     <companyName>yass-along.com</companyName>
     <internalName>yass</internalName>
     <originalFilename>yass.exe</originalFilename>
+    <trademarks></trademarks>
+    <language>ENGLISH_US</language>
   </versionInfo>
 </launch4jConfig>

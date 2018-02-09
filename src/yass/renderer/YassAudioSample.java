@@ -52,7 +52,7 @@ public class YassAudioSample {
      * @param args Description of the Parameter
      */
     public static void main(String args[]) {
-        loadSample("/samples/554_bebeto_Ambient_loop.wav");
+        loadSample("/yass/resources/samples/554_bebeto_Ambient_loop.wav");
         openLine();
 
         Thread t =

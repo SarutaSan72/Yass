@@ -38,7 +38,7 @@ public class YassMIDI {
     public YassMIDI() {
         try {
             Soundbank s = MidiSystem.getSoundbank(getClass().getResource(
-                    "/yass/AJH_Piano.sf2"));
+                    "/yass/resources/midi/AJH_Piano.sf2"));
 
             // Soundbank s = synth.getDefaultSoundbank();
             Instrument[] instr = s.getInstruments();

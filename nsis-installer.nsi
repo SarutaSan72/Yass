@@ -6,8 +6,8 @@ OutFile ".\release\yass-installer-${VERSION}.exe"
 SetCompressor lzma
 XPStyle on
 InstallColors /windows
-Icon .\resources\icons\yass-multi-icon.ico
-UninstallIcon .\resources\icons\yass-multi-icon.ico
+Icon .\src\yass\resources\icons\yass-multi-icon.ico
+UninstallIcon .\src\yass\resources\icons\yass-multi-icon.ico
 InstallDir "$PROGRAMFILES\Yass Along ${VERSION}"
 RequestExecutionLevel admin
 LicenseData .\License.txt

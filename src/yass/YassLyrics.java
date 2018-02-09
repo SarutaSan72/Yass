@@ -878,7 +878,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 							is = new FileInputStream(f);
 						} else {
 							is = getClass().getResourceAsStream(
-									"/spell/" + sc + ".dic");
+									"/yass/resources/spell/" + sc + ".dic");
 						}
 						// System.out.println("/spell/"+sc+".dic");
 						SpellDictionaryHashMap dict = new SpellDictionaryHashMap(

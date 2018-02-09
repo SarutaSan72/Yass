@@ -134,13 +134,13 @@ public class YassPlayer {
 
         // click = null;
         // if (clickEnabled) {
-        // click = loadClip("/samples/406__TicTacShutUp__click_1_d_long.wav");
+        // click = loadClip("/yass/resources/samples/406__TicTacShutUp__click_1_d_long.wav");
         // }
 
         // if (false) {
         // try {
         // FileInputStream clickfi = new
-        // FileInputStream("/samples/406__TicTacShutUp__click_1_d_orig.wav");
+        // FileInputStream("/yass/resources/samples/406__TicTacShutUp__click_1_d_orig.wav");
         // BufferedInputStream clickbfi = new BufferedInputStream(clickfi,
         // 4096);
         // ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -154,7 +154,7 @@ public class YassPlayer {
         // bout.close();
         //
         // AudioInputStream stream =
-        // AudioSystem.getAudioInputStream(this.getClass().getResource("/samples/406__TicTacShutUp__click_1_d_orig.wav"));
+        // AudioSystem.getAudioInputStream(this.getClass().getResource("/yass/resources/samples/406__TicTacShutUp__click_1_d_orig.wav"));
         // AudioFormat af = stream.getFormat();
         //
         // InputStream bis = new ByteArrayInputStream(clickmemcache);

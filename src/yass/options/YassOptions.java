@@ -215,7 +215,7 @@ public class YassOptions extends JDialog {
         private static final long serialVersionUID = -5555522703593740252L;
 
         OwnerFrame() {
-            setIconImage(new ImageIcon(this.getClass().getResource("/yass/yass-icon-16.png")).getImage());
+            setIconImage(new ImageIcon(this.getClass().getResource("/yass/resources/img/yass-icon-16.png")).getImage());
         }
         // This frame can never be shown.
 

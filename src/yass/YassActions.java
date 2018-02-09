@@ -68,7 +68,7 @@ public class YassActions implements DropTargetListener {
         private static final long serialVersionUID = 1L;
 
         public void actionPerformed(ActionEvent e) {
-            URL url = getClass().getResource("/yass/about.gif");
+            URL url = getClass().getResource("/yass/resources/img/about.gif");
             ImageIcon icon;
             if (url == null) {
                 icon = null;
@@ -1260,7 +1260,7 @@ public class YassActions implements DropTargetListener {
             fh.pack();
             fh.setSize(500, 600);
             fh.setIconImage(new ImageIcon(YassActions.this.getClass()
-                    .getResource("/yass/yass-icon-16.png")).getImage());
+                    .getResource("/yass/resources/img/yass-icon-16.png")).getImage());
             fh.setVisible(true);
         }
     };
@@ -4213,314 +4213,314 @@ public class YassActions implements DropTargetListener {
         icons.put(
                 "new16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/New16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/New16.gif")));
         icons.put(
                 "new24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/New24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/New24.gif")));
         icons.put(
                 "open16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Open16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Open16.gif")));
         icons.put(
                 "open24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Open24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Open24.gif")));
         icons.put(
                 "save16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Save16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Save16.gif")));
         icons.put(
                 "save24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Save24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Save24.gif")));
         icons.put(
                 "saveas16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/SaveAs16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/SaveAs16.gif")));
         icons.put(
                 "saveas24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/SaveAs24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/SaveAs24.gif")));
         icons.put("list16Icon",
-                new ImageIcon(getClass().getResource("/yass/List16.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/List16.gif")));
         icons.put("list24Icon",
-                new ImageIcon(getClass().getResource("/yass/List24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/List24.gif")));
         icons.put("playlist16Icon",
-                new ImageIcon(getClass().getResource("/yass/Playlist16.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Playlist16.gif")));
         icons.put("playlist24Icon",
-                new ImageIcon(getClass().getResource("/yass/Playlist24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Playlist24.gif")));
         icons.put(
                 "add16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Add16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Add16.gif")));
         icons.put(
                 "add24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Add24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Add24.gif")));
         icons.put(
                 "import16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Import16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Import16.gif")));
         icons.put(
                 "import24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Import24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Import24.gif")));
         icons.put(
                 "edit16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Edit16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Edit16.gif")));
         icons.put(
                 "edit24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Edit24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Edit24.gif")));
         icons.put("editany24Icon",
-                new ImageIcon(getClass().getResource("/yass/EditAny24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/EditAny24.gif")));
         // icons.put("hyphen16Icon", new
         // ImageIcon(getClass().getResource("/yass/Hyphenate16.gif")));
         icons.put("hyphenate24Icon",
-                new ImageIcon(getClass().getResource("/yass/Hyphenate24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Hyphenate24.gif")));
         // icons.put("check16Icon", new
-        // ImageIcon(getClass().getResource("/toolbarButtonGraphics/general/Properties16.gif")));
+        // ImageIcon(getClass().getResource("/yass/resources/toolbarButtonGraphics/general/Properties16.gif")));
         // icons.put("check24Icon", new
-        // ImageIcon(getClass().getResource("/toolbarButtonGraphics/general/Properties24.gif")));
+        // ImageIcon(getClass().getResource("/yass/resources/toolbarButtonGraphics/general/Properties24.gif")));
         icons.put("spell24Icon",
-                new ImageIcon(getClass().getResource("/yass/SpellCheck24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/SpellCheck24.gif")));
         icons.put(
                 "refresh16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Refresh16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Refresh16.gif")));
         icons.put(
                 "refresh24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Refresh24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Refresh24.gif")));
 
         icons.put(
                 "find16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Find16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Find16.gif")));
         icons.put(
                 "find24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Find24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Find24.gif")));
         icons.put("clearfind24Icon",
-                new ImageIcon(getClass().getResource("/yass/ClearFind24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/ClearFind24.gif")));
 
         icons.put("pagebreak16Icon",
-                new ImageIcon(getClass().getResource("/yass/PageBreak16.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/PageBreak16.gif")));
         icons.put("pagebreak24Icon",
-                new ImageIcon(getClass().getResource("/yass/PageBreak24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/PageBreak24.gif")));
         icons.put("insertnote16Icon",
-                new ImageIcon(getClass().getResource("/yass/InsertNote16.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/InsertNote16.gif")));
         icons.put("insertnote24Icon",
-                new ImageIcon(getClass().getResource("/yass/InsertNote24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/InsertNote24.gif")));
 
         icons.put("correctpagebreak24Icon", new ImageIcon(getClass()
-                .getResource("/yass/CorrectPageBreak24.gif")));
+                .getResource("/yass/resources/img/CorrectPageBreak24.gif")));
         icons.put("correctfilenames24Icon", new ImageIcon(getClass()
-                .getResource("/yass/CorrectFileNames24.gif")));
+                .getResource("/yass/resources/img/CorrectFileNames24.gif")));
         icons.put(
                 "correcttags24Icon",
-                new ImageIcon(getClass().getResource("/yass/CorrectTags24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/CorrectTags24.gif")));
         icons.put(
                 "correcttext24Icon",
-                new ImageIcon(getClass().getResource("/yass/CorrectText24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/CorrectText24.gif")));
         icons.put("correcttransposed24Icon", new ImageIcon(getClass()
-                .getResource("/yass/CorrectTransposed24.gif")));
+                .getResource("/yass/resources/img/CorrectTransposed24.gif")));
         icons.put(
                 "correctlength24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/yass/CorrectLength24.gif")));
+                        "/yass/resources/img/CorrectLength24.gif")));
         icons.put("correctalbum24Icon",
                 new ImageIcon(getClass()
-                        .getResource("/yass/CorrectAlbum24.gif")));
+                        .getResource("/yass/resources/img/CorrectAlbum24.gif")));
         icons.put(
                 "correctyear24Icon",
-                new ImageIcon(getClass().getResource("/yass/CorrectYear24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/CorrectYear24.gif")));
 
         icons.put(
                 "print16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Print16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Print16.gif")));
         icons.put(
                 "print24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Print24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Print24.gif")));
         icons.put(
                 "movie16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/media/Movie16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/media/Movie16.gif")));
         icons.put(
                 "movie24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/media/Movie24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/media/Movie24.gif")));
         icons.put(
                 "fastforward16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/media/FastForward16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/media/FastForward16.gif")));
         icons.put(
                 "fastforward24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/media/FastForward24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/media/FastForward24.gif")));
         icons.put(
                 "rewind16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/media/Rewind16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/media/Rewind16.gif")));
         icons.put(
                 "rewind24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/media/Rewind24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/media/Rewind24.gif")));
 
         icons.put("empty16Icon",
-                new ImageIcon(getClass().getResource("/yass/Empty16.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Empty16.gif")));
         icons.put("empty24Icon",
-                new ImageIcon(getClass().getResource("/yass/Empty24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Empty24.gif")));
 
         icons.put("tiles24Icon",
-                new ImageIcon(getClass().getResource("/yass/Tiles24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Tiles24.gif")));
         icons.put("notiles16Icon",
-                new ImageIcon(getClass().getResource("/yass/NoTiles16.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/NoTiles16.gif")));
         icons.put("notiles24Icon",
-                new ImageIcon(getClass().getResource("/yass/NoTiles24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/NoTiles24.gif")));
         icons.put("lyrics16Icon",
-                new ImageIcon(getClass().getResource("/yass/Lyrics16.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Lyrics16.gif")));
         icons.put("lyrics24Icon",
-                new ImageIcon(getClass().getResource("/yass/Lyrics24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Lyrics24.gif")));
         icons.put("noerr24Icon",
-                new ImageIcon(getClass().getResource("/yass/NoError24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/NoError24.gif")));
         icons.put("err24Icon",
-                new ImageIcon(getClass().getResource("/yass/Error24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Error24.gif")));
 
         icons.put("grayOpen16Icon",
-                new ImageIcon(getClass().getResource("/yass/GrayOpen16.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/GrayOpen16.gif")));
         icons.put("grayOpen24Icon",
-                new ImageIcon(getClass().getResource("/yass/GrayOpen24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/GrayOpen24.gif")));
 
         icons.put(
                 "just16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/text/AlignJustify16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/text/AlignJustify16.gif")));
         icons.put(
                 "just24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/text/AlignJustify24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/text/AlignJustify24.gif")));
         icons.put("freestyle16Icon",
-                new ImageIcon(getClass().getResource("/yass/Freestyle16.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Freestyle16.gif")));
         icons.put("freestyle24Icon",
-                new ImageIcon(getClass().getResource("/yass/Freestyle24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Freestyle24.gif")));
         icons.put("golden16Icon",
-                new ImageIcon(getClass().getResource("/yass/Golden16.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Golden16.gif")));
         icons.put("golden24Icon",
-                new ImageIcon(getClass().getResource("/yass/Golden24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Golden24.gif")));
         icons.put("space16Icon",
-                new ImageIcon(getClass().getResource("/yass/Space16.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Space16.gif")));
         icons.put("space24Icon",
-                new ImageIcon(getClass().getResource("/yass/Space24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Space24.gif")));
         icons.put("minus16Icon",
-                new ImageIcon(getClass().getResource("/yass/Minus16.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Minus16.gif")));
         icons.put("minus24Icon",
-                new ImageIcon(getClass().getResource("/yass/Minus24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Minus24.gif")));
         icons.put("lockon24Icon",
-                new ImageIcon(getClass().getResource("/yass/Lock24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Lock24.gif")));
         icons.put("lockoff24Icon",
-                new ImageIcon(getClass().getResource("/yass/Unlock24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Unlock24.gif")));
 
         icons.put(
                 "home16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/navigation/Home16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/navigation/Home16.gif")));
         icons.put(
                 "home24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/navigation/Home24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/navigation/Home24.gif")));
 
         icons.put("err24Icon",
-                new ImageIcon(getClass().getResource("/yass/Error24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Error24.gif")));
 
         icons.put("setTitle24Icon",
-                new ImageIcon(getClass().getResource("/yass/SetTitle24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/SetTitle24.gif")));
         icons.put("setArtist24Icon",
-                new ImageIcon(getClass().getResource("/yass/SetArtist24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/SetArtist24.gif")));
         icons.put("setGenre24Icon",
-                new ImageIcon(getClass().getResource("/yass/SetGenre24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/SetGenre24.gif")));
         icons.put("setEdition24Icon",
-                new ImageIcon(getClass().getResource("/yass/SetEdition24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/SetEdition24.gif")));
         icons.put(
                 "setLanguage24Icon",
-                new ImageIcon(getClass().getResource("/yass/SetLanguage24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/SetLanguage24.gif")));
         icons.put("setYear24Icon",
-                new ImageIcon(getClass().getResource("/yass/SetYear24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/SetYear24.gif")));
         icons.put("newEdition24Icon",
-                new ImageIcon(getClass().getResource("/yass/NewEdition24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/NewEdition24.gif")));
         icons.put("newFolder24Icon",
-                new ImageIcon(getClass().getResource("/yass/NewFolder24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/NewFolder24.gif")));
         icons.put("renameFolder24Icon",
                 new ImageIcon(getClass()
-                        .getResource("/yass/RenameFolder24.gif")));
+                        .getResource("/yass/resources/img/RenameFolder24.gif")));
 
         icons.put(
                 "play16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/media/Play16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/media/Play16.gif")));
         icons.put(
                 "play24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/media/Play24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/media/Play24.gif")));
         icons.put(
                 "stop16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/media/Stop16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/media/Stop16.gif")));
         icons.put(
                 "stop24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/media/Stop24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/media/Stop24.gif")));
         playSong.putValue(AbstractAction.SMALL_ICON, getIcon("play16Icon"));
         stopPlaySong.putValue(AbstractAction.SMALL_ICON, getIcon("stop16Icon"));
 
         icons.put(
                 "stepf16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/navigation/Down16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/navigation/Down16.gif")));
         icons.put(
                 "stepf24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/navigation/Down24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/navigation/Down24.gif")));
         icons.put(
                 "stepb16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/navigation/Up16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/navigation/Up16.gif")));
         icons.put(
                 "stepb24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/navigation/Up24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/navigation/Up24.gif")));
         playSelection
                 .putValue(AbstractAction.SMALL_ICON, getIcon("play16Icon"));
         interruptPlay
                 .putValue(AbstractAction.SMALL_ICON, getIcon("stop16Icon"));
         icons.put("zoomstd16Icon",
-                new ImageIcon(getClass().getResource("/yass/ZoomPage16.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/ZoomPage16.gif")));
         icons.put("zoomstd24Icon",
-                new ImageIcon(getClass().getResource("/yass/ZoomPage24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/ZoomPage24.gif")));
         icons.put(
                 "zoomin16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/ZoomIn16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/ZoomIn16.gif")));
         icons.put(
                 "zoomin24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/ZoomIn24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/ZoomIn24.gif")));
         icons.put(
                 "zoomout16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/ZoomOut16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/ZoomOut16.gif")));
         icons.put(
                 "zoomout24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/ZoomOut24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/ZoomOut24.gif")));
         icons.put("zoomall16Icon",
-                new ImageIcon(getClass().getResource("/yass/ZoomAll16.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/ZoomAll16.gif")));
         icons.put("zoomall24Icon",
-                new ImageIcon(getClass().getResource("/yass/ZoomAll24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/ZoomAll24.gif")));
         onePage.putValue(AbstractAction.SMALL_ICON, getIcon("zoomstd16Icon"));
         allPages.putValue(AbstractAction.SMALL_ICON, getIcon("zoomall16Icon"));
         lessPages.putValue(AbstractAction.SMALL_ICON, getIcon("zoomout16Icon"));
@@ -4529,83 +4529,83 @@ public class YassActions implements DropTargetListener {
         icons.put(
                 "stepl16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/navigation/Back16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/navigation/Back16.gif")));
         icons.put(
                 "stepl24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/navigation/Back24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/navigation/Back24.gif")));
         icons.put(
                 "stepr16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/navigation/Forward16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/navigation/Forward16.gif")));
         icons.put(
                 "stepr24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/navigation/Forward24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/navigation/Forward24.gif")));
         addToPlayList.putValue(AbstractAction.SMALL_ICON,
                 getIcon("stepr16Icon"));
         removeFromPlayList.putValue(AbstractAction.SMALL_ICON,
                 getIcon("stepl16Icon"));
 
         icons.put("setdir24Icon",
-                new ImageIcon(getClass().getResource("/yass/SetDir24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/SetDir24.gif")));
         icons.put(
                 "setdir24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Preferences24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Preferences24.gif")));
 
         icons.put(
                 "copy16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Copy16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Copy16.gif")));
         icons.put(
                 "copy24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Copy24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Copy24.gif")));
         icons.put(
                 "paste16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Paste16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Paste16.gif")));
         icons.put(
                 "paste24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Paste24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Paste24.gif")));
         icons.put(
                 "insertb16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/table/RowInsertBefore16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/table/RowInsertBefore16.gif")));
         icons.put(
                 "insertb24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/table/RowInsertBefore24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/table/RowInsertBefore24.gif")));
         icons.put(
                 "inserta16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/table/RowInsertAfter16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/table/RowInsertAfter16.gif")));
         icons.put(
                 "inserta24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/table/RowInsertAfter24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/table/RowInsertAfter24.gif")));
         icons.put("split16Icon",
-                new ImageIcon(getClass().getResource("/yass/Split16.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Split16.gif")));
         icons.put("split24Icon",
-                new ImageIcon(getClass().getResource("/yass/Split24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Split24.gif")));
         icons.put("join16Icon",
-                new ImageIcon(getClass().getResource("/yass/Join16.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Join16.gif")));
         icons.put("join24Icon",
-                new ImageIcon(getClass().getResource("/yass/Join24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Join24.gif")));
         icons.put(
                 "delete16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Delete16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Delete16.gif")));
         icons.put(
                 "delete24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Delete24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Delete24.gif")));
         icons.put(
                 "bookmarks24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Bookmarks24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Bookmarks24.gif")));
         // icons.put("selectall16Icon", new
         // ImageIcon(getClass().getResource("/yass/SelectAll16.gif")));
         // icons.put("selectall24Icon", new
@@ -4613,21 +4613,21 @@ public class YassActions implements DropTargetListener {
         icons.put(
                 "undo16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Undo16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Undo16.gif")));
         icons.put(
                 "undo24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Undo24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Undo24.gif")));
         icons.put(
                 "redo16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Redo16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Redo16.gif")));
         icons.put(
                 "redo24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Redo24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Redo24.gif")));
         icons.put("snapshot24Icon",
-                new ImageIcon(getClass().getResource("/yass/Snapshot24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Snapshot24.gif")));
         copyRows.putValue(AbstractAction.SMALL_ICON, getIcon("copy16Icon"));
         pasteRows.putValue(AbstractAction.SMALL_ICON, getIcon("paste16Icon"));
         joinRows.putValue(AbstractAction.SMALL_ICON, getIcon("join16Icon"));
@@ -4659,94 +4659,94 @@ public class YassActions implements DropTargetListener {
         icons.put(
                 "auto16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/development/Application16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/development/Application16.gif")));
         icons.put(
                 "auto24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/development/Application24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/development/Application24.gif")));
         icons.put(
                 "pref16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Preferences16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Preferences16.gif")));
         icons.put(
                 "pref24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Preferences24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Preferences24.gif")));
         showOptions.putValue(AbstractAction.SMALL_ICON, getIcon("pref16Icon"));
 
         icons.put(
                 "playvis16Icon",
-                new ImageIcon(getClass().getResource("/yass/PlayVisible16.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/PlayVisible16.gif")));
         icons.put(
                 "playvis24Icon",
-                new ImageIcon(getClass().getResource("/yass/PlayVisible24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/PlayVisible24.gif")));
         icons.put("playfrozen24Icon",
-                new ImageIcon(getClass().getResource("/yass/PlayFrozen24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/PlayFrozen24.gif")));
         playPage.putValue(AbstractAction.SMALL_ICON, getIcon("playvis16Icon"));
         icons.put("record16Icon",
-                new ImageIcon(getClass().getResource("/yass/Record16.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Record16.gif")));
         icons.put("record24Icon",
-                new ImageIcon(getClass().getResource("/yass/Record24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Record24.gif")));
         recordSelection.putValue(AbstractAction.SMALL_ICON,
                 getIcon("record16Icon"));
         icons.put("correct24Icon",
-                new ImageIcon(getClass().getResource("/yass/Correct24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Correct24.gif")));
         icons.put("correct16Icon",
-                new ImageIcon(getClass().getResource("/yass/Correct16.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Correct16.gif")));
         showErrors
                 .putValue(AbstractAction.SMALL_ICON, getIcon("correct16Icon"));
 
         icons.put("nextBreak24Icon",
-                new ImageIcon(getClass().getResource("/yass/NextBreak24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/NextBreak24.gif")));
         icons.put("prevBreak24Icon",
-                new ImageIcon(getClass().getResource("/yass/PrevBreak24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/PrevBreak24.gif")));
 
         icons.put("rollLeft24Icon",
-                new ImageIcon(getClass().getResource("/yass/RollLeft24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/RollLeft24.gif")));
         icons.put("rollRight24Icon",
-                new ImageIcon(getClass().getResource("/yass/RollRight24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/RollRight24.gif")));
 
         icons.put(
                 "noalign24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/AlignBottom24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/AlignBottom24.gif")));
         icons.put(
                 "align24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/AlignCenter24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/AlignCenter24.gif")));
         icons.put(
                 "alignleft16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/text/AlignLeft16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/text/AlignLeft16.gif")));
         icons.put(
                 "alignleft24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/text/AlignLeft24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/text/AlignLeft24.gif")));
 
         icons.put("midi24Icon",
-                new ImageIcon(getClass().getResource("/yass/Midi24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Midi24.gif")));
         icons.put("nomidi24Icon",
-                new ImageIcon(getClass().getResource("/yass/NoMidi24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/NoMidi24.gif")));
         icons.put("mute24Icon",
-                new ImageIcon(getClass().getResource("/yass/Mute24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/Mute24.gif")));
         icons.put("nomute24Icon",
-                new ImageIcon(getClass().getResource("/yass/NoMute24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/NoMute24.gif")));
 
         icons.put(
                 "speedone24Icon",
-                new ImageIcon(getClass().getResource("/yass/SpeedOne24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/SpeedOne24.gif")));
         icons.put(
                 "speedfour24Icon",
-                new ImageIcon(getClass().getResource("/yass/SpeedFour24.gif")));
+                new ImageIcon(getClass().getResource("/yass/resources/img/SpeedFour24.gif")));
 
         icons.put(
                 "info16Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Information16.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Information16.gif")));
         icons.put(
                 "info24Icon",
                 new ImageIcon(getClass().getResource(
-                        "/toolbarButtonGraphics/general/Information24.gif")));
+                        "/yass/resources/toolbarButtonGraphics/general/Information24.gif")));
 
         enableLyrics.putValue(AbstractAction.SMALL_ICON,
                 getIcon("lyrics16Icon"));
@@ -11237,7 +11237,7 @@ public class YassActions implements DropTargetListener {
 
         OwnerFrame() {
             setIconImage(new ImageIcon(YassActions.this.getClass().getResource(
-                    "/yass/yass-icon-16.png")).getImage());
+                    "/yass/resources/img/yass-icon-16.png")).getImage());
         }
 
         // This frame can never be shown.

@@ -318,7 +318,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
             }
         });
 
-        videoIcon = new ImageIcon(getClass().getResource("/yass/Movie32.gif"))
+        videoIcon = new ImageIcon(getClass().getResource("/yass/resources/img/Movie32.gif"))
                 .getImage();
 
         InputStreamReader isr = null;

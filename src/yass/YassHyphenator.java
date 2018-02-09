@@ -103,7 +103,7 @@ public class YassHyphenator {
                     if (f.exists()) {
                         is = new FileInputStream(f);
                     } else {
-                        is = getClass().getResourceAsStream("/hyphen/" + hy + ".tex");
+                        is = getClass().getResourceAsStream("/yass/resources/hyphen/" + hy + ".tex");
                     }
 
                     //System.out.println("/hyphen/" + hy + ".tex");

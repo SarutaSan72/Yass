@@ -896,24 +896,24 @@ public class YassSongList extends JTable {
         showErrors = false;
 
         try {
-            noCover = new ImageIcon(getClass().getResource("/yass/NoCover.jpg"));
-            brokenSong = new ImageIcon(getClass().getResource("/yass/Broken.jpg"));
-            openedIcon = new ImageIcon(getClass().getResource("/yass/GrayOpen16.gif")).getImage();
-            videoIcon = new ImageIcon(getClass().getResource("/yass/Video.gif")).getImage();
-            multiIcon = new ImageIcon(getClass().getResource("/yass/Multi.gif")).getImage();
-            nobackgroundIcon = new ImageIcon(getClass().getResource("/yass/NoBackground.gif")).getImage();
-            perfectIcon = new ImageIcon(getClass().getResource("/yass/Perfect.gif")).getImage();
-            lockedIcon = new ImageIcon(getClass().getResource("/yass/Locked.gif")).getImage();
+            noCover = new ImageIcon(getClass().getResource("/yass/resources/img/NoCover.jpg"));
+            brokenSong = new ImageIcon(getClass().getResource("/yass/resources/img/Broken.jpg"));
+            openedIcon = new ImageIcon(getClass().getResource("/yass/resources/img/GrayOpen16.gif")).getImage();
+            videoIcon = new ImageIcon(getClass().getResource("/yass/resources/img/Video.gif")).getImage();
+            multiIcon = new ImageIcon(getClass().getResource("/yass/resources/img/Multi.gif")).getImage();
+            nobackgroundIcon = new ImageIcon(getClass().getResource("/yass/resources/img/NoBackground.gif")).getImage();
+            perfectIcon = new ImageIcon(getClass().getResource("/yass/resources/img/Perfect.gif")).getImage();
+            lockedIcon = new ImageIcon(getClass().getResource("/yass/resources/img/Locked.gif")).getImage();
 
             for (int i = 0; i < langIcons.length; i++) {
                 // System.out.println("language: " + langID[i]);
-                langIcons[i] = new ImageIcon(getClass().getResource(langID[i].toLowerCase() + ".gif")).getImage();
+                langIcons[i] = new ImageIcon(getClass().getResource("/yass/resources/img/"+langID[i].toLowerCase() + ".gif")).getImage();
             }
-            err_minorpage_icon = new ImageIcon(getClass().getResource("/yass/MinorPageError.gif")).getImage();
-            err_major_icon = new ImageIcon(getClass().getResource("/yass/MajorError.gif")).getImage();
-            err_file_icon = new ImageIcon(getClass().getResource("/yass/FileError.gif")).getImage();
-            err_tags_icon = new ImageIcon(getClass().getResource("/yass/TagError.gif")).getImage();
-            err_text_icon = new ImageIcon(getClass().getResource("/yass/TextError.gif")).getImage();
+            err_minorpage_icon = new ImageIcon(getClass().getResource("/yass/resources/img/MinorPageError.gif")).getImage();
+            err_major_icon = new ImageIcon(getClass().getResource("/yass/resources/img/MajorError.gif")).getImage();
+            err_file_icon = new ImageIcon(getClass().getResource("/yass/resources/img/FileError.gif")).getImage();
+            err_tags_icon = new ImageIcon(getClass().getResource("/yass/resources/img/TagError.gif")).getImage();
+            err_text_icon = new ImageIcon(getClass().getResource("/yass/resources/img/TextError.gif")).getImage();
         } catch (Exception e) {
             e.printStackTrace();
         }
