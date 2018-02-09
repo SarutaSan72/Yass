@@ -15,13 +15,9 @@
   <manifest></manifest>
   <icon>.\src\yass\resources\icons\yass-multi-icon.ico</icon>
   <jre>
-    <path>..\jre</path>
-    <bundledJre64Bit>true</bundledJre64Bit>
-    <bundledJreAsFallback>false</bundledJreAsFallback>
-    <minVersion>9.0.0</minVersion>
+    <minVersion>1.8.0</minVersion>
     <maxVersion></maxVersion>
     <jdkPreference>preferJre</jdkPreference>
-    <runtimeBits>64/32</runtimeBits>
     <initialHeapSize>48</initialHeapSize>
     <maxHeapSize>512</maxHeapSize>
   </jre>
@@ -42,7 +38,5 @@
     <companyName>yass-along.com</companyName>
     <internalName>yass</internalName>
     <originalFilename>yass.exe</originalFilename>
-    <trademarks></trademarks>
-    <language>ENGLISH_US</language>
   </versionInfo>
 </launch4jConfig>
