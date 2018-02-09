@@ -250,7 +250,7 @@ public class I18 {
         StringBuilder sb = new StringBuilder();
         sb.append("<html><body><font size=+2><u>Yass</u>&#161;</font> by Saruta<br>Version: " + version + " (" + date + ")<br>");
         sb.append("mail@yass-along.com<br>");
-        sb.append("<a href=\"https://github.com/sarutasan72/yass\">https://github.com/sarutasan72/yass</a><br>");
+        sb.append("<a href=\"http://yass-along.com\">http://yass-along.com</a><br>");
         sb.append("<br>");
         sb.append("Copyright (C) 2014 Saruta<br>");
         sb.append("This program is free software: you can redistribute it and/or modify<br>");
