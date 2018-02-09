@@ -1499,8 +1499,7 @@ public class YassActions implements DropTargetListener {
         private static final long serialVersionUID = 1L;
 
         public void actionPerformed(ActionEvent e) {
-            if (speedButton.isSelected()) playTimebase = 4;
-            else playTimebase = 1;
+            playSlower.actionPerformed(e);
         }
     };
 
@@ -1508,8 +1507,21 @@ public class YassActions implements DropTargetListener {
         private static final long serialVersionUID = 1L;
 
         public void actionPerformed(ActionEvent e) {
-            if (speedButton.isSelected()) { playTimebase = 1; speedButton.setSelected(false); }
-            else { playTimebase = 4; speedButton.setSelected(true); }
+            if (playTimebase == 1) {
+                playTimebase = 2;
+                speedButton.setSelectedIcon(getIcon("speedtwo24Icon"));
+            }
+            else if (playTimebase == 2) {
+                playTimebase = 3;
+                speedButton.setSelectedIcon(getIcon("speedthree24Icon"));
+            }
+            else if (playTimebase == 3) {
+                playTimebase = 4;
+                speedButton.setSelectedIcon(getIcon("speedfour24Icon"));
+            }
+            else { playTimebase = 1; }
+
+            speedButton.setSelected(playTimebase != 1);
         }
     };
 
@@ -4736,6 +4748,12 @@ public class YassActions implements DropTargetListener {
                 "speedone24Icon",
                 new ImageIcon(getClass().getResource("/yass/resources/img/SpeedOne24.gif")));
         icons.put(
+                "speedtwo24Icon",
+                new ImageIcon(getClass().getResource("/yass/resources/img/SpeedTwo24.gif")));
+        icons.put(
+                "speedthree24Icon",
+                new ImageIcon(getClass().getResource("/yass/resources/img/SpeedThree24.gif")));
+        icons.put(
                 "speedfour24Icon",
                 new ImageIcon(getClass().getResource("/yass/resources/img/SpeedFour24.gif")));
 
@@ -5278,7 +5296,6 @@ public class YassActions implements DropTargetListener {
         speedButton.setToolTipText(speedButton.getText());
         speedButton.setText("");
         speedButton.setIcon(getIcon("speedone24Icon"));
-        speedButton.setSelectedIcon(getIcon("speedfour24Icon"));
         speedButton.setSelected(playTimebase != 1);
         speedButton.setFocusable(false);
 
