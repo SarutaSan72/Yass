@@ -917,7 +917,10 @@ public class YassSheet extends JPanel implements Scrollable,
                     YassTable.setZoomMode(YassTable.ZOOM_MULTI);
                 }
 
-                requestFocus();
+                if (! hasFocus()) {
+                    requestFocusInWindow();
+                    requestFocus();
+                }
 
                 if (isPlaying() || isTemporaryStop()) {
                     firePropertyChange("play", null, "stop");
