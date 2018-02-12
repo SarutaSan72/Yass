@@ -58,7 +58,7 @@ public class YassActions implements DropTargetListener {
     /**
      * Description of the Field
      */
-    public final static String VERSION = "1.9.0";
+    public final static String VERSION = "1.9.1";
     /**
      * Description of the Field
      */
@@ -2862,8 +2862,8 @@ public class YassActions implements DropTargetListener {
         }
     };
     private Color stdBackground = new JButton().getBackground(),
-            errBackground = new Color(.8f, .5f, .5f),
-            minorerrBackground = new Color(.8f, .8f, .5f);
+            errBackground = new Color(.95f, .5f, .5f),
+            minorerrBackground = new Color(.95f, .8f, .8f);
     private Color[] hicolors = new Color[]{new Color(.3f, .3f, 0.3f, .3f),
             new Color(.3f, .6f, 0.3f, .3f), new Color(.3f, .3f, 0.6f, .3f),
             new Color(.3f, .6f, 0.6f, .3f), new Color(.6f, .6f, 0.3f, .3f),
@@ -3369,7 +3369,7 @@ public class YassActions implements DropTargetListener {
                     col.getBlue(), 64);
         }
 
-        Color ncol[] = new Color[6];
+        Color ncol[] = new Color[7];
         for (int i = 0; i < ncol.length; i++) {
             String c = prop.getProperty("note-color-" + i);
             Color col = Color.decode(c);
@@ -3377,6 +3377,10 @@ public class YassActions implements DropTargetListener {
                     221);
         }
         sheet.setColors(ncol);
+        lyrics.setColors(ncol);
+        YassTableRenderer.setColors(ncol);
+        errBackground = ncol[5];
+        minorerrBackground = ncol[6];
 
         boolean shade = prop.get("shade-notes").equals("true");
         sheet.shadeNotes(shade);

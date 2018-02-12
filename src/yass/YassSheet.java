@@ -180,7 +180,7 @@ public class YassSheet extends JPanel implements Scrollable,
     private boolean messageMemory = false;
     private Color disabledColor = new JPanel().getBackground();
     // gray, blue, golden, freestyle, red
-    private Color colorSet[] = new Color[6];
+    private Color colorSet[] = new Color[7];
     private Color playertextBG = new Color(1f, 1f, 1f, .9f);
     private int keycodes[] = new int[17];
     private long equalsKeyMillis = 0;
@@ -3040,7 +3040,7 @@ public class YassSheet extends JPanel implements Scrollable,
                 int durationGolden = table.getDurationGolden();
                 String goldenDiff = table.getGoldenDiff();
                 boolean err = Math.abs(goldenPoints - idealGoldenPoints) > goldenVariance;
-                g2.setColor(err ? dkRed : dkGray);
+                g2.setColor(err ? colorSet[5] : dkGray);
 
                 String goldenString = MessageFormat.format(
                         I18.get("correct_golden_info"), "" + idealGoldenPoints,
@@ -3854,7 +3854,7 @@ public class YassSheet extends JPanel implements Scrollable,
 
                     g2.setStroke(dashed);
                     if (r.isType(YassRectangle.WRONG)) {
-                        g2.setColor(dkRed);
+                        g2.setColor(colorSet[6]);
                     }
                     dashLine.y1 = TOP_LINE - 10;
                     dashLine.y2 = clip.height - BOTTOM_BORDER;

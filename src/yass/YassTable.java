@@ -5439,6 +5439,18 @@ public class YassTable extends JTable {
         return notes;
     }
 
+    public String getPageMessage(int line) {
+        int pageIndex = getPage(line);
+        if (pageIndex >= 0) {
+            int[] ij = enlargeToPages(pageIndex, pageIndex);
+            for (int k = ij[0]; k <= ij[1] /* include page break */+ 1; k++) {
+                YassRow row = getRowAt(k);
+                if (row.hasMessage()) return row.getMessage();
+            }
+        }
+        return null;
+    }
+
     /**
      * Description of the Method
      *

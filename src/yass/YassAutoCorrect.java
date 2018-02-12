@@ -1,4 +1,5 @@
 /*
+/*
  * Yass - Karaoke Editor
  * Copyright (C) 2009 Saruta
  *

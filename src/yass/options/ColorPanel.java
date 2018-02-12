@@ -36,7 +36,7 @@ public class ColorPanel extends OptionsPanel {
         addSeparator(I18.get("options_design_versions"));
         addColorSet(I18.get("options_design_versions_colors"), "color", 8);
         addSeparator(I18.get("options_design_notes"));
-        addColorSet(I18.get("options_design_notes_colors"), "note-color", 6);
+        addColorSet(I18.get("options_design_notes_colors"), "note-color", 7);
         addBoolean("", "shade-notes", I18.get("options_design_notes_shade"));
         addBoolean("", "show-note-height", I18.get("options_design_notes_height"));
         addBoolean("", "show-note-length", I18.get("options_design_notes_length"));

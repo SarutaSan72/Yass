@@ -29,10 +29,14 @@ import java.awt.*;
  */
 public class YassTableRenderer extends DefaultTableCellRenderer {
     private static final long serialVersionUID = -8540061131858129154L;
-    private Color red = new Color(1f, .8f, .8f);
-    private Color darkRed = new Color(.8f, .5f, .5f);
+    private static Color red = new Color(1f, .8f, .8f);
+    private static Color darkRed = new Color(.8f, .5f, .5f);
 
 
+    public static void setColors(Color[] colorSet) {
+        red = colorSet[5];
+        darkRed = colorSet[6];
+    }
     /**
      * Gets the tableCellRendererComponent attribute of the YassTableRenderer
      * object

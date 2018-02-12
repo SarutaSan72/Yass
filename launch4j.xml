@@ -28,12 +28,12 @@
     <timeoutErr>true</timeoutErr>
   </splash>
   <versionInfo>
-    <fileVersion>1.9.0.0</fileVersion>
-    <txtFileVersion>Yass 1.9.0.0</txtFileVersion>
+    <fileVersion>1.9.1.0</fileVersion>
+    <txtFileVersion>Yass 1.9.1.0</txtFileVersion>
     <fileDescription>Yass - Karaoke Editor</fileDescription>
     <copyright>(C)2018 Saruta</copyright>
-    <productVersion>1.9.0.0</productVersion>
-    <txtProductVersion>1.9.0.0</txtProductVersion>
+    <productVersion>1.9.1.0</productVersion>
+    <txtProductVersion>1.9.1.0</txtProductVersion>
     <productName>Yass</productName>
     <companyName>yass-along.com</companyName>
     <internalName>yass</internalName>

@@ -91,7 +91,10 @@ public class YassProperties extends Properties {
             old = v.equals("1.7");
         }
         if (!old) {
-            old = v.equals("1.7.0");
+            old = v.startsWith("1.8");
+        }
+        if (!old) {
+            old = v.equals("1.9.0");
         }
         return old;
     }
@@ -227,10 +230,10 @@ public class YassProperties extends Properties {
         setProperty("valid-tags", "TITLE ARTIST LANGUAGE EDITION <br> GENRE ALBUM YEAR CREATOR ID <br> MP3 COVER BACKGROUND VIDEO <br> VIDEOGAP START END PLAYERS <br> RELATIVE BPM GAP <br> LENGTH PREVIEWSTART ");
         setProperty("valid-lines", "#:*F-EP");
         setProperty("font-file", "/fonts/Font1.dat");
-        setProperty("max-points", "8000");
-        setProperty("max-golden", "1000");
+        setProperty("max-points", "7500");
+        setProperty("max-golden", "1250");
         setProperty("max-linebonus", "1000");
-        setProperty("golden-allowed-variance", "200");
+        setProperty("golden-allowed-variance", "250");
         setProperty("freestyle-counts", "false");
         setProperty("touching-syllables", "false");
         setProperty("correct-uncommon-pagebreaks-fix", "0");
@@ -258,7 +261,8 @@ public class YassProperties extends Properties {
         setProperty("lyrics-min-height", "120");
         setProperty("lyrics-font-size", "14");
 
-        setProperty("note-color-5", "#ff6666");
+        setProperty("note-color-6", "#dd9966");
+        setProperty("note-color-5", "#dd6666");
         setProperty("note-color-4", "#ffccff");
         setProperty("note-color-3", "#f0f066");
         setProperty("note-color-2", "#4488cc");

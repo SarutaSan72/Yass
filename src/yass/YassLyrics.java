@@ -123,6 +123,9 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 
 	private Color lineNumberColor = Color.gray;
 	private Color fontColor = Color.darkGray;
+
+	private Color[] colorSet = new Color[7];
+	private Color errBackground, minorerrBackground;
 	private Font lineNumberFont = new Font("SansSerif", Font.PLAIN, 10);
 	private LineNumbers lineNumbers = null;
 	private int fontSize = 16;
@@ -150,6 +153,12 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 	 *            Description of the Parameter
 	 */
 	public void tabChanged(boolean onoff) {
+	}
+
+	public void setColors(Color[] c) {
+		System.arraycopy(c, 0, colorSet, 0, colorSet.length);
+		errBackground = colorSet[5];
+		minorerrBackground = colorSet[6];
 	}
 
 	/**
@@ -1870,6 +1879,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 				int endline = doc.getDefaultRootElement().getElementIndex(end);
 
 				g.setColor(lineNumberColor);
+
 				g.setFont(lineNumberFont);
 				FontMetrics metrics = g.getFontMetrics();
 				int rows = doc.getDefaultRootElement().getElementCount();
@@ -1877,6 +1887,16 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 					Element e = doc.getDefaultRootElement().getElement(n);
 					Rectangle r = lyricsArea.modelToView(e.getStartOffset());
 					int y = r.y + r.height - p.y;
+
+					String msg = table.getPageMessage(n+1);
+					if (msg != null) {
+						if (YassAutoCorrect.isAutoCorrectionMinorPageBreak(msg))
+							g.setColor(minorerrBackground);
+						else g.setColor(errBackground);
+
+						g2.fillRect(0, r.y - p.y, getWidth()-1, r.height);
+						g.setColor(lineNumberColor);
+					}
 
 					String s = (n + 1) + "";
 					int w = metrics.stringWidth(s);
