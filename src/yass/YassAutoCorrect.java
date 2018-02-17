@@ -57,6 +57,7 @@ public class YassAutoCorrect {
      */
     public static boolean isAutoCorrectionPageBreak(String msg) {
         return msg.equals(YassRow.PAGE_OVERLAP)
+                || msg.equals(YassRow.SHORT_PAGE_BREAK)
                 || msg.equals(YassRow.EARLY_PAGE_BREAK)
                 || msg.equals(YassRow.LATE_PAGE_BREAK);
     }
@@ -412,6 +413,7 @@ public class YassAutoCorrect {
                 || msg.equals(YassRow.PAGE_OVERLAP)
                 || msg.equals(YassRow.EARLY_PAGE_BREAK)
                 || msg.equals(YassRow.LATE_PAGE_BREAK)
+                || msg.equals(YassRow.SHORT_PAGE_BREAK)
                 || msg.equals(YassRow.UNCOMMON_PAGE_BREAK)
                 || msg.equals(YassRow.UNSORTED_COMMENTS)
                 || msg.equals(YassRow.FILE_FOUND)
@@ -1065,20 +1067,21 @@ public class YassAutoCorrect {
                                     r.addMessage(YassRow.EARLY_PAGE_BREAK, details);
                                     table.addMessage(YassRow.EARLY_PAGE_BREAK);
                                 }
-                                else {
-                                    // todo: reduce last note length before page break
+                                else if (r2.isNote() && r2.getLengthInt() > 1) {
+                                    r2.addMessage(YassRow.SHORT_PAGE_BREAK, details);
+                                    table.addMessage(YassRow.SHORT_PAGE_BREAK);
                                 }
                             } else if (late) {
                                 if (canchange) {
                                     r.addMessage(YassRow.LATE_PAGE_BREAK, details);
                                     table.addMessage(YassRow.LATE_PAGE_BREAK);
                                 }
-                                else {
-                                    // todo: reduce last note length before page break
+                                else if (r2.isNote() && r2.getLengthInt() > 1){
+                                    r2.addMessage(YassRow.SHORT_PAGE_BREAK, details);
+                                    table.addMessage(YassRow.SHORT_PAGE_BREAK);
                                 }
                             } else if (canchange) {
-                                r.addMessage(YassRow.UNCOMMON_PAGE_BREAK,
-                                        details);
+                                r.addMessage(YassRow.UNCOMMON_PAGE_BREAK, details);
                                 table.addMessage(YassRow.UNCOMMON_PAGE_BREAK);
                             }
                         }
@@ -1298,7 +1301,8 @@ public class YassAutoCorrect {
                     }
                     return true;
                 case YassRow.MISSING_TAG:
-                    YassRow r2 = tm.getCommentRow("LANGUAGE:");
+                    YassRow r2 = tm.
+                            getCommentRow("LANGUAGE:");
                     if (r2 == null) {
                         table.setLanguage("Other");
                         changed = true;
@@ -1383,7 +1387,7 @@ public class YassAutoCorrect {
                 case YassRow.PAGE_OVERLAP:
                 case YassRow.EARLY_PAGE_BREAK:
                 case YassRow.LATE_PAGE_BREAK:
-                case YassRow.UNCOMMON_PAGE_BREAK:
+                case YassRow.UNCOMMON_PAGE_BREAK: {
 
                     int comm[] = new int[2];
                     comm[0] = table.getRowAt(i - 1).getBeatInt()
@@ -1396,6 +1400,23 @@ public class YassAutoCorrect {
                         changed = true;
                     }
                     break;
+                }
+                case YassRow.SHORT_PAGE_BREAK: {
+                    int comm[] = new int[2];
+                    comm[0] = r.getBeatInt()
+                            + r.getLengthInt() - 1;
+                    comm[1] = table.getRowAt(i + 2).getBeatInt();
+                    int pause = getCommonPageBreak(comm, table.getBPM(), null);
+                    if (pause >= 0) {
+                        // reduce note length, then auto-correct page break
+                        r.setLength((r.getLengthInt() - 1));
+                        YassRow r1 = table.getRowAt(i + 1);
+                        r1.setBeat(comm[0]);
+                        r1.setSecondBeat(comm[1]);
+                        changed = true;
+                    }
+                    break;
+                }
             }
         }
         return changed;

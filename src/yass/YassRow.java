@@ -99,6 +99,10 @@ public class YassRow implements Cloneable, Comparable<Object> {
     /**
      * Description of the Field
      */
+    public final static String SHORT_PAGE_BREAK = "err_short_page_break";
+    /**
+     * Description of the Field
+     */
     public final static String UNCOMMON_PAGE_BREAK = "err_uncommon_page_break";
     /**
      * Description of the Field
