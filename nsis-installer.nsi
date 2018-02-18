@@ -2,13 +2,31 @@ Name "Yass"
 
 !define VERSION "1.9.1"
 
+##################
+# uninstall previous version
+Function .onInit
+  ReadRegStr $R0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Yass Along" "UninstallString"
+  StrCmp $R0 "" done
+
+  MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION \
+  "Yass Along is already installed. $\n$\nClick `OK` to remove the previous version or `Cancel` to cancel this upgrade." \
+  IDOK uninst
+  Abort
+
+uninst:
+  ClearErrors
+  ExecWait $R0
+done:
+FunctionEnd
+##################
+
 OutFile ".\release\yass-installer-${VERSION}.exe"
 SetCompressor lzma
 XPStyle on
 InstallColors /windows
 Icon .\src\yass\resources\icons\yass-multi-icon.ico
 UninstallIcon .\src\yass\resources\icons\yass-multi-icon.ico
-InstallDir "$PROGRAMFILES\Yass Along ${VERSION}"
+InstallDir "$PROGRAMFILES\Yass Along"
 RequestExecutionLevel admin
 LicenseData .\License.txt
 Page license
@@ -86,19 +104,19 @@ Section
   File ".\lib\Yass Along 1.0.1.pref"
   WriteRegStr HKLM "SOFTWARE\Yass Along" "installdir" "$INSTDIR"
 
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Yass Along ${VERSION}" "DisplayName" "Yass Along ${VERSION}"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Yass Along ${VERSION}" "UninstallString" "$INSTDIR\uninstall.exe"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Yass Along" "DisplayName" "Yass Along"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Yass Along" "UninstallString" "$INSTDIR\uninstall.exe"
 
   WriteUninstaller $INSTDIR\uninstall.exe
 
   StrCpy $R1 $R0 1
   StrCmp $R1 ">" skip
-	CreateDirectory "$SMPROGRAMS\Yass Along ${VERSION}"
-#	CreateShortCut "$SMPROGRAMS\Yass Along ${VERSION}\Yass Player.lnk" "$INSTDIR\yass.exe" "-play"
-	CreateShortCut "$SMPROGRAMS\Yass Along ${VERSION}\Yass Editor.lnk" "$INSTDIR\yass.exe" "-lib" 
+	CreateDirectory "$SMPROGRAMS\Yass Along"
+#	CreateShortCut "$SMPROGRAMS\Yass Along\Yass Player.lnk" "$INSTDIR\yass.exe" "-play"
+	CreateShortCut "$SMPROGRAMS\Yass Along\Yass Editor.lnk" "$INSTDIR\yass.exe" "-lib"
 # "$INSTDIR\yass-edit.ico"
-	CreateShortCut "$SMPROGRAMS\Yass Along ${VERSION}\Yass Converter.lnk" "$INSTDIR\yass.exe" "-convert"
-	CreateShortCut "$SMPROGRAMS\Yass Along ${VERSION}\Uninstall Yass Along.lnk" "$INSTDIR\uninstall.exe"
+	CreateShortCut "$SMPROGRAMS\Yass Along\Yass Converter.lnk" "$INSTDIR\yass.exe" "-convert"
+	CreateShortCut "$SMPROGRAMS\Yass Along\Uninstall Yass Along.lnk" "$INSTDIR\uninstall.exe"
   skip:
 SectionEnd
 
@@ -107,7 +125,7 @@ UninstallText "Thank you for using Yass."
 Section "Uninstall"
   SetShellVarContext all
 
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Yass Along ${VERSION}" 
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Yass Along"
 
   DeleteRegKey HKCR "Directory\shell\yass\command"
   DeleteRegKey HKCR "Directory\shell\yass"
@@ -133,14 +151,16 @@ Section "Uninstall"
   DeleteRegKey HKCR ".kar\shell\yass"
 
 
-  delete "$DESKTOP\Yass Editor.lnk"
+  Delete "$DESKTOP\Yass Editor.lnk"
 #  delete "$DESKTOP\Yass Player.lnk"
-#  delete "$SMPROGRAMS\Yass Along ${VERSION}\Yass Player.lnk"
-  delete "$SMPROGRAMS\Yass Along ${VERSION}\Yass Editor.lnk"
-  delete "$SMPROGRAMS\Yass Along ${VERSION}\Yass Converter.lnk"
-  delete "$SMPROGRAMS\Yass Along ${VERSION}\Uninstall Yass.lnk"
-  rmdir "$SMPROGRAMS\Yass Along ${VERSION}"
-  delete $INSTDIR\uninstall.exe 
-  delete $INSTDIR\yass.exe
-  rmdir /r "$INSTDIR"
+#  delete "$SMPROGRAMS\Yass Along\Yass Player.lnk"
+  Delete "$SMPROGRAMS\Yass Along\Yass Editor.lnk"
+  Delete "$SMPROGRAMS\Yass Along\Yass Converter.lnk"
+  Delete "$SMPROGRAMS\Yass Along\Uninstall Yass.lnk"
+  RMDir /r "$SMPROGRAMS\Yass Along"
+  Delete "$INSTDIR\Yass Along 1.0.1.pref"
+  Delete "$INSTDIR\fobs4jmf.dll"
+  Delete "$INSTDIR\yass.exe"
+  Delete "$INSTDIR\uninstall.exe"
+  RMDir  "$INSTDIR"
 sectionEnd
