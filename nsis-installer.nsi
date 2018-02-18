@@ -1,17 +1,115 @@
-Name "Yass"
+﻿Name "Yass"
 
-RequestExecutionLevel admin
 OutFile ".\release\yass-installer-1.9.1.exe"
+
+Unicode true
+SetCompressor lzma
+XPStyle on
+InstallColors /windows
+Icon .\src\yass\resources\icons\yass-multi-icon.ico
+UninstallIcon .\src\yass\resources\icons\yass-multi-icon.ico
+InstallDir "$PROGRAMFILES\Yass Along"
+RequestExecutionLevel admin
+
+LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
+LoadLanguageFile "${NSISDIR}\Contrib\Language files\German.nlf"
+LoadLanguageFile "${NSISDIR}\Contrib\Language files\Hungarian.nlf"
+LoadLanguageFile "${NSISDIR}\Contrib\Language files\Polish.nlf"
+LoadLanguageFile "${NSISDIR}\Contrib\Language files\Spanish.nlf"
+LicenseLangString myLicenseData ${LANG_ENGLISH} .\License.txt
+LicenseLangString myLicenseData ${LANG_GERMAN} .\License.txt
+LicenseLangString myLicenseData ${LANG_HUNGARIAN} .\License.txt
+LicenseLangString myLicenseData ${LANG_POLISH} .\License.txt
+LicenseLangString myLicenseData ${LANG_SPANISH} .\License.txt
+LicenseData $(myLicenseData)
+
+LangString Msg_Prev ${LANG_ENGLISH} "Yass Along is already installed. $\n$\nChoose `OK` to remove the previous version or `Cancel` to cancel this upgrade."
+LangString Msg_Prev ${LANG_GERMAN} "Yass Along ist bereits installiert. $\n$\nMit `OK` wird die vorherige Version entfernt, mit `Abbrechen` wird die Aktualisierung abgebrochen."
+LangString Msg_Prev ${LANG_HUNGARIAN} "Yass Along is already installed. $\n$\nChoose `OK` to remove the previous version or `Cancel` to cancel this upgrade."
+LangString Msg_Prev ${LANG_POLISH} "Yass Along is already installed. $\n$\nChoose `OK` to remove the previous version or `Cancel` to cancel this upgrade."
+LangString Msg_Prev ${LANG_SPANISH} "Yass Along is already installed. $\n$\nChoose `OK` to remove the previous version or `Cancel` to cancel this upgrade."
+
+LangString Sec_ContextMenuText ${LANG_ENGLISH} "Add context menu item to text files"
+LangString Sec_ContextMenuText ${LANG_GERMAN} "Kontextmenüeintrag für Textdateien"
+LangString Sec_ContextMenuText ${LANG_HUNGARIAN} "Add context menu item to text files"
+LangString Sec_ContextMenuText ${LANG_POLISH} "Add context menu item to text files"
+LangString Sec_ContextMenuText ${LANG_SPANISH} "Add context menu item to text files"
+
+LangString Sec_ContextMenuKar ${LANG_ENGLISH} "Add context menu item to MIDI/Kar files"
+LangString Sec_ContextMenuKar ${LANG_GERMAN} "Kontextmenüeintrag für MIDI/Kar-Dateien"
+LangString Sec_ContextMenuKar ${LANG_HUNGARIAN} "Add context menu item to MIDI/Kar files"
+LangString Sec_ContextMenuKar ${LANG_POLISH} "Add context menu item to MIDI/Kar files"
+LangString Sec_ContextMenuKar ${LANG_SPANISH} "Add context menu item to MIDI/Kar files"
+
+LangString Sec_ContextMenuDir ${LANG_ENGLISH} "Add context menu item to directories"
+LangString Sec_ContextMenuDir ${LANG_GERMAN} "Kontextmenüeintrag für Verzeichnisse"
+LangString Sec_ContextMenuDir ${LANG_HUNGARIAN} "Add context menu item to directories"
+LangString Sec_ContextMenuDir ${LANG_POLISH} "Add context menu item to directories"
+LangString Sec_ContextMenuDir ${LANG_SPANISH} "Add context menu item to directories"
+
+LangString ContextMenu_Edit ${LANG_ENGLISH} "Edit with Yass"
+LangString ContextMenu_Edit ${LANG_GERMAN} "Bearbeiten mit Yass"
+LangString ContextMenu_Edit ${LANG_HUNGARIAN} "Edit with Yass"
+LangString ContextMenu_Edit ${LANG_POLISH} "Edit with Yass"
+LangString ContextMenu_Edit ${LANG_SPANISH} "Edit with Yass"
+
+LangString ContextMenu_Convert ${LANG_ENGLISH} "Convert with Yass"
+LangString ContextMenu_Convert ${LANG_GERMAN} "Konvertieren mit Yass"
+LangString ContextMenu_Convert ${LANG_HUNGARIAN} "Convert with Yass"
+LangString ContextMenu_Convert ${LANG_POLISH} "Convert with Yass"
+LangString ContextMenu_Convert ${LANG_SPANISH} "Convert with Yass"
+
+LangString Sec_Desktop ${LANG_ENGLISH} "Create shortcut on desktop"
+LangString Sec_Desktop ${LANG_GERMAN} "Verknüpfung auf dem Desktop"
+LangString Sec_Desktop ${LANG_HUNGARIAN} "Create shortcut on desktop"
+LangString Sec_Desktop ${LANG_POLISH} "Create shortcut on desktop"
+LangString Sec_Desktop ${LANG_SPANISH} "Create shortcut on desktop"
+
+LangString Msg_Uninstall ${LANG_ENGLISH} "This will uninstall Yass from your system."
+LangString Msg_Uninstall ${LANG_GERMAN} "Yass wird nun von Ihrem System deinstalliert."
+LangString Msg_Uninstall ${LANG_HUNGARIAN} "This will uninstall Yass from your system."
+LangString Msg_Uninstall ${LANG_POLISH} "This will uninstall Yass from your system."
+LangString Msg_Uninstall ${LANG_SPANISH} "This will uninstall Yass from your system."
+
+LangString Msg_RemoveSettings ${LANG_ENGLISH} "Remove user data and settings? This will delete the .yass folder in your home folder. $\n$\nChoose `YES` to remove it, or 'NO' to keep it for future use."
+LangString Msg_RemoveSettings ${LANG_GERMAN} "Persönliche Daten und Einstellungen entfernen? Dies löscht das Verzeichnis .yass in Ihrem Benutzerverzeichnis. $\n$\nMit `Ja` löschen Sie es, mit 'Nein' können Sie es später weiterverwenden."
+LangString Msg_RemoveSettings ${LANG_HUNGARIAN} "Remove user data and settings? This will delete the .yass folder in your home folder. $\n$\nChoose `YES` to remove it, or 'NO' to keep it for future use."
+LangString Msg_RemoveSettings ${LANG_POLISH} "Remove user data and settings? This will delete the .yass folder in your home folder. $\n$\nChoose `YES` to remove it, or 'NO' to keep it for future use."
+LangString Msg_RemoveSettings ${LANG_SPANISH} "Remove user data and settings? This will delete the .yass folder in your home folder. $\n$\nChoose `YES` to remove it, or 'NO' to keep it for future use."
+
+LangString Msg_RemoveSettingsReally ${LANG_ENGLISH} "Are you sure? This will delete your personal settings and spelling."
+LangString Msg_RemoveSettingsReally ${LANG_GERMAN} "Achtung, dies entfernt alle persönliche Einstellungen inklusive der Rechtschreibkorrektur."
+LangString Msg_RemoveSettingsReally ${LANG_HUNGARIAN} "Are you sure? This will delete your personal settings and spelling."
+LangString Msg_RemoveSettingsReally ${LANG_POLISH} "Are you sure? This will delete your personal settings and spelling."
+LangString Msg_RemoveSettingsReally ${LANG_SPANISH} "Are you sure? This will delete your personal settings and spelling."
 
 ##################
 # uninstall previous version
 Function .onInit
+    Push ""
+	Push ${LANG_ENGLISH}
+	Push English
+	Push ${LANG_GERMAN}
+	Push German
+	Push ${LANG_HUNGARIAN}
+	Push Hungarian
+	Push ${LANG_POLISH}
+	Push Polish
+	Push ${LANG_SPANISH}
+	Push Spanish
+	Push A ; auto count languages; the first empty push (Push "") must remain
+	LangDLL::LangDialog "Installer Language" "Please select the language of the installer"
+
+	Pop $LANGUAGE
+	StrCmp $LANGUAGE "cancel" 0 +2
+		Abort
+
   ReadRegStr $R0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Yass Along" "UninstallString"
   StrCmp $R0 "" done
 
   MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION \
-  "Yass Along is already installed. $\n$\nClick `OK` to remove the previous version or `Cancel` to cancel this upgrade." \
-  IDOK uninst
+    $(Msg_Prev) \
+    IDOK uninst
   Abort
 
 uninst:
@@ -28,71 +126,63 @@ done:
 FunctionEnd
 ##################
 
-SetCompressor lzma
-XPStyle on
-InstallColors /windows
-Icon .\src\yass\resources\icons\yass-multi-icon.ico
-UninstallIcon .\src\yass\resources\icons\yass-multi-icon.ico
-InstallDir "$PROGRAMFILES\Yass Along"
-RequestExecutionLevel admin
-LicenseData .\License.txt
 Page license
 Page components
 Page directory
 
-Section "Add context menu item to text files"
+Section $(Sec_ContextMenuText)
   SetOutPath "$INSTDIR"
-  WriteRegStr HKCR "Directory\shell\yass" "" "Edit with Yass"
+  WriteRegStr HKCR "Directory\shell\yass" "" $(ContextMenu_Edit)
   WriteRegStr HKCR "Directory\shell\yass\command" "" '"$INSTDIR\yass.exe" "%1"'
-  WriteRegStr HKCR "txtfile\shell\yass" "" "Edit with Yass"
+  WriteRegStr HKCR "txtfile\shell\yass" "" $(ContextMenu_Edit)
   WriteRegStr HKCR "txtfile\shell\yass\command" "" '"$INSTDIR\yass.exe" "%1"'
 SectionEnd
 
-Section "Add context menu item to MIDI/Kar files"
+Section $(Sec_ContextMenuKar)
   SetOutPath "$INSTDIR"
 
   ReadRegStr $R0 HKCR ".mid" ""
   StrCmp $R0 "" NoDefaultMid DefaultMid
 NoDefaultMid:
-  WriteRegStr HKCR ".mid\shell\yass" "" "Convert with Yass"
+  WriteRegStr HKCR ".mid\shell\yass" "" $(ContextMenu_Convert)
   WriteRegStr HKCR ".mid\shell\yass\command" "" '"$INSTDIR\yass.exe" "%1"'
   Goto EndMid
 DefaultMid:
-  WriteRegStr HKCR "$R0\shell\yass" "" "Convert with Yass"
+  WriteRegStr HKCR "$R0\shell\yass" "" $(ContextMenu_Convert)
   WriteRegStr HKCR "$R0\shell\yass\command" "" '"$INSTDIR\yass.exe" "%1"'
 EndMid:
 
   ReadRegStr $R0 HKCR ".midi" ""
   StrCmp $R0 "" NoDefaultMidi DefaultMidi
 NoDefaultMidi:
-  WriteRegStr HKCR ".midi\shell\yass" "" "Convert with Yass"
+  WriteRegStr HKCR ".midi\shell\yass" "" $(ContextMenu_Convert)
   WriteRegStr HKCR ".midi\shell\yass\command" "" '"$INSTDIR\yass.exe" "%1"'
   Goto EndMidi
 DefaultMidi:
-  WriteRegStr HKCR "$R0\shell\yass" "" "Convert with Yass"
+  WriteRegStr HKCR "$R0\shell\yass" "" $(ContextMenu_Convert)
   WriteRegStr HKCR "$R0\shell\yass\command" "" '"$INSTDIR\yass.exe" "%1"'
 EndMidi:
 
   ReadRegStr $R0 HKCR ".kar" ""
   StrCmp $R0 "" NoDefaultKar DefaultKar
 NoDefaultKar:
-  WriteRegStr HKCR ".kar\shell\yass" "" "Convert with Yass"
+  WriteRegStr HKCR ".kar\shell\yass" "" $(ContextMenu_Convert)
   WriteRegStr HKCR ".kar\shell\yass\command" "" '"$INSTDIR\yass.exe" "%1"'
   Goto EndKar
 DefaultKar:
-  WriteRegStr HKCR "$R0\shell\yass" "" "Convert with Yass"
+  WriteRegStr HKCR "$R0\shell\yass" "" $(ContextMenu_Convert)
   WriteRegStr HKCR "$R0\shell\yass\command" "" '"$INSTDIR\yass.exe" "%1"'
 EndKar:
 
 SectionEnd
 
-Section "Add context menu item to directories"
+Section $(Sec_ContextMenuDir)
   SetOutPath "$INSTDIR"
-  WriteRegStr HKCR "Directory\shell\yass" "" "Edit with Yass"
+  WriteRegStr HKCR "Directory\shell\yass" "" $(ContextMenu_Edit)
   WriteRegStr HKCR "Directory\shell\yass\command" "" '"$INSTDIR\yass.exe" "%1"'
 SectionEnd
 
-Section "Create shortcuts on desktop"
+Section $(Sec_Desktop)
   SetOutPath $INSTDIR
   CreateShortCut "$DESKTOP\Yass Editor.lnk" "$OUTDIR\yass.exe" "-lib" 
 # "$INSTDIR\yass-edit.ico"
@@ -127,7 +217,7 @@ Section
   skip:
 SectionEnd
 
-UninstallText "Thank you for using Yass."
+UninstallText $(Msg_Uninstall)
 
 Section "Uninstall"
   SetShellVarContext all
@@ -170,4 +260,16 @@ Section "Uninstall"
   Delete "$INSTDIR\yass.exe"
   Delete "$INSTDIR\uninstall.exe"
   RMDir  "$INSTDIR"
+
+  MessageBox MB_YESNO|MB_ICONEXCLAMATION \
+    $(Msg_RemoveSettings) \
+    IDNO bye IDYES yes
+yes:
+  MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION \
+    $(Msg_RemoveSettingsReally) \
+    IDOK yes2 IDCANCEL bye
+yes2:
+  RMDir /r "$PROFILE\.yass"
+bye:
+
 sectionEnd
