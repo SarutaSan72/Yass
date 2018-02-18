@@ -1,6 +1,7 @@
 Name "Yass"
 
-!define VERSION "1.9.1"
+RequestExecutionLevel admin
+OutFile ".\release\yass-installer-1.9.1.exe"
 
 ##################
 # uninstall previous version
@@ -14,13 +15,19 @@ Function .onInit
   Abort
 
 uninst:
+  # workaround: cleanup previous start menu entries (all users)
+  SetShellVarContext all
+  RMDir /r "$SMPROGRAMS\Yass Along 1.9.0"
+  RMDir /r "$SMPROGRAMS\Yass Along 1.8.1"
+  RMDir /r "$SMPROGRAMS\Yass Along 1.8.0"
+  RMDir /r "$SMPROGRAMS\Yass Along 1.7.1"
+
   ClearErrors
   ExecWait $R0
 done:
 FunctionEnd
 ##################
 
-OutFile ".\release\yass-installer-${VERSION}.exe"
 SetCompressor lzma
 XPStyle on
 InstallColors /windows

@@ -2,7 +2,7 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>.\release\yass-1.9.0.jar</jar>
+  <jar>.\release\yass-1.9.1.jar</jar>
   <outfile>.\release\yass.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
