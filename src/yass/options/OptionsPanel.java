@@ -43,7 +43,10 @@ public class OptionsPanel extends JPanel {
     private static YassProperties prop = null;
     private JLabel title = null;
     private JPanel left = null, right = null;
+    private JButton resetButton = null;
     private int labelWidth = 80;
+    private Vector<String> panelProps = new Vector<>();
+    private JPanel contentPanel = null;
 
 
     /**
@@ -65,6 +68,18 @@ public class OptionsPanel extends JPanel {
             String val = prop.getProperty(key);
             myprop.put(key, val);
         }
+    }
+
+    public void resetPanelProperties() {
+        for (Enumeration<String> en = panelProps.elements(); en.hasMoreElements(); ) {
+            String key = en.nextElement();
+            String val = prop.getDefaultProperty(key);
+            if (myprop.containsKey(key)) myprop.replace(key, val);
+        }
+        BorderLayout layout = (BorderLayout) contentPanel.getLayout();
+        contentPanel.remove(layout.getLayoutComponent(BorderLayout.CENTER));
+        contentPanel.add("Center", getBody());
+        contentPanel.revalidate();
     }
 
 
@@ -90,6 +105,8 @@ public class OptionsPanel extends JPanel {
         panel.setLayout(new BorderLayout());
         panel.add("North", getHeader());
         panel.add("Center", getBody());
+        panel.add("South", getFooter());
+        contentPanel = panel;
 
         setLayout(new BorderLayout());
         add("North", panel);
@@ -105,6 +122,7 @@ public class OptionsPanel extends JPanel {
      * @return The property value
      */
     public String getProperty(String key) {
+        if (! panelProps.contains(key)) panelProps.add(key);
         return myprop.get(key);
     }
 
@@ -153,6 +171,27 @@ public class OptionsPanel extends JPanel {
         title.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
 
         return title;
+    }
+
+    /**
+     * Gets the footer attribute of the OptionsPanel object
+     *
+     * @return The footer value
+     */
+    public JComponent getFooter() {
+        JPanel p = new JPanel(new BorderLayout());
+        p.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        p.add("Center", new JPanel());
+        p.add("East", resetButton = new JButton("Zurücksetzen"));
+        resetButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int res = JOptionPane.showConfirmDialog(OptionsPanel.this, I18.get("options_reset_msg"), resetButton.getText(), JOptionPane.OK_CANCEL_OPTION);
+                if (res == JOptionPane.OK_OPTION)
+                    resetPanelProperties();
+            }
+        });
+        return p;
     }
 
     /**
