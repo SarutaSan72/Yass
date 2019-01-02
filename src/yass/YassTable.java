@@ -19,6 +19,9 @@
 package yass;
 
 import unicode.UnicodeReader;
+import org.mozilla.universalchardet.Constants;
+import org.mozilla.universalchardet.UniversalDetector;
+
 import yass.renderer.YassLine;
 import yass.renderer.YassNote;
 import yass.renderer.YassSession;
@@ -105,6 +108,8 @@ public class YassTable extends JTable {
     private int durationGolden;
     private int idealGoldenBeats;
     private String goldenDiff;
+
+    private static UniversalDetector detector = null;
 
     /**
      * Constructor for the YassTable object
@@ -1776,11 +1781,14 @@ public class YassTable extends JTable {
         txtFilename = dir.substring(isep + 1);
         dir = dir.substring(0, isep);
 
-        String detectedEncoding = detectUTF8(new File(filename)) ? "UTF-8"
-                : null;
+        // saruta, Jan 2019: better UTF-8 detection method
+        // String detectedEncoding = detectUTF8(new File(filename)) ? "UTF-8" : null;
+        String detectedEncoding = detectEncoding(new File(filename));
 
         isRelative = false;
-        encoding = null;
+        // saruta, Jan 2019: better UTF-8 detection method
+        // encoding = null;
+        encoding = detectedEncoding == Constants.CHARSET_UTF_8 ? "UTF-8" : null;
         relativePageBreak = 0;
         UnicodeReader r = null;
         BufferedReader inputStream = null;
@@ -1799,7 +1807,8 @@ public class YassTable extends JTable {
                     throw new IOException("Invalid data");
                 }
             }
-            encoding = r.getEncoding();
+            // saruta, Jan 2019: better UTF-8 detection method
+            // encoding = r.getEncoding();
             success = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -1904,7 +1913,8 @@ public class YassTable extends JTable {
         return true;
     }
 
-    public boolean detectUTF8(File file) {
+    // saruta, Jan 2019: deprecated; replaced with detectedEncoding
+    /*public boolean detectUTF8(File file) {
 
         Charset charset = Charset.forName("UTF-8");
         CharsetDecoder decoder = charset.newDecoder();
@@ -1937,6 +1947,35 @@ public class YassTable extends JTable {
                 }
         }
         return true;
+    }
+    */
+    public String detectEncoding(File file) {
+        String enc = null;
+        if (detector == null) detector = new UniversalDetector(null);
+
+        BufferedInputStream input = null;
+        try {
+            input = new BufferedInputStream(new FileInputStream(file));
+            byte[] buffer = new byte[512];
+            int nRead;
+            while ((nRead = input.read(buffer)) > 0 && !detector.isDone()) {
+                detector.handleData(buffer, 0, nRead);
+            }
+            detector.dataEnd();
+            enc = detector.getDetectedCharset();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        detector.reset(); // reuse
+        return enc;
     }
 
     /**
@@ -2028,7 +2067,9 @@ public class YassTable extends JTable {
                 f.delete();
             }
 
-            if ((encoding != null && encoding.equals("UTF8")) || utf8Always) {
+            // saruta, Jan 2019: utf8-->UTF-8
+            //if ((encoding != null && encoding.equals("UTF8")) || utf8Always) {
+            if ((encoding != null && encoding.equals("UTF-8")) || utf8Always) {
                 fos = new FileOutputStream(f, false);
                 if (f.length() < 1 && !utf8WithoutBom) {
                     final byte[] bom = new byte[]{(byte) 0xEF, (byte) 0xBB,
@@ -2038,7 +2079,8 @@ public class YassTable extends JTable {
                 osw = new OutputStreamWriter(fos, "UTF-8");
                 bw = new BufferedWriter(osw);
                 outputStream = new PrintWriter(bw);
-                encoding = "UTF8";
+                // encoding = "UTF8";
+                encoding = "UTF-8";
             } else {
                 outputStream = new PrintWriter(new FileWriter(filename));
             }
@@ -3706,6 +3748,82 @@ public class YassTable extends JTable {
         scrollRectToVisible(rr);
         zoomPage();
 
+    }
+
+    public YassRow getNoteAtBeat(int beat) {
+        YassRow r;
+        int i = 0;
+        int n = getRowCount();
+        while (i < n - 1) {
+            r = getRowAt(i++);
+            if (r.isNote() && r.getBeatInt() == beat) return r;
+        }
+        return null;
+    }
+
+    public YassRow getNoteEndingAtBeat(int beat) {
+        YassRow r;
+        int i = 0;
+        int n = getRowCount();
+        while (i < n - 1) {
+            r = getRowAt(i++);
+            if (r.isNote() && r.getBeatInt() + r.getLengthInt() == beat) return r;
+        }
+        return null;
+    }
+
+    /**
+     * Returns closest note before given beat.
+     * If a note exactly hits that beat, it is returned.
+     * Stops search at any note that lays after the given beat.
+     */
+    public YassRow getNoteBeforeBeat(int beat) {
+        YassRow r;
+        YassRow rMin = null;
+        int i = 0;
+        int n = getRowCount();
+        int min = Integer.MAX_VALUE;
+        while (i < n - 1) {
+            r = getRowAt(i++);
+            if (r.isNote()) {
+                int b = r.getBeatInt();
+                if (b <= beat) {
+                    if (beat - b < min) {
+                        min = beat - b;
+                        rMin = r;
+                    }
+                }
+                else break;
+            }
+        }
+        return rMin;
+    }
+
+    /**
+     * Returns closest note end before given beat.
+     * If a note end exactly hits that beat, it is returned.
+     * Stops search at any note end that lays after the given beat.
+     */
+    public YassRow getNoteEndingBeforeBeat(int beat) {
+        YassRow r;
+        YassRow rMin = null;
+        int i = 0;
+        int n = getRowCount();
+        int min = Integer.MAX_VALUE;
+        while (i < n - 1) {
+            r = getRowAt(i++);
+            if (r.isNote()) {
+                int b = r.getBeatInt() + r.getLengthInt();
+                if (b <= beat) {
+                    if (beat - b < min) {
+                        min = beat - b;
+                        rMin = r;
+                    }
+                }
+                else break;
+            }
+        }
+        return rMin;
     }
 
     /**

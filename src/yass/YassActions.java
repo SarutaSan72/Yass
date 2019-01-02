@@ -205,7 +205,8 @@ public class YassActions implements DropTargetListener {
             if (currentView != VIEW_LIBRARY) {
                 return;
             }
-            songList.setEncoding("UTF8");
+            // saruta, Jan 2019: utf8-->UTF-8
+            songList.setEncoding("UTF-8");
         }
     };
     Action setEncodingANSI = new AbstractAction(I18.get("mlib_encoding_ansi")) {

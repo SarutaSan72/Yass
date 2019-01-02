@@ -3519,6 +3519,7 @@ public class YassSongList extends JTable {
 
             multiplayer = t.getMultiplayer() + "";
             encoding = t.getEncoding();
+            if (encoding==null) encoding="";
 
             if (!title.equals(s.getTitle())) {
                 changed = true;

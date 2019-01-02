@@ -202,6 +202,8 @@ public class YassUtils {
         if (encoding != null && encoding.trim().length() < 1) {
             encoding = null;
         }
+        // saruta, Jan 2019: utf8-->UTF-8
+        if (encoding == "utf8") encoding = "UTF-8";
 
         if (artist == null || artist.trim().length() < 1) {
             artist = "UnknownArtist";
