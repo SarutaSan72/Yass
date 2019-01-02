@@ -84,13 +84,13 @@ public class YassFormatFilter extends YassFilter {
             hit = true;
         } else if (rule.equals("encoding_utf8")) {
             String enc = s.getEncoding();
-            hit = enc.equals("UTF8");
+            hit = enc.equals("UTF-8");
         } else if (rule.equals("encoding_ansi")) {
             String enc = s.getEncoding();
             hit = enc != null && enc.equals("Cp1252");
         } else if (rule.equals("encoding_other")) {
             String enc = s.getEncoding();
-            hit = enc == null || !(enc.equals("Cp1252") || enc.equals("UTF8") || enc.equals("UTF16"));
+            hit = enc == null || !(enc.equals("Cp1252") || enc.equals("UTF-8") || enc.equals("UTF-16"));
         } else if (rule.equals("audio_vbr")) {
             String dir = s.getDirectory();
             String mp3 = s.getMP3();
