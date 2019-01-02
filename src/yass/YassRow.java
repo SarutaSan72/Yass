@@ -183,8 +183,17 @@ public class YassRow implements Cloneable, Comparable<Object> {
     /**
      * Description of the Field
      */
+    public final static String WRONG_MEDLEY_START_BEAT = "err_wrong_medley_start_beat";
+    /**
+     * Description of the Field
+     */
+    public final static String WRONG_MEDLEY_END_BEAT = "err_wrong_medley_end_beat";
+    /**
+     * Description of the Field
+     */
     public final static String[] ALL_MESSAGES = {
             MISSING_TAG, UNSORTED_COMMENTS,
+            WRONG_MEDLEY_START_BEAT, WRONG_MEDLEY_END_BEAT,
             OUT_OF_ORDER_COMMENT, COMMENT_AFTER_END, INVALID_TAG, MISSING_END,
             FILE_FOUND, WRONG_VIDEOGAP, FILE_NOT_FOUND,
             EARLY_PAGE_BREAK, LATE_PAGE_BREAK, PAGE_OVERLAP,
@@ -318,7 +327,7 @@ public class YassRow implements Cloneable, Comparable<Object> {
      */
     public static int[] getTagsMessages() {
         if (tagsMessages == null) {
-            tagsMessages = createMessageArray(new String[]{MISSING_TAG, UNSORTED_COMMENTS});
+            tagsMessages = createMessageArray(new String[]{MISSING_TAG, UNSORTED_COMMENTS, WRONG_MEDLEY_START_BEAT, WRONG_MEDLEY_END_BEAT});
         }
         return tagsMessages;
     }

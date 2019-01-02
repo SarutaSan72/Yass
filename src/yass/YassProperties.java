@@ -236,7 +236,7 @@ public class YassProperties extends Properties {
         p.put("note-naming-h", "DE RU PL NO FI SE");
 
         // errors
-        p.put("valid-tags", "TITLE ARTIST LANGUAGE EDITION <br> GENRE ALBUM YEAR CREATOR ID <br> MP3 COVER BACKGROUND VIDEO <br> VIDEOGAP START END PLAYERS <br> RELATIVE BPM GAP <br> LENGTH PREVIEWSTART ");
+        p.put("valid-tags", "TITLE ARTIST LANGUAGE EDITION <br> GENRE ALBUM YEAR CREATOR ID <br> MP3 COVER BACKGROUND VIDEO <br> VIDEOGAP START END PLAYERS <br> RELATIVE BPM GAP <br> LENGTH PREVIEWSTART MEDLEYSTARTBEAT MEDLEYENDBEAT");
         p.put("valid-lines", "#:*F-EP");
         p.put("font-file", "/fonts/Font1.dat");
         p.put("max-points", "7500");

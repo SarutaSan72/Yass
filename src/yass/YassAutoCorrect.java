@@ -95,7 +95,9 @@ public class YassAutoCorrect {
      */
     public static boolean isAutoCorrectionTags(String msg) {
         return msg.equals(YassRow.MISSING_TAG)
-                || msg.equals(YassRow.UNSORTED_COMMENTS);
+                || msg.equals(YassRow.UNSORTED_COMMENTS)
+                || msg.equals(YassRow.WRONG_MEDLEY_START_BEAT)
+                || msg.equals(YassRow.WRONG_MEDLEY_END_BEAT);
     }
 
     /**
@@ -416,6 +418,8 @@ public class YassAutoCorrect {
                 || msg.equals(YassRow.SHORT_PAGE_BREAK)
                 || msg.equals(YassRow.UNCOMMON_PAGE_BREAK)
                 || msg.equals(YassRow.UNSORTED_COMMENTS)
+                || msg.equals(YassRow.WRONG_MEDLEY_START_BEAT)
+                || msg.equals(YassRow.WRONG_MEDLEY_END_BEAT)
                 || msg.equals(YassRow.FILE_FOUND)
                 || msg.equals(YassRow.NO_COVER_LABEL)
                 || msg.equals(YassRow.NO_BACKGROUND_LABEL)
@@ -442,6 +446,8 @@ public class YassAutoCorrect {
                 || msg.equals(YassRow.UNCOMMON_SPACING)
                 || msg.equals(YassRow.TOO_MUCH_SPACES)
                 || msg.equals(YassRow.UNSORTED_COMMENTS)
+                || msg.equals(YassRow.WRONG_MEDLEY_START_BEAT)
+                || msg.equals(YassRow.WRONG_MEDLEY_END_BEAT)
                 || msg.equals(YassRow.PAGE_OVERLAP)
                 || msg.equals(YassRow.EARLY_PAGE_BREAK)
                 || msg.equals(YassRow.LATE_PAGE_BREAK)
@@ -833,6 +839,44 @@ public class YassAutoCorrect {
                                 }
                             }
                         }
+                    } else if (tag.equals("MEDLEYSTARTBEAT:")) {
+                        String medleyStartString = r.getComment();
+                        int medleyStart = -1;
+                        try {
+                            medleyStart = Integer.parseInt(medleyStartString);
+                        } catch(Exception e) {}
+                        if (medleyStart >= 0)
+                        {
+                           if (table.getNoteAtBeat(medleyStart) == null) {
+                               YassRow r2 = table.getNoteBeforeBeat(medleyStart);
+                               if (r2 != null) {
+                                   r.addMessage(YassRow.WRONG_MEDLEY_START_BEAT,
+                                           MessageFormat.format(
+                                                   I18.get("correct_wrong_medley_start"),
+                                                   medleyStartString, r2.getBeatInt()+""));
+                                   table.addMessage(YassRow.WRONG_MEDLEY_START_BEAT);
+                               }
+                           }
+                        }
+                    } else if (tag.equals("MEDLEYENDBEAT:")) {
+                        String medleyEndString = r.getComment();
+                        int medleyEnd = -1;
+                        try {
+                            medleyEnd = Integer.parseInt(medleyEndString);
+                        } catch(Exception e) {}
+                        if (medleyEnd > 0)
+                        {
+                            if (table.getNoteEndingAtBeat(medleyEnd) == null) {
+                                YassRow r2 = table.getNoteEndingBeforeBeat(medleyEnd);
+                                if (r2 != null) {
+                                    r.addMessage(YassRow.WRONG_MEDLEY_END_BEAT,
+                                            MessageFormat.format(
+                                                    I18.get("correct_wrong_medley_end"),
+                                                    medleyEndString, (r2.getBeatInt() + r2.getLengthInt())+""));
+                                    table.addMessage(YassRow.WRONG_MEDLEY_END_BEAT);
+                                }
+                            }
+                        }
                     }
                     if (tagPos < lastTagPos) {
                         r.addMessage(YassRow.UNSORTED_COMMENTS);
@@ -1206,6 +1250,18 @@ public class YassAutoCorrect {
 
             if (currentMessage.equals(YassRow.UNSORTED_COMMENTS)) {
                 sortComments(table);
+                return true;
+            }
+            if (currentMessage.equals(YassRow.WRONG_MEDLEY_START_BEAT)) {
+                int medleyStart = Integer.parseInt(r.getComment());
+                YassRow r2 = table.getNoteBeforeBeat(medleyStart);
+                table.setMedleyStartBeat(r2.getBeatInt());
+                return true;
+            }
+            if (currentMessage.equals(YassRow.WRONG_MEDLEY_END_BEAT)) {
+                int medleyEnd = Integer.parseInt(r.getComment());
+                YassRow r2 = table.getNoteEndingBeforeBeat(medleyEnd);
+                table.setMedleyEndBeat(r2.getBeatInt() + r2.getLengthInt());
                 return true;
             }
             if (currentMessage.equals(YassRow.TRANSPOSED_NOTES)) {
