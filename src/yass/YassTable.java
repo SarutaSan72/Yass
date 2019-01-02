@@ -3332,7 +3332,7 @@ public class YassTable extends JTable {
                 }
                 p.addRow(r);
             }
-            if (r.isPageBreak() || r.isEnd()) {
+            if (p != null && (r.isPageBreak() || r.isEnd())) {
                 p.addRow(r);
                 first = true;
             }

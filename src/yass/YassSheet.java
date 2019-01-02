@@ -180,7 +180,8 @@ public class YassSheet extends JPanel implements Scrollable,
     private boolean messageMemory = false;
     private Color disabledColor = new JPanel().getBackground();
     // gray, blue, golden, freestyle, red
-    private Color colorSet[] = new Color[7];
+    public static final int COLORSET_COUNT = 7;
+    private Color colorSet[] = new Color[COLORSET_COUNT];
     private Color playertextBG = new Color(1f, 1f, 1f, .9f);
     private int keycodes[] = new int[17];
     private long equalsKeyMillis = 0;

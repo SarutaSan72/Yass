@@ -552,7 +552,7 @@ public class YassMIDIConverter implements DropTargetListener {
         sheet = new YassSheet();
         YassProperties prop = new YassProperties();
 
-        Color ncol[] = new Color[6];
+        Color ncol[] = new Color[YassSheet.COLORSET_COUNT];
         for (int i = 0; i < ncol.length; i++) {
             String c = prop.getProperty("note-color-" + i);
             Color col = Color.decode(c);
