@@ -910,7 +910,7 @@ public class YassSongList extends JTable {
                 langIcons[i] = new ImageIcon(getClass().getResource("/yass/resources/img/"+langID[i].toLowerCase() + ".gif")).getImage();
             }
             err_minorpage_icon = new ImageIcon(getClass().getResource("/yass/resources/img/MinorPageError.gif")).getImage();
-            err_major_icon = new ImageIcon(getClass().getResource("/yass/resources/img/MajorError.gif")).getImage();
+            err_major_icon = new ImageIcon(getClass().getResource("/yass/resources/img/MajorError2.gif")).getImage();
             err_file_icon = new ImageIcon(getClass().getResource("/yass/resources/img/FileError.gif")).getImage();
             err_tags_icon = new ImageIcon(getClass().getResource("/yass/resources/img/TagError.gif")).getImage();
             err_text_icon = new ImageIcon(getClass().getResource("/yass/resources/img/TextError.gif")).getImage();

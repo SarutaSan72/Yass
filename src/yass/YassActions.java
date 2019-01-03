@@ -461,6 +461,8 @@ public class YassActions implements DropTargetListener {
             Vector<String> msg = new Vector<>();
             msg.addElement(YassRow.MISSING_TAG);
             msg.addElement(YassRow.UNSORTED_COMMENTS);
+            msg.addElement(YassRow.WRONG_MEDLEY_START_BEAT);
+            msg.addElement(YassRow.WRONG_MEDLEY_END_BEAT);
             songList.batchProcess(false, msg);
         }
     };
