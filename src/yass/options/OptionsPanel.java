@@ -182,7 +182,7 @@ public class OptionsPanel extends JPanel {
         JPanel p = new JPanel(new BorderLayout());
         p.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         p.add("Center", new JPanel());
-        p.add("East", resetButton = new JButton("Zurücksetzen"));
+        p.add("East", resetButton = new JButton(I18.get("options_reset")));
         resetButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
