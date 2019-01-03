@@ -26,6 +26,7 @@ Basic setup is described in the Wiki: https://github.com/SarutaSan72/Yass/wiki/D
 - VFFMpeg Objects (fobs)
 - Java Media Framework (JMF)
 - Robert Eckstein's Wizard code
+- juniversalchardet
 
 Licenses are stated in the application's help section.
 
