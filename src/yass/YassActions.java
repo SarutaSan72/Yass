@@ -6696,6 +6696,11 @@ public class YassActions implements DropTargetListener {
         s = prop.getProperty("playback-buttons");
         boolean showPlayerButtons = s != null && s.equals("true");
         sheet.showPlayerButtons(showPlayerButtons);
+
+        s = prop.getProperty("piano-volume");
+        try {
+            mp3.setPianoVolume(Integer.parseInt(s));
+        } catch (Exception e){ e.printStackTrace(); }
     }
 
     /**

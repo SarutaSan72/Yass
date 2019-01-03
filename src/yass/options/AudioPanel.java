@@ -41,6 +41,8 @@ public class AudioPanel extends OptionsPanel {
         addText(I18.get("options_seek_in_ms"), "seek-in-offset-ms");
         addText(I18.get("options_seek_out_ms"), "seek-out-offset-ms");
         addComment(I18.get("options_seek_comment_ms"));
+        addSeparator(I18.get("options_piano"));
+        addRadio(I18.get("options_piano_volume"), "piano-volume", "127|100|70", I18.get("options_piano_volume_max") + "|" + I18.get("options_piano_volume_med") + "|" + I18.get("options_piano_volume_min"));
         addSeparator(I18.get("options_video"));
         addBoolean("", "use-fobs", I18.get("options_use_fobs"));
         addComment(I18.get("options_use_fobs_comment"));

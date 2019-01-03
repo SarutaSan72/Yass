@@ -1589,4 +1589,13 @@ public class YassPlayer {
             firePlayerStopped();
         }
     }
+
+    public void setPianoVolume(int vol)
+    {
+        midi.setVolume(vol);
+    }
+    public int getPianoVolume()
+    {
+        return midi.getVolume();
+    }
 }

@@ -32,6 +32,10 @@ public class YassMIDI {
 
     private final boolean DEBUG = false;
 
+    public static final int VOLUME_MAX = 127;
+    public static final int VOLUME_MED = 100;
+    public static final int VOLUME_MIN = 70;
+    private int volume = VOLUME_MED;
     /**
      * Constructor for the YassMIDI object
      */
@@ -106,7 +110,7 @@ public class YassMIDI {
             if (DEBUG) System.out.println("Program channel: set instrument");
             mc[4].programChange(n);
             if (DEBUG) System.out.println("Program channel: set volume");
-            mc[4].controlChange(7, 127);
+            mc[4].controlChange(7, volume);
             System.out.println("Soundbank ready.");
 
 //			for (int i = 0; i < 127; i++) {
@@ -208,5 +212,16 @@ public class YassMIDI {
             return;
         }
         synth.close();
+    }
+
+    public int getVolume() {
+        return volume;
+    }
+
+    public void setVolume(int volume) {
+        if (volume >= VOLUME_MIN && volume <= VOLUME_MAX) {
+            this.volume = volume;
+            mc[4].controlChange(7, volume);
+        }
     }
 }

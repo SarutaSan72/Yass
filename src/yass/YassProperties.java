@@ -448,6 +448,9 @@ public class YassProperties extends Properties {
         p.put("debug-score", "false");
         p.put("debug-waveform", "false");
 
+        //piano
+        p.put("piano-volume", "127");
+
         //non-editable
         p.put("welcome", "true");
         p.put("recent-file", "");
