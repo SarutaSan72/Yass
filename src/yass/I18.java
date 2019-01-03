@@ -269,7 +269,8 @@ public class I18 {
         sb.append("Yass uses: ");
         sb.append("Java Look & Feel Graphics Repository, JavaZoom JLayer/MP3SPI/VorbisSPI<br>");
         sb.append("and Tritonus Sequencer, iText, Jazzy Spell Checker, TeX Hyphenator, JInput,<br>");
-        sb.append("VFFMpeg Objects (fobs), Java Media Framework (JMF), Robert Eckstein's Wizard code.<br>");
+        sb.append("VFFMpeg Objects (fobs), Java Media Framework (JMF), Robert Eckstein's Wizard code,<br>");
+        sb.append("juniversalchardet.<br>");
         sb.append("Speed measure 'Inverse Duration' based on Marcel Taeumel's approach (http://uman.sf.net).<br>");
         sb.append("Spanish translation by Pantera.<br>");
         sb.append("Hungarian translation by Skyli.<br>");
