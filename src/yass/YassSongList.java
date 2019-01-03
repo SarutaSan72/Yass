@@ -5291,14 +5291,12 @@ public class YassSongList extends JTable {
 
             actions.setProgress(0);
             actions.setProgress(MessageFormat.format(I18.get("lib_msg"), data.size()), dir);
-			/*
-			 *  SwingUtilities.invokeLater(
-			 *  new Runnable() {
-			 *  public void run() {
-			 *  load();
-			 *  }
-			 *  });
-			 */
+
+            SwingUtilities.invokeLater(new Runnable() {
+			   public void run() {
+                   if (autoAction != null) autoAction.setEnabled(true);
+			   }
+			 });
         }
     }
 
