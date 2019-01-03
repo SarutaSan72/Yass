@@ -78,6 +78,7 @@ public class YassLibOptions extends JDialog {
         left.add(new JLabel(I18.get("tool_prefs_programs") + " "));
         defaults = new JComboBox<>();
         defaults.setEditable(false);
+        defaults.addItem("");
         String def = p.getProperty("default-programs");
         def = def.replaceAll("[/\\\\]+", "\\" + File.separator);
         //System.out.println(def);
@@ -183,12 +184,48 @@ public class YassLibOptions extends JDialog {
                     }
                 });
 
-        JButton add = new JButton("Add");
+        JButton add = new JButton(I18.get("tool_prefs_programs_add"));
         add.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        defaults.setEditable(true);
-                        defaults.getEditor().getEditorComponent().requestFocus();
+                        JFileChooser chooser = new JFileChooser();
+                        File d = null;
+                        if (songdir != null) {
+                            d = new File(songdir);
+                        }
+                        if (d == null || !d.exists()) {
+                            d = new java.io.File(".");
+                        }
+
+                        chooser.setCurrentDirectory(d);
+                        chooser.setDialogTitle(I18.get("tool_prefs_songs_spec"));
+                        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+                        if (chooser.showOpenDialog(YassLibOptions.this) != JFileChooser.APPROVE_OPTION) {
+                            return;
+                        }
+                        String s = chooser.getSelectedFile().getAbsolutePath();
+                        File f = new File(s);
+
+                        // user has chosen songs folder instead of parent
+                        if (s.toLowerCase().endsWith("songs")) {
+                            String par = f.getParent();
+                            String d2 = par + File.separator + "Songs";
+                            String d3 = par + File.separator + "songs";
+                            if (new File(d2).exists() || new File(d3).exists()) {
+                                f = new File(par);
+                            }
+                        }
+                        s = f.getAbsolutePath();
+                        s = s.replaceAll("[/\\\\]+", "\\" + File.separator);
+                        defaults.addItem(s);
+                        defaults.setSelectedItem(s);
+
+                        String def = p.getProperty("default-programs");
+                        if (! def.endsWith("|")) def += "|";
+                        def += s;
+                        p.setProperty("default-programs", def);
+                        p.store();
                     }
                 });
         JPanel defaultsBox = new JPanel(new BorderLayout());
@@ -249,6 +286,19 @@ public class YassLibOptions extends JDialog {
                         }
                         String s = chooser.getSelectedFile().getAbsolutePath();
                         File f = new File(s);
+
+                        // saruta, Jan 2019: user has chosen parent instead of song folder
+                        if (! s.toLowerCase().endsWith("songs"))
+                        {
+                            String d2 = s + File.separator + "Songs";
+                            String d3 = s + File.separator + "songs";
+                            if (new File(d2).exists()) {
+                                f = new File(d2);
+                            } else if (new File(d3).exists()) {
+                                f = new File(d3);
+                            }
+                        }
+
                         File p = f;
                         File c = f;
                         File par = f.getParentFile();

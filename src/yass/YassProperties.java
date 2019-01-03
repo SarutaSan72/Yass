@@ -98,6 +98,9 @@ public class YassProperties extends Properties {
         if (!old) {
             old = v.equals("1.9.0");
         }
+        if (!old) {
+            old = v.equals("1.9.1");
+        }
         return old;
     }
 
@@ -184,7 +187,7 @@ public class YassProperties extends Properties {
      */
     public void setDefaultProperties(Hashtable<Object,Object> p) {
 
-        p.put("default-programs", "C:/Program Files/Ultrastar Deluxe|C:/Program Files (x86)/UltraStar Deluxe|C:/Program Files/Ultrastar|C:/Programme/Ultrastar Deluxe|C:/Ultrastar Deluxe|C:/Programme/Ultrastar|C:/Ultrastar|D:/Ultrastar|E:/Ultrastar|F:/Ultrastar|/home/.ultrastardx|/home/.ultrastar");
+        p.put("default-programs", "C:/Program Files/Ultrastar Deluxe|C:/Program Files (x86)/UltraStar Deluxe|C:/Program Files/Ultrastar|C:/Programme/Ultrastar Deluxe|C:/Ultrastar Deluxe|C:/Programme/Ultrastar|C:/Ultrastar|D:/Ultrastar|E:/Ultrastar|F:/Ultrastar|/home/.ultrastardx|/home/.ultrastar|C:/Program Files (x86)/UltraStar Deluxe WorldParty|C:/Program Files/UltraStar Deluxe WorldParty|D:/UltraStar Deluxe WorldParty|C:/Program Files (x86)/Vocaluxe|C:/Program Files/Vocaluxe|D:/Vocaluxe|C:/Program Files (x86)/Performous|C:/Program Files/Performous");
         // dirs
         p.put("song-directory", userDir + File.separator + "Songs");
         p.put("playlist-directory", userDir + File.separator + "Playlists");
