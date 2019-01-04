@@ -3048,10 +3048,34 @@ public class YassSheet extends JPanel implements Scrollable,
                         "" + goldenPoints, "" + idealGoldenBeats, ""
                                 + durationGolden, goldenDiff);
 
-                g2.drawString(goldenString, clip.x + 10, TOP_BORDER + 20);
+                int x = clip.x;
+                int w = heightBoxWidth;
+                int h = 12;
+                int y = TOP_BORDER + 10;
+
+                double varPercentage = goldenVariance / (double)idealGoldenPoints;
+                int xVar = (int)(w * varPercentage);
+
+                double goldenPercentage = goldenPoints / (double)idealGoldenPoints;
+                if (goldenPercentage>2) goldenPercentage = 2;
+                int xGold = (int)(w/2 * goldenPercentage);
+
+                g2.drawString(goldenString, x + w + 10, y + h);
+                g2.setColor(dkGray);
+                g2.drawRect(x, y, w, h);
+                g2.setColor(err ? colorSet[5] : colorSet[0]);
+                g2.fillRect(x+1, y+1, w-1, h-1);
+                g2.setColor(colorSet[3]);
+                g2.fillRect(x+w/2-xVar/2, y+1, xVar, h-1);
+                g2.setColor(dkGray);
+                g2.drawRect(x+w/2, y, 1, h);
+                g2.setColor(Color.black);
+                g2.drawRect(x + xGold, y-1, 1, h+2);
+
                 g2.setColor(white);
             }
 
+            // not used
             if (equalsKeyMillis > 0) {
                 g2.setColor(dkGray);
                 Font oldFont = g2.getFont();
