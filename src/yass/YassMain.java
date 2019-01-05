@@ -108,10 +108,11 @@ public class YassMain extends JApplet {
                 System.out.println("MidiSystem sequencer unavailable.");
             else if (javax.sound.sampled.AudioSystem.getMixer(null) == null)
                 System.out.println("AudioSystem unavailable.");
+            System.out.println("AudioSystem and MidiSystem Sequencer found.");
         } catch (MidiUnavailableException e) {
-            e.printStackTrace();
+            System.err.println("Midi system sequencer not available.");
+            //e.printStackTrace();
         }
-        System.out.println("AudioSystem and MidiSystem Sequencer found.");
     }
 
     private void initFrame() {

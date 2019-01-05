@@ -219,6 +219,9 @@ public class YassMIDI {
     }
 
     public void setVolume(int volume) {
+        if (mc == null) {
+            return;
+        }
         if (volume >= VOLUME_MIN && volume <= VOLUME_MAX) {
             this.volume = volume;
             mc[4].controlChange(7, volume);
