@@ -45,6 +45,40 @@ public class YassSheet extends JPanel implements Scrollable,
         yass.renderer.YassPlaybackRenderer {
 
     public final static int NORM_HEIGHT = 20;
+
+
+    // gray, blue, golden, freestyle, red
+    public static final int COLORSET_COUNT = 7;
+    private Color colorSet[] = new Color[COLORSET_COUNT];
+
+    public static final Color disabledColor = new JPanel().getBackground();
+    public static final  Color gray = new Color(.7f, .7f, .7f, .7f);
+    private static final  Color hiGray = new Color(.6f, .6f, .6f, 1f);
+    private static final Color hiGray2 = new Color(.9f, .9f, .9f, 1f);
+    public static final Color oddpageColor = gray, evenpageColor = hiGray2;
+    public static final Color dkGray = new Color(.4f, .4f, .4f, .7f);
+    public static final  Color white = new Color(1f, 1f, 1f);
+
+    private static final Color shadow = UIManager.getColor("Button.shadow");
+    private static final Color highlight = UIManager.getColor("Button.highlight");
+    private static final Color playertextBG = new Color(1f, 1f, 1f, .9f);
+    private static final  Color playBlueHi = new Color(1f, 1f, 1f, 1f);
+    private static final  Color playBlue = new Color(.4f, .6f, .8f, 1f);
+    private static final Color darkShadow = gray;
+    private static final  Color blue = new Color(.4f, .6f, .8f, .7f);
+    private static final  Color blueDrag = new Color(.8f, .9f, 1f, .5f);
+    private static final  Color dkRed = new Color(.8f, .4f, .4f, .7f);
+    public static final  Color playerColor = new Color(1f, .1f, .1f, .5f);
+    private static final  Color playerColor2 = new Color(1f, .1f, .1f, .3f);
+    private static final  Color playerColor3 = new Color(1f, .1f, .1f, .1f);
+    private static final  Color inoutColor = new Color(.9f, .9f, 1f, .5f);
+    private static final  Color inoutSnapshotBarColor = new Color(.3f, .3f, .5f, .7f);
+    private static final  Color inoutBarColor = new Color(.5f, .5f, .7f, .7f);
+
+    public static final BasicStroke thinStroke = new BasicStroke(0.5f),
+            stdStroke = new BasicStroke(1f), medStroke = new BasicStroke(1.5f),
+            thickStroke = new BasicStroke(2f);
+
     private static final long serialVersionUID = 3284920111520989009L;
     private final static int ACTION_CONTROL = 1, ACTION_ALT = 2,
             ACTION_CONTROL_ALT = 4, ACTION_NONE = 0;
@@ -126,11 +160,6 @@ public class YassSheet extends JPanel implements Scrollable,
     private int dragDir = UNDEFINED;
     private int hiliteCue = UNDEFINED, dragMode = UNDEFINED;
 
-    /*
-     * new Color(1f, 1f, 1f, .7f), new Color(.7f, .7f, .7f, .7f), new Color(.4f,
-     * .6f, .8f, .8f), new Color(.8f, .8f, .5f, .7f), new Color(.8f, .5f, .8f,
-     * .7f), new Color(.9f, .7f, .7f, .7f)
-     */
     private final static int VERTICAL = 1;
     private final static int HORIZONTAL = 2;
     private final static int LEFT = 1;
@@ -150,8 +179,6 @@ public class YassSheet extends JPanel implements Scrollable,
     private final static int PLAY_PAGE = 16;
     private final static int PLAY_NOTE_PRESSED = 18;
     private final static int PLAY_PAGE_PRESSED = 19;
-    Color shadow = UIManager.getColor("Button.shadow");
-    Color highlight = UIManager.getColor("Button.highlight");
     boolean useSketching = false, useSketchingPlayback = false;
     AffineTransform identity = new AffineTransform();
     String bufferlost = I18.get("sheet_msg_buffer_lost");
@@ -165,8 +192,8 @@ public class YassSheet extends JPanel implements Scrollable,
     boolean live = false;
     String toomuchtext = I18.get("sheet_msg_too_much_text");
     private YassTable table = null;
-    private Vector<YassTable> tables = new Vector<>();
-    private Vector<Vector<YassRectangle>> rects = new Vector<>();
+    private final Vector<YassTable> tables = new Vector<>();
+    private final Vector<Vector<YassRectangle>> rects = new Vector<>();
     private Vector<YassRectangle> rect = null;
     private Vector<Cloneable> snapshot = null, snapshotRect = null;
     private YassActions actions = null;
@@ -178,33 +205,11 @@ public class YassSheet extends JPanel implements Scrollable,
     private int lyricsWidth = 400;
     private boolean lyricsVisible = true;
     private boolean messageMemory = false;
-    private Color disabledColor = new JPanel().getBackground();
-    // gray, blue, golden, freestyle, red
-    public static final int COLORSET_COUNT = 7;
-    private Color colorSet[] = new Color[COLORSET_COUNT];
-    private Color playertextBG = new Color(1f, 1f, 1f, .9f);
     private int keycodes[] = new int[17];
     private long equalsKeyMillis = 0;
     private String layout = "East";
-    private Color playBlueHi = new Color(1f, 1f, 1f, 1f);
-    private Color playBlue = new Color(.4f, .6f, .8f, 1f);
-    private Color gray = new Color(.7f, .7f, .7f, .7f);
-    Color darkShadow = gray;
-    private Color hiGray = new Color(.6f, .6f, .6f, 1f);
-    private Color hiGray2 = new Color(.9f, .9f, .9f, 1f);
-    private Color oddpageColor = gray, evenpageColor = hiGray2;
-    private Color dkGray = new Color(.4f, .4f, .4f, .7f);
-    private Color blue = new Color(.4f, .6f, .8f, .7f);
-    private Color blueDrag = new Color(.8f, .9f, 1f, .5f);
-    private Color dkRed = new Color(.8f, .4f, .4f, .7f);
-    private Color white = new Color(1f, 1f, 1f);
-    private Color playerColor = new Color(1f, .1f, .1f, .5f);
-    private Color playerColor2 = new Color(1f, .1f, .1f, .3f);
-    private Color playerColor3 = new Color(1f, .1f, .1f, .1f);
-    private Color inoutColor = new Color(.9f, .9f, 1f, .5f);
-    private Color inoutSnapshotBarColor = new Color(.3f, .3f, .5f, .7f);
-    private Color inoutBarColor = new Color(.5f, .5f, .7f, .7f);
-    private Paint tex = null, bgtex = null;
+
+    private Paint tex, bgtex;
     private BufferedImage bgImage = null;
     private boolean showVideo = false, showBackground = false;
     private boolean mouseover = true;
@@ -227,11 +232,9 @@ public class YassSheet extends JPanel implements Scrollable,
     private long sketchStartTime = 0;
     private int[] sketchDirs = null;
     private boolean sketchStarted = false;
-    private BasicStroke thinStroke = new BasicStroke(0.5f),
-            stdStroke = new BasicStroke(1f), medStroke = new BasicStroke(1.5f),
-            thickStroke = new BasicStroke(2f);
     private Font smallFont = new Font("SansSerif", Font.PLAIN, 10);
     private int minHeight = 0, maxHeight = 18;
+    private int minBeat = 0, maxBeat = 1000;
     private int hit = -1, hilite = -1, hiliteHeight = 1000, hhPageMin = 0;
     private int heightBoxWidth = 74;
     private Rectangle2D.Double select = new Rectangle2D.Double(0, 0, 0, 0);
@@ -1630,6 +1633,7 @@ public class YassSheet extends JPanel implements Scrollable,
                             }
                         }
                     }
+                    setPlayerPosition(-1);
 
                     return;
                 }
@@ -1912,6 +1916,10 @@ public class YassSheet extends JPanel implements Scrollable,
      */
     public void setColors(Color[] c) {
         System.arraycopy(c, 0, colorSet, 0, colorSet.length);
+    }
+
+    public Color[] getColors() {
+        return colorSet;
     }
 
     /**
@@ -3030,60 +3038,6 @@ public class YassSheet extends JPanel implements Scrollable,
         }
         if (img == null && showBackground) {
             img = bgImage;
-        }
-
-        if (img == null && !live) {
-            int goldenPoints = table.getGoldenPoints();
-            if (goldenPoints > 0) {
-                int idealGoldenPoints = table.getIdealGoldenPoints();
-                int goldenVariance = table.getGoldenVariance();
-                int idealGoldenBeats = table.getIdealGoldenBeats();
-                int durationGolden = table.getDurationGolden();
-                String goldenDiff = table.getGoldenDiff();
-                boolean err = Math.abs(goldenPoints - idealGoldenPoints) > goldenVariance;
-                g2.setColor(err ? colorSet[5] : dkGray);
-
-                String goldenString = MessageFormat.format(
-                        I18.get("correct_golden_info"), "" + idealGoldenPoints,
-                        "" + goldenPoints, "" + idealGoldenBeats, ""
-                                + durationGolden, goldenDiff);
-
-                int x = clip.x;
-                int w = heightBoxWidth;
-                int h = 12;
-                int y = TOP_BORDER + 10;
-
-                double varPercentage = goldenVariance / (double)idealGoldenPoints;
-                int xVar = (int)(w * varPercentage);
-
-                double goldenPercentage = goldenPoints / (double)idealGoldenPoints;
-                if (goldenPercentage>2) goldenPercentage = 2;
-                int xGold = (int)(w/2 * goldenPercentage);
-
-                g2.drawString(goldenString, x + w + 10, y + h);
-                g2.setColor(dkGray);
-                g2.drawRect(x, y, w, h);
-                g2.setColor(err ? colorSet[5] : colorSet[0]);
-                g2.fillRect(x+1, y+1, w-1, h-1);
-                g2.setColor(colorSet[3]);
-                g2.fillRect(x+w/2-xVar/2, y+1, xVar, h-1);
-                g2.setColor(dkGray);
-                g2.drawRect(x+w/2, y, 1, h);
-                g2.setColor(Color.black);
-                g2.drawRect(x + xGold, y-1, 1, h+2);
-
-                g2.setColor(white);
-            }
-
-            // not used
-            if (equalsKeyMillis > 0) {
-                g2.setColor(dkGray);
-                Font oldFont = g2.getFont();
-                g2.setFont(big[big.length - 1]);
-                g2.drawString("= " + equalsDigits, clip.x + 10, TOP_BORDER + 60);
-                g2.setFont(oldFont);
-                g2.setColor(white);
-            }
         }
     }
 
@@ -5125,6 +5079,8 @@ public class YassSheet extends JPanel implements Scrollable,
     public int[] getHeightRange() {
         int minH = 128;
         int maxH = -128;
+        int minBeat = 10000;
+        int maxBeat = 0;
 
         Enumeration<YassTable> et = tables.elements();
         for (Enumeration<Vector<YassRectangle>> e = rects.elements(); e
@@ -5139,6 +5095,8 @@ public class YassSheet extends JPanel implements Scrollable,
                     int height = row.getHeightInt();
                     minH = Math.min(minH, height);
                     maxH = Math.max(maxH, height);
+                    minBeat = Math.min(minBeat, row.getBeatInt());
+                    maxBeat = Math.max(maxBeat, row.getBeatInt() + row.getLengthInt());
                 }
             }
         }
@@ -5160,7 +5118,7 @@ public class YassSheet extends JPanel implements Scrollable,
         // minH = minH < 0 ? (int)(minH / 10-1)*10 : (int)(minH / 10)*10;
         // if (maxH-minH <17) maxH=minH+17;
 
-        return new int[]{minHeight, maxHeight};
+        return new int[]{minHeight, maxHeight, minBeat, maxBeat};
     }
 
     /**
@@ -5181,6 +5139,9 @@ public class YassSheet extends JPanel implements Scrollable,
         int[] minmax = getHeightRange();
         minHeight = minmax[0];
         maxHeight = minmax[1];
+        minBeat = minmax[2];
+        maxBeat = minmax[3];
+        firePropertyChange("heightRange", null, minmax);
 
         Enumeration<YassTable> et = tables.elements();
         for (Enumeration<Vector<YassRectangle>> e = rects.elements(); e
@@ -5368,7 +5329,7 @@ public class YassSheet extends JPanel implements Scrollable,
     public void setPlayerPosition(int x) {
         //new Exception("playerpos ="+x).printStackTrace();
 
-        playerPos = x;
+        if (x>=0) playerPos = x;
 
         // Rectangle w = ((JViewport)getParent()).getViewRect();
 		/*
@@ -5377,6 +5338,7 @@ public class YassSheet extends JPanel implements Scrollable,
 		 * Rectangle(playerPos,0,clip.width-1,clip.height-1));
 		 * imageChanged=true; refreshImage(); }
 		 */
+		firePropertyChange("posMs", null, new Double(fromTimeline(playerPos)));
     }
 
     /**
@@ -5510,9 +5472,21 @@ public class YassSheet extends JPanel implements Scrollable,
         return nextElement(x);
     }
 
-    /**
-     * Sets the viewToNextPage attribute of the YassSheet object
-     */
+    public double getMinVisibleMs() {
+        int x = clip.x + LEFT_BORDER;
+        if (paintHeights) {
+            x += heightBoxWidth;
+        }
+        return fromTimeline(x);
+    }
+    public double getMaxVisibleMs() {
+        int x = clip.x + clip.width;
+        return fromTimeline(x);
+    }
+
+        /**
+         * Sets the viewToNextPage attribute of the YassSheet object
+         */
     public void setViewToNextPage() {
         table.gotoPage(1);
     }

@@ -52,6 +52,7 @@ public class YassMain extends JApplet {
 
     private YassProperties prop;
     private YassSheet sheet = null;
+    private YassSheetInfo sheetInfo = null;
     private YassActions actions = null;
     private YassPlayer mp3 = null;
     private YassLyrics lyrics = null;
@@ -224,6 +225,8 @@ public class YassMain extends JApplet {
         actions.init(prop);
         actions.setTab(mainPanel);
         sheet.setActions(actions);
+
+        sheetInfo = new YassSheetInfo(sheet);
 
         if (!NO_GAME) {
             yass.screen.YassScreen.loadPlugins(prop);
@@ -528,6 +531,8 @@ public class YassMain extends JApplet {
 
         sheetPanel.add("North", actions.createFileEditToolbar());
         sheetPanel.add("Center", sheetPane);
+        sheetPanel.add("South", sheetInfo);
+
 
         sheetPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         sheetPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);

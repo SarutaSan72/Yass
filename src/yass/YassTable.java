@@ -3777,6 +3777,33 @@ public class YassTable extends JTable {
      * If a note exactly hits that beat, it is returned.
      * Stops search at any note that lays after the given beat.
      */
+    public int getIndexOfNoteBeforeBeat(int beat) {
+        YassRow r, rMin = null;
+        int i = 0;
+        int iMin = -1;
+        int n = getRowCount();
+        int min = Integer.MAX_VALUE;
+        while (i < n - 1) {
+            r = getRowAt(i++);
+            if (r.isNote()) {
+                int b = r.getBeatInt();
+                if (b <= beat) {
+                    if (beat - b < min) {
+                        min = beat - b;
+                        iMin = i;
+                    }
+                }
+                else break;
+            }
+        }
+        return iMin;
+    }
+
+    /**
+     * Returns closest note before given beat.
+     * If a note exactly hits that beat, it is returned.
+     * Stops search at any note that lays after the given beat.
+     */
     public YassRow getNoteBeforeBeat(int beat) {
         YassRow r;
         YassRow rMin = null;

@@ -55,6 +55,8 @@ import java.util.*;
  */
 public class YassActions implements DropTargetListener {
 
+    private YassSheet sheet;
+
     /**
      * Description of the Field
      */
@@ -2487,7 +2489,6 @@ public class YassActions implements DropTargetListener {
             checkData(table, false, true);
         }
     };
-    private YassSheet sheet = null;
     Action showCopiedRows = new AbstractAction(I18.get("medit_copy_show")) {
         private static final long serialVersionUID = 1L;
 
@@ -7394,7 +7395,12 @@ public class YassActions implements DropTargetListener {
                 sheet.setPlayerPosition(sheet.toTimeline(sheet.getDuration()));
             } else if (r.isComment()) {
                 sheet.setPlayerPosition(sheet.toTimeline(table.getStart()));
+            } else {
+                sheet.setPlayerPosition(-1);
             }
+
+        } else {
+            sheet.setPlayerPosition(-1);
         }
 
         if (video != null && sheet.showVideo()) {
