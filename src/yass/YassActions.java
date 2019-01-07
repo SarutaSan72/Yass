@@ -60,7 +60,7 @@ public class YassActions implements DropTargetListener {
     /**
      * Description of the Field
      */
-    public final static String VERSION = "1.9.3";
+    public final static String VERSION = "1.10.0";
     /**
      * Description of the Field
      */
