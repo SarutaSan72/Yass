@@ -32,7 +32,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
-import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -5141,7 +5141,7 @@ public class YassSheet extends JPanel implements Scrollable,
         maxHeight = minmax[1];
         minBeat = minmax[2];
         maxBeat = minmax[3];
-        firePropertyChange("heightRange", null, minmax);
+        fireRangeChanged(minHeight, maxHeight, minBeat, maxBeat);
 
         Enumeration<YassTable> et = tables.elements();
         for (Enumeration<Vector<YassRectangle>> e = rects.elements(); e
@@ -5338,7 +5338,7 @@ public class YassSheet extends JPanel implements Scrollable,
 		 * Rectangle(playerPos,0,clip.width-1,clip.height-1));
 		 * imageChanged=true; refreshImage(); }
 		 */
-		firePropertyChange("posMs", null, new Double(fromTimeline(playerPos)));
+		firePosChanged();
     }
 
     /**
@@ -6012,4 +6012,19 @@ public class YassSheet extends JPanel implements Scrollable,
     public void setPause(boolean onoff) {
     }
 
+    private ArrayList<YassSheetListener> listeners = new ArrayList<YassSheetListener>();
+
+    public void addYassSheetListener(YassSheetListener listener) {
+        listeners.add(listener);
+    }
+    public void removeYassSheetListener(YassSheetListener listener) {
+        listeners.remove(listener);
+    }
+    public void firePosChanged() {
+        double posMs = fromTimeline(playerPos);
+        for (YassSheetListener listener : listeners) listener.posChanged(this, posMs);
+    }
+    public void fireRangeChanged(int minH, int maxH, int minB, int maxB) {
+        for (YassSheetListener listener : listeners) listener.rangeChanged(this, minH, maxH, minB, maxB);
+    }
 }

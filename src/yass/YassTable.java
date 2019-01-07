@@ -3778,13 +3778,13 @@ public class YassTable extends JTable {
      * Stops search at any note that lays after the given beat.
      */
     public int getIndexOfNoteBeforeBeat(int beat) {
-        YassRow r, rMin = null;
+        YassRow r;
         int i = 0;
         int iMin = -1;
         int n = getRowCount();
         int min = Integer.MAX_VALUE;
         while (i < n - 1) {
-            r = getRowAt(i++);
+            r = getRowAt(i);
             if (r.isNote()) {
                 int b = r.getBeatInt();
                 if (b <= beat) {
@@ -3795,6 +3795,7 @@ public class YassTable extends JTable {
                 }
                 else break;
             }
+            i++;
         }
         return iMin;
     }
@@ -3811,7 +3812,7 @@ public class YassTable extends JTable {
         int n = getRowCount();
         int min = Integer.MAX_VALUE;
         while (i < n - 1) {
-            r = getRowAt(i++);
+            r = getRowAt(i);
             if (r.isNote()) {
                 int b = r.getBeatInt();
                 if (b <= beat) {
@@ -3822,6 +3823,7 @@ public class YassTable extends JTable {
                 }
                 else break;
             }
+            i++;
         }
         return rMin;
     }
@@ -5978,6 +5980,10 @@ public class YassTable extends JTable {
         setRowSelectionInterval(rows[0], rows[0] + 1);
         zoomPage();
         updatePlayerPosition();
+    }
+
+    public double beatToMs(int beat) {
+        return 1000 * 60 * beat / (4 * bpm) + gap;
     }
 
     /**

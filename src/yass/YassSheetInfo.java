@@ -63,11 +63,14 @@ public class YassSheetInfo extends JPanel {
         super(true);
         setFocusable(false);
         this.sheet = s;
-        sheet.addPropertyChangeListener(new PropertyChangeListener() {
+        sheet.addYassSheetListener(new YassSheetListener() {
             @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (evt.getPropertyName().equals("heightRange")) setHeightRange((int[])evt.getNewValue());
-                if (evt.getPropertyName().equals("posMs")) setPosMs((double)evt.getNewValue());
+            public void posChanged(YassSheet source, double posMs) {
+                setPosMs(posMs);
+            }
+            @Override
+            public void rangeChanged(YassSheet source, int minH, int maxH, int minB, int maxB) {
+                setHeightRange(minH, maxH, minB, maxB);
             }
         });
         addMouseListener(new MouseAdapter() {
@@ -95,15 +98,26 @@ public class YassSheetInfo extends JPanel {
         YassTable table = sheet.getActiveTable();
         if (table == null) return;
 
+        // click position in beats
         int w = getWidth();
         if (x < 0) x = 0;
         if (x > w) x = w;
         int beat = (int)((minBeat + x*rangeBeat) / (double) w);
+
+        double minMs = sheet.getMinVisibleMs();
+        double maxMs = sheet.getMaxVisibleMs();
+        double ms = table.beatToMs(beat);
+        boolean visible = minMs < ms && ms < maxMs;
+
         int i= table.getIndexOfNoteBeforeBeat(beat);
         if (i>=0) {
+            if (i+2 < table.getRowCount() - 1) {
+                YassRow r = table.getRowAt(i+1); // clicked directly after pagebreak -> select note after beat
+                if (r.isPageBreak() && beat > r.getBeatInt()) i+=2;
+            }
             table.setRowSelectionInterval(i, i);
             table.updatePlayerPosition();
-            table.zoomPage();
+            if (! visible) table.zoomPage();
         }
     }
 
@@ -112,11 +126,11 @@ public class YassSheetInfo extends JPanel {
         return new Dimension(600, notesBar + msgBar + txtBar);
     }
 
-    private void setHeightRange(int[] minmax) {
-        minHeight = minmax[0];
-        maxHeight = minmax[1];
-        minBeat = minmax[2];
-        maxBeat = minmax[3];
+    private void setHeightRange(int minH, int maxH, int minB, int maxB) {
+        minHeight = minH;
+        maxHeight = maxH;
+        minBeat = minB;
+        maxBeat = maxB;
         rangeBeat = maxBeat-minBeat;
         rangeHeight = maxHeight-minHeight;
         inited = true;
