@@ -212,7 +212,8 @@ public class YassSynth {
             wavsourceDataLine.open(wavaudioFormat);
             wavsourceDataLine.start();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("YassSynth: Cannot open line");
+            //e.printStackTrace();
         }
 
     }
@@ -290,7 +291,7 @@ public class YassSynth {
 			 *  }
 			 *  }
 			 */
-            sourceDataLine.write(dat, 0, dat.length);
+            if (sourceDataLine != null) sourceDataLine.write(dat, 0, dat.length);
             // sourceDataLine.drain();
             //audioInputStream[i].reset();
         } catch (Exception e) {
@@ -304,7 +305,7 @@ public class YassSynth {
      */
     public static void closeLine() {
         try {
-            sourceDataLine.close();
+            if (sourceDataLine!= null) sourceDataLine.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -315,7 +316,7 @@ public class YassSynth {
      */
     public static void closeWavLine() {
         try {
-            wavsourceDataLine.close();
+            if (wavsourceDataLine != null) wavsourceDataLine.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

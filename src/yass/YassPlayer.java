@@ -1155,7 +1155,7 @@ public class YassPlayer {
          */
         public void run() {
             try {
-                ap.play(skip1, skip2);
+                if (ap != null) ap.play(skip1, skip2);
             } catch (Exception e) {
                 System.out.println("Playback Error");
                 e.printStackTrace();
@@ -1268,12 +1268,13 @@ public class YassPlayer {
                     });
                     if (DEBUG)
                         System.out.println("JavaZoom AdvancedPlayer created.");
+                } catch (IllegalArgumentException e) {
+                    System.err.println("YassPlayer: " + e.getMessage());
                 } catch (Exception e) {
                     notInterrupted = false;
                     if (DEBUG)
-                        System.out
-                                .println("Cannot create JavaZoom AdvancedPlayer.");
-                    e.printStackTrace();
+                        System.out.println("Cannot create JavaZoom AdvancedPlayer.");
+                    //e.printStackTrace();
                 }
             }
 

@@ -104,7 +104,7 @@ import com.swabunga.spell.swing.JTextComponentSpellChecker;
 public class YassLyrics extends JPanel implements TabChangeListener {
 	private static final long serialVersionUID = -2873881715263100606L;
 	private JTextPane lyricsArea = null;
-	private JScrollPane lyricsScrollPane = null;
+	private JScrollPane lyricsScrollPane;
 	private YassAutoCorrect auto;
 	private YassProperties prop;
 	private YassTable table;
@@ -127,14 +127,13 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 	private Color[] colorSet = new Color[7];
 	private Color errBackground, minorerrBackground;
 	private Font lineNumberFont = new Font("SansSerif", Font.PLAIN, 10);
-	private LineNumbers lineNumbers = null;
+	private LineNumbers lineNumbers;
 	private int fontSize = 16;
 
 	private boolean preventFireUpdate = false;
 	private boolean preventHyphenKeys = true;
 
-	private Hashtable<Object, Object> spellCheckers = null;
-	private YassHyphenator hyphenator = null;
+	private Hashtable<Object, Object> spellCheckers;
 
 	private JTextComponentSpellChecker spellCheckerComp = null;
 	private FindReplace frDialog;
