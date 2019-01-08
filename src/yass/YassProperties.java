@@ -335,6 +335,7 @@ public class YassProperties extends Properties {
         p.put("sketching-playback", "false");
         p.put("show-note-height", "true");
         p.put("show-note-length", "true");
+        p.put("show-note-scale", "false");
         p.put("auto-trim", "false");
         p.put("playback-buttons", "true");
         p.put("record-timebase", "2");

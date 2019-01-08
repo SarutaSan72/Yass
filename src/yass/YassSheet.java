@@ -55,6 +55,7 @@ public class YassSheet extends JPanel implements Scrollable,
     public static final  Color gray = new Color(.7f, .7f, .7f, .7f);
     private static final  Color hiGray = new Color(.6f, .6f, .6f, 1f);
     private static final Color hiGray2 = new Color(.9f, .9f, .9f, 1f);
+    private static final Color hiGray3 = new Color(.95f, .95f, .95f, 1f);
     public static final Color oddpageColor = gray, evenpageColor = hiGray2;
     public static final Color dkGray = new Color(.4f, .4f, .4f, .7f);
     public static final  Color white = new Color(1f, 1f, 1f);
@@ -255,6 +256,7 @@ public class YassSheet extends JPanel implements Scrollable,
     private long inSnapshot = -1, outSnapshot = -1;
     private Cursor cutCursor = null;
     private boolean showNoteLength = false;
+    private boolean showNoteScale = false;
     private boolean showNoteHeight = true;
     private Rectangle clip = new Rectangle();
     private boolean refreshing = false;
@@ -2480,6 +2482,10 @@ public class YassSheet extends JPanel implements Scrollable,
         showNoteLength = onoff;
     }
 
+    public void setNoteScaleVisible(boolean onoff) {
+        showNoteScale = onoff;
+    }
+
     public void setNoteHeightVisible(boolean onoff) {
         showNoteHeight = onoff;
     }
@@ -3403,15 +3409,56 @@ public class YassSheet extends JPanel implements Scrollable,
                 g2.draw(line);
             }
         } else {
+            // scale with alternating background
+            g2.setColor(new Color(0, 0, 0, 10));
             for (int h = minHeight; h < maxHeight; h++) {
-                if (h % 2 == 1) {
+                if (h % 2 != 0) {
                     continue;
                 }
+                double y = dim.height - BOTTOM_BORDER - (h - minHeight) * hSize;
+                if ((h+12) % 24 == 0) {
+                    g2.fillRect((int) line.x1, (int) (y - 12 * hSize), (int) (line.x2 - line.x1), (int) (12 * hSize));
+                }
+            }
+            // lowest scale might be visible partly
+            int mh = minHeight;
+            if ((mh+12) % 24 != 0) {
+                while (mh % 12 != 0) mh++;
+                if (mh % 24 == 0) {
+                    double y = dim.height - BOTTOM_BORDER - (mh - minHeight) * hSize;
+                    g2.fillRect((int) line.x1, (int) y, (int) (line.x2 - line.x1), (int) ((mh - minHeight) * hSize));
+                }
+            }
+            // lines
+            for (int h = minHeight; h < maxHeight; h++) {
+                if (h % 2 != 0) {
+                    continue;
+                }
+                line.y1 = line.y2 = dim.height - BOTTOM_BORDER - (h - minHeight) * hSize;
                 g2.setStroke(h % 12 == 0 ? stdStroke : thinStroke);
                 g2.setColor(h % 12 == 0 ? hiGray : hiGray2);
-                line.y1 = line.y2 = dim.height - BOTTOM_BORDER
-                        - (h - minHeight) * hSize;
                 g2.draw(line);
+            }
+            // scale numbers
+            g2.setColor(hiGray);
+            int fs = (int) Math.min(big.length * hSize/8, big.length-1);
+            g2.setFont(big[fs]);
+            int fh = g2.getFontMetrics().getAscent();
+            for (int h = minHeight; h < maxHeight; h++) {
+                if (h % 12 == 0) {
+                    double y = dim.height - BOTTOM_BORDER - (h - minHeight) * hSize;
+                    String s = ""+(h/12);
+                    int sw = g2.getFontMetrics().stringWidth(s);
+                    g2.drawString(s, (int)line.x1 + 5, (int)(y - 6 * hSize + fh/2));
+                    g2.drawString(s, (int)line.x2 - 5-sw   , (int)(y - 6 * hSize + fh/2));
+                }
+            }
+            double y = dim.height - BOTTOM_BORDER - (mh - minHeight) * hSize;
+            if (y + 12 * hSize- fh/2 < dim.height - BOTTOM_BORDER) {
+                String s = "" + (mh / 12 - 1);
+                int sw = g2.getFontMetrics().stringWidth(s);
+                g2.drawString(s, (int) line.x1 + 5, (int) (y + 12 * hSize - fh / 2));
+                g2.drawString(s, (int) line.x2 - 5 - sw, (int) (y + 12 * hSize - fh / 2));
             }
         }
     }
@@ -3918,6 +3965,8 @@ public class YassSheet extends JPanel implements Scrollable,
                         if (showNoteHeight) {
                             int pitch = table.getRowAt(i).getHeightInt();
                             String hstr = "" + getNoteName(pitch + 60);
+                            int scale = (int)(pitch / 12);
+                            if (showNoteScale) hstr += ""+scale;
 
                             int yoff = 4;
 
