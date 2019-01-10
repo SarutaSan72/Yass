@@ -39,9 +39,10 @@ import java.util.Hashtable;
  */
 public class YassOptions extends JDialog {
     private static final long serialVersionUID = -3946878493552010967L;
-    private JTree tree = null;
-    private Hashtable<String, OptionsPanel> panels = null;
-    private JPanel main = null;
+    private final JTree tree;
+    private final Hashtable<String, OptionsPanel> panels;
+    private final JPanel main;
+    private final JScrollPane scrollMain;
 
 
     /**
@@ -101,7 +102,7 @@ public class YassOptions extends JDialog {
         //left
         main.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
         panel.add("West", new JScrollPane(tree = new JTree(top)));
-        panel.add("Center", new JScrollPane(main));
+        panel.add("Center", scrollMain = new JScrollPane(main));
 
         tree.setRootVisible(false);
         tree.setShowsRootHandles(true);
@@ -153,8 +154,8 @@ public class YassOptions extends JDialog {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         pack();
         Dimension dim = this.getToolkit().getScreenSize();
-        setSize(760, 620);
-        setLocation(dim.width / 2 - 380, dim.height / 2 - 250);
+        setSize(780, 620);
+        setLocation(dim.width / 2 - 390, dim.height / 2 - 250);
         setTitle(I18.get("options_title"));
         showPanel(I18.get("options_directories"));
         setVisible(true);
@@ -193,8 +194,8 @@ public class YassOptions extends JDialog {
         main.removeAll();
         main.add("Center", getPanel(id));
         getPanel(id).validate();
-        main.validate();
-        main.repaint();
+        scrollMain.validate();
+        scrollMain.repaint();
     }
 
     /**

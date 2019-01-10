@@ -635,8 +635,8 @@ public class OptionsPanel extends JPanel {
     }
 
     class ChoiceListener implements ActionListener {
-        Vector<String> keys = null;
-        String select_key = null;
+        private final Vector<String> keys;
+        private final String select_key;
 
 
         /**
