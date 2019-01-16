@@ -76,13 +76,18 @@ public class YassSheetInfo extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+                if (sheet.isPlaying() || sheet.isTemporaryStop()) {
+                    sheet.stopPlaying();
+                }
+
                 moveTo(e.getX());
             }
         });
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                moveTo(e.getX());
+                if (! (sheet.isPlaying() || sheet.isTemporaryStop()))
+                    moveTo(e.getX());
             }
         });
         addMouseWheelListener(new MouseWheelListener() {
@@ -97,6 +102,9 @@ public class YassSheetInfo extends JPanel {
     {
         YassTable table = sheet.getActiveTable();
         if (table == null) return;
+
+        if (sheet.isPlaying() || sheet.isTemporaryStop())
+            return;
 
         // click position in beats
         int w = getWidth();

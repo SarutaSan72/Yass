@@ -6076,4 +6076,8 @@ public class YassSheet extends JPanel implements Scrollable,
     public void fireRangeChanged(int minH, int maxH, int minB, int maxB) {
         for (YassSheetListener listener : listeners) listener.rangeChanged(this, minH, maxH, minB, maxB);
     }
+
+    public void stopPlaying() {
+        firePropertyChange("play", null, "stop");
+    }
 }

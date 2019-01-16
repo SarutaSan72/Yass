@@ -96,10 +96,7 @@ public class YassProperties extends Properties {
             old = v.startsWith("1.8");
         }
         if (!old) {
-            old = v.equals("1.9.0");
-        }
-        if (!old) {
-            old = v.equals("1.9.1");
+            old = v.equals("1.9");
         }
         return old;
     }
