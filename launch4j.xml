@@ -2,7 +2,7 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>.\release\yass-2.0.0.jar</jar>
+  <jar>.\release\yass-2.1.0.jar</jar>
   <outfile>.\release\yass.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
@@ -28,12 +28,12 @@
     <timeoutErr>true</timeoutErr>
   </splash>
   <versionInfo>
-    <fileVersion>2.0.0.0</fileVersion>
-    <txtFileVersion>Yass 2.0.0.0</txtFileVersion>
+    <fileVersion>2.1.0.0</fileVersion>
+    <txtFileVersion>Yass 2.1.0.0</txtFileVersion>
     <fileDescription>Yass - Karaoke Editor</fileDescription>
     <copyright>(C)2019 Saruta</copyright>
-    <productVersion>2.0.0.0</productVersion>
-    <txtProductVersion>2.0.0.0</txtProductVersion>
+    <productVersion>2.1.0.0</productVersion>
+    <txtProductVersion>2.1.0.0</txtProductVersion>
     <productName>Yass</productName>
     <companyName>yass-along.com</companyName>
     <internalName>yass</internalName>

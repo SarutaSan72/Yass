@@ -60,11 +60,11 @@ public class YassActions implements DropTargetListener {
     /**
      * Description of the Field
      */
-    public final static String VERSION = "2.0.0";
+    public final static String VERSION = "2.1.0";
     /**
      * Description of the Field
      */
-    public final static String DATE = "1/2019";
+    public final static String DATE = "2/2019";
 
     Action showAbout = new AbstractAction(I18.get("mlib_about")) {
         private static final long serialVersionUID = 1L;
