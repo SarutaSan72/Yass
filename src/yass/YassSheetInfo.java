@@ -171,48 +171,47 @@ public class YassSheetInfo extends JPanel {
 
         // background
         g2.setColor(sheet.disabledColor);
-        g2.fillRect(0,0,w, h);
+        g2.fillRect(0, 0, w, h);
 
         //  notes background
         g2.setColor(sheet.dkGray);
-        g2.fillRect(x, y+h-hBar, w, hBar);
+        g2.fillRect(x, y + h - hBar, w, hBar);
         g2.setColor(sheet.dkGray);
         g2.drawRect(x, y, w, h);
-        g2.drawRect(x, y+h-hBar, w, hBar);
+        g2.drawRect(x, y + h - hBar, w, hBar);
 
         // selection
         double minMs = sheet.getMinVisibleMs();
         double maxMs = sheet.getMaxVisibleMs();
-        rx = (int)(w * (sheet.toBeat(minMs) - minBeat) / (double)rangeBeat);
-        int rx2 = (int)(w * (sheet.toBeat(maxMs) - minBeat) / (double)rangeBeat);
+        rx = (int) (w * (sheet.toBeat(minMs) - minBeat) / (double) rangeBeat);
+        int rx2 = (int) (w * (sheet.toBeat(maxMs) - minBeat) / (double) rangeBeat);
         g2.setColor(Color.white);
-        g2.fillRect(x + rx, y, rx2-rx, h-hBar);
+        g2.fillRect(x + rx, y, rx2 - rx, h - hBar);
         g2.setColor(Color.black);
-        g2.drawRect(x + rx, y, rx2-rx, h-hBar);
+        g2.drawRect(x + rx, y, rx2 - rx, h - hBar);
 
         // notes
-        YassRow r, rPrev=null;
-        int rxPrev=0, ryPrev=0, rwPrev=0;
+        YassRow r, rPrev = null;
+        int rxPrev = 0, ryPrev = 0, rwPrev = 0;
         for (Enumeration<?> e = table.getRows(); e.hasMoreElements(); ) {
             r = (YassRow) e.nextElement();
-            if (r.isPageBreak())
-            {
+            if (r.isPageBreak()) {
                 g2.setColor(sheet.dkGray);
-                rx = (int) (w * (r.getBeatInt()-minBeat) / (double)rangeBeat);
+                rx = (int) (w * (r.getBeatInt() - minBeat) / (double) rangeBeat);
                 rw = 1;
-                g2.fillRect(x + rx,y,rw,h);
+                g2.fillRect(x + rx, y, rw, h);
                 rPrev = null;
                 continue;
             }
-            if (! r.isNote()) {
+            if (!r.isNote()) {
                 rPrev = null;
                 continue;
             }
 
 
-            rx = (int) (w * (r.getBeatInt()-minBeat) / (double)rangeBeat);
-            ry = (int) ((h-hBar) * (r.getHeightInt()-minHeight) / (double)rangeHeight);
-            rw = (int) (w * r.getLengthInt() / rangeBeat +.5);
+            rx = (int) (w * (r.getBeatInt() - minBeat) / (double) rangeBeat);
+            ry = (int) ((h - hBar) * (r.getHeightInt() - minHeight) / (double) rangeHeight);
+            rw = (int) (w * r.getLengthInt() / rangeBeat + .5);
 
             Color hiliteFill = null;
             if (r.isGolden()) {
@@ -224,17 +223,15 @@ public class YassSheetInfo extends JPanel {
             }
             if (hiliteFill != null) {
                 g2.setColor(hiliteFill);
-                g2.fillRect(x + rx-1, y + h - hBar + 1, rw+2, hBar - 1);
+                g2.fillRect(x + rx - 1, y + h - hBar + 1, rw + 2, hBar - 1);
             }
             g2.setColor(sheet.dkGray);
             g2.setStroke(sheet.medStroke);
-            g2.drawLine(x + rx,y + h - hBar - ry, x + rx + rw, y + h - hBar - ry);
-            if (rPrev != null && rPrev.isNote())
-            {
-                int gap = r.getBeatInt()-(rPrev.getBeatInt() + rPrev.getLengthInt());
+            g2.drawLine(x + rx, y + h - hBar - ry, x + rx + rw, y + h - hBar - ry);
+            if (rPrev != null && rPrev.isNote()) {
+                int gap = r.getBeatInt() - (rPrev.getBeatInt() + rPrev.getLengthInt());
                 double gapMs = gap * 60 / (4 * bpm) * 1000;
-                if (gapMs < 500)
-                {
+                if (gapMs < 500) {
                     g2.drawLine(x + rxPrev + rwPrev, y + h - hBar - ryPrev, x + rx, y + h - hBar - ry);
                 }
             }
@@ -247,7 +244,7 @@ public class YassSheetInfo extends JPanel {
 
         // cursor
         g2.setColor(sheet.playerColor);
-        rx = (int)(w * (sheet.toBeat(posMs) - minBeat) / (double)rangeBeat);
+        rx = (int) (w * (sheet.toBeat(posMs) - minBeat) / (double) rangeBeat);
         g2.fillRect(x + rx - 1, y - 2, 2, h + 5);
 
         // golden
@@ -270,25 +267,67 @@ public class YassSheetInfo extends JPanel {
             w = 80;
             h = 12;
 
-            double varPercentage = goldenVariance / (double)idealGoldenPoints;
-            int xVar = (int)(w * varPercentage);
+            double varPercentage = goldenVariance / (double) idealGoldenPoints;
+            int xVar = (int) (w * varPercentage);
 
-            double goldenPercentage = goldenPoints / (double)idealGoldenPoints;
-            if (goldenPercentage>2) goldenPercentage = 2;
-            int xGold = (int)(w/2 * goldenPercentage);
+            double goldenPercentage = goldenPoints / (double) idealGoldenPoints;
+            if (goldenPercentage > 2) goldenPercentage = 2;
+            int xGold = (int) (w / 2 * goldenPercentage);
 
             g2.drawString(goldenString, x + w + 10, y + h);
 
             g2.setColor(sheet.dkGray);
             g2.drawRect(x, y, w, h);
             g2.setColor(err ? colorSet[5] : colorSet[0]);
-            g2.fillRect(x+1, y+1, w-1, h-1);
+            g2.fillRect(x + 1, y + 1, w - 1, h - 1);
             g2.setColor(colorSet[3]);
-            g2.fillRect(x+w/2-xVar/2, y+1, xVar, h-1);
+            g2.fillRect(x + w / 2 - xVar / 2, y + 1, xVar, h - 1);
             g2.setColor(sheet.dkGray);
-            g2.drawRect(x+w/2, y, 1, h);
+            g2.drawRect(x + w / 2, y, 1, h);
             g2.setColor(Color.black);
-            g2.drawRect(x + xGold, y-1, 1, h+2);
+            g2.drawRect(x + xGold, y - 1, 1, h + 2);
+        }
+
+        // artist/title/year
+        String t = table.getTitle();
+        String a = table.getArtist();
+        String year = table.getYear();
+        String g = table.getGenre();
+        int sec = (int)(sheet.getDuration() / 1000.0 + 0.5);
+        int min = sec / 60;
+        sec = sec - min * 60;
+        String dString = (sec < 10) ? min + ":0" + sec : min + ":" + sec;
+        if (a == null) a = "";
+        if (t == null) t = "";
+        if (dString == null) dString = "";
+        if (year == null) year = "";
+        if (g == null) g = "";
+        if (g.length() > 10) g = g.substring(0,9)+"...";
+        String s = a;
+        if (s.length() > 0 && t.length() > 0) s+= " - ";
+        s += t;
+
+        String s2 = year;
+        if (s2.length() > 0 && g.length() > 0) s2+= " · ";
+        s2 += g;
+
+        String bpmString = "";
+        if(bpm == (long) bpm) bpmString = String.format("%d",(int)bpm);
+        else bpmString = String.format("%s", bpm);
+        s2 += " · " + bpmString + " bpm";
+
+        s2 += " · " + dString;
+
+        w = getWidth();
+        int sw1 = g2.getFontMetrics().stringWidth(s);
+        int sw2 = g2.getFontMetrics().stringWidth(s2);
+        int sw = Math.max(sw1, sw2);
+        x = w - Math.max(sw1,sw2) - 10;
+        y = txtBar-3;
+        if (x > 300) {
+            g2.setColor(sheet.dkGray);
+            g2.drawString(s, w-sw-10, y - 15);
+            g2.drawString(s2, w-sw2-10, y);
         }
     }
 }
