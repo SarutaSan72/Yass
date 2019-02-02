@@ -3439,26 +3439,29 @@ public class YassSheet extends JPanel implements Scrollable,
                 g2.setColor(h % 12 == 0 ? hiGray : hiGray2);
                 g2.draw(line);
             }
+
             // scale numbers
-            g2.setColor(hiGray);
-            int fs = (int) Math.min(big.length * hSize/8, big.length-1);
-            g2.setFont(big[fs]);
-            int fh = g2.getFontMetrics().getAscent();
-            for (int h = minHeight; h < maxHeight; h++) {
-                if (h % 12 == 0) {
-                    double y = dim.height - BOTTOM_BORDER - (h - minHeight) * hSize;
-                    String s = ""+(h/12);
-                    int sw = g2.getFontMetrics().stringWidth(s);
-                    g2.drawString(s, (int)line.x1 + 5, (int)(y - 6 * hSize + fh/2));
-                    g2.drawString(s, (int)line.x2 - 5-sw   , (int)(y - 6 * hSize + fh/2));
+            if (paintHeights) {
+                g2.setColor(hiGray);
+                int fs = (int) Math.min(big.length * hSize / 8, big.length - 1);
+                g2.setFont(big[fs]);
+                int fh = g2.getFontMetrics().getAscent();
+                for (int h = minHeight; h < maxHeight; h++) {
+                    if (h % 12 == 0) {
+                        double y = dim.height - BOTTOM_BORDER - (h - minHeight) * hSize;
+                        String s = "" + (h / 12 + 4);
+                        int sw = g2.getFontMetrics().stringWidth(s);
+                        g2.drawString(s, (int) line.x1 + 5, (int) (y - 6 * hSize + fh / 2));
+                        g2.drawString(s, (int) line.x2 - 5 - sw, (int) (y - 6 * hSize + fh / 2));
+                    }
                 }
-            }
-            double y = dim.height - BOTTOM_BORDER - (mh - minHeight) * hSize;
-            if (y + 12 * hSize- fh/2 < dim.height - BOTTOM_BORDER) {
-                String s = "" + (mh / 12 - 1);
-                int sw = g2.getFontMetrics().stringWidth(s);
-                g2.drawString(s, (int) line.x1 + 5, (int) (y + 12 * hSize - fh / 2));
-                g2.drawString(s, (int) line.x2 - 5 - sw, (int) (y + 12 * hSize - fh / 2));
+                double y = dim.height - BOTTOM_BORDER - (mh - minHeight) * hSize;
+                if (y + 12 * hSize - fh / 2 < dim.height - BOTTOM_BORDER) {
+                    String s = "" + (mh / 12 + 4 - 1);
+                    int sw = g2.getFontMetrics().stringWidth(s);
+                    g2.drawString(s, (int) line.x1 + 5, (int) (y + 12 * hSize - fh / 2));
+                    g2.drawString(s, (int) line.x2 - 5 - sw, (int) (y + 12 * hSize - fh / 2));
+                }
             }
         }
     }
@@ -3965,8 +3968,8 @@ public class YassSheet extends JPanel implements Scrollable,
                         if (showNoteHeight) {
                             int pitch = table.getRowAt(i).getHeightInt();
                             String hstr = "" + getNoteName(pitch + 60);
-                            int scale = (int)(pitch / 12);
-                            if (showNoteScale) hstr += ""+scale;
+                            int scale = (int)(pitch / 12 + 4);
+                            if (showNoteScale || paintHeights) hstr += ""+scale;
 
                             int yoff = 4;
 
