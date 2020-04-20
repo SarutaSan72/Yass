@@ -5052,7 +5052,7 @@ public class YassSongList extends JTable {
                         return false;
                     }
                     String s = new String(cstr).trim().toLowerCase();
-                    if (s.startsWith("title") || s.startsWith("artist")) {
+                    if (s.startsWith("title") || s.startsWith("artist") || s.startsWith("medley") || s.startsWith("mp3") || s.startsWith("author") || s.startsWith("language") || s.startsWith("genre")  || s.startsWith("year")) {
                         inputStream.close();
                         return true;
                     }

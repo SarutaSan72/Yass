@@ -594,7 +594,7 @@ public class YassRow implements Cloneable, Comparable<Object> {
      * @return The commentTag value
      */
     public String getCommentTag() {
-        return s[1];
+        return s[1].toUpperCase();
     }
 
 

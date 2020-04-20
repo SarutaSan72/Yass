@@ -322,7 +322,7 @@ public class YassProperties extends Properties {
         p.put("dict-map", "English|EN|German|DE|French|EN|Croatian|EN|Hungarian|EN|Italian|EN|Japanese|EN|Polish|EN|Russian|EN|Spanish|EN|Swedish|EN|Turkish|EN");
         p.put("user-dicts", userDir + File.separator + yassDir);
 
-        p.put("utf8-without-bom", "false");
+        p.put("utf8-without-bom", "true");
         p.put("utf8-always", "false");
 
         p.put("floatable", "false");
