@@ -324,7 +324,7 @@ public class OptionsPanel extends JPanel {
      * @param n     The feature to be added to the ColorSet attribute
      * @param okey  The feature to be added to the ColorSet attribute
      */
-    public void addColorSet(String label, String okey, int n) {
+    public void addColorSet(String label, String okey, int n, String[] names) {
         JPanel row = new JPanel();
         row.setLayout(new BoxLayout(row, BoxLayout.X_AXIS));
         JLabel lab = new JLabel(label);
@@ -340,7 +340,9 @@ public class OptionsPanel extends JPanel {
             String s = getProperty(key);
             Color col = Color.decode(s);
 
-            JLabel la = new JLabel(i + "", JLabel.CENTER);
+            String lbl = i+"";
+            if (names != null && i < names.length) lbl = names[i];
+            JLabel la = new JLabel(lbl, JLabel.CENTER);
             la.addMouseListener(new EditColorListener(la, col, key));
             la.setToolTipText("#" + Integer.toHexString(col.getRGB() & 0x00ffffff));
             la.setOpaque(true);

@@ -34,9 +34,11 @@ public class ColorPanel extends OptionsPanel {
     public void addRows() {
         setLabelWidth(140);
         addSeparator(I18.get("options_design_versions"));
-        addColorSet(I18.get("options_design_versions_colors"), "color", 8);
+        addColorSet(I18.get("options_design_versions_colors"), "color", 8, null);
         addSeparator(I18.get("options_design_notes"));
-        addColorSet(I18.get("options_design_notes_colors"), "note-color", 7);
+        String s = I18.get("options_design_notes_colors_names");
+        String[] names = s != null ? s.split("\\|") : null;
+        addColorSet(I18.get("options_design_notes_colors"), "note-color", 7, names);
         addBoolean("", "shade-notes", I18.get("options_design_notes_shade"));
         addBoolean("", "show-note-height", I18.get("options_design_notes_height"));
         addBoolean("", "show-note-scale", I18.get("options_design_notes_scale"));
@@ -56,18 +58,18 @@ public class ColorPanel extends OptionsPanel {
         //addBoolean("", "floatable", I18.get("options_design_tools_floatable"));
         //addComment(I18.get("options_design_tools_comment"));
 
-		/*
+        /*
          *  addColor("Standard:", "color-0");
-		 *  addColor("Version 1:", "color-1");
-		 *  addColor("Version 2:", "color-2");
-		 *  addColor("Version 3:", "color-3");
-		 *  addColor("Version 4:", "color-4");
-		 *  addColor("Version 5:", "color-5");
-		 *  addColor("Version 6:", "color-6");
-		 *  addColor("Version 7:", "color-7");
-		 *  addColor("Version 8:", "color-8");
-		 *  addColor("Version 9:", "color-9");
-		 */
+         *  addColor("Version 1:", "color-1");
+         *  addColor("Version 2:", "color-2");
+         *  addColor("Version 3:", "color-3");
+         *  addColor("Version 4:", "color-4");
+         *  addColor("Version 5:", "color-5");
+         *  addColor("Version 6:", "color-6");
+         *  addColor("Version 7:", "color-7");
+         *  addColor("Version 8:", "color-8");
+         *  addColor("Version 9:", "color-9");
+         */
     }
 
 }
