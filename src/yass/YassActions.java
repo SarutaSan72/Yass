@@ -2211,6 +2211,19 @@ public class YassActions implements DropTargetListener {
             table.setType("F");
         }
     };
+    Action darkmode = new AbstractAction(I18.get("medit_darkmode")) {
+        private static final long serialVersionUID = 1L;
+
+        public void actionPerformed(ActionEvent e) {
+            interruptPlay();
+            if (lyrics.isEditable() || songList.isEditing()
+                    || isFilterEditing()) {
+                return;
+            }
+            sheet.setDarkMode(! sheet.darkMode);
+            sheet.firePropsChanged();
+        }
+    };
     Action detailLibrary = new AbstractAction(I18.get("mlib_details_toggle")) {
         private static final long serialVersionUID = 1L;
 
@@ -3388,6 +3401,9 @@ public class YassActions implements DropTargetListener {
 
         boolean shade = prop.get("shade-notes").equals("true");
         sheet.shadeNotes(shade);
+        boolean darkMode = prop.containsKey("dark-mode") && prop.get("dark-mode").equals("true");
+        sheet.setDarkMode(darkMode);
+        sheet.firePropsChanged();
         sheet.repaint();
     }
 
@@ -4954,6 +4970,7 @@ public class YassActions implements DropTargetListener {
         menu.add(showErrors);
         menu.add(showTable);
         menu.addSeparator();
+        menu.add(darkmode);
         menu.add(fullscreen);
 
         menu = new JMenu(I18.get("medit_lyrics"));
@@ -11017,6 +11034,13 @@ public class YassActions implements DropTargetListener {
         c.getActionMap().put("version4", version4);
         version4.putValue(AbstractAction.ACCELERATOR_KEY,
                 KeyStroke.getKeyStroke(KeyEvent.VK_4, InputEvent.CTRL_MASK));
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.ALT_MASK),
+                "darkmode");
+        c.getActionMap().put("darkmode", darkmode);
+        darkmode.putValue(AbstractAction.ACCELERATOR_KEY,
+                KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.ALT_MASK));
+
     }
 
     /**

@@ -18,25 +18,11 @@
 
 package yass;
 
-import yass.renderer.YassNote;
-import yass.renderer.YassPlayerNote;
-import yass.renderer.YassSession;
-import yass.renderer.YassTrack;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
-import java.awt.image.BufferedImage;
-import java.awt.image.VolatileImage;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 import java.util.Enumeration;
-import java.util.Vector;
 
 /**
  * Description of the Class
@@ -71,6 +57,11 @@ public class YassSheetInfo extends JPanel {
             @Override
             public void rangeChanged(YassSheet source, int minH, int maxH, int minB, int maxB) {
                 setHeightRange(minH, maxH, minB, maxB);
+            }
+            @Override
+            public void propsChanged(YassSheet source) {
+                setBackground(sheet.darkMode ? sheet.hiGrayDarkMode : sheet.hiGray);
+                repaint();
             }
         });
         addMouseListener(new MouseAdapter() {
@@ -170,13 +161,13 @@ public class YassSheetInfo extends JPanel {
         int h = getHeight();
 
         // background
-        g2.setColor(sheet.disabledColor);
+        g2.setColor(sheet.darkMode ? sheet.hiGrayDarkMode : sheet.hiGray);
         g2.fillRect(0, 0, w, h);
 
         //  notes background
-        g2.setColor(sheet.dkGray);
+        g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
         g2.fillRect(x, y + h - hBar, w, hBar);
-        g2.setColor(sheet.dkGray);
+        g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
         g2.drawRect(x, y, w, h);
         g2.drawRect(x, y + h - hBar, w, hBar);
 
@@ -185,9 +176,9 @@ public class YassSheetInfo extends JPanel {
         double maxMs = sheet.getMaxVisibleMs();
         rx = (int) (w * (sheet.toBeat(minMs) - minBeat) / (double) rangeBeat);
         int rx2 = (int) (w * (sheet.toBeat(maxMs) - minBeat) / (double) rangeBeat);
-        g2.setColor(Color.white);
+        g2.setColor(sheet.darkMode ? sheet.whiteDarkMode : sheet.white);
         g2.fillRect(x + rx, y, rx2 - rx, h - hBar);
-        g2.setColor(Color.black);
+        g2.setColor(sheet.darkMode ? sheet.blackDarkMode : sheet.black);
         g2.drawRect(x + rx, y, rx2 - rx, h - hBar);
 
         // notes
@@ -196,7 +187,7 @@ public class YassSheetInfo extends JPanel {
         for (Enumeration<?> e = table.getRows(); e.hasMoreElements(); ) {
             r = (YassRow) e.nextElement();
             if (r.isPageBreak()) {
-                g2.setColor(sheet.dkGray);
+                g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
                 rx = (int) (w * (r.getBeatInt() - minBeat) / (double) rangeBeat);
                 rw = 1;
                 g2.fillRect(x + rx, y, rw, h);
@@ -225,7 +216,7 @@ public class YassSheetInfo extends JPanel {
                 g2.setColor(hiliteFill);
                 g2.fillRect(x + rx - 1, y + h - hBar + 1, rw + 2, hBar - 1);
             }
-            g2.setColor(sheet.dkGray);
+            g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
             g2.setStroke(sheet.medStroke);
             g2.drawLine(x + rx, y + h - hBar - ry, x + rx + rw, y + h - hBar - ry);
             if (rPrev != null && rPrev.isNote()) {
@@ -256,7 +247,7 @@ public class YassSheetInfo extends JPanel {
             int durationGolden = table.getDurationGolden();
             String goldenDiff = table.getGoldenDiff();
             boolean err = Math.abs(goldenPoints - idealGoldenPoints) > goldenVariance;
-            g2.setColor(err ? colorSet[5] : sheet.dkGray);
+            g2.setColor(err ? colorSet[5] : (sheet.darkMode ? sheet.hiGray : sheet.dkGray));
 
             String goldenString = MessageFormat.format(
                     I18.get("correct_golden_info"), "" + idealGoldenPoints,
@@ -276,15 +267,15 @@ public class YassSheetInfo extends JPanel {
 
             g2.drawString(goldenString, x + w + 10, y + h);
 
-            g2.setColor(sheet.dkGray);
+            g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
             g2.drawRect(x, y, w, h);
-            g2.setColor(err ? colorSet[5] : colorSet[0]);
+            g2.setColor(err ? colorSet[5] : (sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray));
             g2.fillRect(x + 1, y + 1, w - 1, h - 1);
             g2.setColor(colorSet[3]);
             g2.fillRect(x + w / 2 - xVar / 2, y + 1, xVar, h - 1);
-            g2.setColor(sheet.dkGray);
+            g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
             g2.drawRect(x + w / 2, y, 1, h);
-            g2.setColor(Color.black);
+            g2.setColor(sheet.darkMode ? sheet.blackDarkMode : sheet.black);
             g2.drawRect(x + xGold, y - 1, 1, h + 2);
         }
 
@@ -325,7 +316,7 @@ public class YassSheetInfo extends JPanel {
         x = w - Math.max(sw1,sw2) - 10;
         y = txtBar-3;
         if (x > 300) {
-            g2.setColor(sheet.dkGray);
+            g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
             g2.drawString(s, w-sw-10, y - 15);
             g2.drawString(s2, w-sw2-10, y);
         }

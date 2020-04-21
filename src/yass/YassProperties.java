@@ -278,6 +278,7 @@ public class YassProperties extends Properties {
         p.put("note-color-1", "#777777");
         p.put("note-color-0", "#dddddd");
         p.put("shade-notes", "true");
+        p.put("dark-mode", "false");
 
         p.put("color-7", "#cccccc");
         p.put("color-6", "#444444");
