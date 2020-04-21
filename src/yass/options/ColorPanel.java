@@ -33,6 +33,8 @@ public class ColorPanel extends OptionsPanel {
      */
     public void addRows() {
         setLabelWidth(140);
+        addSeparator(I18.get("options_design_dark_mode"));
+        addBoolean("", "dark-mode", I18.get("options_design_dark_mode_enabled"));
         addSeparator(I18.get("options_design_versions"));
         addColorSet(I18.get("options_design_versions_colors"), "color", 8, null);
         addSeparator(I18.get("options_design_notes"));

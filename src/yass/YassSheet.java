@@ -51,21 +51,26 @@ public class YassSheet extends JPanel implements Scrollable,
     public static final int COLORSET_COUNT = 7;
     private Color colorSet[] = new Color[COLORSET_COUNT];
 
-    public static final Color disabledColor = new JPanel().getBackground();
-    public static final  Color gray = new Color(.7f, .7f, .7f, .7f);
-    private static final  Color hiGray = new Color(.6f, .6f, .6f, 1f);
-    private static final Color hiGray2 = new Color(.9f, .9f, .9f, 1f);
-    private static final Color hiGray3 = new Color(.95f, .95f, .95f, 1f);
-    public static final Color oddpageColor = gray, evenpageColor = hiGray2;
-    public static final Color dkGray = new Color(.4f, .4f, .4f, .7f);
-    public static final  Color white = new Color(1f, 1f, 1f);
+    public static final  Color black = new Color(0,0,0);
+    public static final Color dkGray = new Color(102,102,102);
+    public static final  Color hiGray = new Color(153,153,153);
+    public static final Color hiGray2 = new Color(230,230,230);
+    public static final  Color white = new Color(255,255,255);
 
-    private static final Color shadow = UIManager.getColor("Button.shadow");
-    private static final Color highlight = UIManager.getColor("Button.highlight");
-    private static final Color playertextBG = new Color(1f, 1f, 1f, .9f);
-    private static final  Color playBlueHi = new Color(1f, 1f, 1f, 1f);
-    private static final  Color playBlue = new Color(.4f, .6f, .8f, 1f);
-    private static final Color darkShadow = gray;
+    public static final  Color blackDarkMode = new Color(200,200,200);
+    public static final Color dkGrayDarkMode = new Color(142,142,142);
+    public static final Color hiGrayDarkMode = new Color(100,100,100);
+    public static final Color hiGray2DarkMode = new Color(70,70,70);
+    public static final  Color whiteDarkMode = new Color(50,50,50);
+
+    public static final Color oddpageColor = hiGray, evenpageColor = hiGray2;
+
+    private static final Color arrow = new Color(238, 238, 238, 160);
+    private static final Color arrowDarkMode = new Color(200, 200, 200, 160);
+
+    private static final Color playertextBG = new Color(1f, 1f, 1f, .9f); // used once; deprecated
+    private static final  Color playBlueHi = new Color(1f, 1f, 1f, 1f);  // used once
+    private static final  Color playBlue = new Color(.4f, .6f, .8f, 1f); // used once
     private static final  Color blue = new Color(.4f, .6f, .8f, .7f);
     private static final  Color blueDrag = new Color(.8f, .9f, 1f, .5f);
     private static final  Color dkRed = new Color(.8f, .4f, .4f, .7f);
@@ -199,6 +204,7 @@ public class YassSheet extends JPanel implements Scrollable,
     private Vector<Cloneable> snapshot = null, snapshotRect = null;
     private YassActions actions = null;
     private boolean noshade = false;
+    boolean darkMode = false;
     private boolean autoTrim = false;
     private boolean temporaryZoomOff = false;
     private long lastMidiTime = -1;
@@ -285,26 +291,7 @@ public class YassSheet extends JPanel implements Scrollable,
 
         removeAll();
 
-        BufferedImage bi = new BufferedImage(4, 4, BufferedImage.TYPE_INT_RGB);
-        Graphics2D big = bi.createGraphics();
-        big.setColor(dkGray);
-        big.fillRect(0, 0, 4, 2);
-        big.setColor(hiGray2);
-        big.fillRect(0, 2, 4, 2);
-        Rectangle rec = new Rectangle(0, 0, 4, 4);
-        tex = new TexturePaint(bi, rec);
-
-        int w = 16;
-        int w2 = w / 2;
-        BufferedImage im = new BufferedImage(w, w, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g = im.createGraphics();
-        g.setColor(white);
-        g.fillRect(0, 0, w, w);
-        Color panelbg = new JPanel().getBackground();
-        g.setColor(panelbg);
-        g.fillRect(0, 0, w2, w2);
-        g.fillRect(w2, w2, w2, w2);
-        bgtex = new TexturePaint(im, new Rectangle(w, w));
+        setDarkMode(false); // creates TexturePaint
 
         Action keepfocus = new AbstractAction("Keep Focus") {
             private static final long serialVersionUID = 8988045810847674634L;
@@ -738,7 +725,6 @@ public class YassSheet extends JPanel implements Scrollable,
             }
 
             public void keyReleased(KeyEvent e) {
-                e.getKeyChar();
                 if (!e.isControlDown() && !e.isAltDown() && !e.isShiftDown()) {
                     hiliteAction = ACTION_NONE;
                     repaint();
@@ -1933,6 +1919,30 @@ public class YassSheet extends JPanel implements Scrollable,
         noshade = !onoff;
     }
 
+    public void setDarkMode(boolean onoff) {
+        darkMode = onoff;
+
+        BufferedImage bi = new BufferedImage(4, 4, BufferedImage.TYPE_INT_RGB);
+        Graphics2D big = bi.createGraphics();
+        big.setColor(darkMode ? dkGrayDarkMode : dkGray);
+        big.fillRect(0, 0, 4, 2);
+        big.setColor(darkMode ? hiGray2DarkMode : hiGray2);
+        big.fillRect(0, 2, 4, 2);
+        Rectangle rec = new Rectangle(0, 0, 4, 4);
+        tex = new TexturePaint(bi, rec);
+
+        int w = 16;
+        int w2 = w / 2;
+        BufferedImage im = new BufferedImage(w, w, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = im.createGraphics();
+        g.setColor(darkMode ? whiteDarkMode : white);
+        g.fillRect(0, 0, w, w);
+        g.setColor(darkMode ? hiGray2DarkMode : hiGray2);
+        g.fillRect(0, 0, w2, w2);
+        g.fillRect(w2, w2, w2, w2);
+        bgtex = new TexturePaint(im, new Rectangle(w, w));
+    }
+
     /**
      * Description of the Method
      *
@@ -2643,7 +2653,7 @@ public class YassSheet extends JPanel implements Scrollable,
             int dw = getWidth();
             int dh = getHeight();
 
-            g2d.setColor(disabledColor);
+            g.setColor(darkMode ? hiGrayDarkMode : hiGray);
             g2d.fillRect(0, 0, dw, dh);
         }
     }
@@ -2899,7 +2909,7 @@ public class YassSheet extends JPanel implements Scrollable,
                     // backVolImage = createVolatileImage(clip.width, clip.height);
                 case VolatileImage.IMAGE_RESTORED:
                     Graphics2D gc = backVolImage.createGraphics();
-                    gc.drawImage(image, 0, 0, Color.white, null);
+                    gc.drawImage(image, 0, 0, white, null);
                     gc.dispose();
                     break;
             }
@@ -2911,7 +2921,7 @@ public class YassSheet extends JPanel implements Scrollable,
             System.out.println("contents lost (" + i + ")");
         }
         g.drawImage(image, clip.x, clip.y, clip.x + clip.width, clip.y
-                + clip.height, 0, 0, clip.width, clip.height, Color.white, this);
+                + clip.height, 0, 0, clip.width, clip.height, white, this);
     }
 
     /**
@@ -2948,7 +2958,7 @@ public class YassSheet extends JPanel implements Scrollable,
                     // backVolImage = createVolatileImage(clip.width, clip.height);
                 case VolatileImage.IMAGE_RESTORED:
                     Graphics2D gc = backVolImage.createGraphics();
-                    gc.drawImage(image, 0, 0, Color.white, null);
+                    gc.drawImage(image, 0, 0, white, null);
                     gc.dispose();
                     break;
             }
@@ -2961,7 +2971,7 @@ public class YassSheet extends JPanel implements Scrollable,
             System.out.println("contents lost (" + i + ")");
         }
         g.drawImage(image, clip.x, clip.y, clip.x + clip.width, clip.y
-                + clip.height, 0, 0, clip.width, clip.height, Color.white, this);
+                + clip.height, 0, 0, clip.width, clip.height, white, this);
     }
 
     /**
@@ -2992,13 +3002,13 @@ public class YassSheet extends JPanel implements Scrollable,
             int h = (int) (w * 3 / 4.0);
             int yy = clip.height / 2 - h / 2;
 
-            g2.setColor(white);
+            g2.setColor(darkMode ? whiteDarkMode : white);
             g2.fillRect(clip.x, 0, clip.width, yy);
             g2.fillRect(clip.x, yy, clip.width, clip.height);
 
             g2.drawImage(img, clip.x, clip.y + yy, w, h, null);
         } else {
-            g2.setColor(white);
+            g2.setColor(darkMode ? whiteDarkMode : white);
             g2.fillRect(clip.x, clip.y, clip.width, clip.height);
 
             g2.setPaint(bgtex);
@@ -3033,7 +3043,7 @@ public class YassSheet extends JPanel implements Scrollable,
                             - RIGHT_BORDER, BOTTOM_BORDER + 16);
                 }
             }
-            g2.setColor(white);
+            g2.setColor(darkMode ? whiteDarkMode : white);
         }
     }
 
@@ -3067,7 +3077,7 @@ public class YassSheet extends JPanel implements Scrollable,
             lasty = y;
         }
 
-        g2.setColor(white);
+        g2.setColor(darkMode ? whiteDarkMode : white);
     }
 
     /**
@@ -3083,27 +3093,32 @@ public class YassSheet extends JPanel implements Scrollable,
         int w = LEFT_BORDER;
         int h = BOTTOM_BORDER - 16;
 
+        Color fg = darkMode ? hiGrayDarkMode : hiGray;
+        Color sh = darkMode ? hiGray2DarkMode : hiGray2;
+        Color wt = darkMode ? whiteDarkMode : white;
+        Color arr = darkMode ? arrowDarkMode : arrow;
+
         boolean isPressed = hiliteCue == PREV_PAGE_PRESSED;
-        g2.setColor(isPressed ? disabledColor : new Color(238, 238, 238, 160));
+        g2.setColor(isPressed ? fg : arr);
         g2.fillRect(x, y, w, h);
 
         if (isPressed) {
-            g2.setColor(shadow);
+            g2.setColor(sh);
             g2.drawRect(x, y, w - 1, h - 1);
         } else {
-            g2.setColor(disabledColor);
+            g2.setColor(fg);
             g2.drawLine(x, y, x, y + h - 1);
             g2.drawLine(x + 1, y, x + w - 2, y);
 
-            g2.setColor(highlight);
+            g2.setColor(wt);
             g2.drawLine(x + 1, y + 1, x + 1, y + h - 3);
             g2.drawLine(x + 2, y + 1, x + w - 3, y + 1);
 
-            g2.setColor(shadow);
+            g2.setColor(sh);
             g2.drawLine(x + 1, y + h - 2, x + w - 2, y + h - 2);
             g2.drawLine(x + w - 2, y + 1, x + w - 2, y + h - 3);
 
-            g2.setColor(darkShadow);
+            g2.setColor(fg);
             g2.drawLine(x, y + h - 1, x + w - 1, y + h - 1);
             g2.drawLine(x + w - 1, y + h - 1, x + w - 1, y);
         }
@@ -3111,7 +3126,7 @@ public class YassSheet extends JPanel implements Scrollable,
         boolean isEnabled = hiliteCue == PREV_PAGE
                 || hiliteCue == PREV_PAGE_PRESSED;
         YassUtils.paintTriangle(g2, x + 10, y + 14, w / 3, YassUtils.WEST,
-                isEnabled, darkShadow, shadow, highlight);
+                isEnabled, fg, sh, wt);
 
         x = clip.x + clip.width - RIGHT_BORDER;
         y = dim.height - BOTTOM_BORDER + 16;
@@ -3119,32 +3134,32 @@ public class YassSheet extends JPanel implements Scrollable,
         h = BOTTOM_BORDER - 16;
 
         isPressed = hiliteCue == NEXT_PAGE_PRESSED;
-        g2.setColor(isPressed ? disabledColor : new Color(238, 238, 238, 160));
+        g2.setColor(isPressed ? fg : arr);
         g2.fillRect(x, y, w, h);
         if (isPressed) {
-            g2.setColor(shadow);
+            g2.setColor(sh);
             g2.drawRect(x, y, w - 1, h - 1);
         } else {
-            g2.setColor(disabledColor);
+            g2.setColor(fg);
             g2.drawLine(x, y, x, y + h - 1);
             g2.drawLine(x + 1, y, x + w - 2, y);
 
-            g2.setColor(highlight);
+            g2.setColor(wt);
             g2.drawLine(x + 1, y + 1, x + 1, y + h - 3);
             g2.drawLine(x + 2, y + 1, x + w - 3, y + 1);
 
-            g2.setColor(shadow);
+            g2.setColor(sh);
             g2.drawLine(x + 1, y + h - 2, x + w - 2, y + h - 2);
             g2.drawLine(x + w - 2, y + 1, x + w - 2, y + h - 3);
 
-            g2.setColor(darkShadow);
+            g2.setColor(fg);
             g2.drawLine(x, y + h - 1, x + w - 1, y + h - 1);
             g2.drawLine(x + w - 1, y + h - 1, x + w - 1, y);
         }
 
         isEnabled = hiliteCue == NEXT_PAGE || hiliteCue == NEXT_PAGE_PRESSED;
         YassUtils.paintTriangle(g2, x + 10, y + 14, w / 3, YassUtils.EAST,
-                isEnabled, darkShadow, shadow, highlight);
+                isEnabled, fg, sh, wt);
     }
 
     /**
@@ -3173,34 +3188,39 @@ public class YassSheet extends JPanel implements Scrollable,
         int w = 48;
         int h = 64;
 
+        Color fg = darkMode ? hiGrayDarkMode : hiGray;
+        Color sh = darkMode ? hiGray2DarkMode : hiGray2;
+        Color wt = darkMode ? whiteDarkMode : white;
+        Color arr = darkMode ? arrowDarkMode : arrow;
+
         boolean isPressed = hiliteCue == PLAY_NOTE_PRESSED;
-        g2.setColor(isPressed ? disabledColor : new Color(238, 238, 238, 160));
+        g2.setColor(isPressed ? fg : arr);
         g2.fillRect(x, y, w, h);
 
         if (isPressed) {
-            g2.setColor(shadow);
+            g2.setColor(sh);
             g2.drawRect(x, y, w - 1, h - 1);
         } else {
-            g2.setColor(disabledColor);
+            g2.setColor(fg);
             g2.drawLine(x, y, x, y + h - 1);
             g2.drawLine(x + 1, y, x + w - 2, y);
 
-            g2.setColor(highlight);
+            g2.setColor(wt);
             g2.drawLine(x + 1, y + 1, x + 1, y + h - 3);
             g2.drawLine(x + 2, y + 1, x + w - 3, y + 1);
 
-            g2.setColor(shadow);
+            g2.setColor(sh);
             g2.drawLine(x + 1, y + h - 2, x + w - 2, y + h - 2);
             g2.drawLine(x + w - 2, y + 1, x + w - 2, y + h - 3);
 
-            g2.setColor(darkShadow);
+            g2.setColor(fg);
             g2.drawLine(x, y + h - 1, x + w - 1, y + h - 1);
             g2.drawLine(x + w - 1, y + h - 1, x + w - 1, y);
         }
         boolean isEnabled = hiliteCue == PLAY_NOTE_PRESSED
                 || hiliteCue == PLAY_NOTE;
         YassUtils.paintTriangle(g2, x + 16, y + 24, 18, YassUtils.EAST,
-                isEnabled, darkShadow, shadow, highlight);
+                isEnabled, fg, sh, wt);
 
         x = playerPos - clip.x - 32;
         y = TOP_PLAYER_BUTTONS;
@@ -3208,34 +3228,34 @@ public class YassSheet extends JPanel implements Scrollable,
         h = 64;
 
         isPressed = hiliteCue == PLAY_PAGE_PRESSED;
-        g2.setColor(isPressed ? disabledColor : new Color(238, 238, 238, 160));
+        g2.setColor(isPressed ? fg : arr);
         g2.fillRect(x, y, w, h);
 
         if (isPressed) {
-            g2.setColor(shadow);
+            g2.setColor(sh);
             g2.drawRect(x, y, w - 1, h - 1);
         } else {
-            g2.setColor(disabledColor);
+            g2.setColor(fg);
             g2.drawLine(x, y, x, y + h - 1);
             g2.drawLine(x + 1, y, x + w - 2, y);
 
-            g2.setColor(highlight);
+            g2.setColor(wt);
             g2.drawLine(x + 1, y + 1, x + 1, y + h - 3);
             g2.drawLine(x + 2, y + 1, x + w - 3, y + 1);
 
-            g2.setColor(shadow);
+            g2.setColor(sh);
             g2.drawLine(x + 1, y + h - 2, x + w - 2, y + h - 2);
             g2.drawLine(x + w - 2, y + 1, x + w - 2, y + h - 3);
 
-            g2.setColor(darkShadow);
+            g2.setColor(fg);
             g2.drawLine(x, y + h - 1, x + w - 1, y + h - 1);
             g2.drawLine(x + w - 1, y + h - 1, x + w - 1, y);
         }
         isEnabled = hiliteCue == PLAY_PAGE_PRESSED || hiliteCue == PLAY_PAGE;
-        g2.setColor(isEnabled ? shadow : darkShadow);
+        g2.setColor(isEnabled ? sh : fg);
         g2.fillRect(x + 7, y + 21, 3, 23);
         YassUtils.paintTriangle(g2, x + 12, y + 27, 12, YassUtils.EAST,
-                isEnabled, darkShadow, shadow, highlight);
+                isEnabled, fg, sh, wt);
     }
 
     /**
@@ -3248,7 +3268,7 @@ public class YassSheet extends JPanel implements Scrollable,
         if (paintHeights) {
             off += heightBoxWidth;
         }
-        g2.setColor(disabledColor);
+        g2.setColor(darkMode ? hiGrayDarkMode : hiGray);
         g2.fillRect((int) (beatgap * wSize + off), 0, dim.width, TOP_BORDER);
 
         int multiplier = 1;
@@ -3317,7 +3337,7 @@ public class YassSheet extends JPanel implements Scrollable,
         }
 
         g2.setStroke(thinStroke);
-        g2.setColor(hiGray);
+        g2.setColor(darkMode ? hiGrayDarkMode : hiGray);
         double miny = dim.height - BOTTOM_BORDER;
         double maxy;
         if (pan) {
@@ -3362,7 +3382,7 @@ public class YassSheet extends JPanel implements Scrollable,
                 g2.setStroke(j % 4 == 0 ? (showBackground || showVideo) ? thickStroke
                         : stdStroke
                         : thinStroke);
-                g2.setColor(j % 4 == 0 ? hiGray : hiGray2);
+                g2.setColor(j % 4 == 0 ? (darkMode ? hiGrayDarkMode : hiGray) : (darkMode ? hiGray2DarkMode : hiGray2));
                 g2.draw(line);
             }
             i++;
@@ -3376,7 +3396,7 @@ public class YassSheet extends JPanel implements Scrollable,
             line.x2 = line.x1 + 4 * multiplier * wSize;
             line.y1 = line.y2 = TOP_LINE - 10;
             g2.setStroke(thickStroke);
-            g2.setColor(dkGray);
+            g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
             g2.draw(line);
             String bstr = "B";
             if (multiplier > 1) {
@@ -3402,7 +3422,7 @@ public class YassSheet extends JPanel implements Scrollable,
         Line2D.Double line = new Line2D.Double(getLeftX() - LEFT_BORDER, 0,
                 clip.x + clip.width, 0);
         if (pan) {
-            g2.setColor(hiGray2);
+            g2.setColor(darkMode ? hiGray2DarkMode : hiGray2);
             g2.setStroke(stdStroke);
             for (int h = 0; h < NORM_HEIGHT; h += 2) {
                 line.y1 = line.y2 = dim.height - BOTTOM_BORDER - h * hSize;
@@ -3436,13 +3456,13 @@ public class YassSheet extends JPanel implements Scrollable,
                 }
                 line.y1 = line.y2 = dim.height - BOTTOM_BORDER - (h - minHeight) * hSize;
                 g2.setStroke(h % 12 == 0 ? stdStroke : thinStroke);
-                g2.setColor(h % 12 == 0 ? hiGray : hiGray2);
+                g2.setColor(h % 12 == 0 ? (darkMode ? hiGrayDarkMode : hiGray) : (darkMode ? hiGray2DarkMode : hiGray2));
                 g2.draw(line);
             }
 
             // scale numbers
             if (paintHeights) {
-                g2.setColor(hiGray);
+                g2.setColor(darkMode ? hiGrayDarkMode : hiGray);
                 int fs = (int) Math.min(big.length * hSize / 8, big.length - 1);
                 g2.setFont(big[fs]);
                 int fh = g2.getFontMetrics().getAscent();
@@ -3502,7 +3522,7 @@ public class YassSheet extends JPanel implements Scrollable,
         int hh = clip.height - TOP_LINE + 10 + -BOTTOM_BORDER - 1;
 
         g2.setStroke(thinStroke);
-        g2.setColor(disabledColor);
+        g2.setColor(darkMode ? hiGrayDarkMode : hiGray);
         g2.fillRect(x, y, w, hh);
 
         g2.setColor(Color.gray);
@@ -3555,7 +3575,7 @@ public class YassSheet extends JPanel implements Scrollable,
                         (float) (line.y1));
             }
             if (hiliteHeight < 200) {
-                g2.setColor(gray);
+                g2.setColor(hiGray);
                 g2.fillRect(clip.x + heightBoxWidth, (int) (dim.height
                         - BOTTOM_BORDER - (hiliteHeight - hhPageMin + 1)
                         * hSize), clip.width, (int) (2 * hSize));
@@ -3596,7 +3616,7 @@ public class YassSheet extends JPanel implements Scrollable,
                         (float) (line.y1));
             }
             if (hiliteHeight < 200) {
-                g2.setColor(gray);
+                g2.setColor(hiGray);
                 g2.fillRect(clip.x + heightBoxWidth, (int) (dim.height
                         - BOTTOM_BORDER - (hiliteHeight - minHeight + 1)
                         * hSize), clip.width, (int) (2 * hSize));
@@ -3656,10 +3676,10 @@ public class YassSheet extends JPanel implements Scrollable,
                 String s = YassUtils.commaTime(d) + "s";
                 int sw = g2.getFontMetrics().stringWidth(s);
 
-                g2.setColor(disabledColor);
+                g2.setColor(darkMode ? hiGrayDarkMode : hiGray);
                 g2.fillRect(x + xw / 2 - sw / 2 - 5, 11, sw + 10, 9);
 
-                g2.setColor(dkGray);
+                g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
                 g2.drawString(s, x + xw / 2 - sw / 2, 18);
             }
         }
@@ -3694,9 +3714,9 @@ public class YassSheet extends JPanel implements Scrollable,
             String s = YassUtils.commaTime(d) + "s";
             g2.setFont(smallFont);
             int sw = g2.getFontMetrics().stringWidth(s);
-            g2.setColor(disabledColor);
+            g2.setColor(darkMode ? hiGrayDarkMode : hiGray);
             g2.fillRect(playerPos - clip.x - sw / 2 - 5, 11, sw + 10, 9);
-            g2.setColor(dkGray);
+            g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
             g2.drawString(s, playerPos - clip.x - sw / 2, 18);
         }
 
@@ -3901,7 +3921,7 @@ public class YassSheet extends JPanel implements Scrollable,
                 } else {
                     if (r.isType(YassRectangle.GAP)) {
                         if (!live) {
-                            g2.setColor(dkGray);
+                            g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
                             Rectangle2D.Double rec = new Rectangle2D.Double(
                                     r.x, r.y, 6, r.height);
                             g2.fill(rec);
@@ -3912,7 +3932,7 @@ public class YassSheet extends JPanel implements Scrollable,
                     }
                     if (r.isType(YassRectangle.START)) {
                         if (!live) {
-                            g2.setColor(dkGray);
+                            g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
                             Rectangle2D.Double rec = new Rectangle2D.Double(
                                     r.x, r.y, 2, r.height);
                             g2.fill(rec);
@@ -3926,7 +3946,7 @@ public class YassSheet extends JPanel implements Scrollable,
                     }
                     if (r.isType(YassRectangle.END)) {
                         if (!live) {
-                            g2.setColor(dkGray);
+                            g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
                             Rectangle2D.Double rec = new Rectangle2D.Double(
                                     r.x, r.y, 2, r.height);
                             g2.fill(rec);
@@ -3950,7 +3970,7 @@ public class YassSheet extends JPanel implements Scrollable,
 
                             int midx = (int) (r.x + r.width / 2);
                             Font oldFont = g2.getFont();
-                            g2.setColor(dkGray);
+                            g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
                             g2.setFont(big[16]);
                             FontMetrics metrics = g2.getFontMetrics();
                             int strw = metrics.stringWidth(lenstr);
@@ -3976,7 +3996,7 @@ public class YassSheet extends JPanel implements Scrollable,
 
                             int midx = (int) (r.x + r.width / 2);
                             Font oldFont = g2.getFont();
-                            g2.setColor(dkGray);
+                            g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
                             g2.setFont(big[16]);
                             FontMetrics metrics = g2.getFontMetrics();
                             int strw = metrics.stringWidth(hstr);
@@ -4119,7 +4139,7 @@ public class YassSheet extends JPanel implements Scrollable,
                                 g2.setClip(clip);
 
                                 if (wSize / 2 > 5) {
-                                    g2.setColor(Color.white);
+                                    g2.setColor(white);
                                     int hh = (int) (r.y - hSize / 2);
                                     g2.drawLine((int) (r.x + 3), hh, (int) (r.x
                                             + wSize / 2 - 4), hh);
@@ -4187,7 +4207,7 @@ public class YassSheet extends JPanel implements Scrollable,
                             g2.draw(r);
                         } else if (r.width > 1.4) {
                             Color c = table.isRowSelected(i) ? colorSet[2]
-                                    : dkGray;
+                                    : (darkMode ? dkGrayDarkMode : dkGray);
                             g2.setColor(c);
 
                             smallRect.x1 = r.x;
@@ -4200,7 +4220,7 @@ public class YassSheet extends JPanel implements Scrollable,
                             g2.draw(smallRect);
                         } else {
                             Color c = table.isRowSelected(i) ? colorSet[2]
-                                    : dkGray;
+                                    : (darkMode ? dkGrayDarkMode : dkGray);
                             g2.setColor(c);
 
                             smallRect.x1 = r.x;
@@ -4225,7 +4245,7 @@ public class YassSheet extends JPanel implements Scrollable,
     public void paintPlainRectangles(Graphics2D g2) {
         YassRectangle r;
         new YassRectangle();
-        Color borderCol = dkGray;
+        Color borderCol = darkMode ? dkGrayDarkMode : dkGray;
 
         int cx = clip.x;
         int cw = clip.width;
@@ -4471,7 +4491,7 @@ public class YassSheet extends JPanel implements Scrollable,
 
             if (info && r.isType(YassRectangle.FIRST)) {
                 String s = pn + "";
-                g2.setColor(dkGray);
+                g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
                 g2.setFont(big[18]);
                 // g2.drawString(s, (float) (r.x + offx + 5), 18);
                 g2.drawString(s, (float) (r.x + offx + 5), clip.height
@@ -4531,7 +4551,7 @@ public class YassSheet extends JPanel implements Scrollable,
 
             if (strw <= r.width) {
                 if (off == 0) {
-                    g2.setColor(white);
+                    g2.setColor(darkMode ? whiteDarkMode : white);
                 }
                 g2.drawString(str, sx, sh);
             } else {
@@ -4565,7 +4585,7 @@ public class YassSheet extends JPanel implements Scrollable,
                     g2.translate(sx, sh);
                     g2.rotate(-Math.PI / 2);
 
-                    g2.setColor(dkGray);
+                    g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
                     g2.drawString(ostr, 0, 0);
 
                     g2.rotate(Math.PI / 2);
@@ -4619,7 +4639,7 @@ public class YassSheet extends JPanel implements Scrollable,
         if (waitms > 3000) {
             String s = sec + "";
             g2.setFont(big[24]);
-            g2.setColor(Color.white);
+            g2.setColor(white);
             FontMetrics metrics = g2.getFontMetrics();
             int strw = metrics.stringWidth(s);
             float sx = leftx + 30 - strw / 2;
@@ -4779,7 +4799,7 @@ public class YassSheet extends JPanel implements Scrollable,
             str = str.replace(YassRow.SPACE, ' ');
 
             g2.setFont(big[24]);
-            g2.setColor(colorSet[1]);
+            g2.setColor(darkMode ? colorSet[0] : colorSet[1]);
             metrics = g2.getFontMetrics();
             strw = metrics.stringWidth(str);
             strh = metrics.getHeight();
@@ -4791,7 +4811,7 @@ public class YassSheet extends JPanel implements Scrollable,
                 if (playerPos >= r.x && playerPos < r.x + r.width) {
                     int shade = (int) ((big.length - 1) - (big.length - 24)
                             * (playerPos - r.x) / r.width);
-                    g2.setColor(colorSet[2]);
+                    g2.setColor(darkMode ? colorSet[0] : colorSet[1]);
                     g2.setFont(big[shade]);
                     metrics = g2.getFontMetrics();
                     int strw2 = metrics.stringWidth(str);
@@ -4801,7 +4821,7 @@ public class YassSheet extends JPanel implements Scrollable,
                 }
             } else {
                 if (playerPos >= r.x - 2 && playerPos < r.x + r.width) {
-                    g2.setColor(colorSet[2]);
+                    g2.setColor(darkMode ? colorSet[2] : colorSet[2]);
                 }
             }
 
@@ -5948,7 +5968,7 @@ public class YassSheet extends JPanel implements Scrollable,
                     int hh = (int) (w * 3 / 4.0);
                     int yy = h / 2 - hh / 2;
 
-                    pgb.setColor(Color.white);
+                    pgb.setColor(white);
                     pgb.fillRect(0, 0, w, yy);
                     pgb.fillRect(0, yy, w, h);
                     pgb.drawImage(img, 0, yy, w, hh, null);
@@ -5967,7 +5987,7 @@ public class YassSheet extends JPanel implements Scrollable,
                     int hh = (int) (w * 3 / 4.0);
                     int yy = h / 2 - hh / 2;
 
-                    pgb.setColor(Color.white);
+                    pgb.setColor(white);
                     pgb.fillRect(0, 0, w, yy);
                     pgb.fillRect(0, yy, w, h);
                     pgb.drawImage(img, 0, yy, w, hh, null);
@@ -6079,6 +6099,9 @@ public class YassSheet extends JPanel implements Scrollable,
     }
     public void fireRangeChanged(int minH, int maxH, int minB, int maxB) {
         for (YassSheetListener listener : listeners) listener.rangeChanged(this, minH, maxH, minB, maxB);
+    }
+    public void firePropsChanged() {
+        for (YassSheetListener listener : listeners) listener.propsChanged(this);
     }
 
     public void stopPlaying() {

@@ -449,6 +449,7 @@ public class YassTable extends JTable {
                             // zoomPage();
                             // updatePlayerPosition();
                             sheet.repaint();
+                            sheet.firePropsChanged();
                         }
                     }
                 }

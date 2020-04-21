@@ -21,4 +21,5 @@ package yass;
 public interface YassSheetListener {
     void posChanged(YassSheet source, double posMs);
     void rangeChanged(YassSheet source, int minHeight, int maxHeight, int minBeat, int maxBeat);
+    void propsChanged(YassSheet source);
 }

@@ -561,11 +561,11 @@ public class YassMIDIConverter implements DropTargetListener {
         }
         sheet.setColors(ncol);
 
-        boolean shade = prop.get("shade-notes").equals("true");
         sheet.showArrows(false);
         sheet.showPlayerButtons(false);
         sheet.showText(false);
         sheet.shadeNotes(false);
+        sheet.setDarkMode(false);
         sheet.setVersionTextPainted(false);
         sheet.setPaintHeights(false);
         sheet.setPreferredSize(new Dimension(300, 400));
