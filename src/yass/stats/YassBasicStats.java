@@ -29,12 +29,14 @@ import yass.YassTable;
  */
 public class YassBasicStats extends YassStats {
 
-    private String[] ids = new String[]{"pages", "words", "notes", "golden", "freestyle", "notesperpage"};
+    private String[] ids = new String[]{"pages", "words", "notes", "golden", "rapgolden", "rap", "freestyle", "notesperpage"};
 
     private int pagesIndex = -1;
     private int wordsIndex = -1;
     private int notesIndex = -1;
     private int goldenIndex = -1;
+    private int rapgoldenIndex = -1;
+    private int rapIndex = -1;
     private int freestyleIndex = -1;
     private int nppIndex = -1;
 
@@ -60,10 +62,14 @@ public class YassBasicStats extends YassStats {
         int words = 0;
         int notes = 0;
         int golden = 0;
+        int rapgolden = 0;
+        int rap = 0;
         int freestyle = 0;
 
         int notelen = 0;
         int goldenlen = 0;
+        int rapgoldenlen = 0;
+        int raplen = 0;
         int freelen = 0;
 
         int i = 0;
@@ -88,7 +94,15 @@ public class YassBasicStats extends YassStats {
                 goldenlen += r.getLengthInt();
                 golden++;
             }
-            if (r.isFreeStyle()) {
+            else if (r.isRapGolden()) {
+                rapgoldenlen += r.getLengthInt();
+                rapgolden++;
+            }
+            else if (r.isRap()) {
+                raplen += r.getLengthInt();
+                rap++;
+            }
+            else if (r.isFreeStyle()) {
                 freelen += r.getLengthInt();
                 freestyle++;
             }
@@ -99,6 +113,8 @@ public class YassBasicStats extends YassStats {
         float npp = notes / (float) pages;
 
         float goldenp = notes > 0 ? 100 * goldenlen / (float) notelen : 0;
+        float rapgoldenp = notes > 0 ? 100 * rapgoldenlen / (float) notelen : 0;
+        float rapp = notes > 0 ? 100 * raplen / (float) notelen : 0;
         float freestylep = notes > 0 ? 100 * freelen / (float) notelen : 0;
 
         if (pagesIndex < 0) {
@@ -106,6 +122,8 @@ public class YassBasicStats extends YassStats {
             wordsIndex = indexOf("words");
             notesIndex = indexOf("notes");
             goldenIndex = indexOf("golden");
+            rapgoldenIndex = indexOf("rapgolden");
+            rapIndex = indexOf("rap");
             freestyleIndex = indexOf("freestyle");
             nppIndex = indexOf("notesperpage");
         }
@@ -113,6 +131,8 @@ public class YassBasicStats extends YassStats {
         s.setStatsAt(wordsIndex, words);
         s.setStatsAt(notesIndex, notes);
         s.setStatsAt(goldenIndex, goldenp);
+        s.setStatsAt(rapgoldenIndex, rapgoldenp);
+        s.setStatsAt(rapIndex, rapp);
         s.setStatsAt(freestyleIndex, freestylep);
         s.setStatsAt(nppIndex, npp);
     }
@@ -157,6 +177,14 @@ public class YassBasicStats extends YassStats {
         }
         if (rule.equals("golden")) {
             float val = s.getStatsAt(goldenIndex);
+            hit = val >= start && (val <= end || end < 0);
+        }
+        if (rule.equals("rapgolden")) {
+            float val = s.getStatsAt(rapgoldenIndex);
+            hit = val >= start && (val <= end || end < 0);
+        }
+        if (rule.equals("rap")) {
+            float val = s.getStatsAt(rapIndex);
             hit = val >= start && (val <= end || end < 0);
         }
         if (rule.equals("freestyle")) {

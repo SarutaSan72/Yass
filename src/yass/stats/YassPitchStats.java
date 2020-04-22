@@ -75,7 +75,7 @@ public class YassPitchStats extends YassStats {
 
         while (i <= n) {
             YassRow r = t.getRowAt(i);
-            if (r.isFreeStyle()) {
+            if (r.isFreeStyle() || r.isRap() || r.isRapGolden()) {
                 i++;
                 continue;
             }
