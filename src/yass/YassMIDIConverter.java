@@ -26,6 +26,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.dnd.*;
 import java.awt.event.*;
 import java.io.*;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -849,8 +850,7 @@ public class YassMIDIConverter implements DropTargetListener {
 
         try {
             System.out.println("Midi Converter: Loading Soundbank...");
-            Soundbank s = MidiSystem.getSoundbank(getClass().getResource(
-                    "/yass/AJH_Piano.sf2"));
+            Soundbank s = MidiSystem.getSoundbank(getClass().getResource("/yass/resources/midi/AJH_Piano.sf2"));
             Instrument[] instr = s.getInstruments();
 
             sequencer = MidiSystem.getSequencer();
