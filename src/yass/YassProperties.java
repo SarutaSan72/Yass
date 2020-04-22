@@ -266,7 +266,7 @@ public class YassProperties extends Properties {
         //editor
         p.put("editor-layout", "East");
         p.put("editor-layouts", "East|West");
-        p.put("lyrics-width", "400");
+        p.put("lyrics-width", "450");
         p.put("lyrics-min-height", "120");
         p.put("lyrics-font-size", "14");
 
