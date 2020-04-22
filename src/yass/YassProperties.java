@@ -51,52 +51,13 @@ public class YassProperties extends Properties {
         String v = getProperty("yass-version");
         boolean old = v == null;
         if (!old) {
-            old = v.startsWith("0.8");
+            old = v.startsWith("0.");
         }
         if (!old) {
-            old = v.startsWith("0.9.5");
+            old = v.startsWith("1.");
         }
         if (!old) {
-            old = v.startsWith("0.9.6");
-        }
-        if (!old) {
-            old = v.startsWith("0.9.7");
-        }
-        if (!old) {
-            old = v.startsWith("0.9.8");
-        }
-        if (!old) {
-            old = v.startsWith("0.9.9");
-        }
-        if (!old) {
-            old = v.startsWith("1.0.1");
-        }
-        if (!old) {
-            old = v.startsWith("1.1");
-        }
-        if (!old) {
-            old = v.startsWith("1.2");
-        }
-        if (!old) {
-            old = v.startsWith("1.3");
-        }
-        if (!old) {
-            old = v.startsWith("1.4");
-        }
-        if (!old) {
-            old = v.startsWith("1.5");
-        }
-        if (!old) {
-            old = v.startsWith("1.6");
-        }
-        if (!old) {
-            old = v.equals("1.7");
-        }
-        if (!old) {
-            old = v.startsWith("1.8");
-        }
-        if (!old) {
-            old = v.equals("1.9");
+            old = v.startsWith("2.0");
         }
         return old;
     }
@@ -237,7 +198,7 @@ public class YassProperties extends Properties {
 
         // errors
         p.put("valid-tags", "TITLE ARTIST LANGUAGE EDITION <br> GENRE ALBUM YEAR CREATOR ID <br> MP3 COVER BACKGROUND VIDEO <br> VIDEOGAP START END PLAYERS <br> RELATIVE BPM GAP <br> LENGTH PREVIEWSTART MEDLEYSTARTBEAT MEDLEYENDBEAT");
-        p.put("valid-lines", "#:*F-EP");
+        p.put("valid-lines", "#:*FRG-EP");
         p.put("font-file", "/fonts/Font1.dat");
         p.put("max-points", "7500");
         p.put("max-golden", "1250");

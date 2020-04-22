@@ -856,6 +856,14 @@ public class YassRow implements Cloneable, Comparable<Object> {
         return s[0].equals("F");
     }
 
+    public boolean isRap() {
+        return s[0].equals("R");
+    }
+
+    public boolean isRapGolden() {
+        return s[0].equals("G");
+    }
+
     /**
      * Gets the multiplayer attribute of the YassRow object
      *
@@ -871,7 +879,7 @@ public class YassRow implements Cloneable, Comparable<Object> {
      * @return The note value
      */
     public boolean isNote() {
-        return isBeat() || isGolden() || isFreeStyle();
+        return isBeat() || isGolden() || isFreeStyle() || isRap() || isRapGolden();
     }
 
     /**

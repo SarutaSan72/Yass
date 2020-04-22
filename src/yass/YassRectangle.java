@@ -71,6 +71,10 @@ public class YassRectangle extends RoundRectangle2D.Double implements Cloneable 
      * Description of the Field
      */
     public final static int UNDEFINED = 512;
+
+    public final static int RAP = 1024;
+    public final static int RAPGOLDEN = 2048;
+
     private static final long serialVersionUID = -4749465399293425641L;
     int pn = -1;
     private int pageMin = 0;

@@ -165,6 +165,10 @@ public class YassTable extends JTable {
                             r.setType("F");
                         } else if (r.isFreeStyle()) {
                             r.setType(":");
+                        } else if (r.isRap()) {
+                            r.setType("R");
+                        } else if (r.isRapGolden()) {
+                            r.setType("G");
                         } else {
                             r.setType("*");
                         }
@@ -5996,7 +6000,7 @@ public class YassTable extends JTable {
             TableCellEditor {
         private static final long serialVersionUID = -5422573906886420055L;
         Dimension d = new Dimension(100, 100);
-        JComboBox<?> ed = new JComboBox<Object>(new String[]{":", "*", "F"}) {
+        JComboBox<?> ed = new JComboBox<Object>(new String[]{":", "*", "F", "R", "G"}) {
             private static final long serialVersionUID = 1L;
 
             public Dimension getPopupSize() {
@@ -6024,6 +6028,10 @@ public class YassTable extends JTable {
                 ed.setSelectedIndex(1);
             } else if (v.equals("F")) {
                 ed.setSelectedIndex(2);
+            } else if (v.equals("R")) {
+                ed.setSelectedIndex(3);
+            } else if (v.equals("G")) {
+                ed.setSelectedIndex(4);
             } else {
                 ed.setSelectedIndex(0);
             }

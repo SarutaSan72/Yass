@@ -111,7 +111,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 	private YassSheet sheet;
 
 	private Style notLongStyle, longStyle, notSelectStyle, selectStyle,
-			goldenStyle, freeStyle, notGoldenOrFreeStyle;
+			goldenStyle, freeStyle, rapStyle, rapgoldenStyle, notGoldenOrFreeStyle;
 
 	private Color red = new Color(255, 240, 240);
 	private Color disabledColor = new JPanel().getBackground();
@@ -291,6 +291,11 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 		StyleConstants.setBold(goldenStyle, true);
 		freeStyle = sc.addStyle(null, null);
 		StyleConstants.setItalic(freeStyle, true);
+		rapStyle = sc.addStyle(null, null);
+		StyleConstants.setFontFamily(rapStyle, "Monospaced");
+		rapgoldenStyle = sc.addStyle(null, null);
+		StyleConstants.setFontFamily(rapgoldenStyle, "Monospaced");
+		StyleConstants.setBold(rapgoldenStyle, true);
 		notGoldenOrFreeStyle = sc.addStyle(null, null);
 		StyleConstants.setBold(notGoldenOrFreeStyle, false);
 		StyleConstants.setItalic(notGoldenOrFreeStyle, false);
@@ -1151,6 +1156,12 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 					} else if (r.isFreeStyle()) {
 						lyricsArea.getStyledDocument().setCharacterAttributes(
 								ij[0], ij[1] - ij[0], freeStyle, false);
+					} else if (r.isRap()) {
+						lyricsArea.getStyledDocument().setCharacterAttributes(
+								ij[0], ij[1] - ij[0], rapStyle, false);
+					} else if (r.isRapGolden()) {
+						lyricsArea.getStyledDocument().setCharacterAttributes(
+								ij[0], ij[1] - ij[0], rapgoldenStyle, false);
 					}
 					ij = nextSyllable(ij[1] + 1);
 					k++;

@@ -123,6 +123,8 @@ public class YassSheet extends JPanel implements Scrollable,
     private Font fontv = new Font("SansSerif", Font.PLAIN, fs);
     private Font fonti = new Font("SansSerif", Font.ITALIC, fs);
     private Font fontb = new Font("SansSerif", Font.BOLD, fs + 2);
+    private Font fontt = new Font("MonoSpaced", Font.PLAIN, fs);
+    private Font fonttb = new Font("MonoSpaced", Font.BOLD, fs + 2);
     private Font big[] = new Font[]{new Font("SansSerif", Font.BOLD, fs - 8),
             new Font("SansSerif", Font.BOLD, fs - 8),
             new Font("SansSerif", Font.BOLD, fs - 8),
@@ -3878,6 +3880,10 @@ public class YassSheet extends JPanel implements Scrollable,
                         hiliteFill = colorSet[3];
                     } else if (r.isType(YassRectangle.FREESTYLE)) {
                         hiliteFill = colorSet[4];
+                    } else if (r.isType(YassRectangle.RAP)) {
+                        hiliteFill = colorSet[0];
+                    } else if (r.isType(YassRectangle.RAPGOLDEN)) {
+                        hiliteFill = colorSet[3];
                     } else if (r.isType(YassRectangle.WRONG)) {
                         hiliteFill = colorSet[5];
                     }
@@ -4275,6 +4281,10 @@ public class YassSheet extends JPanel implements Scrollable,
                 hiliteFill = colorSet[3];
             } else if (r.isType(YassRectangle.FREESTYLE)) {
                 hiliteFill = colorSet[4];
+            } else if (r.isType(YassRectangle.RAP)) {
+                hiliteFill = colorSet[0];
+            } else if (r.isType(YassRectangle.RAPGOLDEN)) {
+                hiliteFill = colorSet[3];
             } else if (r.isType(YassRectangle.WRONG)) {
                 hiliteFill = colorSet[5];
             }
@@ -4520,6 +4530,10 @@ public class YassSheet extends JPanel implements Scrollable,
                     g2.setFont(fonti);
                 } else if (r.isType(YassRectangle.GOLDEN)) {
                     g2.setFont(fontb);
+                } else if (r.isType(YassRectangle.RAP)) {
+                    g2.setFont(fontt);
+                } else if (r.isType(YassRectangle.RAPGOLDEN)) {
+                    g2.setFont(fonttb);
                 } else if (table != t) {
                     g2.setFont(fontv);
                 } else {
@@ -5046,6 +5060,10 @@ public class YassSheet extends JPanel implements Scrollable,
                 rr.setType(YassRectangle.GOLDEN);
             } else if (r.isFreeStyle()) {
                 rr.setType(YassRectangle.FREESTYLE);
+            } else if (r.isRap()) {
+                rr.setType(YassRectangle.RAP);
+            } else if (r.isRapGolden()) {
+                rr.setType(YassRectangle.RAPGOLDEN);
             } else {
                 rr.resetType();
             }

@@ -60,7 +60,7 @@ public class YassActions implements DropTargetListener {
     /**
      * Description of the Field
      */
-    public final static String VERSION = "2.0.1";
+    public final static String VERSION = "2.1.0";
     /**
      * Description of the Field
      */
@@ -2211,6 +2211,30 @@ public class YassActions implements DropTargetListener {
             table.setType("F");
         }
     };
+    Action rap = new AbstractAction(I18.get("medit_rap")) {
+        private static final long serialVersionUID = 1L;
+
+        public void actionPerformed(ActionEvent e) {
+            interruptPlay();
+            if (lyrics.isEditable() || songList.isEditing()
+                    || isFilterEditing()) {
+                return;
+            }
+            table.setType("R");
+        }
+    };
+    Action rapgolden = new AbstractAction(I18.get("medit_rapgolden")) {
+        private static final long serialVersionUID = 1L;
+
+        public void actionPerformed(ActionEvent e) {
+            interruptPlay();
+            if (lyrics.isEditable() || songList.isEditing()
+                    || isFilterEditing()) {
+                return;
+            }
+            table.setType("G");
+        }
+    };
     Action darkmode = new AbstractAction(I18.get("medit_darkmode")) {
         private static final long serialVersionUID = 1L;
 
@@ -4351,6 +4375,8 @@ public class YassActions implements DropTargetListener {
         icons.put("insertnote24Icon",
                 new ImageIcon(getClass().getResource("/yass/resources/img/InsertNote24.gif")));
 
+        insertNote.putValue(AbstractAction.SMALL_ICON, getIcon("insertnote16Icon"));
+
         icons.put("correctpagebreak24Icon", new ImageIcon(getClass()
                 .getResource("/yass/resources/img/CorrectPageBreak24.gif")));
         icons.put("correctfilenames24Icon", new ImageIcon(getClass()
@@ -4448,6 +4474,14 @@ public class YassActions implements DropTargetListener {
                 new ImageIcon(getClass().getResource("/yass/resources/img/Golden16.gif")));
         icons.put("golden24Icon",
                 new ImageIcon(getClass().getResource("/yass/resources/img/Golden24.gif")));
+        icons.put("rap16Icon",
+                new ImageIcon(getClass().getResource("/yass/resources/img/Rap16.gif")));
+        icons.put("rap24Icon",
+                new ImageIcon(getClass().getResource("/yass/resources/img/Rap24.gif")));
+        icons.put("rapgolden16Icon",
+                new ImageIcon(getClass().getResource("/yass/resources/img/RapGolden16.gif")));
+        icons.put("rapgolden24Icon",
+                new ImageIcon(getClass().getResource("/yass/resources/img/RapGolden24.gif")));
         icons.put("space16Icon",
                 new ImageIcon(getClass().getResource("/yass/resources/img/Space16.gif")));
         icons.put("space24Icon",
@@ -4460,6 +4494,11 @@ public class YassActions implements DropTargetListener {
                 new ImageIcon(getClass().getResource("/yass/resources/img/Lock24.gif")));
         icons.put("lockoff24Icon",
                 new ImageIcon(getClass().getResource("/yass/resources/img/Unlock24.gif")));
+
+        golden.putValue(AbstractAction.SMALL_ICON, getIcon("golden16Icon"));
+        rap.putValue(AbstractAction.SMALL_ICON, getIcon("rap16Icon"));
+        rapgolden.putValue(AbstractAction.SMALL_ICON, getIcon("rapgolden16Icon"));
+        freestyle.putValue(AbstractAction.SMALL_ICON, getIcon("freestyle16Icon"));
 
         icons.put(
                 "home16Icon",
@@ -4741,6 +4780,14 @@ public class YassActions implements DropTargetListener {
                 new ImageIcon(getClass().getResource("/yass/resources/img/RollLeft24.gif")));
         icons.put("rollRight24Icon",
                 new ImageIcon(getClass().getResource("/yass/resources/img/RollRight24.gif")));
+        icons.put("rollLeft16Icon",
+                new ImageIcon(getClass().getResource("/yass/resources/img/RollLeft16.gif")));
+        icons.put("rollRight16Icon",
+                new ImageIcon(getClass().getResource("/yass/resources/img/RollRight16.gif")));
+
+        rollLeft.putValue(AbstractAction.SMALL_ICON, getIcon("rollLeft16Icon"));
+        rollRight.putValue(AbstractAction.SMALL_ICON, getIcon("rollRight16Icon"));
+        editLyrics.putValue(AbstractAction.SMALL_ICON, getIcon("edit16Icon"));
 
         icons.put(
                 "noalign24Icon",
@@ -4864,12 +4911,12 @@ public class YassActions implements DropTargetListener {
         menu.add(pasteRows);
         menu.add(showCopiedRows);
         menu.addSeparator();
-        menu.add(togglePageBreak);
         menu.add(insertNote);
+        menu.add(splitRows);
+        menu.add(joinRows);
         menu.add(removeRows);
         menu.addSeparator();
-        menu.add(joinRows);
-        menu.add(splitRows);
+        menu.add(togglePageBreak);
         menu.addSeparator();
         menu.add(showStartEnd);
 
@@ -4987,6 +5034,8 @@ public class YassActions implements DropTargetListener {
         menu.add(rollRight);
         menu.addSeparator();
         menu.add(golden);
+        menu.add(rapgolden);
+        menu.add(rap);
         menu.add(freestyle);
         menu.add(minus);
         menu.add(space);
@@ -5475,6 +5524,21 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("golden24Icon"));
         b.setFocusable(false);
+
+        t.add(b = new JButton());
+        b.setAction(rapgolden);
+        b.setToolTipText(b.getText());
+        b.setText("");
+        b.setIcon(getIcon("rapgolden24Icon"));
+        b.setFocusable(false);
+
+        t.add(b = new JButton());
+        b.setAction(rap);
+        b.setToolTipText(b.getText());
+        b.setText("");
+        b.setIcon(getIcon("rap24Icon"));
+        b.setFocusable(false);
+
         t.add(b = new JButton());
         b.setAction(freestyle);
         b.setToolTipText(b.getText());
@@ -7031,6 +7095,8 @@ public class YassActions implements DropTargetListener {
         rollRight.setEnabled(onoff);
         golden.setEnabled(onoff);
         freestyle.setEnabled(onoff);
+        rap.setEnabled(onoff);
+        rapgolden.setEnabled(onoff);
         space.setEnabled(onoff);
         minus.setEnabled(onoff);
         // enableHyphenKeys.setEnabled(onoff);
@@ -7150,56 +7216,6 @@ public class YassActions implements DropTargetListener {
 
         // editRaw.setEnabled(onoff);
         // editRawParent.setEnabled(onoff);
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-    public JComponent createLyricsToolbar() {
-        JToolBar t = new JToolBar(I18.get("tool_lyrics"));
-        t.setFloatable(false);
-        t.setOrientation(SwingConstants.HORIZONTAL);
-        AbstractButton b;
-
-        t.add(b = new JButton());
-        b.setAction(editLyrics);
-        b.setToolTipText(b.getText());
-        b.setText("");
-        b.setIcon(getIcon("edit24Icon"));
-        b.setFocusable(false);
-
-        t.add(b = new JButton());
-        b.setAction(space);
-        b.setToolTipText(b.getText());
-        b.setText("");
-        b.setIcon(getIcon("space24Icon"));
-        b.setFocusable(false);
-
-        t.add(b = new JButton());
-        b.setAction(minus);
-        b.setToolTipText(b.getText());
-        b.setText("");
-        b.setIcon(getIcon("minus24Icon"));
-        b.setFocusable(false);
-
-        t.addSeparator();
-
-        t.add(b = new JButton());
-        b.setAction(golden);
-        b.setToolTipText(b.getText());
-        b.setText("");
-        b.setIcon(getIcon("golden24Icon"));
-        b.setFocusable(false);
-        t.add(b = new JButton());
-        b.setAction(freestyle);
-        b.setToolTipText(b.getText());
-        b.setText("");
-        b.setIcon(getIcon("freestyle24Icon"));
-        b.setFocusable(false);
-
-        return t;
     }
 
     /**
@@ -10911,6 +10927,15 @@ public class YassActions implements DropTargetListener {
         c.getActionMap().put("freestyle", freestyle);
         freestyle.putValue(AbstractAction.ACCELERATOR_KEY,
                 KeyStroke.getKeyStroke(KeyEvent.VK_F, 0));
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.SHIFT_MASK), "rapgolden");
+        c.getActionMap().put("rapgolden", rapgolden);
+        rapgolden.putValue(AbstractAction.ACCELERATOR_KEY,
+                KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.SHIFT_MASK));
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.SHIFT_MASK), "rap");
+        c.getActionMap().put("rap", rap);
+        rap.putValue(AbstractAction.ACCELERATOR_KEY,
+                KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.SHIFT_MASK));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_N, 0), "standard");
         c.getActionMap().put("standard", standard);

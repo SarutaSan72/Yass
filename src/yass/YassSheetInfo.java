@@ -209,6 +209,10 @@ public class YassSheetInfo extends JPanel {
                 hiliteFill = colorSet[3];
             } else if (r.isFreeStyle()) {
                 hiliteFill = colorSet[4];
+            } else if (r.isRap()) {
+                hiliteFill = sheet.darkMode ? sheet.dkGrayDarkMode.darker() : sheet.dkGray.darker();
+            } else if (r.isRapGolden()) {
+                hiliteFill = colorSet[3].darker();
             } else if (r.hasMessage()) {
                 hiliteFill = colorSet[5];
             }

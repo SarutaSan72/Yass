@@ -903,7 +903,7 @@ public class YassAutoCorrect {
                         }
                     }
 
-                    if (r.isGolden()) {
+                    if (r.isGolden() || r.isRapGolden()) {
                         if (firstgolden == null) {
                             firstgolden = r;
                         }
