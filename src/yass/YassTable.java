@@ -162,13 +162,13 @@ public class YassTable extends JTable {
 
                     if (r.isNote() && col == 0) {
                         if (r.isGolden()) {
+                            r.setType("G");
+                        } else if (r.isRapGolden()) {
+                            r.setType("R");
+                        } else if (r.isRap()) {
                             r.setType("F");
                         } else if (r.isFreeStyle()) {
                             r.setType(":");
-                        } else if (r.isRap()) {
-                            r.setType("R");
-                        } else if (r.isRapGolden()) {
-                            r.setType("G");
                         } else {
                             r.setType("*");
                         }
@@ -2485,7 +2485,7 @@ public class YassTable extends JTable {
 
         // insert space when missing
         char c0 = s.charAt(0);
-        if (n > 1 && c0 == '-' || c0 == ':' || c0 == '*' || c0 == 'F'
+        if (n > 1 && c0 == '-' || c0 == ':' || c0 == '*' || c0 == 'G' || c0 == 'R' || c0 == 'F'
                 || c0 == 'f') {
             if (s.charAt(1) != ' ') {
                 s = c0 + " " + s.substring(1);
@@ -2533,7 +2533,7 @@ public class YassTable extends JTable {
         }
 
         // convert invalid lines into comments
-        if (s.charAt(0) != ':' && s.charAt(0) != '*' && s.charAt(0) != 'F') {
+        if (s.charAt(0) != ':' && s.charAt(0) != '*' && s.charAt(0) != 'G' && s.charAt(0) != 'R' && s.charAt(0) != 'F') {
             tm.addRow("#", s, "", "", "", YassRow.LINE_CUT);
             return true;
         }

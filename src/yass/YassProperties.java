@@ -274,7 +274,7 @@ public class YassProperties extends Properties {
         p.put("group-tags", "all|previewstart|medleystartbeat|start|end|relative|gap<5|gap>30|gap>60|bpm<200|bpm>400");
         p.put("group-errors", "all|all_errors|critical_errors|major_errors|tag_errors|file_errors|page_errors|text_errors");
         p.put("group-duets", "all|solos|duets|trios|quartets|choirs");
-        p.put("group-stats", "all|pages_common|pages_pages_0-30|pages_pages_31-80|pages_pages_81-|golden_golden_3-20|rap_rap_0-|freestyle_freestyle_0-30|notesperpage_notesperpage_0-5|notesperpage_notesperpage_5.1-|speeddist_slow|speeddist_averagespeed|speeddist_fast|pitchrange_monoton|pitchrange_melodic|pitchrange_smooth|pitchrange_bumpy|speeddist_longbreath");
+        p.put("group-stats", "all|pages_common|pages_pages_0-30|pages_pages_31-80|pages_pages_81-|golden_golden_3-20|rap_rap_1-|freestyle_freestyle_0-30|notesperpage_notesperpage_0-5|notesperpage_notesperpage_5.1-|speeddist_slow|speeddist_averagespeed|speeddist_fast|pitchrange_monoton|pitchrange_melodic|pitchrange_smooth|pitchrange_bumpy|speeddist_longbreath");
         p.put("group-instrument", "all|white|black|12-white|8-white|25-keys|13-keys");
 
         p.put("group-min", "3");
