@@ -9302,28 +9302,29 @@ public class YassActions implements DropTargetListener {
 
         // get player names
         String versions = "";
-        YassRow pr = tm.getCommentRow("PLAYERS:");
-        if (pr != null) {
-            versions = pr.getComment();
-        } else {
-            for (int i = 1; i <= multi; i++) {
-                versions = versions + " P" + i;
+        for (int i = 1; i <= multi; i++) {
+            if (versions != "") versions += "; ";
+            YassRow pr = tm.getCommentRow("DUETSINGERP"+i+":");
+            if (pr != null) {
+                versions += pr.getComment();
             }
-        }
-        if (gui) {
-            String msg = I18.get("mlib_tracks_split_names");
-            versions = JOptionPane.showInputDialog(getTab(), msg,
-                    versions.trim());
-            if (versions == null) {
-                return resVector;
+            else {
+                versions += "P" + i;
             }
         }
 
+        if (gui) {
+            String msg = I18.get("mlib_tracks_split_names");
+            versions = JOptionPane.showInputDialog(getTab(), msg, versions.trim());
+            if (versions == null)
+                return null;
+        }
+
         versions = versions.trim();
-        String version[] = versions.split(" ");
+        String version[] = versions.split(";");
         if (!gui) {
             for (int i = 0; i < version.length; i++) {
-                version[i] = version[i] + "_TEMP";
+                version[i] = version[i].trim() + "_TEMP";
             }
         }
 
@@ -9331,13 +9332,13 @@ public class YassActions implements DropTargetListener {
         Vector<YassTable> tables = new Vector<>(version.length);
         for (String aVersion : version) {
             YassTable res = new YassTable();
+            res.init(prop);
             tables.addElement(res);
         }
 
         // copy header
         int p = 0;
-        for (Enumeration<YassTable> en = tables.elements(); en
-                .hasMoreElements(); ) {
+        for (Enumeration<YassTable> en = tables.elements(); en.hasMoreElements(); ) {
             YassTable res = en.nextElement();
             YassTableModel resmodel = (YassTableModel) res.getModel();
             Vector<YassRow> resdata = resmodel.getData();
@@ -9347,14 +9348,15 @@ public class YassActions implements DropTargetListener {
                 if (!r.isComment()) {
                     break;
                 }
-                if (r.getCommentTag().equals("PLAYERS:")) {
+                if (r.getCommentTag().equals("DUETSINGERP1:") ||
+                        r.getCommentTag().equals("DUETSINGERP2:") ) {
                     continue;
                 }
                 resdata.addElement(new YassRow(r));
             }
             res.setDir(t.getDir());
             res.setFilename(t.getFilename());
-            res.setVersion(version[p++]);
+            res.setVersion(version[p++].trim());
             res.setBPM(t.getBPM());
             res.setGap(t.getGap());
         }
@@ -9374,15 +9376,16 @@ public class YassActions implements DropTargetListener {
                 String ps = r.getBeat().trim();
                 try {
                     p = Integer.parseInt(ps);
+                    if (p==3) p=0; // P0 = P3 = both
                 } catch (Exception e) {
                     p = 0;
                 }
                 continue;
             }
-            if (r.isNote() && p > 0) {
+            if (r.isNote() && p > 0) { // add to player <p>
                 notes[p - 1].addElement(new YassRow(r));
             }
-            if (r.isNote() && p == 0) {
+            if (r.isNote() && p == 0) { // add to all players
                 for (Vector<YassRow> note : notes) {
                     note.addElement(new YassRow(r));
                 }
@@ -9400,7 +9403,6 @@ public class YassActions implements DropTargetListener {
                         note.addElement(new YassRow(r));
                     }
                 }
-                p = 0;
             }
             if (r.isEnd()) {
                 for (Vector<YassRow> note : notes) {
@@ -9421,8 +9423,7 @@ public class YassActions implements DropTargetListener {
 
         // add player notes
         p = 0;
-        for (Enumeration<YassTable> en = tables.elements(); en
-                .hasMoreElements(); ) {
+        for (Enumeration<YassTable> en = tables.elements(); en.hasMoreElements(); ) {
             YassTable res = en.nextElement();
             YassTableModel resmodel = (YassTableModel) res.getModel();
             Vector<YassRow> resdata = resmodel.getData();
@@ -9450,8 +9451,7 @@ public class YassActions implements DropTargetListener {
                 YassRow r = (YassRow) ren.nextElement();
                 if (r.isNote() && first) {
                     minbeat = r.getBeatInt();
-                    double resgap = gap + minbeat / 4
-                            * (60 * 1000 / res.getBPM());
+                    double resgap = gap + minbeat / 4 * (60 * 1000 / res.getBPM());
                     res.setGap(resgap);
                     first = false;
                 }
@@ -9475,16 +9475,11 @@ public class YassActions implements DropTargetListener {
 
         // store files
         p = 0;
-        for (Enumeration<YassTable> en = tables.elements(); en
-                .hasMoreElements(); ) {
+        for (Enumeration<YassTable> en = tables.elements(); en.hasMoreElements(); ) {
             YassTable res = en.nextElement();
-            YassTableModel resmodel = (YassTableModel) res.getModel();
-            Vector<?> resdata = resmodel.getData();
-
-            String v = res.getVersion();
+            String v = res.getVersion().trim();
             String absFilename = res.getDir() + File.separator
-                    + res.getArtist() + " - " + res.getTitle() + " [" + v
-                    + "].txt";
+                    + res.getArtist() + " - " + res.getTitle() + " [" + v + "].txt";
             File f = new File(absFilename);
             if (f.exists()) {
                 if (gui) {
@@ -9494,7 +9489,7 @@ public class YassActions implements DropTargetListener {
                                             v), I18
                                     .get("mlib_tracks_split_names_error_title"),
                             JOptionPane.ERROR_MESSAGE);
-                    return resVector;
+                    return null;
                 } else {
                     f.delete();
                 }
@@ -9502,19 +9497,13 @@ public class YassActions implements DropTargetListener {
         }
 
         resVector = new Vector<>(tables.size());
-        for (Enumeration<YassTable> en = tables.elements(); en
-                .hasMoreElements(); ) {
+        for (Enumeration<YassTable> en = tables.elements(); en .hasMoreElements(); ) {
             YassTable res = en.nextElement();
-            YassTableModel resmodel = (YassTableModel) res.getModel();
-            Vector<?> resdata = resmodel.getData();
-
-            String v = res.getVersion();
+            String v = res.getVersion().trim();
             String absFilename = res.getDir() + File.separator
-                    + res.getArtist() + " - " + res.getTitle() + " [" + v
-                    + "].txt";
+                    + res.getArtist() + " - " + res.getTitle() + " [" + v + "].txt";
             File f = new File(absFilename);
-            res.setFilename(res.getArtist() + " - " + res.getTitle() + " [" + v
-                    + "].txt");
+            res.setFilename(res.getArtist() + " - " + res.getTitle() + " [" + v + "].txt");
             res.storeFile(f.getAbsolutePath());
             resVector.addElement(f.getAbsolutePath());
         }
@@ -9549,8 +9538,7 @@ public class YassActions implements DropTargetListener {
             }
             sm.fireTableDataChanged();
             songList.storeCache();
-            setProgress(MessageFormat.format(I18.get("lib_msg"), sm.getData()
-                    .size()), "");
+            setProgress(MessageFormat.format(I18.get("lib_msg"), sm.getData().size()), "");
 
             songList.clearSelection();
             songList.addRowSelectionInterval(j, j);
@@ -9675,8 +9663,7 @@ public class YassActions implements DropTargetListener {
 
         // sort in order of appeareance
         Vector<YassPage> orderedHeads = new Vector<>(tablepages.size());
-        for (Enumeration<Vector<YassPage>> en = tablepages.elements(); en
-                .hasMoreElements(); ) {
+        for (Enumeration<Vector<YassPage>> en = tablepages.elements(); en.hasMoreElements(); ) {
             Vector<YassPage> pages = en.nextElement();
             if (pages.isEmpty()) {
                 continue;
@@ -9687,8 +9674,7 @@ public class YassActions implements DropTargetListener {
 
         tables.clear();
         tablepages.clear();
-        String playerTag = "PLAYERS:";
-        String playerNames = "";
+        String versions = "";
         for (Enumeration<?> en = orderedHeads.elements(); en.hasMoreElements(); ) {
             YassPage p = (YassPage) en.nextElement();
             YassTable t = p.getTable();
@@ -9700,10 +9686,9 @@ public class YassActions implements DropTargetListener {
             if (!gui) {
                 v = v.replaceAll("_TEMP", "");
             }
-            playerNames += " " + v;
+            if (versions != "") versions += "; ";
+            versions += v;
         }
-        YassRow playersRow = new YassRow("#", playerTag, playerNames.trim(),
-                "", "");
 
         // copy header
         YassTable res = new YassTable();
@@ -9720,7 +9705,10 @@ public class YassActions implements DropTargetListener {
             }
             resdata.addElement(new YassRow(r));
         }
-        resdata.addElement(playersRow);
+        String[] vv = versions.split(";");
+        for (int i = 0; i < vv.length; i++) {
+            resdata.addElement(new YassRow("#", "DUETSINGERP" + (i+1) + ":", vv[i].trim(), "", ""));
+        }
         res.setDir(mintable.getDir());
 
         try {
@@ -9784,7 +9772,7 @@ public class YassActions implements DropTargetListener {
                 if (!combineTracks) {
                     resdata.addElement(new YassRow("P", player + "", "", "", ""));
                 } else {
-                    resdata.addElement(new YassRow("P", "0", "", "", ""));
+                    resdata.addElement(new YassRow("P", "3", "", "", ""));
                 }
                 YassRow pagebreak = null;
                 Vector<?> rows = minpage.getRows();

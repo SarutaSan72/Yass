@@ -2468,7 +2468,13 @@ public class YassTable extends JTable {
                     end = Double.parseDouble(s.replace(',', '.'));
                 } else if (tag.equals("VIDEOGAP:")) {
                     vgap = Double.parseDouble(s.replace(',', '.'));
-                } else if (tag.equals("PLAYERS:")) {
+                } else if (tag.equals("DUETSINGERP1:")) {
+                    // s="all player names", version=""
+                } else if (tag.equals("DUETSINGERP2:")) {
+                    // s="all player names", version=""
+                } else if (tag.equals("DUETSINGERP3:")) {
+                    // s="all player names", version=""
+                } else if (tag.equals("DUETSINGERP4:")) {
                     // s="all player names", version=""
                 } else if (tag.equals("RELATIVE:")) {
                     isRelative = s.toLowerCase().equals("yes")
@@ -2517,12 +2523,13 @@ public class YassTable extends JTable {
             return true;
         }
 
-        if (s.charAt(0) == 'P' && n > 2) {
-            String pnum = s.substring(2).trim();
+        if (s.charAt(0) == 'P' && n > 1) {
+            String pnum = s.substring(1).trim();
             try {
                 int pn = Integer.parseInt(pnum);
-                tm.addRow(s.charAt(0) + "", pnum, "", "", "");
+                tm.addRow("P", pnum, "", "", "", ""); // add space (not stored, see YassRow.toString)
                 if (pn > 0) {
+                    if (pn == 3) pn = 0; // P0 = P3 = both
                     multiplayer = Math.max(multiplayer, pn);
                 }
                 return true;
@@ -2533,7 +2540,7 @@ public class YassTable extends JTable {
         }
 
         // convert invalid lines into comments
-        if (s.charAt(0) != ':' && s.charAt(0) != '*' && s.charAt(0) != 'G' && s.charAt(0) != 'R' && s.charAt(0) != 'F') {
+        if (s.charAt(0) != ':' && s.charAt(0) != '*' && s.charAt(0) != 'G' && s.charAt(0) != 'R' && s.charAt(0) != 'F' && s.charAt(0) != 'P') {
             tm.addRow("#", s, "", "", "", YassRow.LINE_CUT);
             return true;
         }
