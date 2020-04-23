@@ -30,6 +30,8 @@ import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 /**
@@ -216,7 +218,14 @@ public class YassOptions extends JDialog {
         private static final long serialVersionUID = -5555522703593740252L;
 
         OwnerFrame() {
-            setIconImage(new ImageIcon(this.getClass().getResource("/yass/resources/img/yass-icon-16.png")).getImage());
+            URL icon16 = this.getClass().getResource("/yass/resources/img/yass-icon-16.png");
+            URL icon32 = this.getClass().getResource("/yass/resources/img/yass-icon-32.png");
+            URL icon48 = this.getClass().getResource("/yass/resources/img/yass-icon-48.png");
+            ArrayList<Image> icons = new ArrayList<Image>();
+            icons.add(new ImageIcon(icon48).getImage());
+            icons.add(new ImageIcon(icon32).getImage());
+            icons.add(new ImageIcon(icon16).getImage());
+            setIconImages(icons);
         }
         // This frame can never be shown.
 

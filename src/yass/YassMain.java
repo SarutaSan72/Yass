@@ -31,6 +31,8 @@ import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Locale;
 
 /**
@@ -118,7 +120,14 @@ public class YassMain extends JApplet {
 
     private void initFrame() {
         final JFrame frame = new JFrame(I18.get("yass_title"));
-        frame.setIconImage(new ImageIcon(YassMain.this.getClass().getResource("/yass/resources/img/yass-icon-16.png")).getImage());
+        URL icon16 = YassMain.this.getClass().getResource("/yass/resources/img/yass-icon-16.png");
+        URL icon32 = YassMain.this.getClass().getResource("/yass/resources/img/yass-icon-32.png");
+        URL icon48 = YassMain.this.getClass().getResource("/yass/resources/img/yass-icon-48.png");
+        ArrayList<Image> icons = new ArrayList<Image>();
+        icons.add(new ImageIcon(icon48).getImage());
+        icons.add(new ImageIcon(icon32).getImage());
+        icons.add(new ImageIcon(icon16).getImage());
+        frame.setIconImages(icons);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(
                 new WindowAdapter() {
