@@ -2363,13 +2363,8 @@ public class YassActions implements DropTargetListener {
 
         public void actionPerformed(ActionEvent e) {
             if (srcDialog != null) {
-                if (srcDialog.isShowing()) {
-                    srcDialog.setVisible(false);
-                    return;
-                }
-                srcDialog.pack();
-                srcDialog.setVisible(true);
-                return;
+                srcDialog.dispose();
+                srcDialog = null;
             }
 
             JDialog dia = srcDialog = new JDialog(new OwnerFrame());
@@ -3641,6 +3636,12 @@ public class YassActions implements DropTargetListener {
     public void closeAllTables() {
         setOpened(false);
         closeAll();
+
+        if (srcDialog != null) {
+            srcDialog.dispose();
+            srcDialog = null;
+        }
+
         table = createNextTable();
 
         lyrics.setTable(table);
