@@ -36,7 +36,7 @@ public class YassAutoCorrect {
     private static int FIXED_PAGE_BREAK = 0;
 
     byte[] fontWidth = null;
-    int fontSize = 14, outline = 3;
+    int fontSize = 14, stringOutline = 3, charSpacing = 2, fontAspectRatio = 95;
     private YassProperties prop = null;
     private String[] audioExtensions, imageExtensions, videoExtensions;
     private String coverID;
@@ -1517,40 +1517,32 @@ public class YassAutoCorrect {
      * @return The stringWidth value
      */
     public int getStringWidth(String s) {
-        double fontH = fontSize / 10.0;
-
-        char c[] = s.toCharArray();
-        int ascii;
-        int fw;
-        double cw;
-        double w = 0;
-        double aspectW = 0.95;
-        for (char aC : c) {
-            ascii = (int) (aC);
+        double stringWidth = 0;
+        for (char aC : s.toCharArray()) {
+            int ascii = (int) (aC);
             if (ascii > 255) {
-                if (ascii >= 8216 && ascii <= 8218) {
+                // replace left/right/low single quotation marks: ‘’‚
+                if (ascii >= 8216 && ascii <= 8218)
                     ascii = (int) '\'';
-                }
-                // replace right/left single quotation mark
-                if (ascii >= 8220 && ascii <= 8222) {
+                // replace right/left/low double quotation marks: “”„
+                else if (ascii >= 8220 && ascii <= 8222)
                     ascii = (int) '\'';
-                } // replace right/left/low double quotation mark
-                else if (ascii == 8230) {
+                // replace horizontal ellipsis '...'
+                else if (ascii == 8230)
                     ascii = (int) 'w';
-                } // replace '...'
-                else {
+                // replace any other non-ascii char
+                else
                     ascii = (int) 'W';
-                }
-                //
             }
-            fw = fontWidth[ascii] / 2 + 2;
-            // Oline
-            // fw = fontWidth[(int)(c[i])]+1; //Oline2
-            cw = fw * fontH * aspectW;
-            w += cw;
+            stringWidth += fontWidth[ascii] / 2 + charSpacing;
         }
-
-        w = w + (2 * outline);
-        return (int) w;
+        stringWidth =
+                // scale by fontSize = cap height + descent
+                stringWidth * fontSize / 10.0
+                // scale by font aspect ratio = w / x-height
+                * fontAspectRatio / 100.0
+                // add left/right outline
+                + 2 * stringOutline;
+        return (int) stringWidth;
     }
 }
