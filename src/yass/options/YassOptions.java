@@ -86,7 +86,9 @@ public class YassOptions extends JDialog {
 
         addPanel(checker, I18.get("options_tags"), new TagPanel());
         addPanel(checker, I18.get("options_images"), new ImagesErrorPanel());
-        addPanel(checker, I18.get("options_others"), new ErrorPanel());
+        addPanel(checker, I18.get("options_errors_fonts"), new FontErrorPanel());
+        addPanel(checker, I18.get("options_errors_breaks"), new ErrorPanel());
+        addPanel(checker, I18.get("options_errors_bonus"), new BonusErrorPanel());
 
         addPanel(editor, I18.get("options_design"), new ColorPanel());
         addPanel(editor, I18.get("options_control"), new SketchPanel());

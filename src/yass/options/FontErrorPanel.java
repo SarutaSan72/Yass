@@ -25,7 +25,7 @@ import yass.I18;
  *
  * @author Saruta
  */
-public class ErrorPanel extends OptionsPanel {
+public class FontErrorPanel extends OptionsPanel {
 
     private static final long serialVersionUID = -7477393618838320424L;
 
@@ -35,12 +35,17 @@ public class ErrorPanel extends OptionsPanel {
     public void addRows() {
         setLabelWidth(140);
 
-        addSeparator(I18.get("options_errors_display"));
-        addBoolean(I18.get("options_errors_touching"), "touching-syllables", I18.get("options_errors_touching_syllables"));
-        addRadio(I18.get("options_errors_pages"), "correct-uncommon-pagebreaks", "true|false|unknown", I18.get("options_errors_pages_true") + "|" + I18.get("options_errors_pages_false") + "|" + I18.get("options_errors_pages_unknown"));
-        addComment(I18.get("options_errors_pages_comment"));
-        addText(I18.get("options_errors_pages_fix"), "correct-uncommon-pagebreaks-fix");
-        addComment(I18.get("options_errors_pages_fix_comment"));
+        addChoice(I18.get("options_errors_font_file"), getProperties().getProperty("font-files"), "font-files", "font-file");
+        addFile("", "font-file-custom");
+        addComment(I18.get("options_errors_font_file_comment"));
+
+        addText(I18.get("options_errors_font_size"), "font-size");
+
+        addText(I18.get("options_errors_font_spacing"), "char-spacing");
+        addComment(I18.get("options_errors_font_spacing_comment"));
+
+        addText(I18.get("options_errors_font_max_width"), "text-max-width");
+        addComment(I18.get("options_errors_font_max_width_comment"));
     }
 }
 

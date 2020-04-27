@@ -199,7 +199,6 @@ public class YassProperties extends Properties {
         // errors
         p.put("valid-tags", "TITLE ARTIST LANGUAGE EDITION <br> GENRE ALBUM YEAR CREATOR ID <br> MP3 COVER BACKGROUND VIDEO <br> VIDEOGAP START END DUETSINGERP1 DUETSINGERP2 DUETSINGERP3 DUETSINGERP4 <br> RELATIVE BPM GAP <br> LENGTH PREVIEWSTART MEDLEYSTARTBEAT MEDLEYENDBEAT");
         p.put("valid-lines", "#:*FRG-EP");
-        p.put("font-file", "/fonts/Font1.dat");
         p.put("max-points", "7500");
         p.put("max-golden", "1250");
         p.put("max-linebonus", "1000");
@@ -207,6 +206,13 @@ public class YassProperties extends Properties {
         p.put("freestyle-counts", "false");
         p.put("touching-syllables", "false");
         p.put("correct-uncommon-pagebreaks-fix", "0");
+
+        p.put("font-file", "Candara Bold");
+        p.put("font-files", "Arial Bold|Candara Bold|Roboto Regular");
+        p.put("font-file-custom", "");
+        p.put("font-size", "28");
+        p.put("char-spacing", "0");
+        p.put("text-max-width", "800");
 
         p.put("cover-max-size", "128");
         p.put("cover-min-width", "200");

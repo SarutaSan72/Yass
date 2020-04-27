@@ -20,10 +20,11 @@
 package yass;
 
 import javax.swing.*;
-import java.io.File;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -35,8 +36,8 @@ import java.util.*;
 public class YassAutoCorrect {
     private static int FIXED_PAGE_BREAK = 0;
 
-    byte[] fontWidth = null;
-    int fontSize = 14, stringOutline = 3, charSpacing = 2, fontAspectRatio = 95;
+    int[] fontWidth = null;
+    int fontSize=14, charSpacing = 2;
     private YassProperties prop = null;
     private String[] audioExtensions, imageExtensions, videoExtensions;
     private String coverID;
@@ -1027,6 +1028,10 @@ public class YassAutoCorrect {
                             String s = sb.toString();
                             double percentFree = getPageSpace(s);
                             if (percentFree < 0) {
+                                String font = prop.getProperty("font-file-custom").trim() != ""
+                                        ? prop.getProperty("font-file-custom")
+                                        : prop.getProperty("font-file");
+
                                 // System.out.println(percentFree + " outside");
                                 int pf = -(int) (percentFree * 100);
                                 if (pf == 0) {
@@ -1034,13 +1039,13 @@ public class YassAutoCorrect {
                                             YassRow.TOO_MUCH_TEXT,
                                             MessageFormat.format(
                                                     I18.get("correct_too_much_text_1"),
-                                                    prop.getProperty("font-file")));
+                                                    font));
                                 } else {
                                     r.addMessage(
                                             YassRow.TOO_MUCH_TEXT,
                                             MessageFormat.format(
-                                                    I18.get("correct_too_much_text_1"),
-                                                    prop.getProperty("font-file"),
+                                                    I18.get("correct_too_much_text_2"),
+                                                    font,
                                                     pf));
                                 }
                                 table.addMessage(YassRow.TOO_MUCH_TEXT);
@@ -1479,26 +1484,6 @@ public class YassAutoCorrect {
     }
 
     /**
-     * Description of the Method
-     *
-     */
-    public void loadFont() {
-        fontWidth = new byte[256];
-        try {
-            InputStream is = getClass().getResourceAsStream("/yass/resources"+
-                    prop.getProperty("font-file"));
-            is.read(fontWidth, 0, fontWidth.length);
-            is.close();
-        } catch (Exception e) {
-            System.out.println("Font file not found: "
-                    + prop.getProperty("font-file"));
-            e.printStackTrace();
-        }
-        // for (int i=0; i<bytes.length; i++)
-        // System.out.print( ((char)i)+"="+bytes[i]+" ");
-    }
-
-    /**
      * Gets the pageSpace attribute of the YassAutoCorrect object
      *
      * @param s Description of the Parameter
@@ -1534,15 +1519,94 @@ public class YassAutoCorrect {
                 else
                     ascii = (int) 'W';
             }
-            stringWidth += fontWidth[ascii] / 2 + charSpacing;
+            stringWidth += fontWidth[ascii] * fontSize / 256.0 + charSpacing;
         }
-        stringWidth =
-                // scale by fontSize = cap height + descent
-                stringWidth * fontSize / 10.0
-                // scale by font aspect ratio = w / x-height
-                * fontAspectRatio / 100.0
-                // add left/right outline
-                + 2 * stringOutline;
+        //System.out.println(s.substring(0,5) + " = " + (int)stringWidth + " px" + "  " + (int)(100*(stringWidth)/800.0));
         return (int) stringWidth;
+    }
+
+
+    /**
+     * Description of the Method
+     *
+     */
+    public void loadFont() {
+        fontSize=28;
+        try {
+            fontSize = Integer.parseInt(prop.getProperty("font-size"));
+        } catch(Exception e) { e.printStackTrace(); }
+        charSpacing = 0;
+        try {
+            charSpacing = Integer.parseInt(prop.getProperty("char-spacing"));
+        } catch(Exception e) { e.printStackTrace(); }
+        String font = prop.getProperty("font-file-custom").trim().length() > 0
+                ? prop.getProperty("font-file-custom")
+                : prop.getProperty("font-file");
+
+        if (! new File(font).exists())
+            loadFontWidths(font);
+        else
+        {
+            loadTTFontWidths(font);
+        }
+    }
+
+    public void loadFontWidths(String font) {
+        String s = null;
+        try {
+            InputStream is = getClass().getResourceAsStream("/yass/resources/fonts/"+ font + ".txt");
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) != -1)
+                os.write(buffer, 0, length);
+            s = os.toString("UTF-8");
+            is.close();
+        } catch (Exception e) {
+            System.out.println("Font file not found: " + font);
+            e.printStackTrace();
+        }
+
+        fontWidth = new int[256];
+        String[] stokens = s.split(" ");
+        int i = 32;
+        for (String st: stokens)
+        {
+            if (! st.startsWith("["))
+            {
+                //System.out.println((i) + " = " + st);
+                fontWidth[i] = Integer.parseInt(st);
+                i++;
+                if (i>255) break;
+            }
+        }
+    }
+
+    private void loadTTFontWidths(String font)
+    {
+        fontWidth = new int[256];
+        try {
+            InputStream is = new BufferedInputStream(new FileInputStream(font));
+            Font f = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont((float) 256);
+
+            BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR);
+            Graphics g = img.getGraphics();
+            g.setFont(f);
+            int[] fw2 = g.getFontMetrics().getWidths();
+            String s = "";
+            for (int i = 0; i < 256; i++) {
+                fontWidth[i] = fw2[i];
+                String c = ""+(char) i;
+                if (i==32) c = "space";
+                if (i==160) c= "nbsp";
+                if (i==173) c= "shy";
+                if (i>=32) s += " ["+i+"]["+c+"] "+ fw2[i];
+            }
+            // System.out.println(font + " = " + s);
+            g.dispose();
+        } catch (Exception e) {
+            System.out.println("Font file not found: " + font);
+            e.printStackTrace();
+        }
     }
 }
