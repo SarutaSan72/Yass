@@ -33,9 +33,8 @@ public class ErrorPanel extends OptionsPanel {
      * Gets the body attribute of the DirPanel object
      */
     public void addRows() {
-        setLabelWidth(140);
+        setLabelWidth(90);
 
-        addSeparator(I18.get("options_errors_display"));
         addBoolean(I18.get("options_errors_touching"), "touching-syllables", I18.get("options_errors_touching_syllables"));
         addRadio(I18.get("options_errors_pages"), "correct-uncommon-pagebreaks", "true|false|unknown", I18.get("options_errors_pages_true") + "|" + I18.get("options_errors_pages_false") + "|" + I18.get("options_errors_pages_unknown"));
         addComment(I18.get("options_errors_pages_comment"));

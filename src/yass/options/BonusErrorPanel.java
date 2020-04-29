@@ -35,7 +35,6 @@ public class BonusErrorPanel extends OptionsPanel {
     public void addRows() {
         setLabelWidth(140);
 
-        addSeparator(I18.get("options_errors_score"));
         addText(I18.get("options_errors_score_golden"), "max-golden");
         addText(I18.get("options_errors_score_linebonus"), "max-linebonus");
         addText(I18.get("options_errors_score_points"), "max-points");

@@ -33,7 +33,7 @@ public class FontErrorPanel extends OptionsPanel {
      * Gets the body attribute of the DirPanel object
      */
     public void addRows() {
-        setLabelWidth(140);
+        setLabelWidth(190);
 
         addChoice(I18.get("options_errors_font_file"), getProperties().getProperty("font-files"), "font-files", "font-file");
         addFile("", "font-file-custom");
