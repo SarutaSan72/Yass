@@ -60,7 +60,7 @@ public class YassSheetInfo extends JPanel {
             }
             @Override
             public void propsChanged(YassSheet source) {
-                setBackground(sheet.darkMode ? sheet.hiGrayDarkMode : sheet.hiGray);
+                setBackground(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
                 repaint();
             }
         });
@@ -161,7 +161,7 @@ public class YassSheetInfo extends JPanel {
         int h = getHeight();
 
         // background
-        g2.setColor(sheet.darkMode ? sheet.hiGrayDarkMode : sheet.hiGray);
+        g2.setColor(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
         g2.fillRect(0, 0, w, h);
 
         //  notes background

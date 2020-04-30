@@ -60,7 +60,7 @@ public class YassActions implements DropTargetListener {
     /**
      * Description of the Field
      */
-    public final static String VERSION = "2.1.0";
+    public final static String VERSION = "2.1.1";
     /**
      * Description of the Field
      */
@@ -6819,6 +6819,25 @@ public class YassActions implements DropTargetListener {
             // System.out.println("init edit view 2");
             if (editMenu == null) {
                 editMenu = createEditMenu();
+
+                sheet.addYassSheetListener(new YassSheetListener() {
+                    @Override
+                    public void posChanged(YassSheet source, double posMs) { }
+                    @Override
+                    public void rangeChanged(YassSheet source, int minHeight, int maxHeight, int minBeat, int maxBeat) { }
+                    @Override
+                    public void propsChanged(YassSheet source) {
+                        editMenu.setBackground(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
+                        for (Component c: editMenu.getComponents()) {
+                            c.setForeground(sheet.darkMode ? sheet.blackDarkMode : sheet.black);
+                        }
+                    }
+                });
+                editMenu.setBackground(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
+                for (Component c: editMenu.getComponents()) {
+                    c.setForeground(sheet.darkMode ? sheet.blackDarkMode : sheet.black);
+                }
+
             }
             menuHolder.setJMenuBar(editMenu);
             currentView = VIEW_EDIT;

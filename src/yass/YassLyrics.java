@@ -82,6 +82,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.DefaultEditorKit;
@@ -101,7 +102,7 @@ import com.swabunga.spell.swing.JTextComponentSpellChecker;
  *
  * @author Saruta
  */
-public class YassLyrics extends JPanel implements TabChangeListener {
+public class YassLyrics extends JPanel implements TabChangeListener, YassSheetListener {
 	private static final long serialVersionUID = -2873881715263100606L;
 	private JTextPane lyricsArea = null;
 	private JScrollPane lyricsScrollPane;
@@ -114,15 +115,34 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 			goldenStyle, freeStyle, rapStyle, rapgoldenStyle, notGoldenOrFreeStyle;
 
 	private Color red = new Color(255, 240, 240);
-	private Color disabledColor = new JPanel().getBackground();
+	private Color redDarkMode = new Color(255, 240, 240);
 
-	private Color bgColor = new Color(255, 255, 255);
-	private Color bgColor2 = new Color(245, 245, 245, 200);
+	public static final  Color black = new Color(0,0,0);
+	public static final Color dkGray = new Color(102,102,102);
+	public static final  Color hiGray = new Color(153,153,153);
+	public static final Color hiGray2 = new Color(230,230,230);
+	public static final  Color white = new Color(255,255,255);
+	public static final  Color whitetrans = new Color(245,245,245, 200);
 
-	private Color nofontBG = new Color(1f, 1f, 1f, 0f);
+	private Color bgColor = hiGray;
+	Color blue = Color.blue;
+
+	private Color selection = new Color(180, 200, 230);
+
+	public static final  Color blackDarkMode = new Color(200,200,200);
+	public static final Color dkGrayDarkMode = new Color(142,142,142);
+	public static final Color hiGrayDarkMode = new Color(100,100,100);
+	public static final Color hiGray2DarkMode = new Color(70,70,70);
+	public static final  Color whiteDarkMode = new Color(50,50,50);
+	public static final  Color whitetransDarkMode = new Color(70,70,70, 200);
+
+	private Color bgColorDarkMode = new Color(245, 245, 245, 200);
+	private Color selectionDarkMode = new Color(80, 100, 130);
+
+
+	private Color nofontBG = new Color(1f, 1f, 1f, 0f); // transparent
 
 	private Color lineNumberColor = Color.gray;
-	private Color fontColor = Color.darkGray;
 
 	private Color[] colorSet = new Color[7];
 	private Color errBackground, minorerrBackground;
@@ -197,6 +217,52 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 		StyleConstants.setFontSize(notLongStyle, fontSize);
 	}
 
+	public void posChanged(YassSheet source, double posMs) {
+	}
+	public void rangeChanged(YassSheet source, int minH, int maxH, int minB, int maxB) {
+	}
+	public void propsChanged(YassSheet source) {
+		StyleConstants.setForeground(notLongStyle, sheet.darkMode? dkGrayDarkMode : dkGray);
+		StyleConstants.setForeground(notSelectStyle, sheet.darkMode? dkGrayDarkMode : dkGray);
+		StyleConstants.setBackground(notSelectStyle, nofontBG); // transparent
+
+		lyricsArea.setSelectionColor(sheet.darkMode ? selectionDarkMode : selection);
+		lyricsArea.setSelectedTextColor(sheet.darkMode ? blackDarkMode : black);
+
+		StyleConstants.setForeground(selectStyle, sheet.darkMode ? blackDarkMode : black);
+		StyleConstants.setBackground(selectStyle, sheet.darkMode ? selectionDarkMode : selection);
+
+		lyricsScrollPane.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
+			protected JButton createZeroButton() {
+				JButton button = new JButton("");
+				Dimension zeroDim = new Dimension(0,0);
+				button.setPreferredSize(zeroDim);
+				button.setMinimumSize(zeroDim);
+				button.setMaximumSize(zeroDim);
+				return button;
+			}
+			@Override
+			protected JButton createDecreaseButton(int orientation) {
+				JButton b = createZeroButton();
+				b.setBackground(sheet.darkMode? hiGrayDarkMode : hiGray);
+				b.setForeground(sheet.darkMode? hiGray2DarkMode : hiGray2);
+				return b;
+			}
+			protected JButton createIncreaseButton(int orientation) {
+				JButton b = createZeroButton();
+				b.setBackground(sheet.darkMode? hiGrayDarkMode : hiGray);
+				return b;
+			}
+			@Override
+			protected void configureScrollBarColors() {
+				this.thumbColor = sheet.darkMode? hiGray : hiGray;
+				this.thumbDarkShadowColor = sheet.darkMode? dkGray : dkGray;
+				this.trackColor = sheet.darkMode? hiGray2DarkMode : hiGray2;
+			}
+		});
+		repaint();
+	}
+
 	/**
 	 * Constructor for the YassLyrics object
 	 *
@@ -230,7 +296,8 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 
 			public void paintComponent(Graphics g) {
 
-				g.setColor(lyricsArea.isEditable() ? bgColor : bgColor2);
+				g.setColor(lyricsArea.isEditable() ? (sheet.darkMode ? whiteDarkMode : white) :
+						(sheet.darkMode ? whitetransDarkMode : whitetrans));
 				Rectangle r = ((JViewport) getParent()).getViewRect();
 				g.fillRect(r.x, r.y, r.width, r.height);
 
@@ -255,7 +322,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 				int x = d.width - 60;
 				int y = p.y + strh + 6;
 				g2.setFont(big);
-				g.setColor(Color.blue);
+				g.setColor(blue);
 				g.drawString(str, x, y);
 			}
 		};
@@ -269,7 +336,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 		StyleConstants.setFontSize(notLongStyle, fontSize);
 		StyleConstants.setSpaceAbove(notLongStyle, 0);
 		StyleConstants.setSpaceBelow(notLongStyle, 0);
-		StyleConstants.setForeground(notLongStyle, fontColor);
+		// StyleConstants.setForeground(notLongStyle, dkGray); --> see propsChanged
 		StyleConstants.setStrikeThrough(notLongStyle, false);
 
 		// Line too long
@@ -277,15 +344,12 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 		StyleConstants.setStrikeThrough(longStyle, true);
 		// not selected
 		notSelectStyle = sc.addStyle(null, null);
-		StyleConstants.setForeground(notSelectStyle, fontColor);
-		StyleConstants.setBackground(
-				notSelectStyle,
-				nofontBG);
+		//StyleConstants.setForeground(notSelectStyle, dkGray); --> see propsChanged
+		//StyleConstants.setBackground(notSelectStyle, nofontBG); --> see propsChanged
 		// selected
 		selectStyle = sc.addStyle(null, null);
-		StyleConstants.setForeground(selectStyle, Color.black);
-		StyleConstants.setBackground(selectStyle,
-				lyricsArea.getSelectionColor());
+		// StyleConstants.setForeground(selectStyle, black); --> see propsChanged
+		// StyleConstants.setBackground(selectStyle, lyricsArea.getSelectionColor()); --> see propsChanged
 		// golden
 		goldenStyle = sc.addStyle(null, null);
 		StyleConstants.setBold(goldenStyle, true);
@@ -784,6 +848,7 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 				lineNumbers.repaint();
 			}
 		});
+		lyricsScrollPane.setBorder(null);
 
 		setLayout(new BorderLayout());
 		add("West", lineNumbers);
@@ -1050,7 +1115,11 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 	 *            The new sheet value
 	 */
 	public void setSheet(YassSheet s) {
+		if (sheet != null)
+			sheet.removeYassSheetListener(this);
 		sheet = s;
+		sheet.addYassSheetListener(this);
+		propsChanged(sheet);
 	}
 
 	/**
@@ -1341,9 +1410,9 @@ public class YassLyrics extends JPanel implements TabChangeListener {
 		}
 
 		lyricsArea
-				.setBackground(mismatch == 0 ? (lyricsArea.isEditable() ? Color.white
-						: disabledColor)
-						: red);
+				.setBackground(mismatch == 0 ? (lyricsArea.isEditable() ? (sheet.darkMode ? whiteDarkMode : white)
+						: (sheet.darkMode ? bgColorDarkMode : bgColor))
+						: (sheet.darkMode ? redDarkMode : red));
 	}
 
 	/**

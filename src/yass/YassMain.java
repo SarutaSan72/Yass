@@ -22,6 +22,9 @@ import yass.stats.YassStats;
 
 import javax.sound.midi.MidiUnavailableException;
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -538,14 +541,50 @@ public class YassMain extends JApplet {
                     }
                 });
 
-        sheetPanel.add("North", actions.createFileEditToolbar());
+        JComponent t;
+        sheetPanel.add("North", t = actions.createFileEditToolbar());
         sheetPanel.add("Center", sheetPane);
         sheetPanel.add("South", sheetInfo);
 
+        sheet.addYassSheetListener(new YassSheetListener() {
+            @Override
+            public void posChanged(YassSheet source, double posMs) { }
+            @Override
+            public void rangeChanged(YassSheet source, int minHeight, int maxHeight, int minBeat, int maxBeat) { }
+            @Override
+            public void propsChanged(YassSheet source) {
+                t.setBackground(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
+                t.setBorder(BorderFactory.createEmptyBorder(3,3,3,3));
+                /* todo dark mode buttons
+                Border emptyBorder = BorderFactory.createCompoundBorder(
+                        BorderFactory.createEtchedBorder(EtchedBorder.RAISED),
+                        BorderFactory.createEmptyBorder(4,4,4,4));
+                Border rolloverBorder = BorderFactory.createCompoundBorder(
+                        BorderFactory.createEtchedBorder(EtchedBorder.RAISED),
+                        BorderFactory.createEmptyBorder(4,4,4,4));
+                for (Component c: t.getComponents()) {
+                    c.setBackground(sheet.darkMode ? sheet.hiGray : sheet.hiGray2);
+                    if (c instanceof JButton)
+                        ((JButton)c).getModel().addChangeListener(new ChangeListener() {
+                            @Override
+                            public void stateChanged(ChangeEvent e) {
+                                ButtonModel model = (ButtonModel) e.getSource();
+                                c.setBackground(model.isRollover()
+                                        ? (sheet.darkMode ? sheet.blue : sheet.blue)
+                                        : (sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2));
+                                ((JButton)c).setBorder(model.isRollover() ? rolloverBorder : emptyBorder);
+                            }
+                        });
+                }*/
+            }
+        });
+        t.setBackground(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
+        t.setBorder(BorderFactory.createLineBorder(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2, 3));
 
         sheetPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         sheetPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         sheetPane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+        sheetPane.setBorder(null);
 
         return sheetPanel;
     }

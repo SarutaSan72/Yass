@@ -3270,7 +3270,7 @@ public class YassSheet extends JPanel implements Scrollable,
         if (paintHeights) {
             off += heightBoxWidth;
         }
-        g2.setColor(darkMode ? hiGrayDarkMode : hiGray);
+        g2.setColor(darkMode ? hiGray2DarkMode : hiGray2);
         g2.fillRect((int) (beatgap * wSize + off), 0, dim.width, TOP_BORDER);
 
         int multiplier = 1;
@@ -3280,7 +3280,7 @@ public class YassSheet extends JPanel implements Scrollable,
             multiplier *= 4;
         }
 
-        g2.setColor(Color.darkGray);
+        g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
         g2.setFont(smallFont);
         FontMetrics metrics = g2.getFontMetrics();
         String str;
@@ -3524,7 +3524,7 @@ public class YassSheet extends JPanel implements Scrollable,
         int hh = clip.height - TOP_LINE + 10 + -BOTTOM_BORDER - 1;
 
         g2.setStroke(thinStroke);
-        g2.setColor(darkMode ? hiGrayDarkMode : hiGray);
+        g2.setColor(darkMode ? hiGray2DarkMode : hiGray2);
         g2.fillRect(x, y, w, hh);
 
         g2.setColor(Color.gray);
@@ -3577,7 +3577,7 @@ public class YassSheet extends JPanel implements Scrollable,
                         (float) (line.y1));
             }
             if (hiliteHeight < 200) {
-                g2.setColor(hiGray);
+                g2.setColor(blueDrag);
                 g2.fillRect(clip.x + heightBoxWidth, (int) (dim.height
                         - BOTTOM_BORDER - (hiliteHeight - hhPageMin + 1)
                         * hSize), clip.width, (int) (2 * hSize));
@@ -3716,7 +3716,7 @@ public class YassSheet extends JPanel implements Scrollable,
             String s = YassUtils.commaTime(d) + "s";
             g2.setFont(smallFont);
             int sw = g2.getFontMetrics().stringWidth(s);
-            g2.setColor(darkMode ? hiGrayDarkMode : hiGray);
+            g2.setColor(darkMode ? hiGray2DarkMode : hiGray2);
             g2.fillRect(playerPos - clip.x - sw / 2 - 5, 11, sw + 10, 9);
             g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
             g2.drawString(s, playerPos - clip.x - sw / 2, 18);
