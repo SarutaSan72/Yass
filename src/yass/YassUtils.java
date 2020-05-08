@@ -194,6 +194,9 @@ public class YassUtils {
     public static String createSong(JComponent parent, Hashtable<?, ?> vals, YassProperties prop) {
         String artist = (String) vals.get("artist");
         String title = (String) vals.get("title");
+        String language = (String) vals.get("language");
+        String genre = (String) vals.get("genre");
+        String bpm = (String) vals.get("bpm");
         String mp3filename = (String) vals.get("filename");
         String folder = (String) vals.get("folder");
         String songdir = (String) vals.get("songdir");
@@ -263,6 +266,11 @@ public class YassUtils {
         table.init(prop);
         table.removeAllRows();
         table.setText(tabletxt);
+        table.setArtist(artist);
+        table.setTitle(title);
+        table.setGenre(genre);
+        table.setLanguage(language);
+        table.setBPM(bpm);
         table.setEncoding(encoding);
         table.storeFile(newtxt.getAbsolutePath());
         return newtxt.getAbsolutePath();

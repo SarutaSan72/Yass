@@ -4439,6 +4439,7 @@ public class YassSheet extends JPanel implements Scrollable,
             return;
         }
         Color c = table.getTableColor();
+        if (c==null) c = Color.black;
         paintTableText(g2, table, rect, c.darker(), c, 0, -clip.x, true);
     }
 

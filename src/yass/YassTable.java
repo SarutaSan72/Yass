@@ -640,7 +640,7 @@ public class YassTable extends JTable {
         if (s == null || s.length() < 1) {
             return;
         }
-        s.replace(',', '.');
+        s = s.replace(',', '.');
         double d = Double.parseDouble(s);
         if (d > 0) {
             setBPM(d);
