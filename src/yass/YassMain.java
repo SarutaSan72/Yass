@@ -308,7 +308,7 @@ public class YassMain extends JApplet {
     private void checkVersion() {
         if (prop.checkVersion()) {
             String dir = prop.getUserDir();
-            int ok = JOptionPane.showConfirmDialog(null, "<html>" + I18.get("incompatible_version") + "<br>" + dir + "<br><br>" + I18.get("remove_version"), I18.get("incompatible_version") + " - Yass", JOptionPane.OK_CANCEL_OPTION);
+            int ok = JOptionPane.showConfirmDialog(null, "<html>" + I18.get("incompatible_version") + "<br>" + dir + "<br><br>" + I18.get("remove_version"), I18.get("incompatible_version") + " - Yass", JOptionPane.YES_NO_OPTION);
             if (ok == JOptionPane.OK_OPTION) {
                 boolean verify = !dir.contains(".yass");
                 if (verify || !(new File(dir).exists()) || !(new File(dir).isDirectory())) {

@@ -60,11 +60,11 @@ public class YassActions implements DropTargetListener {
     /**
      * Description of the Field
      */
-    public final static String VERSION = "2.1.1";
+    public final static String VERSION = "2.1.2";
     /**
      * Description of the Field
      */
-    public final static String DATE = "4/2020";
+    public final static String DATE = "5/2020";
 
     Action showAbout = new AbstractAction(I18.get("mlib_about")) {
         private static final long serialVersionUID = 1L;
@@ -2900,16 +2900,16 @@ public class YassActions implements DropTargetListener {
     private Color stdBackground = new JButton().getBackground(),
             errBackground = new Color(.95f, .5f, .5f),
             minorerrBackground = new Color(.95f, .8f, .8f);
-    private Color[] hicolors = new Color[]{new Color(.3f, .3f, 0.3f, .3f),
-            new Color(.3f, .6f, 0.3f, .3f), new Color(.3f, .3f, 0.6f, .3f),
-            new Color(.3f, .6f, 0.6f, .3f), new Color(.6f, .6f, 0.3f, .3f),
-            new Color(.6f, .3f, 0.6f, .3f), new Color(.4f, .4f, 0.6f, .3f),
-            new Color(.4f, .6f, 0.4f, .3f),};
-    private Color[] colors = new Color[]{new Color(.3f, .3f, 0.3f, .7f),
-            new Color(.3f, .6f, 0.3f, .7f), new Color(.3f, .3f, 0.6f, .7f),
-            new Color(.3f, .6f, 0.6f, .7f), new Color(.6f, .6f, 0.3f, .7f),
-            new Color(.6f, .3f, 0.6f, .7f), new Color(.4f, .4f, 0.6f, .7f),
-            new Color(.4f, .6f, 0.4f, .7f),};
+    private Color[] colors = new Color[]{
+            new Color(.3f, .3f, 0.3f, .7f),
+            new Color(.3f, .6f, 0.3f, .7f),
+            new Color(.3f, .3f, 0.6f, .7f),
+            new Color(.3f, .6f, 0.6f, .7f),
+            new Color(.6f, .6f, 0.3f, .7f),
+            new Color(.6f, .3f, 0.6f, .7f),
+            new Color(.4f, .4f, 0.6f, .7f),
+            new Color(.4f, .6f, 0.4f, .7f)};
+
     private boolean autoTrim = false;
     private JComboBox<String> plBox = null, filter = null;
     private JTextField filterEditor = null;
@@ -3399,13 +3399,8 @@ public class YassActions implements DropTargetListener {
             colors[i] = new Color(col.getRed(), col.getGreen(), col.getBlue(),
                     255);
         }
-        for (int i = 0; i < hicolors.length; i++) {
-            Color col = colors[i];
-            hicolors[i] = new Color(col.getRed(), col.getGreen(),
-                    col.getBlue(), 64);
-        }
 
-        Color ncol[] = new Color[7];
+        Color ncol[] = new Color[YassSheet.COLORSET_COUNT];
         for (int i = 0; i < ncol.length; i++) {
             String c = prop.getProperty("note-color-" + i);
             Color col = Color.decode(c);
@@ -3415,8 +3410,8 @@ public class YassActions implements DropTargetListener {
         sheet.setColors(ncol);
         lyrics.setColors(ncol);
         YassTableRenderer.setColors(ncol);
-        errBackground = ncol[5];
-        minorerrBackground = ncol[6];
+        errBackground = ncol[YassSheet.COLOR_ERROR];
+        minorerrBackground = ncol[YassSheet.COLOR_WARNING];
 
         boolean shade = prop.get("shade-notes").equals("true");
         sheet.shadeNotes(shade);
@@ -3500,11 +3495,11 @@ public class YassActions implements DropTargetListener {
             String rgb = Integer.toHexString(colors[i].getRGB());
             prop.put(c, rgb);
         }
-        for (int i = 0; i < hicolors.length; i++) {
-            String c = "hi-color-" + i;
 
-            String rgb = Integer.toHexString(colors[i].getRGB());
-            prop.put(c, rgb);
+        Color ncol[] = sheet.getColors();
+        for (int i = 0; i < ncol.length; i++) {
+            String rgb = Integer.toHexString(ncol[i].getRGB());
+            prop.put("note-color-" + i, rgb);
         }
     }
 
@@ -3516,16 +3511,6 @@ public class YassActions implements DropTargetListener {
      */
     public Color getTableColor(int i) {
         return colors[i];
-    }
-
-    /**
-     * Gets the tableHiColor attribute of the YassActions object
-     *
-     * @param i Description of the Parameter
-     * @return The tableHiColor value
-     */
-    public Color getTableHiColor(int i) {
-        return hicolors[i];
     }
 
     /**
@@ -3544,24 +3529,6 @@ public class YassActions implements DropTargetListener {
      */
     public void setTab(JComponent c) {
         tab = c;
-    }
-
-    /**
-     * Gets the tableColors attribute of the YassActions object
-     *
-     * @return The tableColors value
-     */
-    public Color[] getTableColors() {
-        return hicolors;
-    }
-
-    /**
-     * Gets the tableHiColors attribute of the YassActions object
-     *
-     * @return The tableHiColors value
-     */
-    public Color[] getTableHiColors() {
-        return hicolors;
     }
 
     /**

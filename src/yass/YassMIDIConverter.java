@@ -116,14 +116,10 @@ public class YassMIDIConverter implements DropTargetListener {
         }
     };
     private String[] instrument = new String[128];
-    private Color[] colors = new Color[]{new Color(.3f, .3f, 0.3f, .7f),
-            new Color(.3f, .6f, 0.3f, .7f), new Color(.3f, .3f, 0.6f, .7f),
-            new Color(.3f, .6f, 0.6f, .7f), new Color(.6f, .6f, 0.3f, .7f),
-            new Color(.6f, .3f, 0.6f, .7f), new Color(.4f, .4f, 0.6f, .7f),
-            new Color(.4f, .6f, 0.4f, .7f), new Color(.4f, .6f, 0.6f, .7f),
-            new Color(.6f, .6f, 0.4f, .7f), new Color(.6f, .4f, 0.6f, .7f),};
     private Synthesizer synthesizer;
     private JComponent dropTarget = null;
+
+    private Color[] colors = new Color[8];
 
     /**
      * Constructor for the YassMIDIConverter object

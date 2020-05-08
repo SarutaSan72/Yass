@@ -206,15 +206,15 @@ public class YassSheetInfo extends JPanel {
 
             Color hiliteFill = null;
             if (r.isGolden()) {
-                hiliteFill = colorSet[3];
+                hiliteFill = colorSet[YassSheet.COLOR_GOLDEN];
             } else if (r.isFreeStyle()) {
-                hiliteFill = colorSet[4];
+                hiliteFill = colorSet[YassSheet.COLOR_FREESTYLE];
             } else if (r.isRap()) {
-                hiliteFill = sheet.darkMode ? sheet.dkGrayDarkMode.darker() : sheet.dkGray.darker();
+                hiliteFill = colorSet[YassSheet.COLOR_RAP];
             } else if (r.isRapGolden()) {
-                hiliteFill = colorSet[3].darker();
+                hiliteFill = colorSet[YassSheet.COLOR_RAPGOLDEN];
             } else if (r.hasMessage()) {
-                hiliteFill = colorSet[5];
+                hiliteFill = colorSet[YassSheet.COLOR_ERROR];
             }
             if (hiliteFill != null) {
                 g2.setColor(hiliteFill);
@@ -251,7 +251,7 @@ public class YassSheetInfo extends JPanel {
             int durationGolden = table.getDurationGolden();
             String goldenDiff = table.getGoldenDiff();
             boolean err = Math.abs(goldenPoints - idealGoldenPoints) > goldenVariance;
-            g2.setColor(err ? colorSet[5] : (sheet.darkMode ? sheet.hiGray : sheet.dkGray));
+            g2.setColor(err ? colorSet[YassSheet.COLOR_ERROR] : (sheet.darkMode ? sheet.hiGray : sheet.dkGray));
 
             String goldenString = MessageFormat.format(
                     I18.get("correct_golden_info"), "" + idealGoldenPoints,
@@ -273,9 +273,9 @@ public class YassSheetInfo extends JPanel {
 
             g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
             g2.drawRect(x, y, w, h);
-            g2.setColor(err ? colorSet[5] : (sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray));
+            g2.setColor(err ? colorSet[YassSheet.COLOR_ERROR] : (sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray));
             g2.fillRect(x + 1, y + 1, w - 1, h - 1);
-            g2.setColor(colorSet[3]);
+            g2.setColor(colorSet[YassSheet.COLOR_GOLDEN]);
             g2.fillRect(x + w / 2 - xVar / 2, y + 1, xVar, h - 1);
             g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
             g2.drawRect(x + w / 2, y, 1, h);

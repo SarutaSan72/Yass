@@ -347,6 +347,7 @@ public class OptionsPanel extends JPanel {
             la.setToolTipText("#" + Integer.toHexString(col.getRGB() & 0x00ffffff));
             la.setOpaque(true);
             la.setBackground(col);
+            la.setFont(la.getFont().deriveFont(((float)(la.getFont().getSize() - 3))));
             grid.add(la);
         }
         JPanel colPanel = new JPanel(new BorderLayout());

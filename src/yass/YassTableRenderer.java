@@ -34,8 +34,8 @@ public class YassTableRenderer extends DefaultTableCellRenderer {
 
 
     public static void setColors(Color[] colorSet) {
-        red = colorSet[5];
-        darkRed = colorSet[6];
+        red = colorSet[YassSheet.COLOR_ERROR];
+        darkRed = colorSet[YassSheet.COLOR_WARNING];
     }
     /**
      * Gets the tableCellRendererComponent attribute of the YassTableRenderer

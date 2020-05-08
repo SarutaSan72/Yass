@@ -144,7 +144,7 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 
 	private Color lineNumberColor = Color.gray;
 
-	private Color[] colorSet = new Color[7];
+	private Color[] colorSet = new Color[YassSheet.COLORSET_COUNT];
 	private Color errBackground, minorerrBackground;
 	private Font lineNumberFont = new Font("SansSerif", Font.PLAIN, 10);
 	private LineNumbers lineNumbers;
@@ -176,8 +176,8 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 
 	public void setColors(Color[] c) {
 		System.arraycopy(c, 0, colorSet, 0, colorSet.length);
-		errBackground = colorSet[5];
-		minorerrBackground = colorSet[6];
+		errBackground = colorSet[YassSheet.COLOR_ERROR];
+		minorerrBackground = colorSet[YassSheet.COLOR_WARNING];
 	}
 
 	/**

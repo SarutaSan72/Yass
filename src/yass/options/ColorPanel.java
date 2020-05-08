@@ -19,6 +19,7 @@
 package yass.options;
 
 import yass.I18;
+import yass.YassSheet;
 
 /**
  * Description of the Class
@@ -32,7 +33,7 @@ public class ColorPanel extends OptionsPanel {
      * Gets the body attribute of the ColorPanel object
      */
     public void addRows() {
-        setLabelWidth(140);
+        setLabelWidth(100);
         addSeparator(I18.get("options_design_dark_mode"));
         addBoolean("", "dark-mode", I18.get("options_design_dark_mode_enabled"));
         addSeparator(I18.get("options_design_versions"));
@@ -40,7 +41,7 @@ public class ColorPanel extends OptionsPanel {
         addSeparator(I18.get("options_design_notes"));
         String s = I18.get("options_design_notes_colors_names");
         String[] names = s != null ? s.split("\\|") : null;
-        addColorSet(I18.get("options_design_notes_colors"), "note-color", 7, names);
+        addColorSet(I18.get("options_design_notes_colors"), "note-color", YassSheet.COLORSET_COUNT, names);
         addBoolean("", "shade-notes", I18.get("options_design_notes_shade"));
         addBoolean("", "show-note-height", I18.get("options_design_notes_height"));
         addBoolean("", "show-note-scale", I18.get("options_design_notes_scale"));

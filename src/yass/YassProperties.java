@@ -59,6 +59,12 @@ public class YassProperties extends Properties {
         if (!old) {
             old = v.startsWith("2.0");
         }
+        if (!old) {
+            old = v.startsWith("2.1.0");
+        }
+        if (!old) {
+            old = v.startsWith("2.1.1");
+        }
         return old;
     }
 
@@ -237,13 +243,15 @@ public class YassProperties extends Properties {
         p.put("lyrics-min-height", "120");
         p.put("lyrics-font-size", "14");
 
-        p.put("note-color-6", "#dd9966");
-        p.put("note-color-5", "#dd6666");
-        p.put("note-color-4", "#ffccff");
-        p.put("note-color-3", "#f0f066");
-        p.put("note-color-2", "#4488cc");
-        p.put("note-color-1", "#777777");
-        p.put("note-color-0", "#dddddd");
+        p.put("note-color-8", "#dd9966"); // warning
+        p.put("note-color-7", "#dd6666"); // error
+        p.put("note-color-6", "#ffccff"); // freestyle
+        p.put("note-color-5", "#66aa66"); // rap
+        p.put("note-color-4", "#bbffbb"); // golden rap
+        p.put("note-color-3", "#f0f066"); // golden
+        p.put("note-color-2", "#4488cc"); // active
+        p.put("note-color-1", "#777777"); // shade
+        p.put("note-color-0", "#dddddd"); // note
         p.put("shade-notes", "true");
         p.put("dark-mode", "false");
 

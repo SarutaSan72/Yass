@@ -45,6 +45,7 @@ public class YassOptions extends JDialog {
     private final Hashtable<String, OptionsPanel> panels;
     private final JPanel main;
     private final JScrollPane scrollMain;
+    private final YassActions actions;
 
 
     /**
@@ -55,7 +56,8 @@ public class YassOptions extends JDialog {
     public YassOptions(YassActions a) {
         super(new OwnerFrame());
 
-        YassProperties prop = a.getProperties();
+        actions = a;
+        YassProperties prop = actions.getProperties();
         panels = new Hashtable<>();
 
         DefaultMutableTreeNode top = new DefaultMutableTreeNode("Yass");
@@ -146,6 +148,7 @@ public class YassOptions extends JDialog {
                         int value = ((Integer) val).intValue();
                         if (value == JOptionPane.OK_OPTION) {
 
+                            actions.storeColors();
                             OptionsPanel.storeProperties();
                             //System.out.println("store");
                         }
