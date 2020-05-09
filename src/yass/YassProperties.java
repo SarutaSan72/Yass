@@ -293,7 +293,7 @@ public class YassProperties extends Properties {
 
         p.put("group-min", "3");
 
-        p.put("hyphenations", "EN|DE|ES|PL|RU");
+        p.put("hyphenations", "EN|DE|ES|PL|RU|ZH");
         p.put("dicts", "EN|DE");
         p.put("dict-map", "English|EN|German|DE|French|EN|Croatian|EN|Hungarian|EN|Italian|EN|Japanese|EN|Polish|EN|Russian|EN|Spanish|EN|Swedish|EN|Turkish|EN");
         p.put("user-dicts", userDir + File.separator + yassDir);
