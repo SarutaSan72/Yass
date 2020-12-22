@@ -102,6 +102,11 @@ public class YassProperties extends Properties {
             if (getProperty("note-naming-h") == null)
                 setProperty("note-naming-h", "DE RU PL NO FI SE");
 
+            if (getProperty("key-17") == null)
+                setProperty("key-17", "B");
+            if (getProperty("key-18") == null)
+                setProperty("key-18", "N");
+
             return;
         } catch (Exception e) {
             // not exists
@@ -336,6 +341,8 @@ public class YassProperties extends Properties {
         p.put("key-14", "H");
         p.put("key-15", "J");
         p.put("key-16", "K");
+        p.put("key-17", "B");
+        p.put("key-18", "N");
 
         p.put("screenkey-0", "ESCAPE");
         p.put("screenkey-1", "PAUSE");

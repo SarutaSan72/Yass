@@ -5695,7 +5695,7 @@ public class YassTable extends JTable {
             inout[0] = 0;
             i = 0;
         }
-        if (j < 0) {
+        if (j < 0 || j > n - 1) {
             inout[1] = -1;
             j = n - 1;
         }

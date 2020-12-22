@@ -194,6 +194,10 @@ public class YassSheet extends JPanel implements Scrollable,
     private final static int PLAY_PAGE = 16;
     private final static int PLAY_NOTE_PRESSED = 18;
     private final static int PLAY_PAGE_PRESSED = 19;
+    private final static int PLAY_BEFORE_PRESSED = 20;
+    private final static int PLAY_BEFORE = 21;
+    private final static int PLAY_NEXT = 22;
+    private final static int PLAY_NEXT_PRESSED = 23;
     boolean useSketching = false, useSketchingPlayback = false;
     AffineTransform identity = new AffineTransform();
     String bufferlost = I18.get("sheet_msg_buffer_lost");
@@ -221,7 +225,7 @@ public class YassSheet extends JPanel implements Scrollable,
     private int lyricsWidth = 400;
     private boolean lyricsVisible = true;
     private boolean messageMemory = false;
-    private int keycodes[] = new int[17];
+    private int keycodes[] = new int[19];
     private long equalsKeyMillis = 0;
     private String layout = "East";
 
@@ -240,9 +244,21 @@ public class YassSheet extends JPanel implements Scrollable,
      */
     private long lastTime = -1;
     private String lastTimeString = "";
-    private int LEFT_BORDER = 36, RIGHT_BORDER = 36;
-    private int TOP_BORDER = 20, BOTTOM_BORDER = 56, TOP_LINE,
-            TOP_PLAYER_BUTTONS;
+    private int
+            LEFT_BORDER = 36,
+            RIGHT_BORDER = 36,
+            TOP_BORDER = 20,
+            BOTTOM_BORDER = 56,
+            TOP_LINE,
+            TOP_PLAYER_BUTTONS,
+            PLAY_PAGE_X = -76,
+            PLAY_PAGE_W = 36,
+            PLAY_BEFORE_X = -36,
+            PLAY_BEFORE_W = 36,
+            PLAY_NOTE_X = 2,
+            PLAY_NOTE_W = 48,
+            PLAY_NEXT_X = 49,
+            PLAY_NEXT_W = 36;
     private Point[] sketch = null;
     private int sketchPos = 0, dirPos = 0;
     private long sketchStartTime = 0;
@@ -405,6 +421,18 @@ public class YassSheet extends JPanel implements Scrollable,
                         && !e.isAltDown()) {
                     Integer mode = new Integer(e.isShiftDown() ? 1 : 0);
                     firePropertyChange("play", mode, "page");
+                    e.consume();
+                    return;
+                }
+
+                // 17=play_before, 18=play_next
+                if (code == keycodes[17] && !e.isControlDown() && !e.isAltDown()) {
+                    firePropertyChange("play", null, "before");
+                    e.consume();
+                    return;
+                }
+                if (code == keycodes[18] && !e.isControlDown() && !e.isAltDown()) {
+                    firePropertyChange("play", null, "next");
                     e.consume();
                     return;
                 }
@@ -808,6 +836,14 @@ public class YassSheet extends JPanel implements Scrollable,
                     firePropertyChange("play", null, "page");
                     hiliteCue = UNDEFINED;
                 }
+                if (hiliteCue == PLAY_BEFORE_PRESSED) {
+                    firePropertyChange("play", null, "before");
+                    hiliteCue = UNDEFINED;
+                }
+                if (hiliteCue == PLAY_NEXT_PRESSED) {
+                    firePropertyChange("play", null, "next");
+                    hiliteCue = UNDEFINED;
+                }
 
                 if (sketchStarted()) {
                     // firePropertyChange("play", null, "stop");
@@ -855,10 +891,10 @@ public class YassSheet extends JPanel implements Scrollable,
                 int x = e.getX();
                 int y = e.getY();
 
-                if (x > playerPos - 32 && x < playerPos + 48
+                if (x > playerPos + PLAY_PAGE_X && x < playerPos + PLAY_NEXT_X + PLAY_NEXT_W
                         && y > TOP_PLAYER_BUTTONS
                         && y < TOP_PLAYER_BUTTONS + 64) {
-                    // PLAY_NOTE_PRESSED or PLAY_PAGE_PRESSED
+                    // PLAY_NOTE_PRESSED or PLAY_PAGE_PRESSED or PLAY_BEFORE/NEXT_PRESSED
                     return;
                 }
 
@@ -970,11 +1006,34 @@ public class YassSheet extends JPanel implements Scrollable,
                     return;
                 }
 
-                if (x > playerPos - 32 && x < playerPos + 48
+                if (x > playerPos + PLAY_PAGE_X && x < playerPos + PLAY_PAGE_X + PLAY_PAGE_W
                         && y > TOP_PLAYER_BUTTONS
                         && y < TOP_PLAYER_BUTTONS + 64) {
-                    hiliteCue = x >= playerPos ? PLAY_NOTE_PRESSED
-                            : PLAY_PAGE_PRESSED;
+                    hiliteCue = PLAY_PAGE_PRESSED;
+                    repaint();
+                    return;
+                }
+
+                if (x > playerPos + PLAY_BEFORE_X && x < playerPos + PLAY_BEFORE_X + PLAY_BEFORE_W
+                        && y > TOP_PLAYER_BUTTONS
+                        && y < TOP_PLAYER_BUTTONS + 64) {
+                    hiliteCue = PLAY_BEFORE_PRESSED;
+                    repaint();
+                    return;
+                }
+
+                if (x > playerPos + PLAY_NOTE_X && x < playerPos + PLAY_NOTE_X + PLAY_NOTE_W
+                        && y > TOP_PLAYER_BUTTONS
+                        && y < TOP_PLAYER_BUTTONS + 64) {
+                    hiliteCue = PLAY_NOTE_PRESSED;
+                    repaint();
+                    return;
+                }
+
+                if (x > playerPos + PLAY_NEXT_X && x < playerPos + PLAY_NEXT_X + PLAY_NEXT_W
+                        && y > TOP_PLAYER_BUTTONS
+                        && y < TOP_PLAYER_BUTTONS + 64) {
+                    hiliteCue = PLAY_NEXT_PRESSED;
                     repaint();
                     return;
                 }
@@ -1286,11 +1345,38 @@ public class YassSheet extends JPanel implements Scrollable,
                     return;
                 }
 
-                if (x > playerPos - 32 && x < playerPos + 48
+                if (x > playerPos + PLAY_PAGE_X && x < playerPos + PLAY_PAGE_X + PLAY_PAGE_W
                         && y > TOP_PLAYER_BUTTONS
                         && y < TOP_PLAYER_BUTTONS + 64) {
                     setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                    hiliteCue = x >= playerPos ? PLAY_NOTE : PLAY_PAGE;
+                    hiliteCue = PLAY_PAGE;
+                    repaint();
+                    return;
+                }
+
+                if (x > playerPos + PLAY_BEFORE_X && x < playerPos + PLAY_BEFORE_X + PLAY_BEFORE_W
+                        && y > TOP_PLAYER_BUTTONS
+                        && y < TOP_PLAYER_BUTTONS + 64) {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                    hiliteCue = PLAY_BEFORE;
+                    repaint();
+                    return;
+                }
+
+                if (x > playerPos + PLAY_NOTE_X && x < playerPos + PLAY_NOTE_X + PLAY_NOTE_W
+                        && y > TOP_PLAYER_BUTTONS
+                        && y < TOP_PLAYER_BUTTONS + 64) {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                    hiliteCue = PLAY_NOTE;
+                    repaint();
+                    return;
+                }
+
+                if (x > playerPos + PLAY_NEXT_X && x < playerPos + PLAY_NEXT_X + PLAY_NEXT_W
+                        && y > TOP_PLAYER_BUTTONS
+                        && y < TOP_PLAYER_BUTTONS + 64) {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                    hiliteCue = PLAY_NEXT;
                     repaint();
                     return;
                 }
@@ -1524,8 +1610,36 @@ public class YassSheet extends JPanel implements Scrollable,
                     repaint();
                     return;
                 }
+                if (hiliteCue == PLAY_PAGE_PRESSED
+                        && !(px > playerPos + PLAY_PAGE_X && px < playerPos + PLAY_PAGE_W
+                        && py > TOP_PLAYER_BUTTONS && py < TOP_PLAYER_BUTTONS + 64)) {
+                    hiliteCue = PLAY_PAGE;
+                    repaint();
+                    return;
+                }
+                if (hiliteCue == PLAY_PAGE
+                        && (px > playerPos + PLAY_PAGE_X && px < playerPos + PLAY_PAGE_W
+                        && py > TOP_PLAYER_BUTTONS && py < TOP_PLAYER_BUTTONS + 64)) {
+                    hiliteCue = PLAY_PAGE_PRESSED;
+                    repaint();
+                    return;
+                }
+                if (hiliteCue == PLAY_BEFORE_PRESSED
+                        && !(px > playerPos + PLAY_BEFORE_X && px < playerPos + PLAY_BEFORE_W
+                        && py > TOP_PLAYER_BUTTONS && py < TOP_PLAYER_BUTTONS + 64)) {
+                    hiliteCue = PLAY_BEFORE;
+                    repaint();
+                    return;
+                }
+                if (hiliteCue == PLAY_BEFORE
+                        && (px > playerPos + PLAY_BEFORE_X && px < playerPos + PLAY_BEFORE_W
+                        && py > TOP_PLAYER_BUTTONS && py < TOP_PLAYER_BUTTONS + 64)) {
+                    hiliteCue = PLAY_BEFORE_PRESSED;
+                    repaint();
+                    return;
+                }
                 if (hiliteCue == PLAY_NOTE_PRESSED
-                        && !(px >= playerPos && px < playerPos + 48
+                        && !(px >= playerPos + PLAY_NOTE_X && px < playerPos + PLAY_NOTE_W
                         && py > TOP_PLAYER_BUTTONS && py < TOP_PLAYER_BUTTONS + 64)) {
                     hiliteCue = PLAY_NOTE;
                     repaint();
@@ -1538,25 +1652,32 @@ public class YassSheet extends JPanel implements Scrollable,
                     repaint();
                     return;
                 }
-                if (hiliteCue == PLAY_PAGE_PRESSED
-                        && !(px > playerPos - 32 && px < playerPos
+
+                if (hiliteCue == PLAY_NEXT_PRESSED
+                        && !(px > playerPos + PLAY_NEXT_X && px < playerPos + PLAY_NEXT_W
                         && py > TOP_PLAYER_BUTTONS && py < TOP_PLAYER_BUTTONS + 64)) {
-                    hiliteCue = PLAY_PAGE;
+                    hiliteCue = PLAY_NEXT;
                     repaint();
                     return;
                 }
-                if (hiliteCue == PLAY_PAGE
-                        && (px > playerPos - 32 && px < playerPos
+                if (hiliteCue == PLAY_NEXT
+                        && (px > playerPos + PLAY_NEXT_X && px < playerPos + PLAY_NEXT_W
                         && py > TOP_PLAYER_BUTTONS && py < TOP_PLAYER_BUTTONS + 64)) {
-                    hiliteCue = PLAY_PAGE_PRESSED;
+                    hiliteCue = PLAY_NEXT_PRESSED;
                     repaint();
                     return;
                 }
+
                 if (hiliteCue == NEXT_PAGE || hiliteCue == PREV_PAGE
-                        || hiliteCue == PLAY_NOTE || hiliteCue == PLAY_PAGE
+                        || hiliteCue == PLAY_NOTE
+                        || hiliteCue == PLAY_PAGE
+                        || hiliteCue == PLAY_BEFORE
+                        || hiliteCue == PLAY_NEXT
                         || hiliteCue == NEXT_PAGE_PRESSED
                         || hiliteCue == PREV_PAGE_PRESSED
                         || hiliteCue == PLAY_NOTE_PRESSED
+                        || hiliteCue == PLAY_BEFORE_PRESSED
+                        || hiliteCue == PLAY_NEXT_PRESSED
                         || hiliteCue == PLAY_PAGE_PRESSED) {
                     return;
                 }
@@ -3192,9 +3313,11 @@ public class YassSheet extends JPanel implements Scrollable,
             }
         }
 
-        int x = playerPos - clip.x + 2;
+        // play current note
+
+        int x = playerPos - clip.x + PLAY_NOTE_X;
         int y = TOP_PLAYER_BUTTONS;
-        int w = 48;
+        int w = PLAY_NOTE_W;
         int h = 64;
 
         Color fg = darkMode ? hiGrayDarkMode : hiGray;
@@ -3226,14 +3349,90 @@ public class YassSheet extends JPanel implements Scrollable,
             g2.drawLine(x, y + h - 1, x + w - 1, y + h - 1);
             g2.drawLine(x + w - 1, y + h - 1, x + w - 1, y);
         }
-        boolean isEnabled = hiliteCue == PLAY_NOTE_PRESSED
-                || hiliteCue == PLAY_NOTE;
+        boolean isEnabled = hiliteCue == PLAY_NOTE_PRESSED || hiliteCue == PLAY_NOTE;
         YassUtils.paintTriangle(g2, x + 16, y + 24, 18, YassUtils.EAST,
                 isEnabled, fg, sh, wt);
 
-        x = playerPos - clip.x - 32;
+
+        // play note before
+
+        x = playerPos - clip.x + PLAY_BEFORE_X;
         y = TOP_PLAYER_BUTTONS;
-        w = 32;
+        w = PLAY_BEFORE_W;
+        h = 64;
+
+        isPressed = hiliteCue == PLAY_BEFORE_PRESSED;
+        g2.setColor(isPressed ? fg : arr);
+        g2.fillRect(x, y, w, h);
+
+        if (isPressed) {
+            g2.setColor(sh);
+            g2.drawRect(x, y, w - 1, h - 1);
+        } else {
+            g2.setColor(fg);
+            g2.drawLine(x, y, x, y + h - 1);
+            g2.drawLine(x + 1, y, x + w - 2, y);
+
+            g2.setColor(wt);
+            g2.drawLine(x + 1, y + 1, x + 1, y + h - 3);
+            g2.drawLine(x + 2, y + 1, x + w - 3, y + 1);
+
+            g2.setColor(sh);
+            g2.drawLine(x + 1, y + h - 2, x + w - 2, y + h - 2);
+            g2.drawLine(x + w - 2, y + 1, x + w - 2, y + h - 3);
+
+            g2.setColor(fg);
+            g2.drawLine(x, y + h - 1, x + w - 1, y + h - 1);
+            g2.drawLine(x + w - 1, y + h - 1, x + w - 1, y);
+        }
+        isEnabled = hiliteCue == PLAY_BEFORE || hiliteCue == PLAY_BEFORE_PRESSED;
+        g2.setColor(isEnabled ? sh : fg);
+        g2.fillRect(x + 22, y + 21, 3, 23);
+        YassUtils.paintTriangle(g2, x + 10, y + 27, 12, YassUtils.EAST,
+                isEnabled, fg, sh, wt);
+
+        // play note next
+
+        x = playerPos - clip.x + PLAY_NEXT_X;
+        y = TOP_PLAYER_BUTTONS;
+        w = PLAY_NEXT_W;
+        h = 64;
+
+        isPressed = hiliteCue == PLAY_NEXT_PRESSED;
+        g2.setColor(isPressed ? fg : arr);
+        g2.fillRect(x, y, w, h);
+
+        if (isPressed) {
+            g2.setColor(sh);
+            g2.drawRect(x, y, w - 1, h - 1);
+        } else {
+            g2.setColor(fg);
+            g2.drawLine(x, y, x, y + h - 1);
+            g2.drawLine(x + 1, y, x + w - 2, y);
+
+            g2.setColor(wt);
+            g2.drawLine(x + 1, y + 1, x + 1, y + h - 3);
+            g2.drawLine(x + 2, y + 1, x + w - 3, y + 1);
+
+            g2.setColor(sh);
+            g2.drawLine(x + 1, y + h - 2, x + w - 2, y + h - 2);
+            g2.drawLine(x + w - 2, y + 1, x + w - 2, y + h - 3);
+
+            g2.setColor(fg);
+            g2.drawLine(x, y + h - 1, x + w - 1, y + h - 1);
+            g2.drawLine(x + w - 1, y + h - 1, x + w - 1, y);
+        }
+        isEnabled = hiliteCue == PLAY_NEXT || hiliteCue == PLAY_NEXT_PRESSED;
+        g2.setColor(isEnabled ? sh : fg);
+        g2.fillRect(x + 10, y + 21, 3, 23);
+        YassUtils.paintTriangle(g2, x + 15, y + 27, 12, YassUtils.EAST,
+                isEnabled, fg, sh, wt);
+
+        // play page
+
+        x = playerPos - clip.x + PLAY_PAGE_X;
+        y = TOP_PLAYER_BUTTONS;
+        w = PLAY_PAGE_W;
         h = 64;
 
         isPressed = hiliteCue == PLAY_PAGE_PRESSED;
@@ -3260,11 +3459,14 @@ public class YassSheet extends JPanel implements Scrollable,
             g2.drawLine(x, y + h - 1, x + w - 1, y + h - 1);
             g2.drawLine(x + w - 1, y + h - 1, x + w - 1, y);
         }
-        isEnabled = hiliteCue == PLAY_PAGE_PRESSED || hiliteCue == PLAY_PAGE;
+        isEnabled = hiliteCue == PLAY_PAGE || hiliteCue == PLAY_PAGE_PRESSED;
         g2.setColor(isEnabled ? sh : fg);
-        g2.fillRect(x + 7, y + 21, 3, 23);
-        YassUtils.paintTriangle(g2, x + 12, y + 27, 12, YassUtils.EAST,
+        g2.fillRect(x + 10, y + 30, 14, 3);
+        YassUtils.paintTriangle(g2, x + 4, y + 28, 8, YassUtils.WEST,
                 isEnabled, fg, sh, wt);
+        YassUtils.paintTriangle(g2, x + 24, y + 28, 8, YassUtils.EAST,
+                isEnabled, fg, sh, wt);
+
     }
 
     /**

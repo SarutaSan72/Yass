@@ -51,6 +51,8 @@ public class KeyboardPanel extends OptionsPanel {
         addText(I18.get("options_key_note_shorten"), "key-11");
         addText(I18.get("options_key_play"), "key-12");
         addText(I18.get("options_key_play_page"), "key-13");
+        addText(I18.get("options_key_play_before"), "key-17");
+        addText(I18.get("options_key_play_next"), "key-18");
         addText(I18.get("options_key_scroll_left"), "key-14");
         addText(I18.get("options_key_scroll_right"), "key-15");
         addText(I18.get("options_key_one_page"), "key-16");

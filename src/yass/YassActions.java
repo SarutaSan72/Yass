@@ -60,11 +60,11 @@ public class YassActions implements DropTargetListener {
     /**
      * Description of the Field
      */
-    public final static String VERSION = "2.1.2";
+    public final static String VERSION = "2.2.0";
     /**
      * Description of the Field
      */
-    public final static String DATE = "5/2020";
+    public final static String DATE = "12/2020";
 
     Action showAbout = new AbstractAction(I18.get("mlib_about")) {
         private static final long serialVersionUID = 1L;
@@ -1401,6 +1401,28 @@ public class YassActions implements DropTargetListener {
                 return;
             }
             playPageOrFrozen(0, true);
+        }
+    };
+    Action playBefore = new AbstractAction(I18.get("medit_play_before")) {
+        private static final long serialVersionUID = 1L;
+
+        public void actionPerformed(ActionEvent e) {
+            if (lyrics.isEditable() || songList.isEditing()
+                    || isFilterEditing()) {
+                return;
+            }
+            playSelectionBefore(0);
+        }
+    };
+    Action playNext = new AbstractAction(I18.get("medit_play_next")) {
+        private static final long serialVersionUID = 1L;
+
+        public void actionPerformed(ActionEvent e) {
+            if (lyrics.isEditable() || songList.isEditing()
+                    || isFilterEditing()) {
+                return;
+            }
+            playSelectionNext(0);
         }
     };
     Action playFrozenWithMIDI = new AbstractAction(
@@ -3101,6 +3123,12 @@ public class YassActions implements DropTargetListener {
                     }
                     if (s.equals("page")) {
                         playPageOrFrozen(m, false);
+                    }
+                    if (s.equals("before")) {
+                        playSelectionBefore(m);
+                    }
+                    if (s.equals("next")) {
+                        playSelectionNext(m);
                     }
                     if (s.equals("stop")) {
                         interruptPlay();
@@ -7859,6 +7887,84 @@ public class YassActions implements DropTargetListener {
 
     /**
      * Description of the Method
+     *
+     * @param mode Description of the Parameter
+     */
+    private void playSelectionBefore(int mode) {
+        long inout[] = new long[2];
+
+        int i = table.getSelectionModel().getMinSelectionIndex();
+        if (i < 0)
+            return;
+
+        YassRow r = table.getRowAt(i);
+        if (!r.isNote())
+            return;
+
+        int beat = r.getBeatInt();
+        long end = (long) table.beatToMs(beat);
+        long pos = end - 300;
+        if (pos < 0)
+            pos = 0;
+
+        startPlaying();
+
+        boolean midiEnabled = midiButton.isSelected();
+        boolean mp3Enabled = mp3Button.isSelected();
+        if (mode == 0) {
+            mp3.setMIDIEnabled(midiEnabled);
+            mp3.setAudioEnabled(mp3Enabled);
+        } else if (mode == 1) {
+            mp3.setMIDIEnabled(true);
+            mp3.setAudioEnabled(false);
+        } else if (mode == 2) {
+            mp3.setMIDIEnabled(true);
+            mp3.setAudioEnabled(true);
+        }
+
+        mp3.playSelection(pos*1000, end*1000, null, playTimebase);
+    }
+
+    /**
+     * Description of the Method
+     *
+     * @param mode Description of the Parameter
+     */
+    private void playSelectionNext(int mode) {
+        long inout[] = new long[2];
+
+        int i = table.getSelectionModel().getMaxSelectionIndex();
+        if (i < 0)
+            return;
+
+        YassRow r = table.getRowAt(i);
+        if (!r.isNote())
+            return;
+
+        int beat = r.getBeatInt() + r.getLengthInt();
+        long pos = (long) table.beatToMs(beat);
+        long end = pos + 300;
+
+        startPlaying();
+
+        boolean midiEnabled = midiButton.isSelected();
+        boolean mp3Enabled = mp3Button.isSelected();
+        if (mode == 0) {
+            mp3.setMIDIEnabled(midiEnabled);
+            mp3.setAudioEnabled(mp3Enabled);
+        } else if (mode == 1) {
+            mp3.setMIDIEnabled(true);
+            mp3.setAudioEnabled(false);
+        } else if (mode == 2) {
+            mp3.setMIDIEnabled(true);
+            mp3.setAudioEnabled(true);
+        }
+
+        mp3.playSelection(pos*1000, end*1000, null, playTimebase);
+    }
+
+    /**
+     * Description of the Method
      */
     public void startRecording() {
         sheet.getTemporaryNotes().clear();
@@ -10796,6 +10902,16 @@ public class YassActions implements DropTargetListener {
         c.getActionMap().put("playPageWithMIDIAudio", playPageWithMIDIAudio);
         playPageWithMIDIAudio.putValue(AbstractAction.ACCELERATOR_KEY,
                 KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK));
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_B, 0), "playBefore");
+        c.getActionMap().put("playNext", playBefore);
+        playBefore.putValue(AbstractAction.ACCELERATOR_KEY,
+                KeyStroke.getKeyStroke(KeyEvent.VK_B, 0));
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_N, 0), "playNext");
+        c.getActionMap().put("playNext", playNext);
+        playNext.putValue(AbstractAction.ACCELERATOR_KEY,
+                KeyStroke.getKeyStroke(KeyEvent.VK_N, 0));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, 0), "showCopiedRows");
         c.getActionMap().put("showCopiedRows", showCopiedRows);
