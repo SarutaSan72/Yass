@@ -4753,7 +4753,15 @@ public class YassActions implements DropTargetListener {
                 new ImageIcon(getClass().getResource("/yass/resources/img/PlayVisible24.gif")));
         icons.put("playfrozen24Icon",
                 new ImageIcon(getClass().getResource("/yass/resources/img/PlayFrozen24.gif")));
-        playPage.putValue(AbstractAction.SMALL_ICON, getIcon("playvis16Icon"));
+        icons.put("playpage16Icon",
+                new ImageIcon(getClass().getResource("/yass/resources/img/PlayPage16.gif")));
+        playPage.putValue(AbstractAction.SMALL_ICON, getIcon("playpage16Icon"));
+        icons.put("playbefore16Icon",
+                new ImageIcon(getClass().getResource("/yass/resources/img/PlayBefore16.gif")));
+        playBefore.putValue(AbstractAction.SMALL_ICON, getIcon("playbefore16Icon"));
+        icons.put("playnext16Icon",
+                new ImageIcon(getClass().getResource("/yass/resources/img/PlayNext16.gif")));
+        playNext.putValue(AbstractAction.SMALL_ICON, getIcon("playnext16Icon"));
         icons.put("record16Icon",
                 new ImageIcon(getClass().getResource("/yass/resources/img/Record16.gif")));
         icons.put("record24Icon",
@@ -4959,6 +4967,8 @@ public class YassActions implements DropTargetListener {
             }
         });
         menu.add(playSelection);
+        menu.add(playBefore);
+        menu.add(playNext);
         menu.add(playPage);
         menu.add(playFrozen);
         menu.add(interruptPlay);
