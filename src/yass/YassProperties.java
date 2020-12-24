@@ -106,6 +106,8 @@ public class YassProperties extends Properties {
                 setProperty("key-17", "B");
             if (getProperty("key-18") == null)
                 setProperty("key-18", "N");
+            if (getProperty("before_next_ms") == null)
+                setProperty("before_next_ms", "300");
 
             return;
         } catch (Exception e) {
@@ -415,6 +417,7 @@ public class YassProperties extends Properties {
         p.put("screen-groups", "title|artist|genre|language|edition|folder|playlist|year");
 
         // advanced
+        p.put("before_next_ms", "300");
         p.put("seek-in-offset", "0");
         p.put("seek-out-offset", "0");
         p.put("seek-in-offset-ms", "0");

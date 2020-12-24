@@ -2657,6 +2657,9 @@ public class YassActions implements DropTargetListener {
             loadKeys();
             loadScreenKeys();
             loadLayout();
+            try { setBeforeNextMs(Integer.parseInt(prop.getProperty("before_next_ms"))); }
+            catch (Exception ignored) { setBeforeNextMs(300); }
+
             auto.init(prop);
 
             String layout = prop.getProperty("editor-layout");
@@ -4208,6 +4211,8 @@ public class YassActions implements DropTargetListener {
         loadKeys();
         loadScreenKeys();
         loadLayout();
+        try { setBeforeNextMs(Integer.parseInt(prop.getProperty("before_next_ms"))); }
+        catch (Exception ignored) { setBeforeNextMs(300); }
 
         String layout = prop.getProperty("editor-layout");
         if (layout == null) {
@@ -7901,8 +7906,6 @@ public class YassActions implements DropTargetListener {
      * @param mode Description of the Parameter
      */
     private void playSelectionBefore(int mode) {
-        long inout[] = new long[2];
-
         int i = table.getSelectionModel().getMinSelectionIndex();
         if (i < 0)
             return;
@@ -7913,7 +7916,7 @@ public class YassActions implements DropTargetListener {
 
         int beat = r.getBeatInt();
         long end = (long) table.beatToMs(beat);
-        long pos = end - 300;
+        long pos = end - beforeNextMs;
         if (pos < 0)
             pos = 0;
 
@@ -7935,14 +7938,17 @@ public class YassActions implements DropTargetListener {
         mp3.playSelection(pos*1000, end*1000, null, playTimebase);
     }
 
+    int beforeNextMs = 300;
+    private void setBeforeNextMs(int n){
+        beforeNextMs = n;
+    }
+
     /**
      * Description of the Method
      *
      * @param mode Description of the Parameter
      */
     private void playSelectionNext(int mode) {
-        long inout[] = new long[2];
-
         int i = table.getSelectionModel().getMaxSelectionIndex();
         if (i < 0)
             return;
@@ -7953,7 +7959,7 @@ public class YassActions implements DropTargetListener {
 
         int beat = r.getBeatInt() + r.getLengthInt();
         long pos = (long) table.beatToMs(beat);
-        long end = pos + 300;
+        long end = pos + beforeNextMs;
 
         startPlaying();
 
