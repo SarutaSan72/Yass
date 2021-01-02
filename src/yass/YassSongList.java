@@ -6445,7 +6445,7 @@ public class YassSongList extends JTable {
                 }
 
                 String t = s.getDirectory() + File.separator + s.getFilename();
-                add = all || s.isLocked() || YassFilter.containsIgnoreCase(t, str) ||
+                add = all || /* s.isLocked() || */ YassFilter.containsIgnoreCase(t, str) ||
                         YassFilter.containsIgnoreCase(s.getTitle(), str) ||
                         YassFilter.containsIgnoreCase(s.getArtist(), str) ||
                         YassFilter.containsIgnoreCase(s.getLanguage(), str) ||
