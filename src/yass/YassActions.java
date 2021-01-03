@@ -60,11 +60,11 @@ public class YassActions implements DropTargetListener {
     /**
      * Description of the Field
      */
-    public final static String VERSION = "2.2.0";
+    public final static String VERSION = "2.2.1";
     /**
      * Description of the Field
      */
-    public final static String DATE = "12/2020";
+    public final static String DATE = "1/2021";
 
     Action showAbout = new AbstractAction(I18.get("mlib_about")) {
         private static final long serialVersionUID = 1L;
@@ -7913,28 +7913,25 @@ public class YassActions implements DropTargetListener {
         YassRow r = table.getRowAt(i);
         if (!r.isNote())
             return;
-
         int beat = r.getBeatInt();
         long end = (long) table.beatToMs(beat);
-        long pos = end - beforeNextMs;
-        if (pos < 0)
-            pos = 0;
+
+        long pos;
+        YassRow r0 = table.getRowAt(i-1);
+        if (mode == 1 || ! r0.isNoteOrPageBreak())
+        {
+            pos = end - beforeNextMs;
+            if (pos < 0) pos = 0;
+        }
+        else if (r0.isNote())
+            pos = (long)table.beatToMs(r0.getBeatInt() + r0.getLengthInt());
+        else // if (r0.isPageBreak())
+            pos = (long)sheet.getLeftMs();
 
         startPlaying();
 
-        boolean midiEnabled = midiButton.isSelected();
-        boolean mp3Enabled = mp3Button.isSelected();
-        if (mode == 0) {
-            mp3.setMIDIEnabled(midiEnabled);
-            mp3.setAudioEnabled(mp3Enabled);
-        } else if (mode == 1) {
-            mp3.setMIDIEnabled(true);
-            mp3.setAudioEnabled(false);
-        } else if (mode == 2) {
-            mp3.setMIDIEnabled(true);
-            mp3.setAudioEnabled(true);
-        }
-
+        mp3.setMIDIEnabled(false);
+        mp3.setAudioEnabled(true);
         mp3.playSelection(pos*1000, end*1000, null, playTimebase);
     }
 
@@ -7959,23 +7956,20 @@ public class YassActions implements DropTargetListener {
 
         int beat = r.getBeatInt() + r.getLengthInt();
         long pos = (long) table.beatToMs(beat);
-        long end = pos + beforeNextMs;
+
+        long end;
+        YassRow r1 = table.getRowAt(i+1);
+        if (mode == 1 || ! r1.isNoteOrPageBreak())
+            end = pos + beforeNextMs;
+        else if (r1.isNote())
+            end = (long) table.beatToMs(r1.getBeatInt());
+        else // if (r1.isPageBreak()
+            end = (long)sheet.getMaxVisibleMs();
 
         startPlaying();
 
-        boolean midiEnabled = midiButton.isSelected();
-        boolean mp3Enabled = mp3Button.isSelected();
-        if (mode == 0) {
-            mp3.setMIDIEnabled(midiEnabled);
-            mp3.setAudioEnabled(mp3Enabled);
-        } else if (mode == 1) {
-            mp3.setMIDIEnabled(true);
-            mp3.setAudioEnabled(false);
-        } else if (mode == 2) {
-            mp3.setMIDIEnabled(true);
-            mp3.setAudioEnabled(true);
-        }
-
+        mp3.setMIDIEnabled(false);
+        mp3.setAudioEnabled(true);
         mp3.playSelection(pos*1000, end*1000, null, playTimebase);
     }
 

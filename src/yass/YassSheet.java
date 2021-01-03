@@ -427,12 +427,14 @@ public class YassSheet extends JPanel implements Scrollable,
 
                 // 17=play_before, 18=play_next
                 if (code == keycodes[17] && !e.isControlDown() && !e.isAltDown()) {
-                    firePropertyChange("play", null, "before");
+                    Integer mode = new Integer(e.isShiftDown() ? 1 : 0);
+                    firePropertyChange("play", mode, "before");
                     e.consume();
                     return;
                 }
                 if (code == keycodes[18] && !e.isControlDown() && !e.isAltDown()) {
-                    firePropertyChange("play", null, "next");
+                    Integer mode = new Integer(e.isShiftDown() ? 1 : 0);
+                    firePropertyChange("play", mode, "next");
                     e.consume();
                     return;
                 }
@@ -5787,9 +5789,17 @@ public class YassSheet extends JPanel implements Scrollable,
         return fromTimeline(x);
     }
 
-        /**
-         * Sets the viewToNextPage attribute of the YassSheet object
-         */
+    public double getLeftMs() {
+        int x = clip.x;
+        if (paintHeights) {
+            x += heightBoxWidth;
+        }
+        return fromTimeline(x);
+    }
+
+    /**
+     * Sets the viewToNextPage attribute of the YassSheet object
+     */
     public void setViewToNextPage() {
         table.gotoPage(1);
     }
