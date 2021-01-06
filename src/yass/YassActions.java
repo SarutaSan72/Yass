@@ -906,6 +906,11 @@ public class YassActions implements DropTargetListener {
             saveLibrary.setEnabled(false);
             undoAllLibraryChanges.setEnabled(false);
             refreshLibrary.setEnabled(false);
+
+            if (savePlayList.isEnabled())
+            {
+                savePlayList.actionPerformed(null);
+            }
         }
     };
     JDialog seDialog = null;
@@ -5827,6 +5832,15 @@ public class YassActions implements DropTargetListener {
                     filterEditor.setText(I18.get("tool_lib_find_empty"));
                 }
                 filterEditor.setForeground(Color.gray);
+            }
+        });
+        filterEditor.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                String s = filterEditor.getText();
+                if (s.equals(I18.get("tool_lib_find_empty"))) {
+                    filterEditor.setText("");
+                }
             }
         });
         filterEditor.addKeyListener(new KeyAdapter() {
