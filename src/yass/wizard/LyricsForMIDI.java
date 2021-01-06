@@ -111,10 +111,20 @@ public class LyricsForMIDI extends JPanel {
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         String lang = (String) langCombo.getSelectedItem();
-                        hyphenator.setLanguage(lang);
-                        String txt = lyricsArea.getText();
-                        txt = hyphenator.hyphenateText(txt);
-                        lyricsArea.setText(txt);
+                        if (lang.toLowerCase().equals("zh")) // // special case: Chinese
+                        {
+                            String txt = lyricsArea.getText();
+                            // bigboss97: In Chinese, each word (one UTF-8 character) has exactly one syllable. Basically you only have to place a hyphen everywhere between two characters.
+                            txt = txt.replaceAll(".", "$0 ");
+                            txt = txt.replaceAll("[ ]{2,}", " ").trim();
+                            lyricsArea.setText(txt);
+                        }
+                        else {
+                            hyphenator.setLanguage(lang);
+                            String txt = lyricsArea.getText();
+                            txt = hyphenator.hyphenateText(txt);
+                            lyricsArea.setText(txt);
+                        }
                     }
                 });
 
