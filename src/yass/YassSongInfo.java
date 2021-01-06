@@ -1641,14 +1641,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
      * @param s The new song value
      */
     public synchronized void setSong(YassSong s) {
-        while (loader != null && !loader.isInterrupted) {
-            loader.isInterrupted = true;
-            try {
-                Thread.currentThread();
-                Thread.sleep(100);
-            } catch (Exception ignored) {
-            }
-        }
+        clear();
 
         song = s;
 
