@@ -227,6 +227,10 @@ public class YassSongList extends JTable {
     Color selcol = UIManager.getColor("Table.selectionBackground");
     Border b2 = BorderFactory.createLineBorder(selcol, 2);
     Border b5 = BorderFactory.createLineBorder(Color.black, 1);
+
+    Border focusLostBorder = BorderFactory.createLineBorder(UIManager.getColor("Label.background"), 5);
+    Border focusGainedBorder = BorderFactory.createLineBorder(selcol, 5);
+
     Action openAction = null, printAction = null, dirAction = null, autoAction = null;
     int extraCol = -1;
     Hashtable<String, Vector<String>> lang_articles = null;
@@ -869,6 +873,19 @@ public class YassSongList extends JTable {
                     }
                 });
 
+        addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                super.focusGained(e);
+                ((JComponent)getParent().getParent()).setBorder(focusGainedBorder);
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                super.focusLost(e);
+                ((JComponent)getParent().getParent()).setBorder(focusLostBorder);
+            }
+        });
 		/*
 		 *  addComponentListener(
 		 *  new ComponentAdapter() {

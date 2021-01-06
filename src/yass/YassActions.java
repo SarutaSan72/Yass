@@ -833,9 +833,18 @@ public class YassActions implements DropTargetListener {
         private static final long serialVersionUID = 1L;
 
         public void actionPerformed(ActionEvent e) {
-            Vector<?> v = songList.getSelectedSongs();
+            if (! playlistToggle.isSelected())
+                showPlaylistMenu.actionPerformed(null);
+
+            Vector<YassSong> v = songList.getSelectedSongs();
             playList.addSongs(v);
             songList.repaint();
+            YassSong s = v.firstElement();
+            if (s == null) {
+                playList.getList().selectSong(0);
+            } else {
+                playList.getList().selectSong(s);
+            }
         }
     };
     Action removeFromPlayList = new AbstractAction(
@@ -843,6 +852,8 @@ public class YassActions implements DropTargetListener {
         private static final long serialVersionUID = 1L;
 
         public void actionPerformed(ActionEvent e) {
+            if (! playlistToggle.isSelected())
+                showPlaylistMenu.actionPerformed(null);
             playList.removeSongs();
             songList.repaint();
         }
