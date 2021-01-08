@@ -1315,6 +1315,13 @@ public class YassAutoCorrect {
                         r3.setBeat(beat3);
                     }
                 }
+
+                // correct medley start/end, too
+                int b = table.getMedleyStartBeat();
+                table.setMedleyStartBeat(b - beat);
+                b = table.getMedleyEndBeat();
+                table.setMedleyEndBeat(b - beat);
+
                 return true;
             }
             switch (currentMessage) {
