@@ -2213,9 +2213,9 @@ public class YassTable extends JTable {
         YassUndoElement ue = null;
         if (sheet != null) {
             ue = new YassUndoElement(c, getSelectedRows(),
-                    sheet.getViewPosition(), sheet.getBeatSize());
+                    sheet.getViewPosition(), sheet.getBeatSize(), bpm, gap, start, end, vgap, isRelative);
         } else {
-            ue = new YassUndoElement(c, getSelectedRows(), new Point(), 0);
+            ue = new YassUndoElement(c, getSelectedRows(), new Point(), 0, bpm, gap, start, end, vgap, isRelative);
         }
         undos.addElement(ue);
         // System.out.println("add " + ue.sheetViewPosition);
@@ -2245,9 +2245,9 @@ public class YassTable extends JTable {
 
         if (sheet != null) {
             ue.set(getSelectedRows(), sheet.getViewPosition(),
-                    sheet.getBeatSize());
+                    sheet.getBeatSize(), bpm, gap, start, end, vgap, isRelative);
         } else {
-            ue.set(getSelectedRows(), new Point(), 0);
+            ue.set(getSelectedRows(), new Point(), 0, bpm, gap, start, end, vgap, isRelative);
         }
     }
 
@@ -2316,6 +2316,12 @@ public class YassTable extends JTable {
 
         boolean oldUndo = preventUndo;
         preventUndo = true;
+        bpm = undoElem.bpm;
+        gap = undoElem.gap;
+        start = undoElem.start;
+        end = undoElem.end;
+        vgap = undoElem.vgap;
+        isRelative = undoElem.isRelative;
         tm.setData(c);
         tm.fireTableDataChanged();
         preventUndo = oldUndo;
@@ -2381,6 +2387,12 @@ public class YassTable extends JTable {
 
         boolean oldUndo = preventUndo;
         preventUndo = true;
+        bpm = undoElem.bpm;
+        gap = undoElem.gap;
+        start = undoElem.start;
+        end = undoElem.end;
+        vgap = undoElem.vgap;
+        isRelative = undoElem.isRelative;
         tm.setData(c);
         tm.fireTableDataChanged();
         preventUndo = oldUndo;
@@ -4302,6 +4314,9 @@ public class YassTable extends JTable {
      * Description of the Method
      */
     public void multiply() {
+        boolean oldUndo = preventUndo;
+        preventUndo = true;
+
         int sel = getSelectionModel().getMinSelectionIndex();
         if (sel < 0 && sheet != null) {
             sel = sheet.nextElement();
@@ -4324,6 +4339,9 @@ public class YassTable extends JTable {
             }
         }
         setBPM(getBPM() * 2);
+        preventUndo = oldUndo;
+        addUndo();
+
         tm.fireTableDataChanged();
         if (sel >= 0) {
             setRowSelectionInterval(sel, sel);
@@ -4343,6 +4361,9 @@ public class YassTable extends JTable {
         if (getBPM() / 2.0 < 20)
             return;
 
+        boolean oldUndo = preventUndo;
+        preventUndo = true;
+
         Enumeration<YassRow> en = tm.getData().elements();
         while (en.hasMoreElements()) {
             YassRow r = en.nextElement();
@@ -4359,6 +4380,9 @@ public class YassTable extends JTable {
             }
         }
         setBPM(getBPM() / 2.0);
+        preventUndo = oldUndo;
+        addUndo();
+
         tm.fireTableDataChanged();
         if (sel >= 0) {
             setRowSelectionInterval(sel, sel);

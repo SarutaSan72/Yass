@@ -2436,7 +2436,7 @@ public class YassActions implements DropTargetListener {
             }
             table.undoRows();
             checkData(table, false, true);
-
+            updateGap();
         }
     };
     Action redo = new AbstractAction(I18.get("medit_redo")) {
@@ -2449,6 +2449,7 @@ public class YassActions implements DropTargetListener {
             }
             table.redoRows();
             checkData(table, false, true);
+            updateGap();
         }
     };
     Action openFile = new AbstractAction(I18.get("mlib_edit_file")) {

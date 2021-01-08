@@ -31,7 +31,8 @@ public class YassUndoElement {
     public int[] selectedRows = null;
     public Point sheetViewPosition = new Point(0, 0);
     public double sheetBeatSize = 0;
-
+    public double bpm, gap, start, end, vgap;
+    public boolean isRelative;
 
     /**
      * Constructor for the YassUndoElement object
@@ -41,11 +42,17 @@ public class YassUndoElement {
      * @param p Description of the Parameter
      * @param w Description of the Parameter
      */
-    public YassUndoElement(Vector<YassRow> d, int[] r, Point p, double w) {
+    public YassUndoElement(Vector<YassRow> d, int[] r, Point p, double w, double b, double g, double s, double e, double vg, boolean rel) {
         data = d;
         selectedRows = r;
         sheetViewPosition.setLocation(p.x, p.y);
         sheetBeatSize = w;
+        bpm = b;
+        gap = g;
+        start = s;
+        end = e;
+        vgap = vg;
+        isRelative = rel;
     }
 
 
@@ -56,10 +63,16 @@ public class YassUndoElement {
      * @param p Description of the Parameter
      * @param w Description of the Parameter
      */
-    public void set(int[] r, Point p, double w) {
+    public void set(int[] r, Point p, double w, double b, double g, double s, double e, double vg, boolean rel) {
         selectedRows = r;
         sheetViewPosition.setLocation(p.x, p.y);
         sheetBeatSize = w;
+        bpm = b;
+        gap = g;
+        start = s;
+        end = e;
+        vgap = vg;
+        isRelative = rel;
     }
 }
 
