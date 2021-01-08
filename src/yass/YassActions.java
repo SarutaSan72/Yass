@@ -3826,6 +3826,16 @@ public class YassActions implements DropTargetListener {
         hasErrorsButton.setEnabled(!empty);
     }
 
+    public void fixButtonBackground(JButton b, boolean rollover) {
+        if (b == hasErrorsButton) {
+            boolean empty = errors.isEmpty();
+            if (! empty)
+                hasErrorsButton.setBackground(rollover? errBackground.brighter() : errBackground);
+            else
+                hasErrorsButton.setBackground(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
+        }
+    }
+
     /**
      * Description of the Method
      *
@@ -5401,7 +5411,14 @@ public class YassActions implements DropTargetListener {
         speedButton.setSelected(playTimebase != 1);
         speedButton.setFocusable(false);
 
-        t.add(b = new JButton());
+        b = new JButton() {
+            public void setEnabled(boolean state)
+            {
+                super.setEnabled(state);
+                if (!state) setBackground(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
+            }
+        };
+        t.add(b);
         b.setAction(showErrors);
         b.setToolTipText(b.getText());
         b.setText("");

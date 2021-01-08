@@ -78,7 +78,7 @@ public class YassSheet extends JPanel implements Scrollable,
     private static final Color playertextBG = new Color(1f, 1f, 1f, .9f); // used once; deprecated
     private static final  Color playBlueHi = new Color(1f, 1f, 1f, 1f);  // used once
     private static final  Color playBlue = new Color(.4f, .6f, .8f, 1f); // used once
-    private static final  Color blue = new Color(.4f, .6f, .8f, .7f);
+    public static final  Color blue = new Color(.4f, .6f, .8f, .7f);
     private static final  Color blueDrag = new Color(.8f, .9f, 1f, .5f);
     private static final  Color dkRed = new Color(.8f, .4f, .4f, .7f);
     public static final  Color playerColor = new Color(1f, .1f, .1f, .5f);

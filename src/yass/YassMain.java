@@ -67,6 +67,7 @@ public class YassMain extends JApplet {
     private YassGroups groups = null;
     private JPanel toolPanel = null;
     private JPanel groupsPanel, songPanel, playlistPanel;
+    private JComponent t;
 
     public static void main(String argv[]) {
         checkAudio();
@@ -541,10 +542,46 @@ public class YassMain extends JApplet {
                     }
                 });
 
-        JComponent t;
         sheetPanel.add("North", t = actions.createFileEditToolbar());
         sheetPanel.add("Center", sheetPane);
         sheetPanel.add("South", sheetInfo);
+
+        // dark mode buttons
+        Border emptyBorder = BorderFactory.createCompoundBorder(
+                BorderFactory.createEtchedBorder(EtchedBorder.RAISED),
+                BorderFactory.createEmptyBorder(4,4,4,4));
+        Border rolloverBorder = BorderFactory.createCompoundBorder(
+                BorderFactory.createEtchedBorder(EtchedBorder.RAISED),
+                BorderFactory.createEmptyBorder(4,4,4,4));
+        for (Component c: t.getComponents()) {
+            if (c instanceof JButton) {
+                ButtonModel m = ((JButton) c).getModel();
+                ((JButton) c).getModel().addChangeListener(new ChangeListener() {
+                    @Override
+                    public void stateChanged(ChangeEvent e) {
+                        ButtonModel model = (ButtonModel) e.getSource();
+                        c.setBackground(model.isRollover()
+                                ? (sheet.darkMode ? sheet.blue : sheet.blue)
+                                : (sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2));
+                        ((JButton) c).setBorder(model.isRollover() ? rolloverBorder : emptyBorder);
+                        actions.fixButtonBackground((JButton) c, model.isRollover());
+                    }
+                });
+            }
+            if (c instanceof JToggleButton) {
+                ButtonModel m = ((JToggleButton) c).getModel();
+                ((JToggleButton) c).getModel().addChangeListener(new ChangeListener() {
+                    @Override
+                    public void stateChanged(ChangeEvent e) {
+                        ButtonModel model = (ButtonModel) e.getSource();
+                        c.setBackground(model.isRollover()
+                                ? (sheet.darkMode ? sheet.blue : sheet.blue)
+                                : (sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2));
+                        ((JToggleButton) c).setBorder(model.isRollover() ? rolloverBorder : emptyBorder);
+                    }
+                });
+            }
+        }
 
         sheet.addYassSheetListener(new YassSheetListener() {
             @Override
@@ -555,27 +592,13 @@ public class YassMain extends JApplet {
             public void propsChanged(YassSheet source) {
                 t.setBackground(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
                 t.setBorder(BorderFactory.createEmptyBorder(3,3,3,3));
-                /* todo dark mode buttons
-                Border emptyBorder = BorderFactory.createCompoundBorder(
-                        BorderFactory.createEtchedBorder(EtchedBorder.RAISED),
-                        BorderFactory.createEmptyBorder(4,4,4,4));
-                Border rolloverBorder = BorderFactory.createCompoundBorder(
-                        BorderFactory.createEtchedBorder(EtchedBorder.RAISED),
-                        BorderFactory.createEmptyBorder(4,4,4,4));
                 for (Component c: t.getComponents()) {
-                    c.setBackground(sheet.darkMode ? sheet.hiGray : sheet.hiGray2);
-                    if (c instanceof JButton)
-                        ((JButton)c).getModel().addChangeListener(new ChangeListener() {
-                            @Override
-                            public void stateChanged(ChangeEvent e) {
-                                ButtonModel model = (ButtonModel) e.getSource();
-                                c.setBackground(model.isRollover()
-                                        ? (sheet.darkMode ? sheet.blue : sheet.blue)
-                                        : (sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2));
-                                ((JButton)c).setBorder(model.isRollover() ? rolloverBorder : emptyBorder);
-                            }
-                        });
-                }*/
+                    if (c instanceof JButton || c instanceof JToggleButton) {
+                        c.setBackground(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
+                        ((JComponent) c).setBorder(emptyBorder);
+                        if (c instanceof JButton) actions.fixButtonBackground((JButton) c, false);
+                    }
+                }
             }
         });
         t.setBackground(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
