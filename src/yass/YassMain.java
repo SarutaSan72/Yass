@@ -57,7 +57,6 @@ public class YassMain extends JApplet {
 
     private YassProperties prop;
     private YassSheet sheet = null;
-    private YassSheetInfo sheetInfo = null;
     private YassActions actions = null;
     private YassPlayer mp3 = null;
     private YassLyrics lyrics = null;
@@ -66,7 +65,7 @@ public class YassMain extends JApplet {
     private YassPlayList playList = null;
     private YassGroups groups = null;
     private JPanel toolPanel = null;
-    private JPanel groupsPanel, songPanel, playlistPanel;
+    private JPanel groupsPanel, songPanel, playlistPanel, sheetInfoPanel;
     private JComponent t;
 
     public static void main(String argv[]) {
@@ -239,8 +238,6 @@ public class YassMain extends JApplet {
         actions.setTab(mainPanel);
         sheet.setActions(actions);
 
-        sheetInfo = new YassSheetInfo(sheet);
-
         if (!NO_GAME) {
             yass.screen.YassScreen.loadPlugins(prop);
             yass.screen.YassScreen.addScreenChangeListener(
@@ -272,7 +269,7 @@ public class YassMain extends JApplet {
         YassErrors errors = new YassErrors(actions, prop, actions.createErrorToolbar());
         actions.setErrors(errors);
 
-        actions.setPanels(this, mainPanel, songListPanel, songInfo, groupsPanel, songPanel, playlistPanel, sheetPanel);
+        actions.setPanels(this, mainPanel, songListPanel, songInfo, groupsPanel, songPanel, playlistPanel, sheetPanel, sheetInfoPanel);
 
         Container c = getContentPane();
         c.setLayout(new BorderLayout());
@@ -544,7 +541,11 @@ public class YassMain extends JApplet {
 
         sheetPanel.add("North", t = actions.createFileEditToolbar());
         sheetPanel.add("Center", sheetPane);
-        sheetPanel.add("South", sheetInfo);
+
+        YassSheetInfo sheetInfo = new YassSheetInfo(sheet, 0);
+        sheetInfoPanel = new JPanel(new GridLayout(1,1));
+        sheetInfoPanel.add(sheetInfo);
+        sheetPanel.add("South", sheetInfoPanel);
 
         // dark mode buttons
         Border emptyBorder = BorderFactory.createCompoundBorder(

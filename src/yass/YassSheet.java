@@ -79,7 +79,8 @@ public class YassSheet extends JPanel implements Scrollable,
     private static final  Color playBlueHi = new Color(1f, 1f, 1f, 1f);  // used once
     private static final  Color playBlue = new Color(.4f, .6f, .8f, 1f); // used once
     public static final  Color blue = new Color(.4f, .6f, .8f, .7f);
-    private static final  Color blueDrag = new Color(.8f, .9f, 1f, .5f);
+    public static final  Color blueDrag = new Color(.8f, .9f, 1f, .5f);
+    public static final  Color blueDragDarkMode = new Color(.4f, .6f, .8f, .5f);
     private static final  Color dkRed = new Color(.8f, .4f, .4f, .7f);
     public static final  Color playerColor = new Color(1f, .1f, .1f, .5f);
     private static final  Color playerColor2 = new Color(1f, .1f, .1f, .3f);
@@ -2585,6 +2586,16 @@ public class YassSheet extends JPanel implements Scrollable,
      */
     public YassTable getActiveTable() {
         return table;
+    }
+
+    public YassTable getTable(int track) {
+        if (track >= tables.size())
+            return null;
+        return tables.elementAt(track);
+    }
+
+    public int getTableCount() {
+        return tables.size();
     }
 
     /**
@@ -5699,6 +5710,12 @@ public class YassSheet extends JPanel implements Scrollable,
         }
         return (long) (x * 60 * 1000L / (4.0 * bpm * wSize) + .5);
     }
+    public long fromTimeline(int track, double x) {
+        if (paintHeights) {
+            x -= heightBoxWidth;
+        }
+        return (long) (x * 60 * 1000L / (4.0 * getTable(track).getBPM() * wSize) + .5);
+    }
 
     /**
      * Description of the Method
@@ -5736,7 +5753,22 @@ public class YassSheet extends JPanel implements Scrollable,
     public int toBeat(double ms) {
         return (int) ((ms - gap) * 4 * bpm / (60 * 1000));
     }
+    public int toBeat(int track, double ms) {
+        return (int) ((ms - getTable(track).getGap()) * 4 * getTable(track).getBPM() / (60 * 1000));
+    }
 
+    public double getGapInBeats(int track)
+    {
+        return getTable(track).getGap() * 4 * getTable(track).getBPM() / (60 * 1000);
+    }
+    public double getMinGapInBeats()
+    {
+        int n = tables.size();
+        double b = 10000;
+        for (int i=0; i<n; i++)
+            b = Math.min(b, getGapInBeats(i));
+        return b;
+    }
     /**
      * Description of the Method
      *
@@ -5763,18 +5795,57 @@ public class YassSheet extends JPanel implements Scrollable,
         }
         return -1;
     }
+    public int nextElement(int track, int pos) {
+        YassRectangle r;
+        int i = 0;
+        for (Enumeration<?> e = rects.elementAt(track).elements(); e.hasMoreElements(); i++) {
+            r = (YassRectangle) e.nextElement();
+            if (r.x - 1 >= pos || r.x + r.width >= pos) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-    public int firstVisibleElement() {
+    public int firstVisibleNote() {
         int x = clip.x + LEFT_BORDER;
         if (paintHeights) {
             x += heightBoxWidth;
         }
-        return nextElement(x);
+        return nextNote(x);
+    }
+    public int nextNote(int pos) {
+        YassRectangle r;
+        int i = 0;
+        for (Enumeration<?> e = rect.elements(); e.hasMoreElements(); i++) {
+            r = (YassRectangle) e.nextElement();
+            if (! r.isPageBreak() && !r.isType(YassRectangle.GAP) &&
+                    !r.isType(YassRectangle.START)&& !r.isType(YassRectangle.END))
+            if (r.x - 1 >= pos || r.x + r.width >= pos) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    public int firstVisibleNote(int track) {
+        int x = clip.x + LEFT_BORDER;
+        if (paintHeights) {
+            x += heightBoxWidth;
+        }
+        return nextNote(track, x);
+    }
+    public int nextNote(int track, int pos) {
+        YassRectangle r;
+        int i = 0;
+        for (Enumeration<?> e = rects.elementAt(track).elements(); e.hasMoreElements(); i++) {
+            r = (YassRectangle) e.nextElement();
+            if (! r.isPageBreak() && !r.isType(YassRectangle.GAP) &&
+                    !r.isType(YassRectangle.START)&& !r.isType(YassRectangle.END))
+                if (r.x - 1 >= pos || r.x + r.width >= pos) {
+                    return i;
+                }
+        }
+        return -1;
     }
 
     public double getMinVisibleMs() {
@@ -5787,6 +5858,17 @@ public class YassSheet extends JPanel implements Scrollable,
     public double getMaxVisibleMs() {
         int x = clip.x + clip.width;
         return fromTimeline(x);
+    }
+    public double getMinVisibleMs(int track) {
+        int x = clip.x + LEFT_BORDER;
+        if (paintHeights) {
+            x += heightBoxWidth;
+        }
+        return fromTimeline(track, x);
+    }
+    public double getMaxVisibleMs(int track) {
+        int x = clip.x + clip.width;
+        return fromTimeline(track, x);
     }
 
     public double getLeftMs() {

@@ -2152,16 +2152,13 @@ public class YassTable extends JTable {
         YassTable verify = new YassTable();
         verify.loadFile(filename);
         if (!equalsData(verify)) {
-            System.out
-                    .println("###############################################");
-            System.out
-                    .println("Write Error: Written data could not be verfied.");
+            System.out.println("###############################################");
+            System.out.println("Write Error: Written data could not be verified.");
             System.out.println("File: " + filename);
             System.out.println("Encoding: " + encoding);
-            System.out
-                    .println("###############################################");
+            System.out.println("###############################################");
             JOptionPane.showMessageDialog(null,
-                    "<html>Write Error: Written data could not be verfied.<br>File: "
+                    "<html>Write Error: Written data could not be verified.<br>File: "
                             + filename, "Error", JOptionPane.ERROR_MESSAGE);
         }
 
@@ -3321,8 +3318,7 @@ public class YassTable extends JTable {
         if (sheet == null) {
             return -1;
         }
-        int row = sheet.firstVisibleElement() + 1;
-        // +1: quick hack
+        int row = sheet.firstVisibleNote();
         if (row < 0) {
             return -1;
         }
@@ -3336,8 +3332,10 @@ public class YassTable extends JTable {
      * @return The pageNumber value
      */
     public int getPageNumber(int row) {
+        if (row < 0)
+            return 0;
         YassRow r = getRowAt(row);
-        if (r.isComment()) {
+        if (r == null || r.isComment()) {
             return 0;
         }
         if (r.isEnd()) {

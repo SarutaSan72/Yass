@@ -31,6 +31,7 @@ import java.util.Enumeration;
  */
 public class YassSheetInfo extends JPanel {
     private YassSheet sheet;
+    private int track;
     private int minHeight;
     private int maxHeight;
     private int minBeat;
@@ -45,11 +46,14 @@ public class YassSheetInfo extends JPanel {
     private static final int msgBar = 10;
     private static final int txtBar = 30;
 
-    public YassSheetInfo(YassSheet s) {
+    private YassSheetListener sheetListener;
+
+    public YassSheetInfo(YassSheet s, int track) {
         super(true);
         setFocusable(false);
         this.sheet = s;
-        sheet.addYassSheetListener(new YassSheetListener() {
+        this.track = track;
+        sheet.addYassSheetListener(sheetListener = new YassSheetListener() {
             @Override
             public void posChanged(YassSheet source, double posMs) {
                 setPosMs(posMs);
@@ -71,14 +75,32 @@ public class YassSheetInfo extends JPanel {
                     sheet.stopPlaying();
                 }
 
-                moveTo(e.getX());
+                if (e.getX() < 100 && e.getY() < 30) {
+                    if (track != sheet.getActiveTable().getActions().getVersion())
+                        sheet.getActiveTable().getActions().gotoVersion(track);
+                }
+                else {
+                    moveTo(e.getX());
+                }
+
             }
         });
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                if (! (sheet.isPlaying() || sheet.isTemporaryStop()))
-                    moveTo(e.getX());
+                if (! (e.getX() < 100 && e.getY() < 30)) {
+                    if (!(sheet.isPlaying() || sheet.isTemporaryStop()))
+                        moveTo(e.getX());
+                }
+            }
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                if (e.getX() < 100 && e.getY() < 30) {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                }
+                else {
+                    setCursor(Cursor.getDefaultCursor());
+                }
             }
         });
         addMouseWheelListener(new MouseWheelListener() {
@@ -89,6 +111,10 @@ public class YassSheetInfo extends JPanel {
         });
     }
 
+    public void removeListener() {
+        sheet.removeYassSheetListener(sheetListener);
+    }
+
     private void moveTo(int x)
     {
         YassTable table = sheet.getActiveTable();
@@ -97,22 +123,30 @@ public class YassSheetInfo extends JPanel {
         if (sheet.isPlaying() || sheet.isTemporaryStop())
             return;
 
+        // calculate ms in clicked track
+        double minGapBeat = sheet.getMinGapInBeats();
+        double gapBeat = sheet.getGapInBeats(track) - minGapBeat;
         // click position in beats
         int w = getWidth();
         if (x < 0) x = 0;
         if (x > w) x = w;
-        int beat = (int)((minBeat + x*rangeBeat) / (double) w);
+        int beat = (int)((minBeat + x*rangeBeat) / (double) w - gapBeat);
+        double ms = sheet.getTable(track).beatToMs(beat);
 
         double minMs = sheet.getMinVisibleMs();
         double maxMs = sheet.getMaxVisibleMs();
-        double ms = table.beatToMs(beat);
         boolean visible = minMs < ms && ms < maxMs;
 
-        int i= table.getIndexOfNoteBeforeBeat(beat);
+        // select note at ms in active track
+        int activeBeat = sheet.toBeat(ms);
+
+        int i= table.getIndexOfNoteBeforeBeat(activeBeat);
+        if (i < 0)
+            i = table.getPage(1);
         if (i>=0) {
             if (i+2 < table.getRowCount() - 1) {
                 YassRow r = table.getRowAt(i+1); // clicked directly after pagebreak -> select note after beat
-                if (r.isPageBreak() && beat > r.getBeatInt()) i+=2;
+                if (r.isPageBreak() && activeBeat > r.getBeatInt()) i+=2;
             }
             table.setRowSelectionInterval(i, i);
             table.updatePlayerPosition();
@@ -142,20 +176,24 @@ public class YassSheetInfo extends JPanel {
     }
 
     public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         paintInfoArea((Graphics2D)g);
     }
 
     public void paintInfoArea(Graphics2D g2) {
         if (sheet.isPlaying()) return;
 
-        YassTable table = sheet.getActiveTable();
+        YassTable table = sheet.getTable(track);
         if (table == null) return;
+
+        int activeTrack = table.getActions().getVersion();
 
         double bpm = table.getBPM();
 
         Color[] colorSet = sheet.getColors();
 
         int x = 0, y = txtBar, rx, ry, rw;
+        int versionWidth = sheet.getTableCount() > 1 ? 100 : 0;
         int hBar = msgBar + txtBar;
         int w = getWidth();
         int h = getHeight();
@@ -163,6 +201,11 @@ public class YassSheetInfo extends JPanel {
         // background
         g2.setColor(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
         g2.fillRect(0, 0, w, h);
+
+        if (track == activeTrack) {
+            g2.setColor(sheet.darkMode ? sheet.whiteDarkMode : sheet.white);
+            g2.fillRect(0, y + h - hBar - notesBar, w, notesBar);
+        }
 
         //  notes background
         g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
@@ -172,14 +215,18 @@ public class YassSheetInfo extends JPanel {
         g2.drawRect(x, y + h - hBar, w, hBar);
 
         // selection
-        double minMs = sheet.getMinVisibleMs();
-        double maxMs = sheet.getMaxVisibleMs();
-        rx = (int) (w * (sheet.toBeat(minMs) - minBeat) / (double) rangeBeat);
-        int rx2 = (int) (w * (sheet.toBeat(maxMs) - minBeat) / (double) rangeBeat);
-        g2.setColor(sheet.darkMode ? sheet.whiteDarkMode : sheet.white);
-        g2.fillRect(x + rx, y, rx2 - rx, h - hBar);
-        g2.setColor(sheet.darkMode ? sheet.blackDarkMode : sheet.black);
-        g2.drawRect(x + rx, y, rx2 - rx, h - hBar);
+        double minMs = sheet.getMinVisibleMs(track);
+        double maxMs = sheet.getMaxVisibleMs(track); //TODO DUET
+        double minGapBeat = sheet.getMinGapInBeats();
+        double gapBeat = sheet.getGapInBeats(track) - minGapBeat;
+        rx = (int) (w * (gapBeat + sheet.toBeat(track, minMs) - minBeat) / (double) rangeBeat); //TODO DUET
+        if (activeTrack == track) {
+            int rx2 = (int) (w * (gapBeat + sheet.toBeat(track, maxMs) - minBeat) / (double) rangeBeat); //TODO DUET
+            g2.setColor(sheet.darkMode ? sheet.blueDragDarkMode : sheet.blueDrag);
+            g2.fillRect(x + rx, y, rx2 - rx, h - hBar);
+            g2.setColor(sheet.darkMode ? sheet.blackDarkMode : sheet.black);
+            g2.drawRect(x + rx, y, rx2 - rx, h - hBar);
+        }
 
         // notes
         YassRow r, rPrev = null;
@@ -188,7 +235,7 @@ public class YassSheetInfo extends JPanel {
             r = (YassRow) e.nextElement();
             if (r.isPageBreak()) {
                 g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
-                rx = (int) (w * (r.getBeatInt() - minBeat) / (double) rangeBeat);
+                rx = (int) (w * (gapBeat + r.getBeatInt() - minBeat) / (double) rangeBeat);
                 rw = 1;
                 g2.fillRect(x + rx, y, rw, h);
                 rPrev = null;
@@ -200,7 +247,7 @@ public class YassSheetInfo extends JPanel {
             }
 
 
-            rx = (int) (w * (r.getBeatInt() - minBeat) / (double) rangeBeat);
+            rx = (int) (w * (gapBeat + r.getBeatInt() - minBeat) / (double) rangeBeat);
             ry = (int) ((h - hBar) * (r.getHeightInt() - minHeight) / (double) rangeHeight);
             rw = (int) (w * r.getLengthInt() / rangeBeat + .5);
 
@@ -239,8 +286,20 @@ public class YassSheetInfo extends JPanel {
 
         // cursor
         g2.setColor(sheet.playerColor);
-        rx = (int) (w * (sheet.toBeat(posMs) - minBeat) / (double) rangeBeat);
+        int curBeat = sheet.toBeat(track, posMs);
+        rx = (int) (w * (gapBeat + curBeat - minBeat) / (double) rangeBeat); //TODO DUET
         g2.fillRect(x + rx - 1, y - 2, 2, h + 5);
+
+        //  track
+        if (sheet.getTableCount() > 1) {
+            g2.setColor(table.getTableColor());
+            g2.fillRect(x + 2, 2, versionWidth, txtBar - 4);
+            g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
+            g2.drawRect(x + 2, 2, versionWidth, txtBar - 4);
+            g2.setColor(sheet.darkMode ? sheet.whiteDarkMode : sheet.white);
+            int sw = g2.getFontMetrics().stringWidth(table.getVersion());
+            g2.drawString(table.getVersion(), x + 2 + (versionWidth-sw)/2, 20);
+        }
 
         // golden
         int goldenPoints = table.getGoldenPoints();
@@ -257,10 +316,10 @@ public class YassSheetInfo extends JPanel {
                     I18.get("correct_golden_info"), "" + idealGoldenPoints,
                     "" + goldenPoints, "" + idealGoldenBeats, "" + durationGolden, goldenDiff);
 
-            x = 10;
-            y = 8;
+            x = x + versionWidth + 10;
+            y = 10;
             w = 80;
-            h = 12;
+            h = 10;
 
             double varPercentage = goldenVariance / (double) idealGoldenPoints;
             int xVar = (int) (w * varPercentage);
@@ -284,45 +343,47 @@ public class YassSheetInfo extends JPanel {
         }
 
         // artist/title/year
-        String t = table.getTitle();
-        String a = table.getArtist();
-        String year = table.getYear();
-        String g = table.getGenre();
-        int sec = (int)(sheet.getDuration() / 1000.0 + 0.5);
-        int min = sec / 60;
-        sec = sec - min * 60;
-        String dString = (sec < 10) ? min + ":0" + sec : min + ":" + sec;
-        if (a == null) a = "";
-        if (t == null) t = "";
-        if (dString == null) dString = "";
-        if (year == null) year = "";
-        if (g == null) g = "";
-        if (g.length() > 10) g = g.substring(0,9)+"...";
-        String s = a;
-        if (s.length() > 0 && t.length() > 0) s+= " - ";
-        s += t;
+        if (track == 0) {
+            String t = table.getTitle();
+            String a = table.getArtist();
+            String year = table.getYear();
+            String g = table.getGenre();
+            int sec = (int) (sheet.getDuration() / 1000.0 + 0.5);
+            int min = sec / 60;
+            sec = sec - min * 60;
+            String dString = (sec < 10) ? min + ":0" + sec : min + ":" + sec;
+            if (a == null) a = "";
+            if (t == null) t = "";
+            if (dString == null) dString = "";
+            if (year == null) year = "";
+            if (g == null) g = "";
+            if (g.length() > 10) g = g.substring(0, 9) + "...";
+            String s = a;
+            if (s.length() > 0 && t.length() > 0) s += " - ";
+            s += t;
 
-        String s2 = year;
-        if (s2.length() > 0 && g.length() > 0) s2+= " · ";
-        s2 += g;
+            String s2 = year;
+            if (s2.length() > 0 && g.length() > 0) s2 += " · ";
+            s2 += g;
 
-        String bpmString = "";
-        if(bpm == (long) bpm) bpmString = String.format("%d",(int)bpm);
-        else bpmString = String.format("%s", bpm);
-        s2 += " · " + bpmString + " bpm";
+            String bpmString = "";
+            if (bpm == (long) bpm) bpmString = String.format("%d", (int) bpm);
+            else bpmString = String.format("%s", bpm);
+            s2 += " · " + bpmString + " bpm";
 
-        s2 += " · " + dString;
+            s2 += " · " + dString;
 
-        w = getWidth();
-        int sw1 = g2.getFontMetrics().stringWidth(s);
-        int sw2 = g2.getFontMetrics().stringWidth(s2);
-        int sw = Math.max(sw1, sw2);
-        x = w - Math.max(sw1,sw2) - 10;
-        y = txtBar-3;
-        if (x > 300) {
-            g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
-            g2.drawString(s, w-sw-10, y - 15);
-            g2.drawString(s2, w-sw2-10, y);
+            w = getWidth();
+            int sw1 = g2.getFontMetrics().stringWidth(s);
+            int sw2 = g2.getFontMetrics().stringWidth(s2);
+            int sw = Math.max(sw1, sw2);
+            x = w - Math.max(sw1, sw2) - 10;
+            y = txtBar - 3;
+            if (x > 300) {
+                g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
+                g2.drawString(s, w - sw - 10, y - 15);
+                g2.drawString(s2, w - sw2 - 10, y);
+            }
         }
     }
 }

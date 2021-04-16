@@ -3147,12 +3147,13 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                 }
                 setProperty("vd-gap", vgap);
 
-                song.clearStats();
-                Vector<?> stats = yass.stats.YassStats.getAllStats();
-                for (Enumeration<?> en = stats.elements(); en.hasMoreElements(); ) {
-                    yass.stats.YassStats st = (yass.stats.YassStats) en
-                            .nextElement();
-                    st.calcStats(song, t);
+                if (song != null) {
+                    song.clearStats();
+                    Vector<?> stats = yass.stats.YassStats.getAllStats();
+                    for (Enumeration<?> en = stats.elements(); en.hasMoreElements(); ) {
+                        yass.stats.YassStats st = (yass.stats.YassStats) en.nextElement();
+                        st.calcStats(song, t);
+                    }
                 }
             } else {
                 setProperty("txt-notes", "");
