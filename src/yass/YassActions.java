@@ -9521,7 +9521,9 @@ public class YassActions implements DropTargetListener {
                     break;
                 }
                 if (r.getCommentTag().equals("DUETSINGERP1:") ||
-                        r.getCommentTag().equals("DUETSINGERP2:")) {
+                        r.getCommentTag().equals("DUETSINGERP2:") ||
+                        r.getCommentTag().equals("DUETSINGERP3:") ||
+                        r.getCommentTag().equals("DUETSINGERP4:")) {
                     continue;
                 }
                 resdata.addElement(new YassRow(r));
@@ -9548,7 +9550,7 @@ public class YassActions implements DropTargetListener {
                 String ps = r.getBeat().trim();
                 try {
                     p = Integer.parseInt(ps);
-                    if (p == 3) p = 0; // P0 = P3 = both
+                    // if (p == 3) p = 0; // P0 = P3 = both
                 } catch (Exception e) {
                     p = 0;
                 }
