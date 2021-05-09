@@ -910,7 +910,9 @@ public class YassPlayer {
      * @param midiPitch Description of the Parameter
      */
     public void playMIDI(int midiPitch) {
-        midiPitch += 60;
+    	if (midiPitch < 30){
+    		midiPitch += 60;
+    	}
         if (midiPitch > 127) {
             midiPitch = 127;
         }
@@ -1391,7 +1393,9 @@ public class YassPlayer {
                                     + clicksPos);
                         maxClickOffset = Math.max(maxClickOffset, off);
                         midiPitch = (int) clicks[clicksPos][1];
-                        midiPitch += 60;
+                        if (midiPitch < 24) {
+                        	midiPitch += 60;
+                        }
                         if (midiPitch > 127) {
                             midiPitch = 127;
                         }

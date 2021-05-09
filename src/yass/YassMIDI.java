@@ -113,15 +113,17 @@ public class YassMIDI {
             mc[4].controlChange(7, volume);
             System.out.println("Soundbank ready.");
 
-//			for (int i = 0; i < 127; i++) {
-//				startPlay(i);
-//				System.out.println(i);
-//				try {
-//					Thread.sleep(600);
-//				} catch (InterruptedException e) {
-//				}
-//				stopPlay();
-//			}
+            if (DEBUG) {
+				for (int i = 0; i < 127; i++) {
+					startPlay(i);
+					//System.out.println(i);
+					try {
+						Thread.sleep(600);
+					} catch (InterruptedException e) {
+					}
+					stopPlay();
+				}
+            }
 
         } catch (IllegalArgumentException e) {
             /* The soft synthesizer appears to be throwing
@@ -191,6 +193,11 @@ public class YassMIDI {
             return;
         }
         mc[4].setMute(false);
+        if (n < 24 || n > 108) {
+        	System.out.print("YassMIDI.startPlay: Note with pitch "); 
+        	System.out.print(n); 
+        	System.out.println(" probably cannot be synthesized.");
+        }        
         mc[4].noteOn(n, 127);
     }
 
