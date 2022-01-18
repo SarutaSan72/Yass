@@ -20,6 +20,16 @@
 	<classpath location="lib/nsisant-1.3.jar"/>
 	</taskdef>
 
+	<target name="compile">
+		<mkdir dir="bin"/>
+		<javac srcdir="src" destdir="bin" classpath="resources"/>
+		<copy todir="bin">
+		    <fileset dir="src">
+		        <exclude name="**/*.java"/>
+		    </fileset>
+		</copy>
+	</target>
+
 	<target name="jar">
         <jar destfile="./release/yass-${yass.version}.jar" filesetmanifest="mergewithoutmain">
             <manifest>
