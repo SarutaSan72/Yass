@@ -18,8 +18,6 @@
 
 package yass;
 
-import com.sun.xml.internal.ws.api.ResourceLoader;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;

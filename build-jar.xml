@@ -12,14 +12,6 @@
 
 	<!-- don't change anything below -->
 
-	<taskdef name="launch4j"
-	    classname="net.sf.launch4j.ant.Launch4jTask"
-	    classpath="${launch4j.dir}/launch4j.jar:${launch4j.dir}/lib/xstream.jar" />
-
-	<taskdef name="nsis" classname="com.danielreese.nsisant.Task">
-	<classpath location="lib/nsisant-1.3.jar"/>
-	</taskdef>
-
 	<target name="compile">
 		<mkdir dir="bin"/>
 		<javac srcdir="src" destdir="bin" classpath="resources"/>
@@ -40,10 +32,18 @@
 			<fileset dir="./resources"/>
         </jar>
     </target>
+
 	<target name="exe" description="Create Yass executable with Launch4J" depends="jar" >
+		<taskdef name="launch4j"
+		    classname="net.sf.launch4j.ant.Launch4jTask"
+		    classpath="${launch4j.dir}/launch4j.jar:${launch4j.dir}/lib/xstream.jar" />
  		<launch4j configFile="./launch4j.xml" />
 	</target>
+
 	<target name="installer" description="Create Yass installer with NSIS" depends="exe" >
+		<taskdef name="nsis" classname="com.danielreese.nsisant.Task">
+			<classpath location="lib/nsisant-1.3.jar"/>
+		</taskdef>
 		<nsis script="./nsis-installer.nsi" path="${nsis.dir}"/>
 	</target>
 </project>
