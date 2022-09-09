@@ -11,6 +11,17 @@
 	<property name="yass.version" value="2.3.0" />
 
 	<!-- don't change anything below -->
+
+	<target name="compile">
+		<mkdir dir="bin"/>
+		<javac srcdir="src" destdir="bin" classpath="resources"/>
+		<copy todir="bin">
+		    <fileset dir="src">
+		        <exclude name="**/*.java"/>
+		    </fileset>
+		</copy>
+	</target>
+
 	<target name="jar">
         <jar destfile="./release/yass-${yass.version}.jar" filesetmanifest="mergewithoutmain">
             <manifest>
