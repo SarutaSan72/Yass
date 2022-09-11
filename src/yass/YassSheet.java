@@ -4151,12 +4151,8 @@ public class YassSheet extends JPanel implements Scrollable,
                 } else {
                     if (r.isType(YassRectangle.GAP)) {
                         if (!live) {
-                            g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
-                            Rectangle2D.Double rec = new Rectangle2D.Double(
-                                    r.x, r.y, 6, r.height);
-                            g2.fill(rec);
-                            rec.x = rec.x + r.width - 5;
-                            g2.fill(rec);
+                            g2.setColor(col);
+                            g2.drawString("\u3010", (float)r.x, (float)r.y + 8);
                         }
                         continue;
                     }

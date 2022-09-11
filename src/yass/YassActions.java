@@ -1038,7 +1038,7 @@ public class YassActions implements DropTargetListener {
             b.setAction(setGapHere);
             b.setToolTipText(b.getText());
             b.setText("");
-            b.setIcon(getIcon("paste24Icon"));
+            b.setIcon(getIcon("gap24Icon"));
             b.setFocusable(false);
 
             panel.addSeparator();
@@ -1073,10 +1073,18 @@ public class YassActions implements DropTargetListener {
             b.setIcon(getIcon("rewind24Icon"));
             b.setFocusable(false);
 
+            panel.add(b = new JButton());
+            b.setAction(showOnlineHelpBeat);
+            b.setToolTipText(b.getText());
+            b.setText("");
+            b.setIcon(getIcon("help24Icon"));
+            b.setFocusable(false);
+
             dia.add("Center", panel);
             dia.pack();
             // dia.setIconImage(new
             // ImageIcon(YassActions.this.getClass().getResource("/yass/yass-icon-16.png")).getImage());
+            dia.setLocationRelativeTo(main);
             dia.setVisible(true);
         }
     };
@@ -1289,6 +1297,13 @@ public class YassActions implements DropTargetListener {
 
         public void actionPerformed(ActionEvent e) {
             openURL("http://www.yass-along.com");
+        }
+    };
+    Action showOnlineHelpBeat = new AbstractAction(I18.get("mlib_help_online")) {
+        private static final long serialVersionUID = 1L;
+
+        public void actionPerformed(ActionEvent e) {
+            openURL("http://www.yass-along.com/beats");
         }
     };
 
@@ -2346,6 +2361,7 @@ public class YassActions implements DropTargetListener {
 
         public void actionPerformed(ActionEvent e) {
             table.addGap(+10);
+            updateGap();
         }
     };
     Action decGap = new AbstractAction(I18.get("medit_gap_sub_10")) {
@@ -2353,6 +2369,7 @@ public class YassActions implements DropTargetListener {
 
         public void actionPerformed(ActionEvent e) {
             table.addGap(-10);
+            updateGap();
         }
     };
     Action incGap2 = new AbstractAction(I18.get("medit_gap_add_1000")) {
@@ -2360,6 +2377,7 @@ public class YassActions implements DropTargetListener {
 
         public void actionPerformed(ActionEvent e) {
             table.addGap(+1000);
+            updateGap();
         }
     };
     Action decGap2 = new AbstractAction(I18.get("medit_gap_sub_1000")) {
@@ -2367,6 +2385,7 @@ public class YassActions implements DropTargetListener {
 
         public void actionPerformed(ActionEvent e) {
             table.addGap(-1000);
+            updateGap();
         }
     };
     Action selectLine = new AbstractAction(I18.get("medit_select_line")) {
@@ -4778,11 +4797,20 @@ public class YassActions implements DropTargetListener {
                         "/yass/resources/toolbarButtonGraphics/general/Redo24.gif")));
         icons.put("snapshot24Icon",
                 new ImageIcon(getClass().getResource("/yass/resources/img/Snapshot24.gif")));
+        icons.put("gap16Icon",
+                new ImageIcon(getClass().getResource("/yass/resources/img/Gap16.gif")));
+        icons.put("gap24Icon",
+                new ImageIcon(getClass().getResource("/yass/resources/img/Gap24.gif")));
+        icons.put("help16Icon",
+                new ImageIcon(getClass().getResource("/yass/resources/img/Help16.gif")));
+        icons.put("help24Icon",
+                new ImageIcon(getClass().getResource("/yass/resources/img/Help24.gif")));
         copyRows.putValue(AbstractAction.SMALL_ICON, getIcon("copy16Icon"));
         pasteRows.putValue(AbstractAction.SMALL_ICON, getIcon("paste16Icon"));
         joinRows.putValue(AbstractAction.SMALL_ICON, getIcon("join16Icon"));
         splitRows.putValue(AbstractAction.SMALL_ICON, getIcon("split16Icon"));
         removeRows.putValue(AbstractAction.SMALL_ICON, getIcon("delete16Icon"));
+        showLyricsStart.putValue(AbstractAction.SMALL_ICON, getIcon("gap16Icon"));
         undo.putValue(AbstractAction.SMALL_ICON, getIcon("undo16Icon"));
         redo.putValue(AbstractAction.SMALL_ICON, getIcon("redo16Icon"));
         openSongFolder.putValue(AbstractAction.SMALL_ICON,
@@ -11146,6 +11174,7 @@ public class YassActions implements DropTargetListener {
                 KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK
                         | InputEvent.ALT_MASK | InputEvent.SHIFT_MASK));
 
+        /* Remove the Ctrl+D keyboard shortcut #88
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_M, InputEvent.CTRL_MASK),
                 "multiply");
         c.getActionMap().put("multiply", multiply);
@@ -11156,7 +11185,7 @@ public class YassActions implements DropTargetListener {
         c.getActionMap().put("divide", divide);
         divide.putValue(AbstractAction.ACCELERATOR_KEY,
                 KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_MASK));
-
+        */
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK),
                 "selectLine");
         c.getActionMap().put("selectLine", selectLine);
