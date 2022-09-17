@@ -484,8 +484,6 @@ public class YassActions implements DropTargetListener {
     };
     JPopupMenu versionPopup = null;
     Vector<YassTable> openTables = null;
-    JComboBox<JLabel> vBox = null;
-    VersionListener vBoxListener = null;
     Action version1 = new AbstractAction(I18.get("mpop_versions_1")) {
         private static final long serialVersionUID = -5531508932850580037L;
 
@@ -2908,7 +2906,7 @@ public class YassActions implements DropTargetListener {
             showVideoToggle = null;
     private boolean isUpdating = false;
     private JButton correctPageBreakButton, correctTransposedButton,
-            correctSpacingButton, hasErrorsButton;
+            correctSpacingButton/*, hasErrorsButton*/;
     private boolean playerDemoMode = false;
     Action gotoPlayer = new AbstractAction(I18.get("mlib_player")) {
         private static final long serialVersionUID = 1L;
@@ -3748,13 +3746,6 @@ public class YassActions implements DropTargetListener {
 
     /**
      * Description of the Method
-     */
-    public void updateMessage() {
-        errors.updateMessage();
-    }
-
-    /**
-     * Description of the Method
      *
      * @param id Description of the Parameter
      */
@@ -3837,12 +3828,13 @@ public class YassActions implements DropTargetListener {
 
         if (hasSpacing || hasTrans) {
         }
+        /*
 
         boolean empty = errors.isEmpty();
         hasErrorsButton.setBackground(empty ? stdBackground : errBackground);
-        hasErrorsButton.setEnabled(!empty);
+        hasErrorsButton.setEnabled(!empty);*/
     }
-
+    /*
     public void fixButtonBackground(JButton b, boolean rollover) {
         if (b == hasErrorsButton) {
             boolean empty = errors.isEmpty();
@@ -3851,7 +3843,7 @@ public class YassActions implements DropTargetListener {
             else
                 hasErrorsButton.setBackground(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
         }
-    }
+    }*/
 
     /**
      * Description of the Method
@@ -3863,125 +3855,6 @@ public class YassActions implements DropTargetListener {
             return null;
         }
         return openTables.elementAt(0);
-    }
-
-    /**
-     * Gets the allTables attribute of the YassActions object
-     *
-     * @return The allTables value
-     */
-    public Vector<YassTable> getOpenTables() {
-        return openTables;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-    public JComboBox<JLabel> createVersionBox() {
-        vBox = new JComboBox<>();
-        vBox.setEditable(false);
-        vBox.setEnabled(false);
-        vBox.setPreferredSize(new Dimension(200, 36));
-        vBox.setMaximumSize(new Dimension(200, 36));
-        createVersionPopup(vBox);
-
-        vBox.setRenderer(new DefaultListCellRenderer() {
-            private static final long serialVersionUID = 2262131610310303506L;
-            JSeparator separator = new JSeparator(JSeparator.HORIZONTAL);
-
-            public Component getListCellRendererComponent(JList<?> list,
-                                                          Object value, int index, boolean isSelected,
-                                                          boolean cellHasFocus) {
-                if (value == null) {
-                    return super.getListCellRendererComponent(list, value,
-                            index, isSelected, cellHasFocus);
-                }
-                JLabel label = (JLabel) value;
-                value = label.getText();
-                if (value == null) {
-                    return super.getListCellRendererComponent(list, value,
-                            index, isSelected, cellHasFocus);
-                }
-
-                if (value.equals("SEPARATOR")) {
-                    return separator;
-                }
-
-                JComponent comp = (JComponent) super
-                        .getListCellRendererComponent(list, value, index,
-                                isSelected, cellHasFocus);
-                Color fg = label.getForeground();
-                comp.setForeground(fg);
-                return comp;
-            }
-        });
-
-        vBox.addActionListener(vBoxListener = new VersionListener());
-        vBox.addKeyListener(new KeyAdapter() {
-            public void keyReleased(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_DELETE) {
-                    removeVersion();
-                } else if (e.getKeyCode() == KeyEvent.VK_C) {
-                    createVersion();
-                }
-            }
-        });
-
-        return vBox;
-    }
-
-    /**
-     * Description of the Method
-     */
-    public void updateVersionBox() {
-        String active = null;
-        if (table != null) {
-            active = table.getDir() + File.separator + table.getFilename();
-        }
-        int k = 0;
-
-        vBox.removeActionListener(vBoxListener);
-        vBox.removeAllItems();
-        vBox.setSelectedIndex(-1);
-
-        int i = 0;
-        JLabel label = null;
-        Font f = new Label().getFont();
-        for (Enumeration<YassTable> en = openTables.elements(); en.hasMoreElements(); ) {
-            YassTable t = en.nextElement();
-            String fn = t.getDir() + File.separator + t.getFilename();
-            String title = t.getTitle();
-            String version = t.getVersion();
-            String s = title;
-            title = YassSongInfo.trim(title, vBox, f);
-
-            if (version != null && version.trim().length() > 0) {
-                s = title + " [" + version + "]";
-            }
-            vBox.addItem(label = new JLabel(s));
-            label.setForeground(t.getTableColor());
-
-            // bug: not working
-            label.setToolTipText(fn);
-
-            if (active != null && active.equals(fn)) {
-                k = i;
-            }
-            i++;
-        }
-        // vBox.addItem(label = new JLabel("SEPARATOR"));
-        // label.setEnabled(false);
-        // vBox.addItem(new JLabel("New Version"));
-
-        vBox.setEnabled(vBox.getItemCount() > 1);
-        vBox.setSelectedIndex(k);
-        vBox.addActionListener(vBoxListener);
-        vBox.validate();
-
-        updateTrackComponent();
-
     }
 
     public void updateTrackComponent() {
@@ -4015,7 +3888,7 @@ public class YassActions implements DropTargetListener {
      * @param b Description of the Parameter
      */
     public void nextVersion(int b) {
-        int i = vBox.getSelectedIndex();
+        int i = openTables.indexOf(table);
         int n = openTables.size();
         i += b;
         if (i < 0) {
@@ -4028,7 +3901,7 @@ public class YassActions implements DropTargetListener {
     }
 
     public int getVersion() {
-        return vBox.getSelectedIndex();
+        return openTables.indexOf(table);
     }
 
     /**
@@ -4041,9 +3914,6 @@ public class YassActions implements DropTargetListener {
         if (b < 0 || b > n - 1) {
             return;
         }
-        vBox.removeActionListener(vBoxListener);
-        vBox.setSelectedIndex(b);
-        vBox.addActionListener(vBoxListener);
 
         int rowIndex = sheet.firstVisibleNote(b);
         int page = openTables.elementAt(b).getPageNumber(rowIndex);
@@ -5127,7 +4997,7 @@ public class YassActions implements DropTargetListener {
         showNothingToggle.setSelected(true);
 
         menu.addSeparator();
-        menu.add(showErrors);
+        //menu.add(showErrors);
         menu.add(showTable);
         menu.addSeparator();
         menu.add(darkmode);
@@ -5486,6 +5356,7 @@ public class YassActions implements DropTargetListener {
         speedButton.setSelected(playTimebase != 1);
         speedButton.setFocusable(false);
 
+        /*
         b = new JButton() {
             public void setEnabled(boolean state) {
                 super.setEnabled(state);
@@ -5498,7 +5369,7 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("correct24Icon"));
         b.setFocusable(false);
-        hasErrorsButton = b;
+        hasErrorsButton = b;*/
 
         mp3Button = new JToggleButton();
         // t.add(...);
@@ -5622,10 +5493,6 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("pagebreak24Icon"));
         b.setFocusable(false);
-
-        // t.add(Box.createHorizontalGlue());
-        //t.add(createVersionBox());
-        createVersionBox();
 
         /*
          * t.add(b = new JButton()); b.setAction(space);
@@ -7345,10 +7212,10 @@ public class YassActions implements DropTargetListener {
         showStartEnd.setEnabled(onoff);
         showLyricsStart.setEnabled(onoff);
         showVideoGap.setEnabled(onoff);
-        showErrors.setEnabled(onoff);
+        /*showErrors.setEnabled(onoff);
         if (!onoff && hasErrorsButton != null) {
             hasErrorsButton.setBackground(stdBackground);
-        }
+        }*/
         // openCover.setEnabled(onoff);
         // openBackground.setEnabled(onoff);
         // openMP3.setEnabled(onoff);
@@ -8793,49 +8660,6 @@ public class YassActions implements DropTargetListener {
 
     /**
      * Description of the Method
-     *
-     * @param filename Description of the Parameter
-     */
-    public void openFileWithVersions(String filename) {
-        closeAll();
-
-        File file = new File(filename);
-        if (!file.exists()) {
-            return;
-        }
-
-        YassTable ot = null;
-        int ncol = 1;
-        File files[] = file.getParentFile().listFiles();
-        for (File file1 : files) {
-            file1.getAbsolutePath();
-            if (!isKaraokeFile(file1)) {
-                continue;
-            }
-
-            YassTable t = createNextTable();
-            if (t != null) {
-                t.removeAllRows();
-                t.loadFile(file1.getAbsolutePath());
-
-                String v = t.getVersion();
-                if (v == null || v.length() < 1) {
-                    t.setTableColor(getTableColor(0));
-                    openTables.remove(t);
-                    openTables.insertElementAt(t, 0);
-                } else {
-                    t.setTableColor(getTableColor(ncol++));
-                }
-                if (file1.equals(file)) {
-                    ot = t;
-                }
-            }
-        }
-        table = ot;
-    }
-
-    /**
-     * Description of the Method
      */
     public void openPlayer() {
         YassSongData sd = YassScreen.getSelectedSong();
@@ -9071,7 +8895,7 @@ public class YassActions implements DropTargetListener {
         }
         // System.out.println("open editor 1");
 
-        updateVersionBox();
+        updateTrackComponent();
 
         // System.out.println("open editor 2");
         String recentFiles = null;
@@ -9349,24 +9173,6 @@ public class YassActions implements DropTargetListener {
     /**
      * Description of the Method
      */
-    public void reload() {
-        for (Enumeration<YassTable> en = openTables.elements(); en
-                .hasMoreElements(); ) {
-            YassTable t = en.nextElement();
-            String d = t.getDir();
-            String f = t.getFilename();
-            String m = t.getMP3();
-            t.removeAllRows();
-            t.loadFile(d + File.separator + f);
-            t.setMP3(m);
-        }
-        updateVersionBox();
-        sheet.init();
-    }
-
-    /**
-     * Description of the Method
-     */
     public void createVersion() {
         String fn = YassUtils.createVersion(tab, prop, table);
         if (fn != null) {
@@ -9428,7 +9234,7 @@ public class YassActions implements DropTargetListener {
             oldf.delete();
         }
 
-        updateVersionBox();
+        updateTrackComponent();
         songList.setVisible(true);
     }
 
@@ -9440,7 +9246,7 @@ public class YassActions implements DropTargetListener {
             sheet.removeTable(table);
             openTables.remove(table);
             table = firstTable();
-            updateVersionBox();
+            updateTrackComponent();
             if (currentView == VIEW_LIBRARY) {
                 songList.setVisible(true);
             } else {
@@ -9485,7 +9291,6 @@ public class YassActions implements DropTargetListener {
      * Description of the Method
      *
      * @param fn  Description of the Parameter
-     * @param gui Description of the Parameter
      * @return Description of the Return Value
      */
     public Vector<String> splitFile(String fn) {
@@ -11323,23 +11128,6 @@ public class YassActions implements DropTargetListener {
                     .getWhen(), (myMoveRight) ? 0 : InputEvent.SHIFT_DOWN_MASK,
                     KeyEvent.VK_TAB, KeyEvent.CHAR_UNDEFINED,
                     KeyEvent.KEY_LOCATION_UNKNOWN));
-        }
-    }
-
-    /**
-     * Description of the Class
-     *
-     * @author Saruta
-     */
-    class VersionListener implements ActionListener {
-        /**
-         * Description of the Method
-         *
-         * @param e Description of the Parameter
-         */
-        public void actionPerformed(ActionEvent e) {
-            int k = vBox.getSelectedIndex();
-            gotoVersion(k);
         }
     }
 

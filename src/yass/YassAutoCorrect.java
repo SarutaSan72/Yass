@@ -113,6 +113,28 @@ public class YassAutoCorrect {
     }
 
     /**
+     * Gets the golden attribute of the YassAutoCorrect class
+     *
+     * @param msg Description of the Parameter
+     * @return The golden value
+     */
+    public static boolean isGolden(String msg) {
+        return msg.equals(YassRow.UNCOMMON_GOLDEN);
+    }
+
+    /**
+     * Gets the unhandledError attribute of the YassAutoCorrect class
+     *
+     * @param msg Description of the Parameter
+     * @return The unhandledError value
+     */
+    public static boolean isUnhandledError(String msg) {
+        if (isAutoCorrectionMinorPageBreak(msg) || isAutoCorrectionPageBreak(msg) || isAutoCorrectionSpacing(msg) || isGolden(msg))
+            return false;
+        return true;
+    }
+
+    /**
      * Gets the pause attribute of the YassAutoCorrect class
      *
      * @param in  Description of the Parameter

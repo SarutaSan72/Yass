@@ -21,6 +21,9 @@ package yass;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
+import java.awt.image.ImageProducer;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 
@@ -47,6 +50,16 @@ public class YassSheetInfo extends JPanel {
     private static final int txtBar = 30;
 
     private YassSheetListener sheetListener;
+
+    public static Image err_minorpage_icon = null, err_major_icon = null, err_file_icon = null, err_tags_icon = null, err_text_icon = null;
+    public static Image no_err_minorpage_icon = null, no_err_major_icon = null, no_err_file_icon = null, no_err_tags_icon = null, no_err_text_icon = null;
+
+    private int hiliteCue = NONE;
+    private static final int NONE = 0;
+    private static final int ACTIVATE_TRACK = 1;
+    private static final int SHOW_ERRORS = 2;
+
+    private boolean hasErr = false;
 
     public YassSheetInfo(YassSheet s, int track) {
         super(true);
@@ -75,31 +88,71 @@ public class YassSheetInfo extends JPanel {
                     sheet.stopPlaying();
                 }
 
-                if (e.getX() < 100 && e.getY() < 30) {
-                    if (track != sheet.getActiveTable().getActions().getVersion())
-                        sheet.getActiveTable().getActions().gotoVersion(track);
+                if (hiliteCue == SHOW_ERRORS) {
+                    if (! isActiveTrack())
+                        activateTrack();
+                    showErrors();
+                }
+                else if (hiliteCue == ACTIVATE_TRACK) {
+                    if (! isActiveTrack())
+                        activateTrack();
                 }
                 else {
-                    moveTo(e.getX());
+                    if (! isActiveTrack())
+                        activateTrack();
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            moveTo(e.getX());
+                        }
+                    });
                 }
-
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+            public void mouseExited(MouseEvent e) {
+                if (hiliteCue != NONE) {
+                    hiliteCue = NONE;
+                    repaint();
+                }
             }
         });
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                if (! (e.getX() < 100 && e.getY() < 30)) {
+                if (e.getY() > 30) {
                     if (!(sheet.isPlaying() || sheet.isTemporaryStop()))
                         moveTo(e.getX());
                 }
             }
             @Override
             public void mouseMoved(MouseEvent e) {
-                if (e.getX() < 100 && e.getY() < 30) {
-                    setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                if (e.getX() > 110 && e.getX() < 490 && e.getY() < 30 && hasErr) {
+                    if (hiliteCue != SHOW_ERRORS) {
+                        hiliteCue = SHOW_ERRORS;
+                        repaint();
+                    }
+                }
+                else if (e.getY() < 30) {
+                    if (! isActiveTrack()) {
+                        if (hiliteCue != ACTIVATE_TRACK) {
+                            hiliteCue = ACTIVATE_TRACK;
+                            repaint();
+                        }
+                    }
+                    else {
+                        if (hiliteCue != NONE) {
+                            hiliteCue = NONE;
+                            repaint();
+                        }
+                    }
                 }
                 else {
-                    setCursor(Cursor.getDefaultCursor());
+                    if (hiliteCue != NONE) {
+                        hiliteCue = NONE;
+                        repaint();
+                    }
                 }
             }
         });
@@ -109,10 +162,40 @@ public class YassSheetInfo extends JPanel {
                 sheet.dispatchEvent(e);
             }
         });
+
+        try {
+            err_minorpage_icon = new ImageIcon(getClass().getResource("/yass/resources/img/MinorPageError.gif")).getImage();
+            err_major_icon = new ImageIcon(getClass().getResource("/yass/resources/img/MajorError2.gif")).getImage();
+            err_file_icon = new ImageIcon(getClass().getResource("/yass/resources/img/FileError.gif")).getImage();
+            err_tags_icon = new ImageIcon(getClass().getResource("/yass/resources/img/TagError.gif")).getImage();
+            err_text_icon = new ImageIcon(getClass().getResource("/yass/resources/img/TextError.gif")).getImage();
+
+            no_err_minorpage_icon = Toolkit.getDefaultToolkit().createImage(new FilteredImageSource(err_minorpage_icon.getSource(), new GrayFilter(true, 80)));
+            no_err_major_icon = Toolkit.getDefaultToolkit().createImage(new FilteredImageSource(err_major_icon.getSource(), new GrayFilter(true, 80)));
+            no_err_file_icon = Toolkit.getDefaultToolkit().createImage(new FilteredImageSource(err_file_icon.getSource(), new GrayFilter(true, 80)));
+            no_err_tags_icon = Toolkit.getDefaultToolkit().createImage(new FilteredImageSource(err_tags_icon.getSource(), new GrayFilter(true, 80)));
+            no_err_text_icon = Toolkit.getDefaultToolkit().createImage(new FilteredImageSource(err_text_icon.getSource(), new GrayFilter(true, 80)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void removeListener() {
         sheet.removeYassSheetListener(sheetListener);
+    }
+
+    private void activateTrack() {
+        if (track != sheet.getActiveTable().getActions().getVersion())
+            sheet.getActiveTable().getActions().gotoVersion(track);
+        YassTable table = sheet.getTable(track);
+        if (table == null) return;
+        sheet.getActiveTable().getActions().checkData(table, false, true);
+    }
+    private void showErrors() {
+        sheet.getActiveTable().getActions().showErrors.actionPerformed(null);
+    }
+    private boolean isActiveTrack() {
+        return track ==  sheet.getActiveTable().getActions().getVersion();
     }
 
     private void moveTo(int x)
@@ -199,8 +282,39 @@ public class YassSheetInfo extends JPanel {
         int h = getHeight();
 
         // background
-        g2.setColor(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
-        g2.fillRect(0, 0, w, h);
+        if (isActiveTrack()) {
+            g2.setColor(sheet.darkMode ? sheet.whiteDarkMode : sheet.white);
+            g2.fillRect(0, 0, w, txtBar);
+        }
+        else {
+            g2.setColor(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
+            g2.fillRect(0, 0, w, txtBar);
+        }
+
+        int goldenPoints = table.getGoldenPoints();
+        int idealGoldenPoints = table.getIdealGoldenPoints();
+        int goldenVariance = table.getGoldenVariance();
+        int idealGoldenBeats = table.getIdealGoldenBeats();
+        int durationGolden = table.getDurationGolden();
+        String goldenDiff = table.getGoldenDiff();
+        boolean goldenErr = Math.abs(goldenPoints - idealGoldenPoints) > goldenVariance;
+
+        hasErr = table.hasUnhandledError() || table.hasMinorPageBreakMessages() || table.hasPageBreakMessages() || table.hasSpacingMessages() || goldenErr;
+        if (hasErr) {
+            if (hiliteCue == SHOW_ERRORS) {
+                g2.setColor(sheet.darkMode ? sheet.blueDragDarkMode : sheet.blueDrag);
+                g2.fillRect(110, 2, 380, txtBar - 4);
+                g2.setColor(colorSet[YassSheet.COLOR_ERROR]);
+                g2.setStroke(sheet.thickStroke);
+                g2.drawRect(110, 2, 380, txtBar - 4);
+                g2.setStroke(sheet.stdStroke);
+            } else {
+                g2.setColor(colorSet[YassSheet.COLOR_ERROR]);
+                g2.setStroke(sheet.thickStroke);
+                g2.drawRect(110, 2, 380, txtBar - 4);
+                g2.setStroke(sheet.stdStroke);
+            }
+        }
 
         if (track == activeTrack) {
             g2.setColor(sheet.darkMode ? sheet.whiteDarkMode : sheet.white);
@@ -301,22 +415,41 @@ public class YassSheetInfo extends JPanel {
             g2.drawString(table.getVersion(), x + 2 + (versionWidth-sw)/2, 20);
         }
 
+        // errors
+        x = x + versionWidth + 14;
+        y = 8;
+        w = 16;
+        h = 16;
+        if (table.hasUnhandledError()) {
+            if (err_major_icon != null)
+                g2.drawImage(err_major_icon, x + (w+8)*0, y, w, h, null);
+        }
+        else {
+            if (no_err_major_icon != null)
+                g2.drawImage(no_err_major_icon, x + (w+8)*0, y, w, h, null);
+        }
+        if (table.hasMinorPageBreakMessages() || table.hasPageBreakMessages()) {
+            if (err_minorpage_icon != null)
+                g2.drawImage(err_minorpage_icon, x + (w+8)*1, y, w, h, null);
+        }
+        else {
+            if (no_err_minorpage_icon != null)
+                g2.drawImage(no_err_minorpage_icon, x + (w+8)*1, y, w, h, null);
+        }
+        if (table.hasSpacingMessages()) {
+            if (err_text_icon != null)
+                g2.drawImage(err_text_icon, x + (w+8)*2, y, w, h, null);
+        }
+        else {
+            if (no_err_text_icon != null)
+                g2.drawImage(no_err_text_icon, x + (w+8)*2, y, w, h, null);
+        }
+        x = x + 80;
+
         // golden
-        int goldenPoints = table.getGoldenPoints();
         if (goldenPoints > 0) {
-            int idealGoldenPoints = table.getIdealGoldenPoints();
-            int goldenVariance = table.getGoldenVariance();
-            int idealGoldenBeats = table.getIdealGoldenBeats();
-            int durationGolden = table.getDurationGolden();
-            String goldenDiff = table.getGoldenDiff();
-            boolean err = Math.abs(goldenPoints - idealGoldenPoints) > goldenVariance;
-            g2.setColor(err ? colorSet[YassSheet.COLOR_ERROR] : (sheet.darkMode ? sheet.hiGray : sheet.dkGray));
+            g2.setColor(goldenErr ? colorSet[YassSheet.COLOR_ERROR] : (sheet.darkMode ? sheet.hiGray : sheet.dkGray));
 
-            String goldenString = MessageFormat.format(
-                    I18.get("correct_golden_info"), "" + idealGoldenPoints,
-                    "" + goldenPoints, "" + idealGoldenBeats, "" + durationGolden, goldenDiff);
-
-            x = x + versionWidth + 10;
             y = 10;
             w = 80;
             h = 10;
@@ -328,11 +461,21 @@ public class YassSheetInfo extends JPanel {
             if (goldenPercentage > 2) goldenPercentage = 2;
             int xGold = (int) (w / 2 * goldenPercentage);
 
-            g2.drawString(goldenString, x + w + 10, y + h);
+            if (! goldenDiff.equals("0")) {
+                String goldenStringMinor = MessageFormat.format(
+                        I18.get("correct_golden_info"), "" + idealGoldenPoints,
+                        "" + goldenPoints, "" + idealGoldenBeats, "" + durationGolden, goldenDiff);
+                g2.drawString(goldenStringMinor, x + w + 10, y + h);
+            }else {
+                String goldenString = MessageFormat.format(
+                        I18.get("correct_golden_info_perfect"), "" + idealGoldenPoints,
+                        "" + goldenPoints, "" + idealGoldenBeats, "" + durationGolden);
+                g2.drawString(goldenString, x + w + 10, y + h);
+            }
 
             g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
             g2.drawRect(x, y, w, h);
-            g2.setColor(err ? colorSet[YassSheet.COLOR_ERROR] : (sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray));
+            g2.setColor(goldenErr ? colorSet[YassSheet.COLOR_ERROR] : (sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray));
             g2.fillRect(x + 1, y + 1, w - 1, h - 1);
             g2.setColor(colorSet[YassSheet.COLOR_GOLDEN]);
             g2.fillRect(x + w / 2 - xVar / 2, y + 1, xVar, h - 1);

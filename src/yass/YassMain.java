@@ -565,7 +565,7 @@ public class YassMain extends JApplet {
                                 ? (sheet.darkMode ? sheet.blue : sheet.blue)
                                 : (sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2));
                         ((JButton) c).setBorder(model.isRollover() ? rolloverBorder : emptyBorder);
-                        actions.fixButtonBackground((JButton) c, model.isRollover());
+                        //actions.fixButtonBackground((JButton) c, model.isRollover());
                     }
                 });
             }
@@ -597,7 +597,7 @@ public class YassMain extends JApplet {
                     if (c instanceof JButton || c instanceof JToggleButton) {
                         c.setBackground(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
                         ((JComponent) c).setBorder(emptyBorder);
-                        if (c instanceof JButton) actions.fixButtonBackground((JButton) c, false);
+                        //if (c instanceof JButton) actions.fixButtonBackground((JButton) c, false);
                     }
                 }
             }

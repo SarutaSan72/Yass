@@ -1737,6 +1737,25 @@ public class YassTable extends JTable {
      *
      * @return Description of the Return Value
      */
+    public boolean hasUnhandledError() {
+        if (messages == null || auto == null) {
+            return false;
+        }
+        Enumeration<String> en = messages.keys();
+        while (en.hasMoreElements()) {
+            String key = en.nextElement();
+            if (YassAutoCorrect.isUnhandledError(key)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Description of the Method
+     *
+     * @return Description of the Return Value
+     */
     public boolean hasTagsMessages() {
         if (messages == null || auto == null) {
             return false;
