@@ -1,6 +1,6 @@
 ﻿Name "Yass"
 
-OutFile ".\release\yass-installer-2.3.0.exe"
+OutFile ".\release\yass-installer-2.3.1.exe"
 
 Unicode true
 SetCompressor lzma
@@ -134,8 +134,8 @@ Section $(Sec_ContextMenuText)
   SetOutPath "$INSTDIR"
   WriteRegStr HKCR "Directory\shell\yass" "" $(ContextMenu_Edit)
   WriteRegStr HKCR "Directory\shell\yass\command" "" '"$INSTDIR\yass.exe" "%1"'
-  WriteRegStr HKCR "txtfile\shell\yass" "" $(ContextMenu_Edit)
-  WriteRegStr HKCR "txtfile\shell\yass\command" "" '"$INSTDIR\yass.exe" "%1"'
+  WriteRegStr HKCR "SystemFileAssociations\.txt\shell\yass" "" $(ContextMenu_Edit)
+  WriteRegStr HKCR "SystemFileAssociations\.txt\shell\yass\command" "" '"$INSTDIR\yass.exe" "%1"'
 SectionEnd
 
 Section $(Sec_ContextMenuKar)
@@ -223,6 +223,9 @@ Section "Uninstall"
   SetShellVarContext all
 
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Yass Along"
+
+  DeleteRegKey HKCR "SystemFileAssociations\.txt\shell\yass\command"
+  DeleteRegKey HKCR "SystemFileAssociations\.txt\shell\yass"
 
   DeleteRegKey HKCR "Directory\shell\yass\command"
   DeleteRegKey HKCR "Directory\shell\yass"
