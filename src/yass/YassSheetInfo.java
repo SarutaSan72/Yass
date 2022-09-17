@@ -128,7 +128,8 @@ public class YassSheetInfo extends JPanel {
             }
             @Override
             public void mouseMoved(MouseEvent e) {
-                if (e.getX() > 110 && e.getX() < 490 && e.getY() < 30 && hasErr) {
+                int versionWidth = sheet.getTableCount() > 1 ? 100 : 0;
+                if (e.getX() > (10+versionWidth) && e.getX() < (10+versionWidth+380) && e.getY() < 30 && hasErr) {
                     if (hiliteCue != SHOW_ERRORS) {
                         hiliteCue = SHOW_ERRORS;
                         repaint();
@@ -303,15 +304,15 @@ public class YassSheetInfo extends JPanel {
         if (hasErr) {
             if (hiliteCue == SHOW_ERRORS) {
                 g2.setColor(sheet.darkMode ? sheet.blueDragDarkMode : sheet.blueDrag);
-                g2.fillRect(110, 2, 380, txtBar - 4);
+                g2.fillRect(versionWidth + 10, 2, 380, txtBar - 4);
                 g2.setColor(colorSet[YassSheet.COLOR_ERROR]);
                 g2.setStroke(sheet.thickStroke);
-                g2.drawRect(110, 2, 380, txtBar - 4);
+                g2.drawRect(versionWidth + 10, 2, 380, txtBar - 4);
                 g2.setStroke(sheet.stdStroke);
             } else {
                 g2.setColor(colorSet[YassSheet.COLOR_ERROR]);
                 g2.setStroke(sheet.thickStroke);
-                g2.drawRect(110, 2, 380, txtBar - 4);
+                g2.drawRect(versionWidth + 10, 2, 380, txtBar - 4);
                 g2.setStroke(sheet.stdStroke);
             }
         }
