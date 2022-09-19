@@ -1297,6 +1297,13 @@ public class YassActions implements DropTargetListener {
             openURL("http://www.yass-along.com");
         }
     };
+    Action showOnlineHelpErrors = new AbstractAction(I18.get("mlib_help_online")) {
+        private static final long serialVersionUID = 1L;
+
+        public void actionPerformed(ActionEvent e) {
+            openURL("http://www.yass-along.com/errors");
+        }
+    };
     Action showOnlineHelpBeat = new AbstractAction(I18.get("mlib_help_online")) {
         private static final long serialVersionUID = 1L;
 
@@ -6182,6 +6189,13 @@ public class YassActions implements DropTargetListener {
         b.setFocusable(false);
         correctSpacingButton = b;
 
+        t.add(b = new JButton());
+        b.setAction(showOnlineHelpErrors);
+        b.setToolTipText(b.getText());
+        b.setText("");
+        b.setIcon(getIcon("help24Icon"));
+        b.setFocusable(false);
+
         return t;
     }
 
@@ -6408,6 +6422,13 @@ public class YassActions implements DropTargetListener {
         b.setToolTipText(b.getText());
         b.setText("");
         b.setIcon(getIcon("err24Icon"));
+        b.setFocusable(false);
+
+        t.add(b = new JButton());
+        b.setAction(showOnlineHelpErrors);
+        b.setToolTipText(b.getText());
+        b.setText("");
+        b.setIcon(getIcon("help24Icon"));
         b.setFocusable(false);
 
         return t;
