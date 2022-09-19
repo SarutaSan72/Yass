@@ -171,11 +171,11 @@ public class YassSheetInfo extends JPanel {
             err_tags_icon = new ImageIcon(getClass().getResource("/yass/resources/img/TagError.gif")).getImage();
             err_text_icon = new ImageIcon(getClass().getResource("/yass/resources/img/TextError.gif")).getImage();
 
-            no_err_minorpage_icon = Toolkit.getDefaultToolkit().createImage(new FilteredImageSource(err_minorpage_icon.getSource(), new GrayFilter(true, 80)));
-            no_err_major_icon = Toolkit.getDefaultToolkit().createImage(new FilteredImageSource(err_major_icon.getSource(), new GrayFilter(true, 80)));
-            no_err_file_icon = Toolkit.getDefaultToolkit().createImage(new FilteredImageSource(err_file_icon.getSource(), new GrayFilter(true, 80)));
-            no_err_tags_icon = Toolkit.getDefaultToolkit().createImage(new FilteredImageSource(err_tags_icon.getSource(), new GrayFilter(true, 80)));
-            no_err_text_icon = Toolkit.getDefaultToolkit().createImage(new FilteredImageSource(err_text_icon.getSource(), new GrayFilter(true, 80)));
+            no_err_minorpage_icon = new ImageIcon(getClass().getResource("/yass/resources/img/MinorPageNoError.gif")).getImage();
+            no_err_major_icon = new ImageIcon(getClass().getResource("/yass/resources/img/MajorNoError2.gif")).getImage();
+            no_err_file_icon = new ImageIcon(getClass().getResource("/yass/resources/img/FileNoError.gif")).getImage();
+            no_err_tags_icon = new ImageIcon(getClass().getResource("/yass/resources/img/TagNoError.gif")).getImage();
+            no_err_text_icon = new ImageIcon(getClass().getResource("/yass/resources/img/TextNoError.gif")).getImage();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -448,42 +448,50 @@ public class YassSheetInfo extends JPanel {
         x = x + 80;
 
         // golden
-        if (goldenPoints > 0) {
-            g2.setColor(goldenErr ? colorSet[YassSheet.COLOR_ERROR] : (sheet.darkMode ? sheet.hiGray : sheet.dkGray));
-
+        if (idealGoldenPoints > 0) {
             y = 10;
             w = 80;
             h = 10;
 
             double varPercentage = goldenVariance / (double) idealGoldenPoints;
             int xVar = (int) (w * varPercentage);
-
             double goldenPercentage = goldenPoints / (double) idealGoldenPoints;
             if (goldenPercentage > 2) goldenPercentage = 2;
             int xGold = (int) (w / 2 * goldenPercentage);
 
-            if (! goldenDiff.equals("0")) {
+            boolean perfect = goldenDiff.equals("0");
+            if (! perfect) {
                 String goldenStringMinor = MessageFormat.format(
                         I18.get("correct_golden_info"), "" + idealGoldenPoints,
                         "" + goldenPoints, "" + idealGoldenBeats, "" + durationGolden, goldenDiff);
+                g2.setColor(goldenErr ? colorSet[YassSheet.COLOR_ERROR] : (sheet.darkMode ? sheet.hiGray : sheet.dkGray));
                 g2.drawString(goldenStringMinor, x + w + 10, y + h);
-            }else {
+            }
+            else {
                 String goldenString = MessageFormat.format(
                         I18.get("correct_golden_info_perfect"), "" + idealGoldenPoints,
                         "" + goldenPoints, "" + idealGoldenBeats, "" + durationGolden);
+                g2.setColor(sheet.darkMode ? sheet.dkGray : sheet.hiGray);
                 g2.drawString(goldenString, x + w + 10, y + h);
             }
 
-            g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
-            g2.drawRect(x, y, w, h);
-            g2.setColor(goldenErr ? colorSet[YassSheet.COLOR_ERROR] : (sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray));
-            g2.fillRect(x + 1, y + 1, w - 1, h - 1);
-            g2.setColor(colorSet[YassSheet.COLOR_GOLDEN]);
-            g2.fillRect(x + w / 2 - xVar / 2, y + 1, xVar, h - 1);
-            g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
-            g2.drawRect(x + w / 2, y, 1, h);
-            g2.setColor(sheet.darkMode ? sheet.blackDarkMode : sheet.black);
-            g2.drawRect(x + xGold, y - 1, 1, h + 2);
+            if (! perfect) {
+                g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
+                g2.drawRect(x, y, w, h);
+                g2.setColor(goldenErr ? colorSet[YassSheet.COLOR_ERROR] : (sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray));
+                g2.fillRect(x + 1, y + 1, w - 1, h - 1);
+                g2.setColor(colorSet[YassSheet.COLOR_GOLDEN]);
+                g2.fillRect(x + w / 2 - xVar / 2, y + 1, xVar, h - 1);
+                g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
+                g2.drawRect(x + w / 2, y, 1, h);
+                g2.setColor(sheet.darkMode ? sheet.blackDarkMode : sheet.black);
+                g2.drawRect(x + xGold, y - 1, 1, h + 2);
+            }
+            else {
+                g2.setColor(sheet.darkMode ? sheet.hiGrayDarkMode : sheet.hiGray);
+                g2.drawRect(x, y, w, h);
+                g2.drawRect(x + xGold, y - 1, 1, h + 2);
+            }
         }
 
         // artist/title/year
