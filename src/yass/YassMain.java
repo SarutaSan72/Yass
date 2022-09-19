@@ -191,13 +191,13 @@ public class YassMain extends JApplet {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         String w = prop.getProperty("frame-width");
         if (w == null)
-            w = dim.width >= 1000 ? "1000" : dim.width + "";
+            w = dim.width >= 1200 ? "1200" : dim.width + "";
         else if (Integer.parseInt(w) > dim.width)
             w = dim.width + "";
 
         String h = prop.getProperty("frame-height");
         if (h == null)
-            h = dim.height >= 600 ? "600" : dim.height + "";
+            h = dim.height >= 800 ? "800" : dim.height + "";
         else if (Integer.parseInt(h) > dim.height)
             w = dim.height + "";
 
