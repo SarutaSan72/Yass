@@ -2633,7 +2633,7 @@ public class YassActions implements DropTargetListener {
             interruptPlay();
             if (errDialog != null) {
                 if (errDialog.isShowing()) {
-                    errDialog.setVisible(false);
+                    //errDialog.setVisible(false);
                     return;
                 }
                 errDialog.pack();

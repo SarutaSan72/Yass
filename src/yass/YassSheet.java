@@ -199,6 +199,10 @@ public class YassSheet extends JPanel implements Scrollable,
     private final static int PLAY_BEFORE = 21;
     private final static int PLAY_NEXT = 22;
     private final static int PLAY_NEXT_PRESSED = 23;
+    private final static int PREV_SLIDE_PRESSED = 24;
+    private final static int NEXT_SLIDE_PRESSED = 25;
+    private final static int PREV_SLIDE = 26;
+    private final static int NEXT_SLIDE = 27;
     boolean useSketching = false, useSketchingPlayback = false;
     AffineTransform identity = new AffineTransform();
     String bufferlost = I18.get("sheet_msg_buffer_lost");
@@ -445,77 +449,13 @@ public class YassSheet extends JPanel implements Scrollable,
                 // 14=scroll_left, 15=scroll_right, 16=one_page
                 if (code == keycodes[14] && !e.isControlDown()
                         && !e.isAltDown()) {
-                    if (YassTable.getZoomMode() == YassTable.ZOOM_ONE) {
-                        YassTable.setZoomMode(YassTable.ZOOM_MULTI);
-                        enablePan(false);
-                        actions.revalidateLyricsArea();
-                        update();
-                    }
-                    int off = 10;
-                    if (e.isShiftDown()) {
-                        off = 50;
-                    }
-                    Point vp = getViewPosition();
-                    vp.x = vp.x - off;
-                    if (vp.x < 0) {
-                        vp.x = 0;
-                    }
-                    setViewPosition(vp);
-
-                    if (playerPos < vp.x || playerPos > vp.x + clip.width) {
-                        int next = nextElement(vp.x);
-                        if (next >= 0) {
-                            YassRow row = table.getRowAt(next);
-                            if (!row.isNote() && next + 1 < table.getRowCount()) {
-                                next = next + 1;
-                                row = table.getRowAt(next);
-                            }
-
-                            if (row.isNote()) {
-                                table.setRowSelectionInterval(next, next);
-                                table.updatePlayerPosition();
-                            }
-                        }
-                    }
-
+                    slideLeft(e.isShiftDown() ? 50 : 10);
                     e.consume();
                     return;
                 }
                 if (code == keycodes[15] && !e.isControlDown()
                         && !e.isAltDown()) {
-                    if (YassTable.getZoomMode() == YassTable.ZOOM_ONE) {
-                        YassTable.setZoomMode(YassTable.ZOOM_MULTI);
-                        enablePan(false);
-                        actions.revalidateLyricsArea();
-                        update();
-                    }
-                    int off = 10;
-                    if (e.isShiftDown()) {
-                        off = 50;
-                    }
-                    Point vp = getViewPosition();
-                    vp.x = vp.x + off;
-                    if (vp.x < 0) {
-                        vp.x = 0;
-                    }
-                    setViewPosition(vp);
-
-                    if (playerPos < vp.x || playerPos > vp.x + clip.width) {
-                        int next = nextElement(vp.x);
-                        if (next >= 0) {
-                            YassRow row = table.getRowAt(next);
-                            if (!row.isNote() && next + 1 < table.getRowCount()) {
-                                next = next + 1;
-                                row = table.getRowAt(next);
-                            }
-
-                            if (row.isNote()) {
-                                table.setRowSelectionInterval(next, next);
-                                table.updatePlayerPosition();
-                            }
-                        }
-                    }
-
+                    slideRight(e.isShiftDown() ? 50 : 10);
                     e.consume();
                     return;
                 }
@@ -801,10 +741,22 @@ public class YassSheet extends JPanel implements Scrollable,
                 if (table == null) {
                     return;
                 }
+
+                if (hiliteCue == PREV_SLIDE_PRESSED || hiliteCue == NEXT_SLIDE_PRESSED) {
+                    stopSlide();
+                    hiliteCue = UNDEFINED;
+                    return;
+                }
+
                 if (temporaryZoomOff) {
-                    temporaryZoomOff = false;
-                    YassTable.setZoomMode(YassTable.ZOOM_ONE);
-                    table.zoomPage();
+                    if (! (hiliteCue == PREV_SLIDE_PRESSED || hiliteCue == NEXT_SLIDE_PRESSED) ) {
+                        temporaryZoomOff = false;
+                        YassTable.setZoomMode(YassTable.ZOOM_ONE);
+                        table.zoomPage();
+                    }
+                    else {
+                        temporaryZoomOff = false;
+                    }
                 }
 
                 if (table.getPreventUndo()) {
@@ -917,7 +869,7 @@ public class YassSheet extends JPanel implements Scrollable,
                 if (y > clip.height - BOTTOM_BORDER + 20
                         || (y > 20 && y < TOP_LINE - 10 && notInLyrics)) {
                     if (!left || twice || one) {
-                        firePropertyChange("one", null, null);
+                        //firePropertyChange("one", null, null);
                         return;
                     }
                 }
@@ -951,11 +903,6 @@ public class YassSheet extends JPanel implements Scrollable,
                 if (table == null) {
                     return;
                 }
-                if (YassTable.getZoomMode() == YassTable.ZOOM_ONE
-                        && dragMode != SLIDE) {
-                    temporaryZoomOff = true;
-                    YassTable.setZoomMode(YassTable.ZOOM_MULTI);
-                }
 
                 if (! hasFocus()) {
                     requestFocusInWindow();
@@ -968,10 +915,30 @@ public class YassSheet extends JPanel implements Scrollable,
                     return;
                 }
 
-                setErrorMessage("");
-
                 int x = e.getX();
                 int y = e.getY();
+
+                if (x > clip.x + LEFT_BORDER && x < clip.x + LEFT_BORDER + LEFT_BORDER && y > dim.height - BOTTOM_BORDER) {
+                    hiliteCue = PREV_SLIDE_PRESSED;
+                    startSlide(-10);
+                    repaint();
+                    return;
+                }
+                if (x > clip.x + clip.width - RIGHT_BORDER - RIGHT_BORDER && x < clip.x + clip.width - RIGHT_BORDER
+                        && y > dim.height - BOTTOM_BORDER) {
+                    hiliteCue = NEXT_SLIDE_PRESSED;
+                    startSlide(+10);
+                    repaint();
+                    return;
+                }
+
+                if (YassTable.getZoomMode() == YassTable.ZOOM_ONE
+                        && dragMode != SLIDE) {
+                    temporaryZoomOff = true;
+                    YassTable.setZoomMode(YassTable.ZOOM_MULTI);
+                }
+
+                setErrorMessage("");
 
                 if (paintHeights) {
                     if (x < clip.x + heightBoxWidth && y > TOP_LINE - 10
@@ -1348,6 +1315,20 @@ public class YassSheet extends JPanel implements Scrollable,
                     return;
                 }
 
+                if (x > clip.x + LEFT_BORDER && x < clip.x + LEFT_BORDER + LEFT_BORDER && y > clip.height - BOTTOM_BORDER) {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                    hiliteCue = PREV_SLIDE;
+                    repaint();
+                    return;
+                }
+
+                if (x > clip.x + clip.width - RIGHT_BORDER - RIGHT_BORDER && x < clip.x + clip.width - RIGHT_BORDER && y > clip.height - BOTTOM_BORDER) {
+                    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                    hiliteCue = NEXT_SLIDE;
+                    repaint();
+                    return;
+                }
+
                 if (x > playerPos + PLAY_PAGE_X && x < playerPos + PLAY_PAGE_X + PLAY_PAGE_W
                         && y > TOP_PLAYER_BUTTONS
                         && y < TOP_PLAYER_BUTTONS + 64) {
@@ -1592,10 +1573,24 @@ public class YassSheet extends JPanel implements Scrollable,
                     repaint();
                     return;
                 }
+                if (hiliteCue == PREV_SLIDE_PRESSED
+                        && !(px > clip.x + LEFT_BORDER && px < clip.x + LEFT_BORDER+ LEFT_BORDER && py > dim.height
+                        - BOTTOM_BORDER)) {
+                    hiliteCue = PREV_SLIDE;
+                    repaint();
+                    return;
+                }
                 if (hiliteCue == PREV_PAGE
                         && (px < clip.x + LEFT_BORDER && py > dim.height
                         - BOTTOM_BORDER)) {
                     hiliteCue = PREV_PAGE_PRESSED;
+                    repaint();
+                    return;
+                }
+                if (hiliteCue == PREV_SLIDE
+                        && (px > clip.x + LEFT_BORDER && px < clip.x + LEFT_BORDER + LEFT_BORDER && py > dim.height
+                        - BOTTOM_BORDER)) {
+                    hiliteCue = PREV_SLIDE_PRESSED;
                     repaint();
                     return;
                 }
@@ -1606,8 +1601,22 @@ public class YassSheet extends JPanel implements Scrollable,
                     repaint();
                     return;
                 }
+                if (hiliteCue == NEXT_SLIDE_PRESSED
+                        && !(px > clip.x + clip.width - RIGHT_BORDER - RIGHT_BORDER && px < clip.x + clip.width - RIGHT_BORDER && py > dim.height
+                        - BOTTOM_BORDER)) {
+                    hiliteCue = NEXT_SLIDE;
+                    repaint();
+                    return;
+                }
                 if (hiliteCue == NEXT_PAGE
                         && (px > clip.x + clip.width - RIGHT_BORDER && py > dim.height
+                        - BOTTOM_BORDER)) {
+                    hiliteCue = NEXT_PAGE_PRESSED;
+                    repaint();
+                    return;
+                }
+                if (hiliteCue == NEXT_SLIDE
+                        && (px > clip.x + clip.width - RIGHT_BORDER - RIGHT_BORDER && px < clip.x + clip.width - RIGHT_BORDER && py > dim.height
                         - BOTTOM_BORDER)) {
                     hiliteCue = NEXT_PAGE_PRESSED;
                     repaint();
@@ -1671,13 +1680,15 @@ public class YassSheet extends JPanel implements Scrollable,
                     return;
                 }
 
-                if (hiliteCue == NEXT_PAGE || hiliteCue == PREV_PAGE
+                if (hiliteCue == NEXT_PAGE || hiliteCue == PREV_PAGE || hiliteCue == NEXT_SLIDE || hiliteCue == PREV_SLIDE
                         || hiliteCue == PLAY_NOTE
                         || hiliteCue == PLAY_PAGE
                         || hiliteCue == PLAY_BEFORE
                         || hiliteCue == PLAY_NEXT
                         || hiliteCue == NEXT_PAGE_PRESSED
                         || hiliteCue == PREV_PAGE_PRESSED
+                        || hiliteCue == NEXT_SLIDE_PRESSED
+                        || hiliteCue == PREV_SLIDE_PRESSED
                         || hiliteCue == PLAY_NOTE_PRESSED
                         || hiliteCue == PLAY_BEFORE_PRESSED
                         || hiliteCue == PLAY_NEXT_PRESSED
@@ -2969,6 +2980,7 @@ public class YassSheet extends JPanel implements Scrollable,
         paintVersionsText(db);
         if (showArrows && !live) {
             paintArrows(db);
+            paintSlideArrows(db);
         }
 
         if (messageMemory && !live) {
@@ -3229,7 +3241,6 @@ public class YassSheet extends JPanel implements Scrollable,
      * @param g2 Description of the Parameter
      */
     public void paintArrows(Graphics2D g2) {
-        // if (!paintArrows) return;
 
         int x = clip.x;// + (paintHeights ? heightBoxWidth : 0);
         int y = dim.height - BOTTOM_BORDER + 16;
@@ -3268,7 +3279,7 @@ public class YassSheet extends JPanel implements Scrollable,
 
         boolean isEnabled = hiliteCue == PREV_PAGE
                 || hiliteCue == PREV_PAGE_PRESSED;
-        YassUtils.paintTriangle(g2, x + 10, y + 14, w / 3, YassUtils.WEST,
+        YassUtils.paintTriangle(g2, x + 10, y + 14, w / 3, YassUtils.NORTH,
                 isEnabled, fg, sh, wt);
 
         x = clip.x + clip.width - RIGHT_BORDER;
@@ -3301,6 +3312,86 @@ public class YassSheet extends JPanel implements Scrollable,
         }
 
         isEnabled = hiliteCue == NEXT_PAGE || hiliteCue == NEXT_PAGE_PRESSED;
+        YassUtils.paintTriangle(g2, x + 10, y + 14, w / 3, YassUtils.SOUTH,
+                isEnabled, fg, sh, wt);
+    }
+    /**
+     * Description of the Method
+     *
+     * @param g2 Description of the Parameter
+     */
+    public void paintSlideArrows(Graphics2D g2) {
+
+        int x = clip.x + LEFT_BORDER;
+        int y = dim.height - BOTTOM_BORDER + 16;
+        int w = LEFT_BORDER;
+        int h = BOTTOM_BORDER - 16;
+
+        Color fg = darkMode ? hiGrayDarkMode : hiGray;
+        Color sh = darkMode ? hiGray2DarkMode : hiGray2;
+        Color wt = darkMode ? whiteDarkMode : white;
+        Color arr = darkMode ? arrowDarkMode : arrow;
+
+        boolean isPressed = hiliteCue == PREV_SLIDE_PRESSED;
+        g2.setColor(isPressed ? fg : arr);
+        g2.fillRect(x, y, w, h);
+
+        if (isPressed) {
+            g2.setColor(sh);
+            g2.drawRect(x, y, w - 1, h - 1);
+        } else {
+            g2.setColor(fg);
+            g2.drawLine(x, y, x, y + h - 1);
+            g2.drawLine(x + 1, y, x + w - 2, y);
+
+            g2.setColor(wt);
+            g2.drawLine(x + 1, y + 1, x + 1, y + h - 3);
+            g2.drawLine(x + 2, y + 1, x + w - 3, y + 1);
+
+            g2.setColor(sh);
+            g2.drawLine(x + 1, y + h - 2, x + w - 2, y + h - 2);
+            g2.drawLine(x + w - 2, y + 1, x + w - 2, y + h - 3);
+
+            g2.setColor(fg);
+            g2.drawLine(x, y + h - 1, x + w - 1, y + h - 1);
+            g2.drawLine(x + w - 1, y + h - 1, x + w - 1, y);
+        }
+
+        boolean isEnabled = hiliteCue == PREV_SLIDE
+                || hiliteCue == PREV_SLIDE_PRESSED;
+        YassUtils.paintTriangle(g2, x + 10, y + 14, w / 3, YassUtils.WEST,
+                isEnabled, fg, sh, wt);
+
+        x = clip.x + clip.width - RIGHT_BORDER - RIGHT_BORDER;
+        y = dim.height - BOTTOM_BORDER + 16;
+        w = RIGHT_BORDER;
+        h = BOTTOM_BORDER - 16;
+
+        isPressed = hiliteCue == NEXT_SLIDE_PRESSED;
+        g2.setColor(isPressed ? fg : arr);
+        g2.fillRect(x, y, w, h);
+        if (isPressed) {
+            g2.setColor(sh);
+            g2.drawRect(x, y, w - 1, h - 1);
+        } else {
+            g2.setColor(fg);
+            g2.drawLine(x, y, x, y + h - 1);
+            g2.drawLine(x + 1, y, x + w - 2, y);
+
+            g2.setColor(wt);
+            g2.drawLine(x + 1, y + 1, x + 1, y + h - 3);
+            g2.drawLine(x + 2, y + 1, x + w - 3, y + 1);
+
+            g2.setColor(sh);
+            g2.drawLine(x + 1, y + h - 2, x + w - 2, y + h - 2);
+            g2.drawLine(x + w - 2, y + 1, x + w - 2, y + h - 3);
+
+            g2.setColor(fg);
+            g2.drawLine(x, y + h - 1, x + w - 1, y + h - 1);
+            g2.drawLine(x + w - 1, y + h - 1, x + w - 1, y);
+        }
+
+        isEnabled = hiliteCue == NEXT_SLIDE || hiliteCue == NEXT_SLIDE_PRESSED;
         YassUtils.paintTriangle(g2, x + 10, y + 14, w / 3, YassUtils.EAST,
                 isEnabled, fg, sh, wt);
     }
@@ -6026,6 +6117,101 @@ public class YassSheet extends JPanel implements Scrollable,
             }
         }
         scrollRectToVisible(i, j);
+    }
+
+    private class SlideThread extends Thread {
+        private int off = 0;
+        private int ticks = 0;
+        public boolean quit = false;
+
+        public SlideThread(int off) {
+            this.off=off;
+        }
+        public void run() {
+            while (! quit && hiliteCue == PREV_SLIDE_PRESSED || hiliteCue == NEXT_SLIDE_PRESSED) {
+                if (off < 0)
+                    slideLeft(-off);
+                else slideRight(off);
+                ticks++;
+                if (ticks == 50)
+                    off *= 5;
+                try { sleep(40); } catch (Exception e) {}
+            }
+        }
+    }
+    private SlideThread slideThread = null;
+
+    private void startSlide (int off) {
+        stopSlide();
+        slideThread = new SlideThread(off);
+        slideThread.start();
+    }
+    private void stopSlide() {
+        if (slideThread != null) {
+            slideThread.quit = true;
+            slideThread = null;
+        }
+    }
+
+    private void slideLeft(int off) {
+        if (YassTable.getZoomMode() == YassTable.ZOOM_ONE) {
+            YassTable.setZoomMode(YassTable.ZOOM_MULTI);
+            enablePan(false);
+            actions.revalidateLyricsArea();
+            update();
+        }
+        Point vp = getViewPosition();
+        vp.x = vp.x - off;
+        if (vp.x < 0) {
+            vp.x = 0;
+        }
+        setViewPosition(vp);
+
+        if (playerPos < vp.x || playerPos > vp.x + clip.width) {
+            int next = nextElement(vp.x);
+            if (next >= 0) {
+                YassRow row = table.getRowAt(next);
+                if (!row.isNote() && next + 1 < table.getRowCount()) {
+                    next = next + 1;
+                    row = table.getRowAt(next);
+                }
+
+                if (row.isNote()) {
+                    table.setRowSelectionInterval(next, next);
+                    table.updatePlayerPosition();
+                }
+            }
+        }
+    }
+    private void slideRight(int off) {
+        if (YassTable.getZoomMode() == YassTable.ZOOM_ONE) {
+            YassTable.setZoomMode(YassTable.ZOOM_MULTI);
+            enablePan(false);
+            actions.revalidateLyricsArea();
+            update();
+        }
+        Point vp = getViewPosition();
+        vp.x = vp.x + off;
+        if (vp.x < 0) {
+            vp.x = 0;
+        }
+        setViewPosition(vp);
+
+        if (playerPos < vp.x || playerPos > vp.x + clip.width) {
+            int next = nextElement(vp.x);
+            if (next >= 0) {
+                YassRow row = table.getRowAt(next);
+                if (!row.isNote() && next + 1 < table.getRowCount()) {
+                    next = next + 1;
+                    row = table.getRowAt(next);
+                }
+
+                if (row.isNote()) {
+                    table.setRowSelectionInterval(next, next);
+                    table.updatePlayerPosition();
+                }
+            }
+        }
     }
 
     // //////////////////////// PLAYBACK RENDERER
