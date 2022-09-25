@@ -3634,41 +3634,6 @@ public class YassActions implements DropTargetListener {
 
     /**
      * Description of the Method
-     *
-     * @param c Description of the Parameter
-     * @return Description of the Return Value
-     */
-    public JPopupMenu createVersionPopup(JComponent c) {
-        versionPopup = new JPopupMenu();
-        JMenuItem m = null;
-        versionPopup.add(m = new JMenuItem(I18.get("mpop_versions")));
-        m.setEnabled(false);
-        versionPopup.addSeparator();
-        //versionPopup.add(createVersion);
-        versionPopup.add(renameVersion);
-        //versionPopup.add(removeVersion);
-        //versionPopup.add(setAsStandard);
-        // versionPopup.addSeparator();
-        // versionPopup.add(mergeVersions);
-        c.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                if (e.isPopupTrigger()) {
-                    versionPopup.show(e.getComponent(), e.getX(), e.getY());
-                }
-            }
-
-            public void mouseReleased(MouseEvent e) {
-                if (e.isPopupTrigger()) {
-                    versionPopup.show(e.getComponent(), e.getX(), e.getY());
-                }
-            }
-
-        });
-        return versionPopup;
-    }
-
-    /**
-     * Description of the Method
      */
     public void closeAllTables() {
         setOpened(false);
@@ -4869,10 +4834,10 @@ public class YassActions implements DropTargetListener {
         menu2.add(nextVersion);
         menu2.add(prevVersion);
         menu2.addSeparator();
-        //menu2.add(createVersion);
+        menu2.add(createVersion);
         menu2.add(renameVersion);
-        //menu2.add(removeVersion);
-        //menu2.add(setAsStandard);
+        menu2.add(removeVersion);
+        // menu2.add(setAsStandard);
         // menu2.addSeparator();
         // menu2.add(mergeVersions);
         menu.add(menu2);
@@ -7128,8 +7093,8 @@ public class YassActions implements DropTargetListener {
      */
     public void setOpened(boolean onoff) {
         createVersion.setEnabled(onoff);
-        renameVersion.setEnabled(onoff);
-        removeVersion.setEnabled(onoff);
+        renameVersion.setEnabled(openTables != null && openTables.size() > 1);
+        removeVersion.setEnabled(openTables != null && openTables.size() > 1);
         setAsStandard.setEnabled(onoff);
         // mergeVersions.setEnabled(onoff);
         interruptPlay.setEnabled(onoff);
@@ -9195,10 +9160,26 @@ public class YassActions implements DropTargetListener {
      * Description of the Method
      */
     public void createVersion() {
-        String fn = YassUtils.createVersion(tab, prop, table);
-        if (fn != null) {
-            openFile(fn);
+        YassTable t = createNextTable();
+        if (t == null) {
+            return;
         }
+        String fn = YassUtils.createVersion(tab, prop, table);
+
+        boolean oldUndo = t.getPreventUndo();
+        t.setPreventUndo(true);
+        t.removeAllRows();
+        t.setPreventUndo(oldUndo);
+        t.loadFile(fn);
+
+        int ncol = openTables.size();
+        t.setTableColor(getTableColor(ncol));
+        table = t;
+        updateTrackComponent(); // add table
+        sheet.setActiveTable(t); // init all
+        main.repaint();
+
+        setOpened(true);
     }
 
     public boolean closeSong() {
@@ -9263,14 +9244,18 @@ public class YassActions implements DropTargetListener {
      * Description of the Method
      */
     public void removeVersion() {
+        if (openTables.size() < 2)
+            return;
         if (YassUtils.removeVersion(tab, prop, table)) {
             sheet.removeTable(table);
             openTables.remove(table);
             table = firstTable();
             updateTrackComponent();
             if (currentView == VIEW_LIBRARY) {
+                setOpened(false);
                 songList.setVisible(true);
             } else {
+                setOpened(true);
                 updateTitle();
                 lyrics.setTable(table);
                 sheet.setActiveTable(table);
