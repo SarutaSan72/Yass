@@ -334,10 +334,13 @@ public class YassUtils {
         String newVersion = r.hasVersion() ? version : "UPDATE";
         String artist = YassSong.toFilename(tm.getCommentRow("ARTIST:").getComment());
 
-        String newVersion2 = newVersion;
+        if (newVersion.equals("P1") || newVersion.equals("P2") || newVersion.equals("P3") || newVersion.equals("P4"))
+            newVersion = "P";
+
+        int k = 1;
+        String newVersion2 = newVersion + k;
         String absFilename = t.getDir() + File.separator + artist + " - " + title + " [" + newVersion2 + "].txt";
         File f = new File(absFilename);
-        int k = 1;
         while (f.exists()) {
             newVersion2 = newVersion + k;
             absFilename = t.getDir() + File.separator + artist + " - " + title + " [" + newVersion2 + "].txt";

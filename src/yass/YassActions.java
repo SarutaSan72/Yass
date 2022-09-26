@@ -1923,27 +1923,29 @@ public class YassActions implements DropTargetListener {
             if (ok != JOptionPane.OK_OPTION) {
                 return;
             }
-
-            Vector<String> splitFiles = new Vector<>();
-            for (Enumeration<YassTable> en = openTables.elements(); en.hasMoreElements(); ) {
-                YassTable t = en.nextElement();
-
-                String dir = t.getDir();
-                String txt = t.getFilename();
-                if (txt == null) {
-                    continue;
-                }
-                if (editorIsInDuetMode)
-                    splitFiles.addElement(dir + File.separator + txt);
-                t.storeFile(dir + File.separator + txt);
-            }
-
-            if (editorIsInDuetMode) {
-                mergeFiles(splitFiles, duetFile);
-            }
-            saveSong.setEnabled(false);
+            saveSongNoAsk(false);
         }
     };
+    private void saveSongNoAsk(boolean silent) {
+        Vector<String> splitFiles = new Vector<>();
+        for (Enumeration<YassTable> en = openTables.elements(); en.hasMoreElements(); ) {
+            YassTable t = en.nextElement();
+
+            String dir = t.getDir();
+            String txt = t.getFilename();
+            if (txt == null) {
+                continue;
+            }
+            if (editorIsInDuetMode)
+                splitFiles.addElement(dir + File.separator + txt);
+            t.storeFile(dir + File.separator + txt);
+        }
+
+        if (editorIsInDuetMode) {
+            mergeFiles(splitFiles, duetFile, silent);
+        }
+        saveSong.setEnabled(false);
+    }
     Action saveAsFile = new AbstractAction(I18.get("mlib_save_as")) {
         private static final long serialVersionUID = 1L;
 
@@ -8568,7 +8570,10 @@ public class YassActions implements DropTargetListener {
             } else {
                 if (!duetMode) {
                     editorIsInDuetMode = false;
+                    duetFile = null;
                 }
+                // this case is handled before calling this method
+                // duetFile = see there
 
                 int group = openTables.size();
                 if (group < 0) {
@@ -8626,6 +8631,7 @@ public class YassActions implements DropTargetListener {
 
         if (multi < 2) {
             editorIsInDuetMode = false;
+            duetFile = null;
 
             YassTable ot = createNextTable();
             if (ot == null) {
@@ -9160,6 +9166,33 @@ public class YassActions implements DropTargetListener {
      * Description of the Method
      */
     public void createVersion() {
+        if (saveSong.isEnabled()) {
+            int ok = JOptionPane.showConfirmDialog(tab,
+                    I18.get("medit_save_msg"), I18.get("medit_save_title"),
+                    JOptionPane.OK_CANCEL_OPTION);
+            if (ok != JOptionPane.OK_OPTION) {
+                return;
+            }
+        }
+
+        String v = table.getVersion();
+        String dir = table.getDir();
+        String filename = table.getFilename();
+        String artist = YassSong.toFilename(table.getArtist());
+        String title = YassSong.toFilename(table.getTitle());
+        if (artist.isEmpty() || title.isEmpty())
+            return;
+
+        if (v == null || v == "") // if source track has no name, store it as P1
+        {
+            v = "P1";
+            table.setVersion(v);
+            table.setFilename(File.separator + artist + " - " + title + " [" + v + "].txt");
+            if (! table.storeFile(table.getDir() + File.separator + table.getFilename()))
+                return;
+            new File(dir + File.separator + filename).delete();
+        }
+
         YassTable t = createNextTable();
         if (t == null) {
             return;
@@ -9174,6 +9207,13 @@ public class YassActions implements DropTargetListener {
 
         int ncol = openTables.size();
         t.setTableColor(getTableColor(ncol));
+
+        if (!editorIsInDuetMode) {
+            editorIsInDuetMode = true;
+            duetFile = dir + File.separator + artist + " - " + title + " [MULTI].txt";
+        }
+        saveSongNoAsk(true);
+
         table = t;
         updateTrackComponent(); // add table
         sheet.setActiveTable(t); // init all
@@ -9210,8 +9250,10 @@ public class YassActions implements DropTargetListener {
         String dir = table.getDir();
         String filename = table.getFilename();
 
-        String title = YassSong.toFilename(table.getTitle());
         String artist = YassSong.toFilename(table.getArtist());
+        String title = YassSong.toFilename(table.getTitle());
+        if (artist.isEmpty() || title.isEmpty())
+            return;
 
         String absFilename = dir + File.separator + artist + " - " + title
                 + " [" + newv + "].txt";
@@ -9244,11 +9286,22 @@ public class YassActions implements DropTargetListener {
      * Description of the Method
      */
     public void removeVersion() {
-        if (openTables.size() < 2)
+        if (openTables.size() <= 2) // don't allow to switch from duet mode to single-track
             return;
+
+        if (saveSong.isEnabled()) {
+            int ok = JOptionPane.showConfirmDialog(tab,
+                    I18.get("medit_save_msg"), I18.get("medit_save_title"),
+                    JOptionPane.OK_CANCEL_OPTION);
+            if (ok != JOptionPane.OK_OPTION) {
+                return;
+            }
+        }
+
         if (YassUtils.removeVersion(tab, prop, table)) {
             sheet.removeTable(table);
             openTables.remove(table);
+            saveSongNoAsk(true);
             table = firstTable();
             updateTrackComponent();
             if (currentView == VIEW_LIBRARY) {
@@ -9574,7 +9627,7 @@ public class YassActions implements DropTargetListener {
      * @param fn Description of the Parameter
      */
     public void mergeFiles(Vector<?> fn) {
-        mergeFiles(fn, null);
+        mergeFiles(fn, null, false);
     }
 
     /**
@@ -9583,7 +9636,7 @@ public class YassActions implements DropTargetListener {
      * @param filenames   Description of the Parameter
      * @param resfilename Description of the Parameter
      */
-    public void mergeFiles(Vector<?> filenames, String resfilename) {
+    public void mergeFiles(Vector<?> filenames, String resfilename, boolean silent) {
         if (filenames.size() < 2) {
             return;
         }
@@ -9870,6 +9923,8 @@ public class YassActions implements DropTargetListener {
                 origDuet.loadFile(resfilename);
                 version = origDuet.getVersion();
             }
+            if (silent && version == null)
+                version = "MULTI";
 
             if (version == null) {
                 version = "MULTI";
