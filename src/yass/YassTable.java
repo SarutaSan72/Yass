@@ -5802,6 +5802,27 @@ public class YassTable extends JTable {
         return clicks;
     }
 
+    // get player names
+    public String[] getPlayerNames() {
+        int multi = getMultiplayer();
+        if (multi < 2)
+            return null;
+        String versions = "";
+        for (int i = 1; i <= multi; i++) {
+            if (versions != "") versions += "; ";
+            YassRow pr = tm.getCommentRow("DUETSINGERP" + i + ":");
+            if (pr != null) {
+                versions += pr.getComment();
+                // found = true;
+            } else {
+                versions += "P" + i;
+            }
+        }
+        versions = versions.trim();
+        String version[] = versions.split("; ");
+        return version;
+    }
+
     /**
      * Description of the Method
      *

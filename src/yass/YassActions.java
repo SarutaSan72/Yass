@@ -6578,6 +6578,33 @@ public class YassActions implements DropTargetListener {
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
+
+            String v = mt.getVersion();
+            if (v != null && ! v.isEmpty()) {
+                String dir = mt.getDir();
+                final String mtfilename = mt.getFilename().substring(0, mt.getFilename().indexOf('['));
+                File[] siblings = new File(dir).listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        return name.startsWith(mtfilename) && name.endsWith(".txt");
+                    }
+                });
+                for (int i=0; i< siblings.length; i++) {
+                    YassTable mt2 = new YassTable();
+                    mt2.loadFile(siblings[i].getAbsolutePath());
+                    int multi2 = mt2.getMultiplayer();
+                    if (multi2 > 1) {
+                        String[] versions = mt2.getPlayerNames();
+                        if (Arrays.asList(versions).indexOf(v) >= 0) {
+                            JOptionPane.showMessageDialog(getTab(),
+                                    I18.get("no_duets_track_edit_msg"),
+                                    I18.get("no_duets_track_edit_title"),
+                                    JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                    }
+                }
+            }
         }
 
         if (openFiles(fn)) {
@@ -9369,28 +9396,7 @@ public class YassActions implements DropTargetListener {
             return null;
         }
 
-        // get player names
-        String versions = "";
-        for (int i = 1; i <= multi; i++) {
-            if (versions != "") versions += "; ";
-            YassRow pr = tm.getCommentRow("DUETSINGERP" + i + ":");
-            if (pr != null) {
-                versions += pr.getComment();
-                // found = true;
-            } else {
-                versions += "P" + i;
-            }
-        }
-
-        /*if (! found) {
-            versions = JOptionPane.showInputDialog(getTab(),
-                    I18.get("mlib_tracks_split_names"),
-                    versions.trim());
-            if (versions == null)
-                return null;
-        }*/
-        versions = versions.trim();
-        String version[] = versions.split(";");
+        String version[] = t.getPlayerNames();
 
         // create tables
         Vector<YassTable> tables = new Vector<>(version.length);
