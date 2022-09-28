@@ -1311,7 +1311,13 @@ public class YassActions implements DropTargetListener {
             openURL("http://www.yass-along.com/beats");
         }
     };
+    Action showOnlineHelpDuet = new AbstractAction(I18.get("mlib_help_online")) {
+        private static final long serialVersionUID = 1L;
 
+        public void actionPerformed(ActionEvent e) {
+            openURL("http://www.yass-along.com/duets");
+        }
+    };
     Action editLyrics = new AbstractAction(I18.get("medit_lyrics_edit")) {
         private static final long serialVersionUID = 1L;
 
@@ -6572,10 +6578,11 @@ public class YassActions implements DropTargetListener {
             int multi = mt.getMultiplayer();
 
             if (multi > 1 && fn.size() > 1) {
-                JOptionPane.showMessageDialog(getTab(),
-                        I18.get("no_duets_edit_msg"),
-                        I18.get("no_duets_edit_title"),
-                        JOptionPane.ERROR_MESSAGE);
+                int ret = JOptionPane.showOptionDialog(getTab(), I18.get("no_duets_edit_msg"),
+                        I18.get("no_duets_edit_title"), JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.PLAIN_MESSAGE, null, new Object[]{ getIcon("help24Icon"), I18.get("wizard_cancel") }, null);
+                if (ret == JOptionPane.OK_OPTION)
+                    showOnlineHelpDuet.actionPerformed(null);
                 return;
             }
 
@@ -6596,10 +6603,11 @@ public class YassActions implements DropTargetListener {
                     if (multi2 > 1) {
                         String[] versions = mt2.getPlayerNames();
                         if (Arrays.asList(versions).indexOf(v) >= 0) {
-                            JOptionPane.showMessageDialog(getTab(),
-                                    I18.get("no_duets_track_edit_msg"),
-                                    I18.get("no_duets_track_edit_title"),
-                                    JOptionPane.ERROR_MESSAGE);
+                            int ret = JOptionPane.showOptionDialog(getTab(), I18.get("no_duets_track_edit_msg"),
+                                    I18.get("no_duets_track_edit_title"), JOptionPane.OK_CANCEL_OPTION,
+                                    JOptionPane.PLAIN_MESSAGE, null, new Object[]{ getIcon("help24Icon"), I18.get("wizard_cancel") }, null);
+                            if (ret == JOptionPane.OK_OPTION)
+                                showOnlineHelpDuet.actionPerformed(null);
                             return;
                         }
                     }
