@@ -9218,16 +9218,17 @@ public class YassActions implements DropTargetListener {
         if (artist.isEmpty() || title.isEmpty())
             return;
 
+        boolean renamedP1 = false;
         if (v == null || v == "") // if source track has no name, store it as P1
         {
             v = "P1";
             table.setVersion(v);
             table.setFilename(File.separator + artist + " - " + title + " [" + v + "].txt");
-            if (! table.storeFile(table.getDir() + File.separator + table.getFilename()))
+            if (!table.storeFile(table.getDir() + File.separator + table.getFilename()))
                 return;
             new File(dir + File.separator + filename).delete();
+            renamedP1 = true;
         }
-
         YassTable t = createNextTable();
         if (t == null) {
             return;
@@ -9248,6 +9249,39 @@ public class YassActions implements DropTargetListener {
             duetFile = dir + File.separator + artist + " - " + title + " [MULTI].txt";
         }
         saveSongNoAsk(true);
+
+        // update songlist
+        if (songList != null) {
+            YassSongListModel sm = (YassSongListModel) songList.getModel();
+            int row = songList.getSelectedRow();
+            if (row >= 0) {
+                YassSong s = sm.getRowAt(row);
+                if (s.getDirectory().equals(dir)) { // same song
+                    if (renamedP1) {
+                        s.setVersion("MULTI");
+                        s.setMultiplayer(""+table.getMultiplayer());
+                        s.setFilename(artist + " - " + title + " [MULTI].txt");
+
+                        YassSong s2 = new YassSong(dir, s.getFolder(), table.getFilename(), "", "");
+                        songList.loadSongDetails(s2, new YassTable());
+                        sm.getData().insertElementAt(s2, ++row);
+                        songList.getUnfilteredData().addElement(s);
+                    }
+                    YassSong snext = s;
+                    int n = sm.getRowCount();
+                    while (snext.getDirectory().equals(dir) && ++row < n) {
+                        snext = sm.getRowAt(row);
+                    }
+                    YassSong s2 = new YassSong(dir, s.getFolder(), t.getFilename(), "", "");
+                    songList.loadSongDetails(s2, new YassTable());
+                    sm.getData().insertElementAt(s2, row);
+                    songList.getUnfilteredData().addElement(s);
+
+                    sm.fireTableDataChanged();
+                    songList.storeCache();
+                }
+            }
+        }
 
         table = t;
         updateTrackComponent(); // add table
@@ -9276,6 +9310,14 @@ public class YassActions implements DropTargetListener {
         if (v == null || v.trim().length() < 1) {
             return;
         }
+        if (saveSong.isEnabled()) {
+            int ok = JOptionPane.showConfirmDialog(tab,
+                    I18.get("medit_save_msg"), I18.get("medit_save_title"),
+                    JOptionPane.OK_CANCEL_OPTION);
+            if (ok != JOptionPane.OK_OPTION) {
+                return;
+            }
+        }
         String newv = JOptionPane.showInputDialog(tab,
                 I18.get("medit_versions_rename_title"), v);
         if (newv == null || newv.trim().length() < 1 || newv.equals(v)) {
@@ -9290,8 +9332,7 @@ public class YassActions implements DropTargetListener {
         if (artist.isEmpty() || title.isEmpty())
             return;
 
-        String absFilename = dir + File.separator + artist + " - " + title
-                + " [" + newv + "].txt";
+        String absFilename = dir + File.separator + artist + " - " + title + " [" + newv + "].txt";
         File f = new File(absFilename);
         while (f.exists()) {
             newv = JOptionPane.showInputDialog(tab,
@@ -9299,8 +9340,7 @@ public class YassActions implements DropTargetListener {
             if (newv == null || newv.trim().length() < 1 || newv.equals(v)) {
                 return;
             }
-            absFilename = dir + File.separator + artist + " - " + title + " ["
-                    + newv + "].txt";
+            absFilename = dir + File.separator + artist + " - " + title + " [" + newv + "].txt";
             f = new File(absFilename);
 
         }
@@ -9311,6 +9351,37 @@ public class YassActions implements DropTargetListener {
         File oldf = new File(dir + File.separator + filename);
         if (oldf.exists()) {
             oldf.delete();
+        }
+        saveSongNoAsk(true);
+
+
+        // update songlist
+        if (songList != null) {
+            YassSongListModel sm = (YassSongListModel) songList.getModel();
+            int row = songList.getSelectedRow();
+            if (row >= 0) {
+                YassSong s = sm.getRowAt(row);
+                if (s.getDirectory().equals(dir)) { // same song
+                    YassSong snext = s;
+                    while (snext.getDirectory().equals(dir) && --row >=0) {
+                        snext = sm.getRowAt(row);
+                    }
+                    snext = sm.getRowAt(++row); // first one
+
+                    int n = sm.getRowCount();
+                    while (snext.getDirectory().equals(dir) && ++row < n && ! snext.getFilename().equals(filename)) {
+                        snext = sm.getRowAt(row);
+                    }
+                    snext = sm.getRowAt(--row); // current one
+                    if (snext.getDirectory().equals(dir) && snext.getFilename().equals(filename)) {
+                        snext.setVersion(table.getVersion());
+                        snext.setFilename(table.getFilename());
+                        songList.loadSongDetails(snext, new YassTable());
+                        sm.fireTableDataChanged();
+                        songList.storeCache();
+                    }
+                }
+            }
         }
 
         updateTrackComponent();
