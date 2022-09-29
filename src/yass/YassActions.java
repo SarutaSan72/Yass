@@ -9408,6 +9408,37 @@ public class YassActions implements DropTargetListener {
             sheet.removeTable(table);
             openTables.remove(table);
             saveSongNoAsk(true);
+
+            // update songlist
+            if (songList != null) {
+                YassSongListModel sm = (YassSongListModel) songList.getModel();
+                int row = songList.getSelectedRow();
+                if (row >= 0) {
+                    YassSong s = sm.getRowAt(row);
+                    String dir = table.getDir();
+                    String filename = table.getFilename();
+                    if (s.getDirectory().equals(dir)) { // same song
+                        YassSong snext = s;
+                        while (snext.getDirectory().equals(dir) && --row >=0) {
+                            snext = sm.getRowAt(row);
+                        }
+                        snext = sm.getRowAt(++row); // first one
+
+                        int n = sm.getRowCount();
+                        while (snext.getDirectory().equals(dir) && ++row < n && ! snext.getFilename().equals(filename)) {
+                            snext = sm.getRowAt(row);
+                        }
+                        snext = sm.getRowAt(--row); // current one
+                        if (snext.getDirectory().equals(dir) && snext.getFilename().equals(filename)) {
+                            sm.getData().removeElementAt(row);
+                            sm.fireTableDataChanged();
+                            songList.getUnfilteredData().removeElement(snext);
+                            songList.storeCache();
+                        }
+                    }
+                }
+            }
+
             table = firstTable();
             updateTrackComponent();
             if (currentView == VIEW_LIBRARY) {
