@@ -545,6 +545,11 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 					editLyrics();
 					e.consume();
 					return;
+				} else if (keyCode == KeyEvent.VK_DELETE && e.isControlDown()) {
+					finishEditing();
+					table.removeRowsWithLyrics();
+					e.consume();
+					return;
 				} else if (keyCode == KeyEvent.VK_ESCAPE) {
 					finishEditing();
 					updateSelection();
@@ -2007,6 +2012,8 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 		lyricsArea.getActionMap().put("find", find);
 		find.putValue(AbstractAction.ACCELERATOR_KEY,
 				KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
+		erase.putValue(AbstractAction.ACCELERATOR_KEY,
+				KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, InputEvent.CTRL_MASK));
 
 		/*
 		 * lyricsArea.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE,
@@ -2021,6 +2028,13 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 
 		public void actionPerformed(ActionEvent e) {
 			find();
+		}
+	};
+
+	Action erase = new AbstractAction() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			table.removeRowsWithLyrics();
 		}
 	};
 

@@ -4967,6 +4967,30 @@ public class YassTable extends JTable {
     /**
      * Description of the Method
      */
+    public boolean removeRowsWithLyrics() {
+        int rows[] = getSelectedRows();
+        if (rows == null || rows.length < 1) {
+            return false;
+        }
+        Arrays.sort(rows);
+        for (int i = rows.length - 1; i >= 0; i--) {
+            int row = rows[i];
+
+            YassRow r = getRowAt(row);
+            if (r.isNote() || r.isPageBreak()) {
+                tm.removeRowAt(row);
+            }
+        }
+        addUndo();
+        tm.fireTableDataChanged();
+        setRowSelectionInterval(rows[0], rows[0]);
+        updatePlayerPosition();
+        return true;
+    }
+
+    /**
+     * Description of the Method
+     */
     public void rollRight() {
         rollRight('$', 0);
         // shift from start

@@ -1687,6 +1687,14 @@ public class YassActions implements DropTargetListener {
             table.removeRows();
         }
     };
+    Action removeRowsWithLyrics = new AbstractAction(I18.get("medit_remove_with_lyrics")) {
+        private static final long serialVersionUID = 1L;
+
+        public void actionPerformed(ActionEvent e) {
+            interruptPlay();
+            table.removeRowsWithLyrics();
+        }
+    };
     Action enableVideoPreview = new AbstractAction(
             I18.get("medit_playallvideo_toggle")) {
         private static final long serialVersionUID = 1L;
@@ -5000,8 +5008,12 @@ public class YassActions implements DropTargetListener {
         menu.add(rapgolden);
         menu.add(rap);
         menu.add(freestyle);
+
+        menu.addSeparator();
+
         menu.add(minus);
         menu.add(space);
+        menu.add(removeRowsWithLyrics);
 
         menu.addSeparator();
 
@@ -10907,6 +10919,11 @@ public class YassActions implements DropTargetListener {
         c.getActionMap().put("removeRows", removeRows);
         removeRows.putValue(AbstractAction.ACCELERATOR_KEY,
                 KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, InputEvent.CTRL_MASK), "removeRowsWithLyrics");
+        c.getActionMap().put("removeRowsWithLyrics", removeRowsWithLyrics);
+        removeRowsWithLyrics.putValue(AbstractAction.ACCELERATOR_KEY,
+                KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, InputEvent.CTRL_MASK));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_L, 0), "absolute");
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.SHIFT_MASK),
