@@ -4981,10 +4981,20 @@ public class YassTable extends JTable {
                 tm.removeRowAt(row);
             }
         }
+        YassRow prev = getRowAt(rows[0]-1);
+        YassRow next = getRowAt(rows[0]);
+        YassRow next2 = getRowAt(rows[0]+1);
+        if (next != null && next.isPageBreak() && next2 != null && next2.isPageBreak())
+            tm.removeRowAt(rows[0]+1);
+        else if (prev != null && (! prev.isNote()) && next != null && next.isPageBreak())
+            tm.removeRowAt(rows[0]);
+
         addUndo();
         tm.fireTableDataChanged();
-        setRowSelectionInterval(rows[0], rows[0]);
+        if (next != null)
+            setRowSelectionInterval(rows[0], rows[0]);
         updatePlayerPosition();
+        zoomPage();
         return true;
     }
 
