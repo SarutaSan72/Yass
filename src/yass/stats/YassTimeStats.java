@@ -203,6 +203,8 @@ public class YassTimeStats extends YassStats {
      * @param s Description of the Parameter
      */
     public void calcStats(YassSong s, YassTable t) {
+        if (s == null || t == null)
+            return;
         int pagelenmax = 0;
         float notelen = 0;
         float pagelensec;

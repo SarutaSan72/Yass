@@ -361,7 +361,7 @@ public class YassUtils {
      * @param t      Description of the Parameter
      * @return Description of the Return Value
      */
-    public static boolean removeVersion(Component parent, YassProperties prop, YassTable t) {
+    public static boolean removeVersion(Component parent, YassProperties prop, YassTable t, boolean withDuet) {
         String absFilename = t.getDir() + File.separator + t.getFilename();
         File f = new File(absFilename);
 
@@ -376,7 +376,11 @@ public class YassUtils {
             return false;
         }
         String version = r.getVersion();
-        int ok = JOptionPane.showConfirmDialog(parent, MessageFormat.format(I18.get("tool_versions_remove_msg"), version), I18.get("tool_versions_remove_title"), JOptionPane.OK_CANCEL_OPTION);
+        int ok;
+        if (withDuet)
+            ok = JOptionPane.showConfirmDialog(parent, MessageFormat.format(I18.get("tool_versions_remove_duet_msg"), version), I18.get("tool_versions_remove_title"), JOptionPane.OK_CANCEL_OPTION);
+        else
+            ok = JOptionPane.showConfirmDialog(parent, MessageFormat.format(I18.get("tool_versions_remove_msg"), version), I18.get("tool_versions_remove_title"), JOptionPane.OK_CANCEL_OPTION);
         if (ok == JOptionPane.OK_OPTION) {
             f.delete();
             return true;

@@ -525,6 +525,14 @@ public class YassTable extends JTable {
         return txtFilename;
     }
 
+    public String getCanonicalFilename() {
+        String a = getArtist();
+        String t = getTitle();
+        String v = getVersion();
+        if (v != null && v.length() > 0)
+            return YassSong.toFilename(a + " - " + t + " [" + v + "].txt");
+        return YassSong.toFilename(a + " - " + t + ".txt");
+    }
     /**
      * Sets the filename attribute of the YassTable object
      *

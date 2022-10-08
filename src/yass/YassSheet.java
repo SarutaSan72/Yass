@@ -2600,7 +2600,7 @@ public class YassSheet extends JPanel implements Scrollable,
     }
 
     public YassTable getTable(int track) {
-        if (track >= tables.size())
+        if (track < 0 || track >= tables.size())
             return null;
         return tables.elementAt(track);
     }

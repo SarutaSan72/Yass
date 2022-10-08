@@ -2381,32 +2381,40 @@ public class YassActions implements DropTargetListener {
         private static final long serialVersionUID = 1L;
 
         public void actionPerformed(ActionEvent e) {
-            table.addGap(+10);
-            updateGap();
+            if (gapDialog != null && gapDialog.isShowing()) {
+                table.addGap(+10);
+                updateGap();
+            }
         }
     };
     Action decGap = new AbstractAction(I18.get("medit_gap_sub_10")) {
         private static final long serialVersionUID = 1L;
 
         public void actionPerformed(ActionEvent e) {
-            table.addGap(-10);
-            updateGap();
+            if (gapDialog != null && gapDialog.isShowing()) {
+                table.addGap(-10);
+                updateGap();
+            }
         }
     };
     Action incGap2 = new AbstractAction(I18.get("medit_gap_add_1000")) {
         private static final long serialVersionUID = 1L;
 
         public void actionPerformed(ActionEvent e) {
-            table.addGap(+1000);
-            updateGap();
+            if (gapDialog != null && gapDialog.isShowing()) {
+                table.addGap(+1000);
+                updateGap();
+            }
         }
     };
     Action decGap2 = new AbstractAction(I18.get("medit_gap_sub_1000")) {
         private static final long serialVersionUID = 1L;
 
         public void actionPerformed(ActionEvent e) {
-            table.addGap(-1000);
-            updateGap();
+            if (gapDialog != null && gapDialog.isShowing()) {
+                table.addGap(-1000);
+                updateGap();
+            }
         }
     };
     Action selectLine = new AbstractAction(I18.get("medit_select_line")) {
@@ -3596,7 +3604,10 @@ public class YassActions implements DropTargetListener {
      * @return The tableColor value
      */
     public Color getTableColor(int i) {
-        return colors[i];
+        if (i < colors.length)
+            return colors[i];
+        else
+            return colors[(i+2) % colors.length].darker();
     }
 
     /**
@@ -4845,18 +4856,12 @@ public class YassActions implements DropTargetListener {
         // menu.add(saveAsFile);
         // menu.add(saveAllFile);
         menu.addSeparator();
-        JMenu menu2 = new JMenu(I18.get("medit_versions"));
-        menu2.setMnemonic(KeyEvent.VK_V);
-        menu2.add(nextVersion);
-        menu2.add(prevVersion);
-        menu2.addSeparator();
-        menu2.add(createVersion);
-        menu2.add(renameVersion);
-        menu2.add(removeVersion);
+        menu.add(createVersion);
+        menu.add(renameVersion);
+        menu.add(removeVersion);
         // menu2.add(setAsStandard);
         // menu2.addSeparator();
         // menu2.add(mergeVersions);
-        menu.add(menu2);
         menu.addSeparator();
         menu.add(gotoLibrary);
         menu.addSeparator();
@@ -6615,11 +6620,11 @@ public class YassActions implements DropTargetListener {
                     if (multi2 > 1) {
                         String[] versions = mt2.getPlayerNames();
                         if (Arrays.asList(versions).indexOf(v) >= 0) {
-                            int ret = JOptionPane.showOptionDialog(getTab(), I18.get("no_duets_track_edit_msg"),
-                                    I18.get("no_duets_track_edit_title"), JOptionPane.OK_CANCEL_OPTION,
-                                    JOptionPane.PLAIN_MESSAGE, null, new Object[]{ getIcon("help24Icon"), I18.get("wizard_cancel") }, null);
-                            if (ret == JOptionPane.OK_OPTION)
-                                showOnlineHelpDuet.actionPerformed(null);
+                            fn = new Vector<>();
+                            fn.add(mt2.getDir() + File.separator + mt2.getFilename());
+                            if (openFiles(fn)) {
+                                setView(VIEW_EDIT);
+                            }
                             return;
                         }
                     }
@@ -6841,7 +6846,6 @@ public class YassActions implements DropTargetListener {
             songList.stopPlaying();
             playToggle.setIcon(getIcon("play24Icon"));
             isLibraryPlaying = false;
-
             // System.out.println("init edit view 1");
             main.removeAll();
             main.add("Center", editComponent);
@@ -7141,7 +7145,7 @@ public class YassActions implements DropTargetListener {
      * @param onoff The new opened value
      */
     public void setOpened(boolean onoff) {
-        createVersion.setEnabled(onoff);
+        createVersion.setEnabled(! editorIsInDuetMode && openTables != null && openTables.size() == 1);
         renameVersion.setEnabled(openTables != null && openTables.size() > 1);
         removeVersion.setEnabled(openTables != null && openTables.size() > 1);
         setAsStandard.setEnabled(onoff);
@@ -8565,8 +8569,7 @@ public class YassActions implements DropTargetListener {
         }
 
         Vector<String> filenames2 = new Vector<>();
-        for (Enumeration<String> en = filenames.elements(); en
-                .hasMoreElements(); ) {
+        for (Enumeration<String> en = filenames.elements(); en.hasMoreElements(); ) {
             String filename = en.nextElement();
             File file = new File(filename);
             if (!file.exists()) {
@@ -8574,9 +8577,7 @@ public class YassActions implements DropTargetListener {
             }
             if (file.isDirectory()) {
                 FilenameFilter filter = new FilenameFilter() {
-                    public String songFileType = prop
-                            .getProperty("song-filetype");
-
+                    public String songFileType = prop.getProperty("song-filetype");
                     public boolean accept(File dir, String name) {
                         return name.endsWith(songFileType);
                     }
@@ -8597,8 +8598,7 @@ public class YassActions implements DropTargetListener {
         int ncol = 0;
         boolean first = true;
 
-        for (Enumeration<String> en = filenames.elements(); en
-                .hasMoreElements(); ) {
+        for (Enumeration<String> en = filenames.elements(); en.hasMoreElements(); ) {
             String filename = en.nextElement();
             File file = new File(filename);
 
@@ -9230,7 +9230,7 @@ public class YassActions implements DropTargetListener {
         if (artist.isEmpty() || title.isEmpty())
             return;
 
-        boolean renamedP1 = false;
+        String fileToRename = null, fileToRenameName = null, fileToRenameVersion = null;
         if (v == null || v == "") // if source track has no name, store it as P1
         {
             v = "P1";
@@ -9239,7 +9239,9 @@ public class YassActions implements DropTargetListener {
             if (!table.storeFile(table.getDir() + File.separator + table.getFilename()))
                 return;
             new File(dir + File.separator + filename).delete();
-            renamedP1 = true;
+            fileToRename = dir + File.separator + filename;
+            fileToRenameName = table.getFilename();
+            fileToRenameVersion = v;
         }
         YassTable t = createNextTable();
         if (t == null) {
@@ -9262,40 +9264,13 @@ public class YassActions implements DropTargetListener {
         }
         saveSongNoAsk(true);
 
-        // update songlist
-        if (songList != null) {
-            YassSongListModel sm = (YassSongListModel) songList.getModel();
-            int row = songList.getSelectedRow();
-            if (row >= 0) {
-                YassSong s = sm.getRowAt(row);
-                if (s.getDirectory().equals(dir)) { // same song
-                    if (renamedP1) {
-                        s.setVersion("MULTI");
-                        s.setMultiplayer(""+table.getMultiplayer());
-                        s.setFilename(artist + " - " + title + " [MULTI].txt");
-
-                        YassSong s2 = new YassSong(dir, s.getFolder(), table.getFilename(), "", "");
-                        songList.loadSongDetails(s2, new YassTable());
-                        sm.getData().insertElementAt(s2, ++row);
-                        songList.getUnfilteredData().addElement(s);
-                    }
-                    YassSong snext = s;
-                    int n = sm.getRowCount();
-                    while (snext.getDirectory().equals(dir) && ++row < n) {
-                        snext = sm.getRowAt(row);
-                    }
-                    YassSong s2 = new YassSong(dir, s.getFolder(), t.getFilename(), "", "");
-                    songList.loadSongDetails(s2, new YassTable());
-                    sm.getData().insertElementAt(s2, row);
-                    songList.getUnfilteredData().addElement(s);
-
-                    sm.fireTableDataChanged();
-                    songList.storeCache();
-                }
-            }
-        }
+        table.setTableColor(getTableColor(0));
+        String fileToInsert0 = artist + " - " + title + " [MULTI].txt";
+        String fileToInsert1 = t.getFilename();
+        updateSonglistForVersion(dir, fileToRename, fileToRenameName, fileToRenameVersion, null,  new String[]{fileToInsert0, fileToInsert1});
 
         table = t;
+        table.setTableColor(getTableColor(1));
         updateTrackComponent(); // add table
         sheet.setActiveTable(t); // init all
         main.repaint();
@@ -9338,6 +9313,7 @@ public class YassActions implements DropTargetListener {
 
         String dir = table.getDir();
         String filename = table.getFilename();
+        String fileToRename = dir + File.separator + filename;
 
         String artist = YassSong.toFilename(table.getArtist());
         String title = YassSong.toFilename(table.getTitle());
@@ -9354,11 +9330,12 @@ public class YassActions implements DropTargetListener {
             }
             absFilename = dir + File.separator + artist + " - " + title + " [" + newv + "].txt";
             f = new File(absFilename);
-
         }
         table.setVersion(newv);
         table.storeFile(f.getAbsolutePath());
         table.setFilename(File.separator + artist + " - " + title + " [" + newv + "].txt");
+        String fileToRenameName = artist + " - " + title + " [" + newv + "].txt";
+        String fileToRenameVersion = newv;
 
         File oldf = new File(dir + File.separator + filename);
         if (oldf.exists()) {
@@ -9366,35 +9343,7 @@ public class YassActions implements DropTargetListener {
         }
         saveSongNoAsk(true);
 
-
-        // update songlist
-        if (songList != null) {
-            YassSongListModel sm = (YassSongListModel) songList.getModel();
-            int row = songList.getSelectedRow();
-            if (row >= 0) {
-                YassSong s = sm.getRowAt(row);
-                if (s.getDirectory().equals(dir)) { // same song
-                    YassSong snext = s;
-                    while (snext.getDirectory().equals(dir) && --row >=0) {
-                        snext = sm.getRowAt(row);
-                    }
-                    snext = sm.getRowAt(++row); // first one
-
-                    int n = sm.getRowCount();
-                    while (snext.getDirectory().equals(dir) && ++row < n && ! snext.getFilename().equals(filename)) {
-                        snext = sm.getRowAt(row);
-                    }
-                    snext = sm.getRowAt(--row); // current one
-                    if (snext.getDirectory().equals(dir) && snext.getFilename().equals(filename)) {
-                        snext.setVersion(table.getVersion());
-                        snext.setFilename(table.getFilename());
-                        songList.loadSongDetails(snext, new YassTable());
-                        sm.fireTableDataChanged();
-                        songList.storeCache();
-                    }
-                }
-            }
-        }
+        updateSonglistForVersion(dir, fileToRename, fileToRenameName, fileToRenameVersion, null, null);
 
         updateTrackComponent();
         songList.setVisible(true);
@@ -9404,9 +9353,6 @@ public class YassActions implements DropTargetListener {
      * Description of the Method
      */
     public void removeVersion() {
-        if (openTables.size() <= 2) // don't allow to switch from duet mode to single-track
-            return;
-
         if (saveSong.isEnabled()) {
             int ok = JOptionPane.showConfirmDialog(tab,
                     I18.get("medit_save_msg"), I18.get("medit_save_title"),
@@ -9416,40 +9362,32 @@ public class YassActions implements DropTargetListener {
             }
         }
 
-        if (YassUtils.removeVersion(tab, prop, table)) {
+        boolean withDuet = openTables != null && openTables.size() == 2 && duetFile != null;
+        String fileToDelete1 = null, fileToDelete2 = null, fileToRename = null, fileToRenameName = null;
+        if (YassUtils.removeVersion(tab, prop, table, withDuet)) {
             sheet.removeTable(table);
             openTables.remove(table);
             saveSongNoAsk(true);
-
-            // update songlist
-            if (songList != null) {
-                YassSongListModel sm = (YassSongListModel) songList.getModel();
-                int row = songList.getSelectedRow();
-                if (row >= 0) {
-                    YassSong s = sm.getRowAt(row);
-                    String dir = table.getDir();
-                    String filename = table.getFilename();
-                    if (s.getDirectory().equals(dir)) { // same song
-                        YassSong snext = s;
-                        while (snext.getDirectory().equals(dir) && --row >=0) {
-                            snext = sm.getRowAt(row);
-                        }
-                        snext = sm.getRowAt(++row); // first one
-
-                        int n = sm.getRowCount();
-                        while (snext.getDirectory().equals(dir) && ++row < n && ! snext.getFilename().equals(filename)) {
-                            snext = sm.getRowAt(row);
-                        }
-                        snext = sm.getRowAt(--row); // current one
-                        if (snext.getDirectory().equals(dir) && snext.getFilename().equals(filename)) {
-                            sm.getData().removeElementAt(row);
-                            sm.fireTableDataChanged();
-                            songList.getUnfilteredData().removeElement(snext);
-                            songList.storeCache();
-                        }
-                    }
-                }
+            if (withDuet)
+            {
+                // single track, remove version from file, and delete track file
+                new File(duetFile).delete();
+                fileToDelete1 = duetFile;
+                YassTable t = openTables.firstElement();
+                new File(t.getDir() + File.separator + t.getFilename()).delete();
+                fileToRename = t.getDir() + File.separator + t.getFilename();
+                t.setVersion("");
+                t.storeFile(t.getDir() + File.separator + t.getCanonicalFilename());
+                t.setFilename(t.getCanonicalFilename());
+                fileToRenameName = t.getFilename();
+                t.resetUndo();
+                editorIsInDuetMode = false;
+                duetFile = null;
+                saveSong.setEnabled(false);
             }
+            fileToDelete2 = table.getDir() + File.separator + table.getFilename();
+
+            updateSonglistForVersion(table.getDir(), fileToRename, fileToRenameName, "", new String[] { fileToDelete1, fileToDelete2 }, null);
 
             table = firstTable();
             updateTrackComponent();
@@ -9485,6 +9423,88 @@ public class YassActions implements DropTargetListener {
         }
     }
 
+    private void updateSonglistForVersion(String dir, String fileToRename, String fileToRenameName, String fileToRenameVersion, String[] filesToDelete, String[] filesToInsert) {
+        if (songList != null) {
+            YassSongListModel sm = (YassSongListModel) songList.getModel();
+            int row = songList.getSelectedRow();
+            if (row >= 0) {
+                int n = sm.getRowCount();
+                YassSong s = sm.getRowAt(row);
+                int selectedRow = row;
+                if (s.getDirectory().equals(dir)) { // same song
+                    YassSong s1 = s;
+                    while (s1.getDirectory().equals(dir) && --row >=0) {
+                        s1 = sm.getRowAt(row);
+                    }
+                    int row0 = row;
+                    boolean changed = false;
+
+                    if (fileToRename != null) {
+                        row = row0;
+                        while (++row < n) { // scan all songs with same dir
+                            s1 = sm.getRowAt(row);
+                            if (!s1.getDirectory().equals(dir))
+                                break;
+                            String path = s1.getDirectory() + File.separator + s1.getFilename();
+                            if (path.equals(fileToRename)) {
+                                s1.setFilename(fileToRenameName);
+                                s1.setVersion(fileToRenameVersion);
+                                changed = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (filesToInsert != null) {
+                        row = row0 + 1;
+                        File folderfile = new File(dir).getParentFile();
+                        String root = prop.getProperty("song-directory");
+                        File rootfile = new File(root);
+                        String folder = "";
+                        if (!folderfile.equals(rootfile)) {
+                            folder = folderfile.getName();
+                        }
+                        for (int i=0; i< filesToInsert.length; i++) {
+                            if (filesToInsert[i] != null) {
+                                s = new YassSong(dir, folder, filesToInsert[i], "", "");
+                                songList.loadSongDetails(s, new YassTable());
+                                sm.getData().insertElementAt(s, row);
+                                songList.getUnfilteredData().addElement(s);
+                                selectedRow++;
+                            }
+                        }
+                        changed = true;
+                    }
+                    if (filesToDelete != null) {
+                        for (int i=0; i< filesToDelete.length; i++) {
+                            if (filesToDelete[i] != null) {
+                                row = row0;
+                                while (++row < n) { // scan all songs with same dir
+                                    s1 = sm.getRowAt(row);
+                                    if (!s1.getDirectory().equals(dir))
+                                        break;
+                                    String path = s1.getDirectory() + File.separator + s1.getFilename();
+                                    if (path.equals(filesToDelete[i])) {
+                                        sm.getData().removeElementAt(row);
+                                        songList.getUnfilteredData().removeElement(s1);
+                                        n--;
+                                        selectedRow=row0+1;
+                                        changed = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (changed) {
+                        sm.fireTableDataChanged();
+                        songList.storeCache();
+                    }
+                    setProgress(MessageFormat.format(I18.get("lib_msg"), sm.getData().size()), "");
+                    songList.setRowSelectionInterval(selectedRow,selectedRow);
+                }
+            }
+        }
+    }
     /**
      * Sets the asStandard attribute of the YassActions object
      */
@@ -9576,10 +9596,10 @@ public class YassActions implements DropTargetListener {
                 }
                 continue;
             }
-            if (r.isNote() && p > 0) { // add to player <p>
+            if (r.isNote() && p > 0 && p != 3) { // add to player <p>
                 notes[p - 1].addElement(new YassRow(r));
             }
-            if (r.isNote() && p == 0) { // add to all players
+            if (r.isNote() && (p == 0 || p == 3)) { // add to all players
                 for (Vector<YassRow> note : notes) {
                     note.addElement(new YassRow(r));
                 }
