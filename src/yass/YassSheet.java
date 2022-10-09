@@ -6153,7 +6153,7 @@ public class YassSheet extends JPanel implements Scrollable,
         }
     }
 
-    private void slideLeft(int off) {
+    public void slideLeft(int off) {
         if (YassTable.getZoomMode() == YassTable.ZOOM_ONE) {
             YassTable.setZoomMode(YassTable.ZOOM_MULTI);
             enablePan(false);
@@ -6183,7 +6183,7 @@ public class YassSheet extends JPanel implements Scrollable,
             }
         }
     }
-    private void slideRight(int off) {
+    public void slideRight(int off) {
         if (YassTable.getZoomMode() == YassTable.ZOOM_ONE) {
             YassTable.setZoomMode(YassTable.ZOOM_MULTI);
             enablePan(false);

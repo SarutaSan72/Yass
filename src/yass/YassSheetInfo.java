@@ -104,7 +104,7 @@ public class YassSheetInfo extends JPanel {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                            moveTo(e.getX());
+                            moveTo(e.getX(), e.isAltDown() || e.isControlDown() || e.getButton() == MouseEvent.BUTTON2|| e.getButton() == MouseEvent.BUTTON3);
                         }
                     });
                 }
@@ -124,7 +124,7 @@ public class YassSheetInfo extends JPanel {
             public void mouseDragged(MouseEvent e) {
                 if (e.getY() > 30) {
                     if (!(sheet.isPlaying() || sheet.isTemporaryStop()))
-                        moveTo(e.getX());
+                        moveTo(e.getX(), true);
                 }
             }
             @Override
@@ -200,7 +200,7 @@ public class YassSheetInfo extends JPanel {
         return track ==  sheet.getActiveTable().getActions().getVersion();
     }
 
-    private void moveTo(int x)
+    private void moveTo(int x, boolean exact)
     {
         YassTable table = sheet.getActiveTable();
         if (table == null) return;
@@ -217,6 +217,7 @@ public class YassSheetInfo extends JPanel {
         if (x > w) x = w;
         int beat = (int)((minBeat + x*rangeBeat) / (double) w - gapBeat);
         double ms = sheet.getTable(track).beatToMs(beat);
+        int newpos = sheet.toTimeline(ms);
 
         double minMs = sheet.getMinVisibleMs();
         double maxMs = sheet.getMaxVisibleMs();
@@ -236,6 +237,13 @@ public class YassSheetInfo extends JPanel {
             table.setRowSelectionInterval(i, i);
             table.updatePlayerPosition();
             if (! visible) table.zoomPage();
+
+            if (exact) {
+                int vx = sheet.getViewPosition().x;
+                int tx = Math.max(0, newpos - 200);
+                sheet.setPlayerPosition(newpos);
+                sheet.slideRight(tx - vx);
+            }
         }
     }
 

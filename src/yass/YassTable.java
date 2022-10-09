@@ -4716,43 +4716,67 @@ public class YassTable extends JTable {
      * @return Description of the Return Value
      */
     public int insertRowsAt(String trstring, int startRow, boolean before) {
-
-        YassRow r = getRowAt(startRow);
-        boolean isSep = r.isPageBreak();
-        if (!(r.isNote() || isSep)) {
-            return 0;
-        }
-        int startBeat = r.getBeatInt();
-        int num = 0;
-        try {
-            StringTokenizer st1 = new StringTokenizer(trstring, "\n");
-            int i = before ? 0 : 1;
-            int pasteBeat = -1;
-            for (; st1.hasMoreTokens(); i++) {
-                StringTokenizer st2 = new StringTokenizer(st1.nextToken(), "\t");
-                String type = st2.hasMoreTokens() ? st2.nextToken() : "";
-                String beat = st2.hasMoreTokens() ? st2.nextToken() : "";
-                if (pasteBeat == -1) {
-                    pasteBeat = Integer.parseInt(beat);
-                }
-                String length = st2.hasMoreTokens() ? st2.nextToken() : "";
-                String height = st2.hasMoreTokens() ? st2.nextToken() : "";
-                String txt = st2.hasMoreTokens() ? st2.nextToken() : "";
-                txt = txt.replace(' ', YassRow.SPACE);
-                int beatInt = Integer.parseInt(beat);
-                isSep = type.equals("-");
-                if (isSep && length.length() > 0) {
-                    int lengthInt = Integer.parseInt(length);
-                    length = (lengthInt + startBeat) + "";
-                }
-                tm.insertRowAt(type, (startBeat + beatInt - pasteBeat) + "",
-                        length + "", height + "", txt, startRow + i);
-                num++;
+        int startBeat = -1;
+        boolean appendPageBreak = false;
+        if (startRow < 0) {
+            if (sheet != null) {
+                int pos = sheet.getPlayerPosition();
+                long ms = sheet.fromTimeline(pos);
+                startBeat = msToBeat(ms);
+                startRow = sheet.nextNote(pos);
+                if (startRow > 0 && getRowAt(startRow-1).isPageBreak())
+                    appendPageBreak = true;
             }
-            addUndo();
-            tm.fireTableRowsInserted(before ? startRow : startRow + 1, startRow
-                    + i - 1);
-        } catch (Exception ex) {
+        }
+        else {
+            YassRow r = getRowAt(startRow);
+            boolean isSep = r.isPageBreak();
+            if (!(r.isNote() || isSep)) {
+                return 0;
+            }
+            startBeat = r.getBeatInt();
+        }
+
+        int num = 0;
+        if (startBeat >= 0) {
+            try {
+                StringTokenizer st1 = new StringTokenizer(trstring, "\n");
+                int i = before ? 0 : 1;
+                int pasteBeat = -1;
+                for (; st1.hasMoreTokens(); i++) {
+                    StringTokenizer st2 = new StringTokenizer(st1.nextToken(), "\t");
+                    String type = st2.hasMoreTokens() ? st2.nextToken() : "";
+                    String beat = st2.hasMoreTokens() ? st2.nextToken() : "";
+                    if (pasteBeat == -1) {
+                        pasteBeat = Integer.parseInt(beat);
+                    }
+                    String length = st2.hasMoreTokens() ? st2.nextToken() : "";
+                    String height = st2.hasMoreTokens() ? st2.nextToken() : "";
+                    String txt = st2.hasMoreTokens() ? st2.nextToken() : "";
+                    txt = txt.replace(' ', YassRow.SPACE);
+                    int beatInt = Integer.parseInt(beat);
+                    boolean isSep = type.equals("-");
+                    if (isSep && length.length() > 0) {
+                        int lengthInt = Integer.parseInt(length);
+                        length = (lengthInt + startBeat) + "";
+                    }
+                    tm.insertRowAt(type, (startBeat + beatInt - pasteBeat) + "",
+                            length + "", height + "", txt, startRow + i);
+                    num++;
+                }
+                if (num > 0 && appendPageBreak) {
+                    YassRow r = tm.getRowAt(startRow+i-1);
+                    if ( r.isNote()) {
+                        tm.insertRowAt("-", (r.getBeatInt() + r.getLengthInt() + 1) + "",
+                                "", "", "", startRow + i);
+                        i++;
+                    }
+                }
+                addUndo();
+                tm.fireTableRowsInserted(before ? startRow : startRow + 1, startRow
+                        + i - 1);
+            } catch (Exception ex) {
+            }
         }
         return num;
     }
@@ -4784,6 +4808,28 @@ public class YassTable extends JTable {
         ;
 
         return insertRowsAt(trstring, startRow, before);
+    }
+
+    public int insertNotesHere() {
+        if (sheet != null) {
+            int pos = sheet.getPlayerPosition();
+            int beat = sheet.toBeat(pos);
+            int startRow = getIndexOfNoteBeforeBeat(beat);
+
+            String trstring = null;
+            try {
+                Clipboard system = Toolkit.getDefaultToolkit().getSystemClipboard();
+                trstring = (String) (system.getContents(this)
+                        .getTransferData(DataFlavor.stringFlavor));
+            } catch (Exception e) {
+                return 0;
+            }
+
+            int ret = insertRowsAt(trstring, -1, true);
+            sheet.updateActiveTable();
+            return ret;
+        }
+        return 0;
     }
 
     /**
@@ -6100,6 +6146,9 @@ public class YassTable extends JTable {
 
     public double beatToMs(int beat) {
         return 1000 * 60 * beat / (4 * bpm) + gap;
+    }
+    public int msToBeat(double ms) {
+        return (int) ((ms - gap) * 4 * bpm / (60 * 1000));
     }
 
     /**

@@ -1667,6 +1667,20 @@ public class YassActions implements DropTargetListener {
             table.pasteRows();
 
             snapshotButton.setSelected(false);
+            if (showCopyCBI != null) showCopyCBI.setState(false);
+            sheet.showSnapshot(false);
+            sheet.repaint();
+        }
+    };
+    Action pasteNotes = new AbstractAction(I18.get("medit_paste_notes")) {
+        private static final long serialVersionUID = 1L;
+
+        public void actionPerformed(ActionEvent e) {
+            interruptPlay();
+            table.insertNotesHere();
+
+            snapshotButton.setSelected(false);
+            if (showCopyCBI != null) showCopyCBI.setState(false);
             sheet.showSnapshot(false);
             sheet.repaint();
         }
@@ -1783,6 +1797,7 @@ public class YassActions implements DropTargetListener {
             copyRows();
 
             snapshotButton.setSelected(true);
+            if (showCopyCBI != null) showCopyCBI.setState(true);
             sheet.showSnapshot(true);
             sheet.repaint();
         }
@@ -2613,6 +2628,7 @@ public class YassActions implements DropTargetListener {
                 if (e.getSource() != snapshotButton) {
                     snapshotButton.setSelected(onoff);
                 }
+                if (showCopyCBI != null) showCopyCBI.setState(onoff);
                 sheet.showSnapshot(onoff);
                 sheet.repaint();
             }
@@ -2905,6 +2921,7 @@ public class YassActions implements DropTargetListener {
     };
     private JCheckBoxMenuItem playAllVideoCBI = null;
     private JCheckBoxMenuItem alignCBI = null;
+    private JCheckBoxMenuItem showCopyCBI = null;
     Action absolute = new AbstractAction(I18.get("medit_align")) {
         private static final long serialVersionUID = 1L;
 
@@ -4676,6 +4693,7 @@ public class YassActions implements DropTargetListener {
                 new ImageIcon(getClass().getResource("/yass/resources/img/Help24.gif")));
         copyRows.putValue(AbstractAction.SMALL_ICON, getIcon("copy16Icon"));
         pasteRows.putValue(AbstractAction.SMALL_ICON, getIcon("paste16Icon"));
+        pasteNotes.putValue(AbstractAction.SMALL_ICON, getIcon("paste16Icon"));
         joinRows.putValue(AbstractAction.SMALL_ICON, getIcon("join16Icon"));
         splitRows.putValue(AbstractAction.SMALL_ICON, getIcon("split16Icon"));
         removeRows.putValue(AbstractAction.SMALL_ICON, getIcon("delete16Icon"));
@@ -4883,14 +4901,11 @@ public class YassActions implements DropTargetListener {
         menu.addSeparator();
         menu.add(copyRows);
         menu.add(pasteRows);
-        menu.add(showCopiedRows);
+        menu.add(pasteNotes);
+        menu.add(showCopyCBI = new JCheckBoxMenuItem(showCopiedRows));
+        showCopyCBI.setState(false);
         menu.addSeparator();
-        menu.add(insertNote);
-        menu.add(splitRows);
-        menu.add(joinRows);
-        menu.add(removeRows);
-        menu.addSeparator();
-        menu.add(togglePageBreak);
+        menu.add(removeRowsWithLyrics);
         menu.addSeparator();
         menu.add(showStartEnd);
 
@@ -5006,20 +5021,23 @@ public class YassActions implements DropTargetListener {
         });
         menu.add(editLyrics);
         menu.addSeparator();
+        menu.add(insertNote);
+        menu.add(splitRows);
+        menu.add(joinRows);
+        menu.add(removeRows);
+        menu.addSeparator();
         menu.add(rollLeft);
         menu.add(rollRight);
+        menu.addSeparator();
+        menu.add(togglePageBreak);
         menu.addSeparator();
         menu.add(golden);
         menu.add(rapgolden);
         menu.add(rap);
         menu.add(freestyle);
-
         menu.addSeparator();
-
         menu.add(minus);
         menu.add(space);
-        menu.add(removeRowsWithLyrics);
-
         menu.addSeparator();
 
         menu.add(findLyrics);
@@ -5327,6 +5345,7 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("list24Icon"));
         b.setFocusable(false);
+        b.setOpaque(false);
 
         t.add(b = new JButton());
         b.setAction(saveSong);
@@ -5334,6 +5353,7 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("save24Icon"));
         b.setFocusable(false);
+        b.setOpaque(false);
 
         t.addSeparator();
 
@@ -5344,6 +5364,7 @@ public class YassActions implements DropTargetListener {
         midiButton.setIcon(getIcon("nomidi24Icon"));
         midiButton.setSelectedIcon(getIcon("midi24Icon"));
         midiButton.setFocusable(false);
+        midiButton.setOpaque(false);
 
         t.add(speedButton = new JToggleButton());
         speedButton.setAction(setPlayTimebase);
@@ -5352,6 +5373,7 @@ public class YassActions implements DropTargetListener {
         speedButton.setIcon(getIcon("speedone24Icon"));
         speedButton.setSelected(playTimebase != 1);
         speedButton.setFocusable(false);
+        speedButton.setOpaque(false);
 
         /*
         b = new JButton() {
@@ -5377,6 +5399,7 @@ public class YassActions implements DropTargetListener {
         mp3Button.setSelectedIcon(getIcon("nomute24Icon"));
         mp3Button.setFocusable(false);
         mp3Button.setSelected(true);
+        mp3Button.setOpaque(false);
 
         videoButton = new JToggleButton();
         // t.add(..);
@@ -5386,6 +5409,7 @@ public class YassActions implements DropTargetListener {
         videoButton.setIcon(getIcon("movie24Icon"));
         // videoButton.setSelectedIcon(getIcon("movie24Icon"));
         videoButton.setFocusable(false);
+        videoButton.setOpaque(false);
 
         t.addSeparator();
 
@@ -5394,14 +5418,16 @@ public class YassActions implements DropTargetListener {
         b.setToolTipText(b.getText());
         b.setText("");
         b.setIcon(getIcon("undo24Icon"));
-
         b.setFocusable(false);
+        b.setOpaque(false);
+
         t.add(b = new JButton());
         b.setAction(redo);
         b.setToolTipText(b.getText());
         b.setText("");
         b.setIcon(getIcon("redo24Icon"));
         b.setFocusable(false);
+        b.setOpaque(false);
 
         t.addSeparator();
 
@@ -5416,12 +5442,15 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("copy24Icon"));
         b.setFocusable(false);
+        b.setOpaque(false);
+
         t.add(b = new JButton());
         b.setAction(pasteRows);
         b.setToolTipText(b.getText());
         b.setText("");
         b.setIcon(getIcon("paste24Icon"));
         b.setFocusable(false);
+        b.setOpaque(false);
 
         t.add(snapshotButton = new JToggleButton());
         snapshotButton.setAction(showCopiedRows);
@@ -5429,6 +5458,7 @@ public class YassActions implements DropTargetListener {
         snapshotButton.setText("");
         snapshotButton.setIcon(getIcon("snapshot24Icon"));
         snapshotButton.setFocusable(false);
+        snapshotButton.setOpaque(false);
 
         t.add(b = new JButton());
         b.setAction(playFrozen);
@@ -5436,6 +5466,7 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("playfrozen24Icon"));
         b.setFocusable(false);
+        b.setOpaque(false);
 
         t.addSeparator();
 
@@ -5445,6 +5476,7 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("insertnote24Icon"));
         b.setFocusable(false);
+        b.setOpaque(false);
 
         t.add(b = new JButton());
         b.setAction(splitRows);
@@ -5452,6 +5484,7 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("split24Icon"));
         b.setFocusable(false);
+        b.setOpaque(false);
 
         t.add(b = new JButton());
         b.setAction(joinRows);
@@ -5459,6 +5492,7 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("join24Icon"));
         b.setFocusable(false);
+        b.setOpaque(false);
 
         t.add(b = new JButton());
         b.setAction(removeRows);
@@ -5466,6 +5500,7 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("delete24Icon"));
         b.setFocusable(false);
+        b.setOpaque(false);
 
         t.addSeparator();
 
@@ -5481,6 +5516,7 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("rollRight24Icon"));
         b.setFocusable(false);
+        b.setOpaque(false);
 
         t.addSeparator();
 
@@ -5490,6 +5526,7 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("pagebreak24Icon"));
         b.setFocusable(false);
+        b.setOpaque(false);
 
         /*
          * t.add(b = new JButton()); b.setAction(space);
@@ -5507,6 +5544,7 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("golden24Icon"));
         b.setFocusable(false);
+        b.setOpaque(false);
 
         t.add(b = new JButton());
         b.setAction(rapgolden);
@@ -5514,6 +5552,7 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("rapgolden24Icon"));
         b.setFocusable(false);
+        b.setOpaque(false);
 
         t.add(b = new JButton());
         b.setAction(rap);
@@ -5521,6 +5560,7 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("rap24Icon"));
         b.setFocusable(false);
+        b.setOpaque(false);
 
         t.add(b = new JButton());
         b.setAction(freestyle);
@@ -5528,6 +5568,7 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("freestyle24Icon"));
         b.setFocusable(false);
+        b.setOpaque(false);
 
         t.addSeparator();
 
@@ -5537,6 +5578,7 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("edit24Icon"));
         b.setFocusable(false);
+        b.setOpaque(false);
 
         t.add(b = new JButton());
         b.setAction(onePage);
@@ -5544,6 +5586,7 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("zoomstd24Icon"));
         b.setFocusable(false);
+        b.setOpaque(false);
 
         t.add(b = new JButton());
         b.setAction(morePages);
@@ -5551,6 +5594,7 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("zoomin24Icon"));
         b.setFocusable(false);
+        b.setOpaque(false);
 
         return t;
     }
@@ -7179,6 +7223,7 @@ public class YassActions implements DropTargetListener {
         showCopiedRows.setEnabled(onoff);
         removeCopy.setEnabled(onoff);
         pasteRows.setEnabled(onoff);
+        pasteNotes.setEnabled(onoff);
         splitRows.setEnabled(onoff);
         joinRows.setEnabled(onoff);
         togglePageBreak.setEnabled(onoff);
@@ -10918,6 +10963,13 @@ public class YassActions implements DropTargetListener {
         c.getActionMap().put("pasteRows", pasteRows);
         pasteRows.putValue(AbstractAction.ACCELERATOR_KEY,
                 KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK));
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK),
+                "pasteNotes");
+        c.getActionMap().put("pasteNotes", pasteNotes);
+        pasteNotes.putValue(AbstractAction.ACCELERATOR_KEY,
+                KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK),
                 "copyRows");
         c.getActionMap().put("copyRows", copyRows);
