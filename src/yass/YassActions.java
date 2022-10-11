@@ -4683,6 +4683,8 @@ public class YassActions implements DropTargetListener {
                         "/yass/resources/toolbarButtonGraphics/general/Redo24.gif")));
         icons.put("snapshot24Icon",
                 new ImageIcon(getClass().getResource("/yass/resources/img/Snapshot24.gif")));
+        icons.put("snapshot16Icon",
+                new ImageIcon(getClass().getResource("/yass/resources/img/Snapshot16.gif")));
         icons.put("gap16Icon",
                 new ImageIcon(getClass().getResource("/yass/resources/img/Gap16.gif")));
         icons.put("gap24Icon",
@@ -4700,26 +4702,19 @@ public class YassActions implements DropTargetListener {
         showLyricsStart.putValue(AbstractAction.SMALL_ICON, getIcon("gap16Icon"));
         undo.putValue(AbstractAction.SMALL_ICON, getIcon("undo16Icon"));
         redo.putValue(AbstractAction.SMALL_ICON, getIcon("redo16Icon"));
-        openSongFolder.putValue(AbstractAction.SMALL_ICON,
-                getIcon("open16Icon"));
-        refreshLibrary.putValue(AbstractAction.SMALL_ICON,
-                getIcon("refresh16Icon"));
+        openSongFolder.putValue(AbstractAction.SMALL_ICON, getIcon("open16Icon"));
+        refreshLibrary.putValue(AbstractAction.SMALL_ICON, getIcon("refresh16Icon"));
         saveLibrary.putValue(AbstractAction.SMALL_ICON, getIcon("save16Icon"));
         newFile.putValue(AbstractAction.SMALL_ICON, getIcon("new16Icon"));
-        // importFiles.putValue(AbstractAction.SMALL_ICON,
-        // getIcon("import16Icon"));
-        printLibrary
-                .putValue(AbstractAction.SMALL_ICON, getIcon("print16Icon"));
-        openSongFromLibrary.putValue(AbstractAction.SMALL_ICON,
-                getIcon("edit16Icon"));
+        // importFiles.putValue(AbstractAction.SMALL_ICON, getIcon("import16Icon"));
+        printLibrary.putValue(AbstractAction.SMALL_ICON, getIcon("print16Icon"));
+        openSongFromLibrary.putValue(AbstractAction.SMALL_ICON, getIcon("edit16Icon"));
         removeSong.putValue(AbstractAction.SMALL_ICON, getIcon("delete16Icon"));
-        undoAllLibraryChanges.putValue(AbstractAction.SMALL_ICON,
-                getIcon("undo16Icon"));
-        // selectLine.putValue(AbstractAction.SMALL_ICON,
-        // getIcon("selectall16Icon"));
+        undoAllLibraryChanges.putValue(AbstractAction.SMALL_ICON, getIcon("undo16Icon"));
+        showCopiedRows.putValue(AbstractAction.SMALL_ICON, getIcon("snapshot16Icon"));
 
-        // filterLibrary.putValue(AbstractAction.SMALL_ICON,
-        // getIcon("find16Icon"));
+        // selectLine.putValue(AbstractAction.SMALL_ICON, getIcon("selectall16Icon"));
+        // filterLibrary.putValue(AbstractAction.SMALL_ICON, getIcon("find16Icon"));
 
         icons.put(
                 "auto16Icon",
@@ -4745,6 +4740,8 @@ public class YassActions implements DropTargetListener {
         icons.put(
                 "playvis24Icon",
                 new ImageIcon(getClass().getResource("/yass/resources/img/PlayVisible24.gif")));
+        icons.put("playfrozen16Icon",
+                new ImageIcon(getClass().getResource("/yass/resources/img/PlayFrozen16.gif")));
         icons.put("playfrozen24Icon",
                 new ImageIcon(getClass().getResource("/yass/resources/img/PlayFrozen24.gif")));
         icons.put("playpage16Icon",
@@ -4786,6 +4783,7 @@ public class YassActions implements DropTargetListener {
         rollLeft.putValue(AbstractAction.SMALL_ICON, getIcon("rollLeft16Icon"));
         rollRight.putValue(AbstractAction.SMALL_ICON, getIcon("rollRight16Icon"));
         editLyrics.putValue(AbstractAction.SMALL_ICON, getIcon("edit16Icon"));
+        playFrozen.putValue(AbstractAction.SMALL_ICON, getIcon("playfrozen16Icon"));
 
         icons.put(
                 "noalign24Icon",
