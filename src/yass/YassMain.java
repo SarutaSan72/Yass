@@ -443,18 +443,6 @@ public class YassMain extends JApplet {
         JPanel sheetPanel = new JPanel(new BorderLayout());
         JScrollPane sheetPane = new JScrollPane(sheet);
 
-        sheetPane.getHorizontalScrollBar().addMouseListener(
-                new MouseAdapter() {
-                    public void mousePressed(MouseEvent e) {
-                        YassTable t = sheet.getActiveTable();
-                        if (t != null && t.getMultiSize() == 1) {
-                            YassTable.setZoomMode(YassTable.ZOOM_MULTI);
-                            sheet.enablePan(false);
-                            actions.revalidateLyricsArea();
-                            sheet.repaint();
-                        }
-                    }
-                });
         sheetPane.getViewport().addChangeListener(
                 new ChangeListener() {
                     public void stateChanged(ChangeEvent e) {
@@ -609,6 +597,7 @@ public class YassMain extends JApplet {
         sheetPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         sheetPane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
         sheetPane.setBorder(null);
+        sheetPane.getActionMap().clear();
 
         return sheetPanel;
     }

@@ -2961,6 +2961,41 @@ public class YassTable extends JTable {
 
     /**
      * Description of the Method
+     */
+    public void viewAll() {
+        int n = getRowCount();
+        int i = 0;
+        YassRow r = getRowAt(i);
+        while (!r.isNoteOrPageBreak() && i < n) {
+            r = getRowAt(++i);
+        }
+
+        if (!r.isNoteOrPageBreak()) {
+            return;
+        }
+
+        int j = n - 1;
+        r = getRowAt(j);
+        while (!r.isNoteOrPageBreak() && j > 0) {
+            r = getRowAt(--j);
+        }
+
+        if (zoomMode != ZOOM_TIME) {
+            sheet.setZoom(i, j, true);
+            sheet.scrollRectToVisible(i, j);
+        }
+        actions.setRelative(false);
+        setZoomMode(ZOOM_MULTI);
+        addMultiSize(getRowCount());
+
+        updatePlayerPosition();
+        if (sheet != null) {
+            sheet.repaint();
+        }
+    }
+
+    /**
+     * Description of the Method
      *
      * @param h Description of the Parameter
      */
@@ -3515,7 +3550,6 @@ public class YassTable extends JTable {
 
         int n = getRowCount();
         int ij[] = null;
-        int lastij[] = null;
         if (zoomMode == ZOOM_ONE) {
             ij = enlargeToPages(i, j);
         }
@@ -3525,7 +3559,7 @@ public class YassTable extends JTable {
                 return;
             }
 
-            int k = multiSize;
+            int k = multiSize-1;
             int span = countSelectedPages();
             if (span > 1) {
                 k -= span;
@@ -3534,7 +3568,6 @@ public class YassTable extends JTable {
             boolean addEnd = false;
 
             while (k > 1 && ij != null) {
-                lastij = ij;
                 ij[1] = enlargeToPageBreak(Math.min(ij[1] + 1, n - 1));
                 boolean endReached = getRowAt(ij[1]).isEnd();
                 if (endReached && !addEnd) {

@@ -41,8 +41,7 @@ import java.util.Vector;
  *
  * @author Saruta
  */
-public class YassSheet extends JPanel implements Scrollable,
-        yass.renderer.YassPlaybackRenderer {
+public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRenderer {
 
     public final static int NORM_HEIGHT = 20;
 
@@ -5981,11 +5980,6 @@ public class YassSheet extends JPanel implements Scrollable,
         return duration;
     }
 
-    // equivalent to
-
-    // sheetPane.getHorizontalScrollBar().setUnitIncrement(30);
-    // sheetPane.getHorizontalScrollBar().setBlockIncrement(150);
-
     /**
      * Sets the duration attribute of the YassSheet object
      *
@@ -6223,66 +6217,6 @@ public class YassSheet extends JPanel implements Scrollable,
      */
     public Dimension getPreferredSize() {
         return dim;
-    }
-
-    /**
-     * Gets the preferredScrollableViewportSize attribute of the YassSheet
-     * object
-     *
-     * @return The preferredScrollableViewportSize value
-     */
-    public Dimension getPreferredScrollableViewportSize() {
-        return getPreferredSize();
-    }
-
-    /**
-     * Gets the scrollableUnitIncrement attribute of the YassSheet object
-     *
-     * @param visibleRect Description of the Parameter
-     * @param orientation Description of the Parameter
-     * @param direction   Description of the Parameter
-     * @return The scrollableUnitIncrement value
-     */
-    public int getScrollableUnitIncrement(Rectangle visibleRect,
-                                          int orientation, int direction) {
-        if (orientation == SwingConstants.HORIZONTAL) {
-            return (int) wSize;
-        }
-        return 1;
-    }
-
-    /**
-     * Gets the scrollableBlockIncrement attribute of the YassSheet object
-     *
-     * @param visibleRect Description of the Parameter
-     * @param orientation Description of the Parameter
-     * @param direction   Description of the Parameter
-     * @return The scrollableBlockIncrement value
-     */
-    public int getScrollableBlockIncrement(Rectangle visibleRect,
-                                           int orientation, int direction) {
-        if (orientation == SwingConstants.HORIZONTAL) {
-            return (int) (5 * wSize);
-        }
-        return 10;
-    }
-
-    /**
-     * Gets the scrollableTracksViewportWidth attribute of the YassSheet object
-     *
-     * @return The scrollableTracksViewportWidth value
-     */
-    public boolean getScrollableTracksViewportWidth() {
-        return false;
-    }
-
-    /**
-     * Gets the scrollableTracksViewportHeight attribute of the YassSheet object
-     *
-     * @return The scrollableTracksViewportHeight value
-     */
-    public boolean getScrollableTracksViewportHeight() {
-        return true;
     }
 
     /**
