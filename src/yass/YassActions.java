@@ -60,11 +60,11 @@ public class YassActions implements DropTargetListener {
     /**
      * Description of the Field
      */
-    public final static String VERSION = "2.3.1";
+    public final static String VERSION = "2.4.0";
     /**
      * Description of the Field
      */
-    public final static String DATE = "04/2021";
+    public final static String DATE = "10/2022";
 
     Action showAbout = new AbstractAction(I18.get("mlib_about")) {
         private static final long serialVersionUID = 1L;
@@ -6221,29 +6221,51 @@ public class YassActions implements DropTargetListener {
 
         // t.add(Box.createHorizontalGlue());
 
-        t.add(b = new JButton());
+        t.add(b = new JButton() {
+            @Override
+            protected void paintComponent(Graphics g) { // quickfix
+                g.clearRect(0,0,getWidth(), getHeight());
+                super.paintComponent(g);
+            }
+        });
         b.setAction(autoCorrectTransposed);
         b.setToolTipText(b.getText());
         b.setText("");
         b.setIcon(getIcon("correcttransposed24Icon"));
         b.setFocusable(false);
+        b.setOpaque(true);
         correctTransposedButton = b;
 
-        t.add(b = new JButton());
+        t.add(b = new JButton() {
+            @Override
+            protected void paintComponent(Graphics g) { // quickfix
+                g.clearRect(0,0,getWidth(), getHeight());
+                super.paintComponent(g);
+            }
+        });
         b.setAction(autoCorrectPageBreaks);
         b.setToolTipText(b.getText());
         b.setText("");
         b.setIcon(getIcon("correctpagebreak24Icon"));
         b.setFocusable(false);
+        b.setOpaque(true);
         correctPageBreakButton = b;
 
-        t.add(b = new JButton());
+        t.add(b = new JButton() {
+            @Override
+            protected void paintComponent(Graphics g) { // quickfix
+                g.clearRect(0,0,getWidth(), getHeight());
+                super.paintComponent(g);
+            }
+        });
         b.setAction(autoCorrectSpacing);
         b.setToolTipText(b.getText());
         b.setText("");
         b.setIcon(getIcon("correcttext24Icon"));
         b.setFocusable(false);
+        b.setOpaque(true);
         correctSpacingButton = b;
+        correctSpacingButton.setRolloverEnabled(true);
 
         t.add(b = new JButton());
         b.setAction(showOnlineHelpErrors);
@@ -6251,6 +6273,7 @@ public class YassActions implements DropTargetListener {
         b.setText("");
         b.setIcon(getIcon("help24Icon"));
         b.setFocusable(false);
+        b.setOpaque(false);
 
         return t;
     }

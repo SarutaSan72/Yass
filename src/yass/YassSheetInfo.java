@@ -47,13 +47,15 @@ public class YassSheetInfo extends JPanel {
     private boolean inited = false;
 
     private static final int notesBar = 50;
-    private static final int msgBar = 10;
+    private static final int msgBar = 14;
     private static final int txtBar = 30;
 
     private YassSheetListener sheetListener;
 
     public static Image err_minorpage_icon = null, err_major_icon = null, err_file_icon = null, err_tags_icon = null, err_text_icon = null;
     public static Image no_err_minorpage_icon = null, no_err_major_icon = null, no_err_file_icon = null, no_err_tags_icon = null, no_err_text_icon = null;
+
+    Stroke medStroke = new BasicStroke(1.5f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL);
 
     private int hiliteCue = NONE;
     private static final int NONE = 0;
@@ -104,7 +106,10 @@ public class YassSheetInfo extends JPanel {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                            moveTo(e.getX(), e.isAltDown() || e.isControlDown() || e.getButton() == MouseEvent.BUTTON2|| e.getButton() == MouseEvent.BUTTON3);
+                            boolean exact = e.isAltDown() || e.isControlDown() || e.getButton() == MouseEvent.BUTTON2|| e.getButton() == MouseEvent.BUTTON3;
+                            moveTo(e.getX(), exact);
+                            if (exact)
+                                moveTo(e.getX(), exact);
                         }
                     });
                 }
@@ -389,8 +394,17 @@ public class YassSheetInfo extends JPanel {
         }
 
         // notes
+        Graphics2D g3 = (Graphics2D) g2.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+        g2.setStroke(medStroke);
+
         YassRow r, rPrev = null;
         int rxPrev = 0, ryPrev = 0, rwPrev = 0;
+        boolean newpage = false;
+        int rxnewpage = 0;
+        int page = 1;
         for (Enumeration<?> e = table.getRows(); e.hasMoreElements(); ) {
             r = (YassRow) e.nextElement();
             if (r.isPageBreak()) {
@@ -399,14 +413,21 @@ public class YassSheetInfo extends JPanel {
                 rw = 1;
                 g2.fillRect(x + rx, y, rw, h);
                 rPrev = null;
+                newpage = true;
+                String s = "" + page;
+                g2.setColor(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
+                g2.drawString(s, x + (rxnewpage + rxPrev + rwPrev - g2.getFontMetrics().stringWidth(s))/2, y + h - hBar + 12);
                 continue;
             }
             if (!r.isNote()) {
                 rPrev = null;
+                String s = "" + page;
+                g2.setColor(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
+                g2.drawString(s, x + (rxnewpage + rxPrev + rwPrev - g2.getFontMetrics().stringWidth(s))/2, y + h - hBar + 12);
                 continue;
             }
             rx = (int) (w * (gapBeat + r.getBeatInt() - minBeat) / (double) rangeBeat);
-            ry = (int) ((h - hBar) * (r.getHeightInt() - minHeight) / (double) rangeHeight);
+            ry = (int) ((h - hBar-4) * (r.getHeightInt() - minHeight) / (double) rangeHeight + 3);
             rw = (int) (w * r.getLengthInt() / rangeBeat + .5);
             Color hiliteFill = null;
             if (r.isGolden()) {
@@ -425,7 +446,6 @@ public class YassSheetInfo extends JPanel {
                 g2.fillRect(x + rx - 1, y + h - hBar + 1, rw + 2, hBar - 1);
             }
             g2.setColor(sheet.darkMode ?  sheet.dkGrayDarkMode : sheet.dkGray);
-            g2.setStroke(sheet.medStroke);
             g2.drawLine(x + rx, y + h - hBar - ry, x + rx + rw, y + h - hBar - ry);
             if (rPrev != null && rPrev.isNote()) {
                 int gap = r.getBeatInt() - (rPrev.getBeatInt() + rPrev.getLengthInt());
@@ -434,12 +454,18 @@ public class YassSheetInfo extends JPanel {
                     g2.drawLine(x + rxPrev + rwPrev, y + h - hBar - ryPrev, x + rx, y + h - hBar - ry);
                 }
             }
-            g2.setStroke(sheet.stdStroke);
+            if (newpage) {
+                page++;
+                newpage = false;
+                rxnewpage = rx;
+            }
+
             rxPrev = rx;
             ryPrev = ry;
             rwPrev = rw;
             rPrev = r;
         }
+        g3.dispose();
 
         // cursor
         int curBeat = sheet.toBeat(track, posMs);
@@ -490,12 +516,12 @@ public class YassSheetInfo extends JPanel {
             g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
             g2.drawRect(x + 2, 2, versionWidth, txtBar - 4);
             String name = table.getVersion();
-            if (bitMaskCount == 2)
+            /*if (bitMaskCount == 2)
                 name = "BOTH";
             else if (bitMaskCount == 3)
                 name = "ALL THREE";
             if (bitMaskCount == 4)
-                name = "ALL FOUR";
+                name = "ALL FOUR";*/
             int sw = g2.getFontMetrics().stringWidth(name);
             g2.drawString(name, x + 2 + (versionWidth-sw)/2, 20);
         }
