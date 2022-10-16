@@ -37,6 +37,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Vector;
 
 /**
  * Description of the Class
@@ -53,7 +54,8 @@ public class YassMain extends JApplet {
     private static boolean edit = false;
     private static boolean play = false;
     private static String midiFile = null;
-    private static String txtFile = null;
+    private static Vector<String> txtFiles = new Vector<>();
+    private static String dirFile = null;
 
     private YassProperties prop;
     private YassSheet sheet = null;
@@ -331,7 +333,6 @@ public class YassMain extends JApplet {
     public void parseCommandLine(String argv[]) {
         if (argv == null)
             return;
-
         for (String arg : argv) {
             String low = arg.toLowerCase();
             if (low.equals("-convert"))
@@ -344,10 +345,10 @@ public class YassMain extends JApplet {
                 midiFile = arg;
             else if (low.endsWith(".txt")) {
                 edit = true;
-                txtFile = arg;
+                txtFiles.add(arg);
             } else if (new File(arg).isDirectory()) {
                 edit = true;
-                txtFile = arg;
+                dirFile = arg;
             }
         }
     }
@@ -361,8 +362,10 @@ public class YassMain extends JApplet {
         }
 
         if (edit) {
-            if (txtFile != null) {
-                actions.openFiles(txtFile);
+            if (txtFiles.size() > 0) {
+                actions.openFiles(txtFiles);
+            } else if (dirFile != null) {
+                actions.openFiles(dirFile);
             } else {
                 actions.closeAllTables();
             }

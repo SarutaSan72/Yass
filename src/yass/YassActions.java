@@ -232,17 +232,10 @@ public class YassActions implements DropTargetListener {
             }
 
             String filename = prop.getProperty("recent-files");
-            if (filename == null || !new File(filename).exists()) {
+            if (filename == null) {
                 return;
             }
-
-            if (currentView == VIEW_EDIT) {
-                closeAllTables();
-                mp3.closeMP3();
-            }
-
-            openFile(filename);
-            setView(VIEW_EDIT);
+            openFiles(filename);
         }
     };
     Action clearFilter = new AbstractAction(I18.get("mlib_find_clear")) {
@@ -2008,7 +2001,7 @@ public class YassActions implements DropTargetListener {
                 return;
 
             String filename = prop.getProperty("recent-files");
-            if (filename == null || !new File(filename).exists())
+            if (filename == null)
                 return;
 
             int sel = table.getSelectionModel().getMinSelectionIndex();
@@ -2016,9 +2009,7 @@ public class YassActions implements DropTargetListener {
                 sel = sheet.nextElement();
             final int selectRow = sel;
 
-            closeAllTables();
-            mp3.closeMP3();
-            openFile(filename);
+            openFiles(filename);
             openEditor(selectRow >= 0);
 
             SwingUtilities.invokeLater(new Thread() {
@@ -2084,14 +2075,6 @@ public class YassActions implements DropTargetListener {
 
         public void actionPerformed(ActionEvent e) {
             removeVersion();
-        }
-    };
-    Action setAsStandard = new AbstractAction(
-            I18.get("medit_versions_remove_all")) {
-        private static final long serialVersionUID = 1L;
-
-        public void actionPerformed(ActionEvent e) {
-            setAsStandard();
         }
     };
     Action newFile = new AbstractAction(I18.get("mlib_new")) {
@@ -2528,14 +2511,10 @@ public class YassActions implements DropTargetListener {
                     return;
                 }
             }
-
             String filename = e.getActionCommand();
             if (filename == null || !new File(filename).exists()) {
-                FileDialog fd = new FileDialog(
-                        (JFrame) SwingUtilities.getWindowAncestor(tab),
-                        I18.get("mlib_edit_file_msg"), FileDialog.LOAD);
+                FileDialog fd = new FileDialog((JFrame) SwingUtilities.getWindowAncestor(tab), I18.get("mlib_edit_file_msg"), FileDialog.LOAD);
                 fd.setFile("*.txt");
-
                 String defDir = table != null ? table.getDir() : null;
                 if (defDir == null) {
                     defDir = prop.getProperty("song-directory");
@@ -2543,11 +2522,9 @@ public class YassActions implements DropTargetListener {
                 if (defDir != null) {
                     fd.setDirectory(defDir);
                 }
-
                 fd.setVisible(true);
                 if (fd.getFile() != null) {
-                    filename = fd.getDirectory() + File.separator
-                            + fd.getFile();
+                    filename = fd.getDirectory() + File.separator + fd.getFile();
                 } else {
                     filename = null;
                 }
@@ -2556,14 +2533,7 @@ public class YassActions implements DropTargetListener {
             if (filename == null) {
                 return;
             }
-
-            if (currentView == VIEW_EDIT) {
-                closeAllTables();
-                mp3.closeMP3();
-            }
-
-            openFile(filename);
-            setView(VIEW_EDIT);
+            openFiles(filename);
         }
     };
     Action gotoLibrary = new AbstractAction(I18.get("medit_lib")) {
@@ -3685,8 +3655,8 @@ public class YassActions implements DropTargetListener {
      * Description of the Method
      */
     public void closeAllTables() {
-        setOpened(false);
         closeAll();
+        setOpened(false);
 
         if (srcDialog != null) {
             srcDialog.dispose();
@@ -3734,10 +3704,10 @@ public class YassActions implements DropTargetListener {
             return null;
         }
 
-        openTables.size();
+        int n = openTables.size();
         YassTable t = new YassTable();
         t.init(prop);
-        t.setTableColor(getTableColor(0));
+        t.setTableColor(getTableColor(n));
 
         sheet.addTable(t);
         openTables.addElement(t);
@@ -4898,7 +4868,6 @@ public class YassActions implements DropTargetListener {
         menu.add(createVersion);
         menu.add(renameVersion);
         menu.add(removeVersion);
-        // menu2.add(setAsStandard);
         // menu2.addSeparator();
         // menu2.add(mergeVersions);
         menu.addSeparator();
@@ -6665,65 +6634,8 @@ public class YassActions implements DropTargetListener {
      */
     public void openSelectedSongs() {
         Vector<String> fn = songList.getSelectedFiles();
-        if (fn == null) {
-            return;
-        }
-
-        for (Enumeration<String> en = fn.elements(); en.hasMoreElements(); ) {
-            String filename = en.nextElement();
-            File file = new File(filename);
-            if (!file.exists()) {
-                continue;
-            }
-            if (!isKaraokeFile(file)) {
-                continue;
-            }
-
-            YassTable mt = new YassTable();
-            mt.loadFile(file.getAbsolutePath());
-            int multi = mt.getMultiplayer();
-
-            if (multi > 1 && fn.size() > 1) {
-                int ret = JOptionPane.showOptionDialog(getTab(), I18.get("no_duets_edit_msg"),
-                        I18.get("no_duets_edit_title"), JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.PLAIN_MESSAGE, null, new Object[]{ getIcon("help24Icon"), I18.get("wizard_cancel") }, null);
-                if (ret == JOptionPane.OK_OPTION)
-                    showOnlineHelpDuet.actionPerformed(null);
-                return;
-            }
-
-            String v = mt.getVersion();
-            if (v != null && ! v.isEmpty()) {
-                String dir = mt.getDir();
-                final String mtfilename = mt.getFilename().substring(0, mt.getFilename().indexOf('['));
-                File[] siblings = new File(dir).listFiles(new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return name.startsWith(mtfilename) && name.endsWith(".txt");
-                    }
-                });
-                for (int i=0; i< siblings.length; i++) {
-                    YassTable mt2 = new YassTable();
-                    mt2.loadFile(siblings[i].getAbsolutePath());
-                    int multi2 = mt2.getMultiplayer();
-                    if (multi2 > 1) {
-                        String[] versions = mt2.getPlayerNames();
-                        if (Arrays.asList(versions).indexOf(v) >= 0) {
-                            fn = new Vector<>();
-                            fn.add(mt2.getDir() + File.separator + mt2.getFilename());
-                            if (openFiles(fn)) {
-                                setView(VIEW_EDIT);
-                            }
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-
-        if (openFiles(fn)) {
-            setView(VIEW_EDIT);
-        }
+        if (fn != null)
+            openFiles(fn);
     }
 
     /**
@@ -7045,7 +6957,7 @@ public class YassActions implements DropTargetListener {
         // System.out.println("init view 3");
 
         String recent = prop.getProperty("recent-files");
-        editRecent.setEnabled(recent != null && new File(recent).exists());
+        editRecent.setEnabled(recent != null);
 
         menuHolder.validate();
 
@@ -7237,7 +7149,6 @@ public class YassActions implements DropTargetListener {
         createVersion.setEnabled(! editorIsInDuetMode && openTables != null && openTables.size() == 1);
         renameVersion.setEnabled(openTables != null && openTables.size() > 1);
         removeVersion.setEnabled(openTables != null && openTables.size() > 1);
-        setAsStandard.setEnabled(onoff);
         // mergeVersions.setEnabled(onoff);
         interruptPlay.setEnabled(onoff);
         rollLeft.setEnabled(onoff);
@@ -7257,6 +7168,8 @@ public class YassActions implements DropTargetListener {
         prevPage.setEnabled(onoff);
         morePages.setEnabled(onoff);
         onePage.setEnabled(onoff);
+        allRemainingPages.setEnabled(onoff);
+        viewAll.setEnabled(onoff);
         selectAll.setEnabled(onoff);
         lessPages.setEnabled(onoff);
         playAll.setEnabled(onoff);
@@ -7264,6 +7177,8 @@ public class YassActions implements DropTargetListener {
         playSelection.setEnabled(onoff);
         playPage.setEnabled(onoff);
         playFrozen.setEnabled(onoff);
+        playBefore.setEnabled(onoff);
+        playNext.setEnabled(onoff);
         copyRows.setEnabled(onoff);
         showCopiedRows.setEnabled(onoff);
         removeCopy.setEnabled(onoff);
@@ -7274,11 +7189,14 @@ public class YassActions implements DropTargetListener {
         togglePageBreak.setEnabled(onoff);
         insertNote.setEnabled(onoff);
         removeRows.setEnabled(onoff);
+        removeRowsWithLyrics.setEnabled(onoff);
         absolute.setEnabled(onoff);
         showTable.setEnabled(onoff);
         showBackground.setEnabled(onoff);
         showVideo.setEnabled(onoff);
         showNothing.setEnabled(onoff);
+        enableClicks.setEnabled(onoff);
+        enableMic.setEnabled(onoff);
 
         if (playAllVideoCBI != null) {
             playAllVideoCBI.setEnabled(onoff);
@@ -7686,7 +7604,7 @@ public class YassActions implements DropTargetListener {
                                 }
                             }
                             if (file != null) {
-                                openFile(file.getAbsolutePath());
+                                openFiles(file.getAbsolutePath());
                                 break;
                             }
                         } else {
@@ -7696,7 +7614,7 @@ public class YassActions implements DropTargetListener {
                         String fn = file.getName().toLowerCase();
                         if (insideSongDir) {
                             if (fn.endsWith(".txt")) {
-                                openFile(file.getAbsolutePath());
+                                openFiles(file.getAbsolutePath());
                                 break;
                             }
                         } else {
@@ -7749,7 +7667,7 @@ public class YassActions implements DropTargetListener {
                         }
                         String fn = YassImport.importTable(songList, prop, t);
                         if (fn != null) {
-                            openFile(fn);
+                            openFiles(fn);
                         }
                     }
                 } else {
@@ -8615,7 +8533,6 @@ public class YassActions implements DropTargetListener {
         if (filenames == null) {
             return false;
         }
-
         Vector<String> v = new Vector<>();
         StringTokenizer st = new StringTokenizer(filenames, ";");
         while (st.hasMoreTokens()) {
@@ -8632,151 +8549,141 @@ public class YassActions implements DropTargetListener {
      * @return Description of the Return Value
      */
     public boolean openFiles(Vector<String> filenames) {
-        return openFiles(filenames, false);
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @param filenames Description of the Parameter
-     * @param duetMode  Description of the Parameter
-     * @return Description of the Return Value
-     */
-    public boolean openFiles(Vector<String> filenames, boolean duetMode) {
-        if (filenames.size() > 10) {
+        int n = filenames.size();
+        if (n > 8 || n < 1)
             return false;
-        }
-        if (filenames.size() < 1) {
-            return false;
-        }
 
         Vector<String> filenames2 = new Vector<>();
-        for (Enumeration<String> en = filenames.elements(); en.hasMoreElements(); ) {
-            String filename = en.nextElement();
-            File file = new File(filename);
-            if (!file.exists()) {
-                continue;
-            }
-            if (file.isDirectory()) {
-                FilenameFilter filter = new FilenameFilter() {
-                    public String songFileType = prop.getProperty("song-filetype");
-                    public boolean accept(File dir, String name) {
-                        return name.endsWith(songFileType);
-                    }
-                };
-                File txts[] = file.listFiles(filter);
-                for (File txt : txts) {
-                    if (isKaraokeFile(txt)) {
-                        filenames2.addElement(txt.getAbsolutePath());
-                    }
-                }
-            } else if (isKaraokeFile(file)) {
-                filenames2.addElement(filename);
-            }
-        }
-        filenames = filenames2;
-        closeAll();
-
-        int ncol = 0;
-        boolean first = true;
-
-        for (Enumeration<String> en = filenames.elements(); en.hasMoreElements(); ) {
-            String filename = en.nextElement();
-            File file = new File(filename);
-
-            YassTable mt = new YassTable();
-            mt.loadFile(file.getAbsolutePath());
-            int multi = mt.getMultiplayer();
-
-            if (multi > 1) {
-                editorIsInDuetMode = true;
-                duetFile = filename;
-                Vector<String> filenames3 = splitFile(filename);
-                if (filenames3 == null)
-                    return false;
-                openFiles(filenames3, true);
-                return true;
-            } else {
-                if (!duetMode) {
-                    editorIsInDuetMode = false;
-                    duetFile = null;
-                }
-                // this case is handled before calling this method
-                // duetFile = see there
-
-                int group = openTables.size();
-                if (group < 0) {
-                    group = 0;
-                }
-
-                YassTable t = createNextTable();
-                if (t == null) {
+        boolean openAsDuet = false;
+        // if one or more directories selected, choose first and select all its karaoke files
+        if (filenames2.isEmpty()) {
+            for (Enumeration<String> en = filenames.elements(); en.hasMoreElements() && filenames2.isEmpty(); ) {
+                String filename = en.nextElement();
+                File file = new File(filename);
+                if (!file.exists())
                     continue;
-                }
-                boolean oldUndo = t.getPreventUndo();
-                t.setPreventUndo(true);
-                t.removeAllRows();
-                t.setPreventUndo(oldUndo);
-                t.loadFile(file.getAbsolutePath());
+                if (file.isDirectory()) {
+                    FilenameFilter filter = new FilenameFilter() {
+                        public String songFileType = prop.getProperty("song-filetype");
 
-                if (first) {
-                    table = t;
-                    first = false;
-                }
-
-                String v = t.getVersion();
-                if (v == null || v.length() < 1) {
-                    t.setTableColor(getTableColor(0));
-                    openTables.remove(t);
-                    openTables.insertElementAt(t, group);
-                    table = t;
-                } else {
-                    t.setTableColor(getTableColor(ncol++));
+                        public boolean accept(File dir, String name) {
+                            return name.endsWith(songFileType);
+                        }
+                    };
+                    File txts[] = file.listFiles(filter);
+                    for (File txt : txts) {
+                        if (isKaraokeFile(txt)) {
+                            filenames2.addElement(txt.getAbsolutePath());
+                        }
+                    }
                 }
             }
         }
-        return true;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @param filename Description of the Parameter
-     */
-    public void openFile(String filename) {
-        closeAll();
-
-        File file = new File(filename);
-        if (!file.exists()) {
-            return;
-        }
-        if (!isKaraokeFile(file)) {
-            return;
-        }
-
-        YassTable t = new YassTable();
-        t.loadFile(file.getAbsolutePath());
-        int multi = t.getMultiplayer();
-
-        if (multi < 2) {
-            editorIsInDuetMode = false;
-            duetFile = null;
-
-            YassTable ot = createNextTable();
-            if (ot == null) {
-                return;
+        // if one or more duets selected, open the first and ignore all others
+        if (filenames2.isEmpty()) {
+            for (Enumeration<String> en = filenames.elements(); en.hasMoreElements(); ) {
+                String filename = en.nextElement();
+                File file = new File(filename);
+                if (!file.exists() || !isKaraokeFile(file))
+                    continue;
+                YassTable mt = new YassTable();
+                mt.loadFile(file.getAbsolutePath());
+                int multi = mt.getMultiplayer();
+                if (multi > 1) {
+                    filenames2.add(filename);
+                    openAsDuet = true;
+                    break;
+                }
             }
-
-            ot.removeAllRows();
-            ot.loadFile(file.getAbsolutePath());
-            table = ot;
-            return;
         }
+        // if one or more tracks selected, check if a matching duet exists, and open that instead
+        if (filenames2.isEmpty()) {
+            for (Enumeration<String> en = filenames.elements(); en.hasMoreElements() && filenames2.isEmpty(); ) {
+                String filename = en.nextElement();
+                File file = new File(filename);
+                if (!file.exists() || !isKaraokeFile(file))
+                    continue;
+                YassTable mt = new YassTable();
+                mt.loadFile(file.getAbsolutePath());
+                int multi = mt.getMultiplayer();
+                if (multi < 2) {
+                    String v = mt.getVersion();
+                    if (v != null && !v.isEmpty()) {
+                        String dir = mt.getDir();
+                        final String mtfilename = mt.getFilename().substring(0, mt.getFilename().indexOf('['));
+                        File[] siblings = new File(dir).listFiles(new FilenameFilter() {
+                            @Override
+                            public boolean accept(File dir, String name) {
+                                return name.startsWith(mtfilename) && name.toLowerCase().endsWith(".txt");
+                            }
+                        });
+                        // search folder for duet file with matching track
+                        for (int i = 0; i < siblings.length; i++) {
+                            YassTable mt2 = new YassTable();
+                            mt2.loadFile(siblings[i].getAbsolutePath());
+                            int multi2 = mt2.getMultiplayer();
+                            if (multi2 > 1) {
+                                String[] versions = mt2.getPlayerNames();
+                                if (Arrays.asList(versions).indexOf(v) >= 0) {
+                                    filenames2.add(mt2.getDir() + File.separator + mt2.getFilename());
+                                    openAsDuet = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // if no duet selected until here, edit all non-duet files in non-duet mode
+        if (filenames2.isEmpty()) {
+            for (Enumeration<String> en = filenames.elements(); en.hasMoreElements(); ) {
+                String filename = en.nextElement();
+                File file = new File(filename);
+                if (!file.exists() || !isKaraokeFile(file))
+                    continue;
+                YassTable mt = new YassTable();
+                mt.loadFile(file.getAbsolutePath());
+                int multi = mt.getMultiplayer();
+                if (multi < 2)
+                    filenames2.add(filename);
+            }
+        }
+        if (!filenames2.isEmpty()) {
+            if (currentView == VIEW_EDIT) {
+                closeAllTables();
+                mp3.closeMP3();
+            }
+            closeAll();
 
-        editorIsInDuetMode = true;
-        duetFile = filename;
-        Vector<String> filenames = splitFile(filename);
-        openFiles(filenames, true);
+            if (openAsDuet) {
+                editorIsInDuetMode = true;
+                duetFile = filenames2.firstElement();
+                filenames2 = splitFile(duetFile);
+                if (filenames2 == null || filenames2.isEmpty())
+                    return false;
+            }
+            else {
+                editorIsInDuetMode = false;
+                duetFile = null;
+            }
+            for (Enumeration<String> en = filenames2.elements(); en.hasMoreElements(); ) {
+                String filename = en.nextElement();
+                File file = new File(filename);
+                YassTable t = createNextTable();
+                if (t != null) {
+                    boolean oldUndo = t.getPreventUndo();
+                    t.setPreventUndo(true);
+                    t.removeAllRows();
+                    t.setPreventUndo(oldUndo);
+                    t.loadFile(file.getAbsolutePath());
+                }
+            }
+            table = null;
+            setView(VIEW_EDIT);
+            return true;
+        }
+    return false;
     }
 
     /**
@@ -9010,15 +8917,10 @@ public class YassActions implements DropTargetListener {
         if (table == null) {
             table = firstTable();
         }
-        if (table == null || table.getArtist() == null
-                || table.getTitle() == null) {
+        if (table == null || table.getArtist() == null || table.getTitle() == null) {
             return;
         }
-        // System.out.println("open editor 1");
-
         updateTrackComponent();
-
-        // System.out.println("open editor 2");
         String recentFiles = null;
         for (Enumeration<YassTable> en = openTables.elements(); en.hasMoreElements(); ) {
             YassTable yt = en.nextElement();
@@ -9029,6 +8931,12 @@ public class YassActions implements DropTargetListener {
                 recentFiles = recentFiles + ";" + fn;
             }
         }
+        if (recentFiles == null && table != null) {
+            String dir = table.getDir();
+            String filename = table.getFilename();
+            if (dir != null && filename != null)
+                recentFiles = dir + File.separator + filename;
+        }
         if (recentFiles != null) {
             prop.setProperty("recent-files", recentFiles);
             prop.store();
@@ -9038,10 +8946,7 @@ public class YassActions implements DropTargetListener {
         }
         updateTitle();
 
-        // System.out.println("open editor 3");
-
         sheet.setDuration(mp3.getDuration() / 1000.0);
-
         sheet.setActiveTable(table);
         String vd = table.getVideo();
         if (video != null && vd != null) {
@@ -9061,15 +8966,10 @@ public class YassActions implements DropTargetListener {
             sheet.setBackgroundImage(img);
             mp3.setBackgroundImage(img);
         }
-
         // sheet.init();
         sheet.update();
         sheet.requestFocus();
-
-        // System.out.println("open editor 4");
-
         setRelative(true);
-
         if (!reload) {
             YassTable.setZoomMode(YassTable.ZOOM_ONE);
             table.setMultiSize(1);
@@ -9078,9 +8978,6 @@ public class YassActions implements DropTargetListener {
             updatePlayerPosition();
             sheet.repaint();
         }
-
-        // System.out.println("open editor 4.1");
-
         lyrics.setTable(table);
         lyrics.repaintLineNumbers();
 
@@ -9090,7 +8987,6 @@ public class YassActions implements DropTargetListener {
         table.getColumnModel().getColumn(2).setPreferredWidth(50);
         table.getColumnModel().getColumn(3).setPreferredWidth(50);
 
-        //if (!reload)
         table.resetUndo();
         undo.setEnabled(false);
         redo.setEnabled(false);
@@ -9098,8 +8994,6 @@ public class YassActions implements DropTargetListener {
 
         setSaved(true);
         setOpened(true);
-
-        // System.out.println("open editor 5");
 
         // prevent unsetting saved icon
         isUpdating = true;
@@ -9120,10 +9014,7 @@ public class YassActions implements DropTargetListener {
         checkData(table, false, true);
         setAutoTrim(oldTrim);
 
-        // System.out.println("open editor 6");
-
-        for (Enumeration<YassTable> en = openTables.elements(); en
-                .hasMoreElements(); ) {
+        for (Enumeration<YassTable> en = openTables.elements(); en.hasMoreElements(); ) {
             YassTable t = en.nextElement();
             songList.addOpened(t);
         }
@@ -9368,6 +9259,9 @@ public class YassActions implements DropTargetListener {
         mp3.closeMP3();
         prop.remove("recent-files");
         editRecent.setEnabled(false);
+        saveSong.setEnabled(false);
+        undo.setEnabled(false);
+        redo.setEnabled(false);
         return true;
     }
 
@@ -9585,15 +9479,6 @@ public class YassActions implements DropTargetListener {
                     songList.setRowSelectionInterval(selectedRow,selectedRow);
                 }
             }
-        }
-    }
-    /**
-     * Sets the asStandard attribute of the YassActions object
-     */
-    public void setAsStandard() {
-        String fn = YassUtils.setAsStandard(tab, prop, table);
-        if (fn != null) {
-            openFile(fn);
         }
     }
 
@@ -9829,25 +9714,26 @@ public class YassActions implements DropTargetListener {
 
         boolean changed = false;
         int rows[] = songList.getSelectedRows();
-        YassSongListModel sm = (YassSongListModel) songList.getModel();
-        int j = rows[rows.length - 1] + 1;
-        for (Enumeration<YassTable> en = tables.elements(); en.hasMoreElements(); ) {
-            YassTable res = en.nextElement();
-            String v = res.getVersion().trim();
-            if (newVersions.contains(v)) {
-                YassSong s = new YassSong(res.getDir(), folder, res.getFilename(), "", "");
-                songList.loadSongDetails(s, new YassTable());
-                sm.getData().insertElementAt(s, j++);
-                songList.getUnfilteredData().addElement(s);
-                changed = true;
+        if (rows != null && rows.length > 0) {
+            YassSongListModel sm = (YassSongListModel) songList.getModel();
+            int j = rows[rows.length - 1] + 1;
+            for (Enumeration<YassTable> en = tables.elements(); en.hasMoreElements(); ) {
+                YassTable res = en.nextElement();
+                String v = res.getVersion().trim();
+                if (newVersions.contains(v)) {
+                    YassSong s = new YassSong(res.getDir(), folder, res.getFilename(), "", "");
+                    songList.loadSongDetails(s, new YassTable());
+                    sm.getData().insertElementAt(s, j++);
+                    songList.getUnfilteredData().addElement(s);
+                    changed = true;
+                }
             }
+            if (changed) {
+                sm.fireTableDataChanged();
+                songList.storeCache();
+            }
+            setProgress(MessageFormat.format(I18.get("lib_msg"), sm.getData().size()), "");
         }
-        if (changed) {
-            sm.fireTableDataChanged();
-            songList.storeCache();
-        }
-        setProgress(MessageFormat.format(I18.get("lib_msg"), sm.getData().size()), "");
-
         return resVector;
     }
 
@@ -10392,17 +10278,15 @@ public class YassActions implements DropTargetListener {
                 String name = file.substring(k + 1);
                 songList.addSong(filedir, folder, name);
                 if (starteditor) {
-                    openFile(file);
                     songList.gotoSong(table);
-                    setView(VIEW_EDIT);
+                    openFiles(file);
                 }
             }
             return file;
         } else {
             if (file != null && starteditor) {
-                openFile(file);
                 songList.gotoSong(table);
-                setView(VIEW_EDIT);
+                openFiles(file);
                 return file;
             }
         }
