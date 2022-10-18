@@ -1827,12 +1827,9 @@ public class YassTable extends JTable {
         FileInputStream fis = null;
         boolean success = false;
         try {
-            r = new UnicodeReader(fis = new FileInputStream(filename),
-                    detectedEncoding);
+            r = new UnicodeReader(fis = new FileInputStream(filename), detectedEncoding);
             inputStream = new BufferedReader(r);
-
-            // BufferedReader inputStream = new BufferedReader(new
-            // FileReader(filename));
+            // BufferedReader inputStream = new BufferedReader(new FileReader(filename));
             String l;
             while ((l = inputStream.readLine()) != null) {
                 if (!addRow(l)) {
@@ -2458,12 +2455,15 @@ public class YassTable extends JTable {
         }
         int n = s.length();
 
+        // convert tag-style track number to "P space bitmask" pattern
+        if (s.equals("#P1") || s.equals("#P2") || s.equals("#P1:") || s.equals("#P2:")) {
+            s = "P " + s.charAt(2);
+        }
         // trim text after "E"
         if (s.charAt(0) == 'E') {
             s = s.substring(1).trim();
             if (s.length() > 0) {
-                tm.addRow("E", " " + s, "", "", "", YassRow.COMMENT_AFTER_END,
-                        s);
+                tm.addRow("E", " " + s, "", "", "", YassRow.COMMENT_AFTER_END, s);
             } else {
                 tm.addRow("E", "", "", "", "");
             }
@@ -2472,26 +2472,9 @@ public class YassTable extends JTable {
         if (s.charAt(0) == '#') {
             int i = s.indexOf(':');
             if (i >= 0 && i + 1 < s.length()) {
-                String version = "";
                 String tag = s.substring(1, i + 1);
                 s = s.substring(i + 1).trim();
-                if (tag.equals("TITLE:")) {
-                    int ti = s.indexOf("[");
-                    if (ti > 0) {
-                        int tii = s.indexOf("]", ti);
-                        if (tii < 0) {
-                            version = " " + s.substring(ti);
-                        } else {
-                            version = " " + s.substring(ti, tii + 1);
-                        }
-                    }
-                    if (ti > 0 && s.charAt(ti - 1) == ' ') {
-                        ti--;
-                    }
-                    if (ti > 0) {
-                        s = s.substring(0, ti);
-                    }
-                } else if (tag.equals("MP3:")) {
+                if (tag.equals("MP3:")) {
                     mp3 = s;
                 } // bpm or gap are set to 0 for invalid input
                 else if (tag.equals("BPM:")) {
@@ -2504,24 +2487,13 @@ public class YassTable extends JTable {
                     end = Double.parseDouble(s.replace(',', '.'));
                 } else if (tag.equals("VIDEOGAP:")) {
                     vgap = Double.parseDouble(s.replace(',', '.'));
-                } else if (tag.equals("DUETSINGERP1:")) {
-                    // s="all player names", version=""
-                } else if (tag.equals("DUETSINGERP2:")) {
-                    // s="all player names", version=""
-                } else if (tag.equals("DUETSINGERP3:")) {
-                    // s="all player names", version=""
-                } else if (tag.equals("DUETSINGERP4:")) {
-                    // s="all player names", version=""
                 } else if (tag.equals("RELATIVE:")) {
-                    isRelative = s.toLowerCase().equals("yes")
-                            || s.toLowerCase().equals("true");
+                    isRelative = s.toLowerCase().equals("yes") || s.toLowerCase().equals("true");
                 }
-                tm.addRow("#", tag, s, version, "");
                 return true;
             }
             // non-tag comment
-            tm.addRow("#", s.substring(1).trim(), "", "", "",
-                    YassRow.INVALID_LINE);
+            tm.addRow("#", s.substring(1).trim(), "", "", "", YassRow.INVALID_LINE);
             return true;
         }
 
@@ -2553,9 +2525,7 @@ public class YassTable extends JTable {
             } else if (isRelative) {
                 relativePageBreak += Integer.parseInt(time);
             }
-
             tm.addRow("-", time, time2, "", "");
-
             return true;
         }
 
@@ -2643,8 +2613,7 @@ public class YassTable extends JTable {
         }
 
         if (k + 1 > n - 1) {
-            tm.addRow(s.charAt(0) + "", time, length, height, "",
-                    YassRow.LINE_CUT);
+            tm.addRow(s.charAt(0) + "", time, length, height, "", YassRow.LINE_CUT);
             return true;
         }
         String txt = s.substring(k + 1);
@@ -2654,10 +2623,8 @@ public class YassTable extends JTable {
             timeInt += relativePageBreak;
             time = timeInt + "";
         }
-
         txt = txt.replace(' ', YassRow.SPACE);
         tm.addRow(s.charAt(0) + "", time, length, height, txt);
-
         return true;
     }
 
