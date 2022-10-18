@@ -1,7 +1,7 @@
 # Yass Karaoke Editor
-Yass is a graphical editor for creating, finetuning, organizing and printing Ultrastar karaoke songs.
+Yass is a graphical editor for finetuning Ultrastar karaoke songs. You can drag & drop notes, spread syllables, and find errors. Further you can filter your song library, mass-tag or batch-correct them, or search for lyrics.
 
-I developed it from 2009 to 2015. Currently I have no time for further development. 
+I develop it since 2009, just for leisure. Don't expect anything.
 
 Contact me if you want to contribute to this project.
 
@@ -34,7 +34,7 @@ Speed measure 'Inverse Duration' based on Marcel Taeumel's approach (http://uman
 
 # License
 
-Copyright (C) 2009 Saruta
+Copyright (C) 2009-2022 Saruta
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
