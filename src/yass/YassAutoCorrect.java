@@ -154,8 +154,7 @@ public class YassAutoCorrect {
      * @param inoutms Description of the Parameter
      * @return The commonPageBreak value
      */
-    public static int getCommonPageBreak(int inout[], double bpm,
-                                         double inoutms[]) {
+    public static int getCommonPageBreak(int inout[], double bpm, double inoutms[]) {
         int pause = inout[1] - inout[0];
         if (pause < 0) {
             return -1;
@@ -289,8 +288,7 @@ public class YassAutoCorrect {
                     break;
                 }
             }
-            data.insertElementAt(new YassRow("#", "COVER:", co.getName(), "",
-                    ""), j);
+            data.insertElementAt(new YassRow("#", "COVER:", co.getName(), "", ""), j);
         }
     }
 
@@ -323,8 +321,7 @@ public class YassAutoCorrect {
             if (k == 0) {
                 k = j;
             }
-            data.insertElementAt(new YassRow("#", "BACKGROUND:", bg.getName(),
-                    "", ""), k);
+            data.insertElementAt(new YassRow("#", "BACKGROUND:", bg.getName(), "", ""), k);
         }
     }
 
@@ -356,8 +353,7 @@ public class YassAutoCorrect {
             if (r3 != null && !r3.isComment()) {
                 j = coverIndex + 1;
             }
-            data.insertElementAt(new YassRow("#", "VIDEO:", vd.getName(), "",
-                    ""), j);
+            data.insertElementAt(new YassRow("#", "VIDEO:", vd.getName(), "", ""), j);
         }
     }
 
@@ -640,8 +636,7 @@ public class YassAutoCorrect {
      * @param checkExtensive     Description of the Parameter
      * @return Description of the Return Value
      */
-    public boolean checkData(YassTable table, boolean checkHeaderAndText,
-                             boolean checkExtensive) {
+    public boolean checkData(YassTable table, boolean checkHeaderAndText, boolean checkExtensive) {
         table.resetMessages();
 
         String fixString = prop.getProperty("correct-uncommon-pagebreaks-fix");
@@ -658,7 +653,6 @@ public class YassAutoCorrect {
             int tagPos;
 
             int durationNormal = 0;
-
             int durationGolden = 0;
 
             YassRow firstnormal = null;
@@ -724,66 +718,53 @@ public class YassAutoCorrect {
                     } else if (tag.equals("TITLE:")) {
                         YassRow r2 = tm.getCommentRow("MP3:");
                         if (r2 == null) {
-                            File mp3 = YassUtils.getFileWithExtension(dir,
-                                    null, audioExtensions);
+                            File mp3 = YassUtils.getFileWithExtension(dir, null, audioExtensions);
                             if (mp3 != null) {
-                                r.addMessage(YassRow.FILE_FOUND,
-                                        I18.get("correct_add_tag") + " " + mp3);
+                                r.addMessage(YassRow.FILE_FOUND, I18.get("correct_add_tag") + " " + mp3);
                                 table.addMessage(YassRow.FILE_FOUND);
                             }
                         }
                         r2 = tm.getCommentRow("COVER:");
                         if (r2 == null) {
-                            File co = YassUtils.getFileWithExtension(dir,
-                                    coverID, imageExtensions);
+                            File co = YassUtils.getFileWithExtension(dir, coverID, imageExtensions);
                             if (co != null) {
-                                r.addMessage(YassRow.FILE_FOUND,
-                                        I18.get("correct_add_tag") + " " + co);
+                                r.addMessage(YassRow.FILE_FOUND, I18.get("correct_add_tag") + " " + co);
                                 table.addMessage(YassRow.FILE_FOUND);
                             }
                         }
                         r2 = tm.getCommentRow("BACKGROUND:");
                         if (r2 == null) {
-                            File bg = YassUtils.getFileWithExtension(dir,
-                                    backgroundID, imageExtensions);
+                            File bg = YassUtils.getFileWithExtension(dir, backgroundID, imageExtensions);
                             if (bg != null) {
-                                r.addMessage(YassRow.FILE_FOUND,
-                                        I18.get("correct_add_tag") + " " + bg);
+                                r.addMessage(YassRow.FILE_FOUND, I18.get("correct_add_tag") + " " + bg);
                                 table.addMessage(YassRow.FILE_FOUND);
                             }
                         }
                         r2 = tm.getCommentRow("VIDEO:");
                         if (r2 == null) {
-                            File vd = YassUtils.getFileWithExtension(dir,
-                                    videoID, videoExtensions);
+                            File vd = YassUtils.getFileWithExtension(dir, videoID, videoExtensions);
                             if (vd != null) {
-                                r.addMessage(YassRow.FILE_FOUND,
-                                        I18.get("correct_add_tag") + " " + vd);
+                                r.addMessage(YassRow.FILE_FOUND, I18.get("correct_add_tag") + " " + vd);
                                 table.addMessage(YassRow.FILE_FOUND);
                             }
                         }
                         r2 = tm.getCommentRow("LANGUAGE:");
                         if (r2 == null) {
-                            r.addMessage(YassRow.MISSING_TAG,
-                                    I18.get("correct_add_language"));
+                            r.addMessage(YassRow.MISSING_TAG, I18.get("correct_add_language"));
                             table.addMessage(YassRow.MISSING_TAG);
                         }
                         r2 = tm.getCommentRow("GENRE:");
                         if (r2 == null) {
-                            r.addMessage(YassRow.MISSING_TAG,
-                                    I18.get("correct_add_genre"));
+                            r.addMessage(YassRow.MISSING_TAG, I18.get("correct_add_genre"));
                             table.addMessage(YassRow.MISSING_TAG);
                         }
                     } else if (tag.equals("MP3:")) {
                         String filename = r.getComment();
                         if (!new File(dir + File.separator + filename).exists()) {
-                            File mp3 = YassUtils.getFileWithExtension(dir,
-                                    null, audioExtensions);
+                            File mp3 = YassUtils.getFileWithExtension(dir, null, audioExtensions);
                             if (mp3 != null) {
                                 r.addMessage(YassRow.FILE_FOUND, MessageFormat
-                                        .format(I18
-                                                        .get("correct_file_not_found"),
-                                                filename, mp3));
+                                        .format(I18.get("correct_file_not_found"), filename, mp3));
                                 table.addMessage(YassRow.FILE_FOUND);
                             } else {
                                 r.addMessage(YassRow.FILE_NOT_FOUND, filename);
@@ -793,13 +774,10 @@ public class YassAutoCorrect {
                     } else if (tag.equals("COVER:")) {
                         String filename = r.getComment();
                         if (!new File(dir + File.separator + filename).exists()) {
-                            File co = YassUtils.getFileWithExtension(dir,
-                                    coverID, imageExtensions);
+                            File co = YassUtils.getFileWithExtension(dir, coverID, imageExtensions);
                             if (co != null) {
                                 r.addMessage(YassRow.FILE_FOUND, MessageFormat
-                                        .format(I18
-                                                        .get("correct_file_not_found"),
-                                                filename, co));
+                                        .format(I18.get("correct_file_not_found"), filename, co));
                                 table.addMessage(YassRow.FILE_FOUND);
                             } else {
                                 r.addMessage(YassRow.FILE_NOT_FOUND, filename);
@@ -809,13 +787,10 @@ public class YassAutoCorrect {
                     } else if (tag.equals("BACKGROUND:")) {
                         String filename = r.getComment();
                         if (!new File(dir + File.separator + filename).exists()) {
-                            File bg = YassUtils.getFileWithExtension(dir,
-                                    backgroundID, imageExtensions);
+                            File bg = YassUtils.getFileWithExtension(dir, backgroundID, imageExtensions);
                             if (bg != null) {
                                 r.addMessage(YassRow.FILE_FOUND, MessageFormat
-                                        .format(I18
-                                                        .get("correct_file_not_found"),
-                                                filename, bg));
+                                        .format(I18.get("correct_file_not_found"), filename, bg));
                                 table.addMessage(YassRow.FILE_FOUND);
                             } else {
                                 r.addMessage(YassRow.FILE_NOT_FOUND, filename);
@@ -825,13 +800,10 @@ public class YassAutoCorrect {
                     } else if (tag.equals("VIDEO:")) {
                         String filename = r.getComment();
                         if (!new File(dir + File.separator + filename).exists()) {
-                            File vd = YassUtils.getFileWithExtension(dir,
-                                    videoID, videoExtensions);
+                            File vd = YassUtils.getFileWithExtension(dir, videoID, videoExtensions);
                             if (vd != null) {
                                 r.addMessage(YassRow.FILE_FOUND, MessageFormat
-                                        .format(I18
-                                                        .get("correct_file_not_found"),
-                                                filename, vd));
+                                        .format(I18.get("correct_file_not_found"), filename, vd));
                                 table.addMessage(YassRow.FILE_FOUND);
                             } else {
                                 r.addMessage(YassRow.FILE_NOT_FOUND, filename);
@@ -847,17 +819,11 @@ public class YassAutoCorrect {
 
                                 if (tm.getCommentRow("VIDEOGAP:") == null) {
                                     r.addMessage(
-                                            YassRow.WRONG_VIDEOGAP,
-                                            MessageFormat.format(
-                                                    I18.get("correct_wrong_videogap_1"),
-                                                    vgap + ""));
+                                            YassRow.WRONG_VIDEOGAP, MessageFormat.format(I18.get("correct_wrong_videogap_1"), vgap + ""));
                                     table.addMessage(YassRow.WRONG_VIDEOGAP);
                                 } else if (vgap != oldvgap) {
                                     r.addMessage(
-                                            YassRow.WRONG_VIDEOGAP,
-                                            MessageFormat.format(
-                                                    I18.get("correct_wrong_videogap_2"),
-                                                    vgap + "", oldvgap + ""));
+                                            YassRow.WRONG_VIDEOGAP, MessageFormat.format(I18.get("correct_wrong_videogap_2"), vgap + "", oldvgap + ""));
                                     table.addMessage(YassRow.WRONG_VIDEOGAP);
                                 }
                             }
@@ -873,10 +839,7 @@ public class YassAutoCorrect {
                            if (table.getNoteAtBeat(medleyStart) == null) {
                                YassRow r2 = table.getNoteBeforeBeat(medleyStart);
                                if (r2 != null) {
-                                   r.addMessage(YassRow.WRONG_MEDLEY_START_BEAT,
-                                           MessageFormat.format(
-                                                   I18.get("correct_wrong_medley_start"),
-                                                   medleyStartString, r2.getBeatInt()+""));
+                                   r.addMessage(YassRow.WRONG_MEDLEY_START_BEAT, MessageFormat.format(I18.get("correct_wrong_medley_start"), medleyStartString, r2.getBeatInt()+""));
                                    table.addMessage(YassRow.WRONG_MEDLEY_START_BEAT);
                                }
                            }
@@ -892,10 +855,7 @@ public class YassAutoCorrect {
                             if (table.getNoteEndingAtBeat(medleyEnd) == null) {
                                 YassRow r2 = table.getNoteEndingBeforeBeat(medleyEnd);
                                 if (r2 != null) {
-                                    r.addMessage(YassRow.WRONG_MEDLEY_END_BEAT,
-                                            MessageFormat.format(
-                                                    I18.get("correct_wrong_medley_end"),
-                                                    medleyEndString, (r2.getBeatInt() + r2.getLengthInt())+""));
+                                    r.addMessage(YassRow.WRONG_MEDLEY_END_BEAT, MessageFormat.format(I18.get("correct_wrong_medley_end"), medleyEndString, (r2.getBeatInt() + r2.getLengthInt())+""));
                                     table.addMessage(YassRow.WRONG_MEDLEY_END_BEAT);
                                 }
                             }
@@ -918,10 +878,7 @@ public class YassAutoCorrect {
                             double ms = beat * (60 * 1000) / (4 * bpm);
                             double newgap = gap + ms;
                             newgap = ((int) (newgap * 100)) / 100.0;
-                            r.addMessage(YassRow.NONZERO_FIRST_BEAT,
-                                    MessageFormat.format(I18
-                                                    .get("correct_nonzero_first_beat"),
-                                            beat + "", gap + "", newgap + ""));
+                            r.addMessage(YassRow.NONZERO_FIRST_BEAT, MessageFormat.format(I18.get("correct_nonzero_first_beat"), beat + "", gap + "", newgap + ""));
                             table.addMessage(YassRow.NONZERO_FIRST_BEAT);
                         }
                     }
@@ -969,8 +926,7 @@ public class YassAutoCorrect {
                             }
                             if (r2.isNote()) {
                                 String txt2 = r2.getText();
-                                if (startswithspace
-                                        && txt2.endsWith(YassRow.SPACE + "")) {
+                                if (startswithspace && txt2.endsWith(YassRow.SPACE + "")) {
                                     r.addMessage(YassRow.TOO_MUCH_SPACES);
                                     table.addMessage(YassRow.TOO_MUCH_SPACES);
                                 }
@@ -1028,10 +984,7 @@ public class YassAutoCorrect {
                                 int minHd = minH / 12 * 12;
                                 int bias = minH - minHd;
                                 int newMax = maxH - minH + bias;
-                                r.addMessage(YassRow.TRANSPOSED_NOTES,
-                                        MessageFormat.format(
-                                                I18.get("correct_transposed"),
-                                                minH, maxH, bias, newMax));
+                                r.addMessage(YassRow.TRANSPOSED_NOTES, MessageFormat.format(I18.get("correct_transposed"), minH, maxH, bias, newMax));
                                 table.addMessage(YassRow.TRANSPOSED_NOTES);
                             }
                         }
@@ -1058,17 +1011,10 @@ public class YassAutoCorrect {
                                 int pf = -(int) (percentFree * 100);
                                 if (pf == 0) {
                                     r.addMessage(
-                                            YassRow.TOO_MUCH_TEXT,
-                                            MessageFormat.format(
-                                                    I18.get("correct_too_much_text_1"),
-                                                    font));
+                                            YassRow.TOO_MUCH_TEXT, MessageFormat.format(I18.get("correct_too_much_text_1"), font));
                                 } else {
                                     r.addMessage(
-                                            YassRow.TOO_MUCH_TEXT,
-                                            MessageFormat.format(
-                                                    I18.get("correct_too_much_text_2"),
-                                                    font,
-                                                    pf));
+                                            YassRow.TOO_MUCH_TEXT, MessageFormat.format(I18.get("correct_too_much_text_2"), font, pf));
                                 }
                                 table.addMessage(YassRow.TOO_MUCH_TEXT);
                             }
@@ -1114,14 +1060,11 @@ public class YassAutoCorrect {
                                 r.addMessage(YassRow.PAGE_OVERLAP);
                                 table.addMessage(YassRow.PAGE_OVERLAP);
                             }
-                            boolean early = getPause(comm[0], beat,
-                                    table.getBPM()) < .05;
-                            boolean late = getPause(beat2, comm[1],
-                                    table.getBPM()) < .05;
+                            boolean early = getPause(comm[0], beat, table.getBPM()) < .05;
+                            boolean late = getPause(beat2, comm[1], table.getBPM()) < .05;
 
                             double ms[] = new double[2];
-                            int ptype = getCommonPageBreak(comm,
-                                    table.getBPM(), ms);
+                            int ptype = getCommonPageBreak(comm, table.getBPM(), ms);
                             boolean canchange = (ptype >= 0)
                                     && (beat != comm[0] || beat2 != comm[1]);
 
@@ -1210,13 +1153,8 @@ public class YassAutoCorrect {
             PrintWriter pw = new PrintWriter(sw);
             th.printStackTrace(pw);
             JOptionPane.showMessageDialog(
-                    JOptionPane.getFrameForComponent(table),
-                    "<html>"
-                            + MessageFormat.format(
-                            I18.get("correct_parse_error_msg"),
-                            table.getDir(), th.getMessage(),
-                            r.toString(), sw.toString()),
-                    I18.get("correct_parse_error_title"),
+                    JOptionPane.getFrameForComponent(table), "<html>"
+                            + MessageFormat.format(I18.get("correct_parse_error_msg"), table.getDir(), th.getMessage(), r.toString(), sw.toString()), I18.get("correct_parse_error_title"),
                     JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -1231,8 +1169,7 @@ public class YassAutoCorrect {
      * @param currentMessage Description of the Parameter
      * @return Description of the Return Value
      */
-    public boolean autoCorrect(YassTable table, boolean all,
-                               String currentMessage) {
+    public boolean autoCorrect(YassTable table, boolean all, String currentMessage) {
         // correct messages until data is inserted/removed
 
         String dir = table.getDir();
@@ -1355,32 +1292,28 @@ public class YassAutoCorrect {
 
                     boolean isTitle = tag.equals("TITLE:");
                     if (isTitle || tag.equals("MP3:")) {
-                        File f = YassUtils.getFileWithExtension(dir, null,
-                                audioExtensions);
+                        File f = YassUtils.getFileWithExtension(dir, null, audioExtensions);
                         if (f != null) {
                             table.setMP3(f.getName());
                             changed = true;
                         }
                     }
                     if (isTitle || tag.equals("COVER:")) {
-                        File f = YassUtils.getFileWithExtension(dir, coverID,
-                                imageExtensions);
+                        File f = YassUtils.getFileWithExtension(dir, coverID, imageExtensions);
                         if (f != null) {
                             table.setCover(f.getName());
                             changed = true;
                         }
                     }
                     if (isTitle || tag.equals("BACKGROUND:")) {
-                        File f = YassUtils.getFileWithExtension(dir, backgroundID,
-                                imageExtensions);
+                        File f = YassUtils.getFileWithExtension(dir, backgroundID, imageExtensions);
                         if (f != null) {
                             table.setBackground(f.getName());
                             changed = true;
                         }
                     }
                     if (isTitle || tag.equals("VIDEO:")) {
-                        File f = YassUtils.getFileWithExtension(dir, videoID,
-                                imageExtensions);
+                        File f = YassUtils.getFileWithExtension(dir, videoID, imageExtensions);
                         if (f != null) {
                             table.setVideo(f.getName());
                             changed = true;
@@ -1478,7 +1411,6 @@ public class YassAutoCorrect {
                 case YassRow.EARLY_PAGE_BREAK:
                 case YassRow.LATE_PAGE_BREAK:
                 case YassRow.UNCOMMON_PAGE_BREAK: {
-
                     int comm[] = new int[2];
                     comm[0] = table.getRowAt(i - 1).getBeatInt()
                             + table.getRowAt(i - 1).getLengthInt();
