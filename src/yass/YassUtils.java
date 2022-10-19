@@ -39,6 +39,7 @@ import java.text.MessageFormat;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Vector;
 
 /**
  * Description of the Class
@@ -1040,6 +1041,27 @@ public class YassUtils {
         }
 
         return new String[]{s, version};
+    }
+
+    public int getBitCount(int n) {
+        int bits = 0;
+        while (n > 0) {
+            n >>= 1;
+            ++bits;
+        }
+        return bits;
+    }
+
+    public Vector<Integer> getBitMask(int n) {
+        Vector<Integer> bits = new Vector<>();
+        int bit = 0;
+        while (n > 0) {
+            if ((n & 1) != 0)
+                bits.add(bit);
+            n >>= 1;
+            ++bit;
+        }
+        return bits;
     }
 
     static class ImageLoadStatus {

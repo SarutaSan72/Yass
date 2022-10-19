@@ -483,9 +483,9 @@ public class YassSheetInfo extends JPanel {
         // singer mask
         if (table.getActions().editorIsInDuetMode) {
             x = x + 4;
-            int bitCount = getBitCount(tc);
+            int bitCount = YassUtils.getBitCount(tc);
             maskWidth = bitCount * 15;
-            Vector<Integer> bitMask = getBitMask(track + 1);
+            Vector<Integer> bitMask = YassUtils.getBitMask(track + 1);
             bitMaskCount = bitMask.size();
             for (Enumeration<Integer> en = bitMask.elements(); en.hasMoreElements(); ) {
                 int i = en.nextElement();
@@ -499,7 +499,7 @@ public class YassSheetInfo extends JPanel {
                 g2.drawRect(x + i * 15, 2, 15, txtBar - 4);
             }
             g2.setColor(sheet.darkMode ? sheet.whiteDarkMode : sheet.white);
-            for (Enumeration<Integer> en = getBitMask(track + 1).elements(); en.hasMoreElements(); ) {
+            for (Enumeration<Integer> en = YassUtils.getBitMask(track + 1).elements(); en.hasMoreElements(); ) {
                 int i = en.nextElement();
                 g2.drawString("" + (i + 1), x + 5 + i * 15, 20);
             }
@@ -670,26 +670,5 @@ public class YassSheetInfo extends JPanel {
                 g2.drawString(s2, w - sw2 - 10, y);
             }
         }
-    }
-
-    public int getBitCount(int n) {
-        int bits = 0;
-        while (n > 0) {
-            n >>= 1;
-            ++bits;
-        }
-        return bits;
-    }
-
-    public Vector<Integer> getBitMask(int n) {
-        Vector<Integer> bits = new Vector<>();
-        int bit = 0;
-        while (n > 0) {
-            if ((n & 1) != 0)
-                bits.add(bit);
-            n >>= 1;
-            ++bit;
-        }
-        return bits;
     }
 }
