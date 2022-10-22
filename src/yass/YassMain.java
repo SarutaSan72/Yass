@@ -38,15 +38,11 @@ import java.util.Vector;
  * @author Saruta
  */
 public class YassMain extends JApplet {
-    private static final long serialVersionUID = 777825370133814283L;
-
     public static boolean PRE_LOAD_FOBS = false;
-
     private static boolean convert = false;
     private static boolean edit = false;
-    private static boolean play = false;
     private static String midiFile = null;
-    private static Vector<String> txtFiles = new Vector<>();
+    private static final Vector<String> txtFiles = new Vector<>();
     private static String dirFile = null;
 
     private YassProperties prop;
@@ -249,7 +245,7 @@ public class YassMain extends JApplet {
         YassErrors errors = new YassErrors(actions, prop, actions.createErrorToolbar());
         actions.setErrors(errors);
 
-        actions.setPanels(this, mainPanel, songListPanel, songInfo, groupsPanel, songPanel, playlistPanel, sheetPanel, sheetInfoPanel);
+        actions.setPanels(this, mainPanel, songListPanel, songInfo, songPanel, playlistPanel, sheetPanel, sheetInfoPanel);
 
         Container c = getContentPane();
         c.setLayout(new BorderLayout());
@@ -317,8 +313,6 @@ public class YassMain extends JApplet {
             String low = arg.toLowerCase();
             if (low.equals("-convert"))
                 convert = true;
-            else if (low.equals("-play"))
-                play = true;
             else if (low.equals("-edit"))
                 edit = true;
             else if (low.endsWith(".mid") || low.endsWith(".midi") || low.endsWith(".kar"))
