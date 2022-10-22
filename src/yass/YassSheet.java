@@ -45,7 +45,6 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
 
     public final static int NORM_HEIGHT = 20;
 
-
     // gray, blue, golden, freestyle, red
     public static final int COLORSET_COUNT = 9;
     public static final int COLOR_NORMAL = 0;
@@ -1965,11 +1964,9 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
                             dragDir = HORIZONTAL;
 
                             if (shiftRemainder != 0) {
-                                firePropertyChange("relBeatRemainder", null,
-                                        new Integer(dx - oldx));
+                                firePropertyChange("relBeatRemainder", null, new Integer(dx - oldx));
                             } else {
-                                firePropertyChange("relBeat", null,
-                                        new Integer(dx - oldx));
+                                firePropertyChange("relBeat", null, new Integer(dx - oldx));
                             }
                         }
                     }
@@ -1979,8 +1976,7 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
                         if (dragDir != VERTICAL) {
 
                             dragDir = HORIZONTAL;
-                            firePropertyChange("relLeft", null, new Integer(dx
-                                    - oldx));
+                            firePropertyChange("relLeft", null, new Integer(dx - oldx));
                         }
                     }
                 } else {
@@ -1995,8 +1991,7 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
                         if (dragDir != VERTICAL) {
 
                             dragDir = HORIZONTAL;
-                            firePropertyChange("relRight", null, new Integer(dx
-                                    - oldx));
+                            firePropertyChange("relRight", null, new Integer(dx - oldx));
                         }
                     }
                 }
@@ -6264,10 +6259,8 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
      *
      * @param s Description of the Parameter
      * @param p Description of the Parameter
-     * @param t Description of the Parameter
      */
-    public void init(yass.renderer.YassSession s, yass.screen.YassTheme t,
-                     YassProperties p) {
+    public void init(yass.renderer.YassSession s, YassProperties p) {
         session = s;
     }
 

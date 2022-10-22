@@ -30,16 +30,9 @@ import javax.sound.sampled.AudioSystem;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.text.MessageFormat;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * Description of the Class
@@ -373,66 +366,20 @@ public class YassUtils {
         }
 
         if (!r.hasVersion()) {
-            JOptionPane.showMessageDialog(parent, "<html>" + I18.get("tool_versions_remove_error") + "</html>", I18.get("tool_versions_remove_title"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(parent, "<html>" + I18.get("tool_tracks_delete_error") + "</html>", I18.get("tool_tracks_delete_title"), JOptionPane.ERROR_MESSAGE);
             return false;
         }
         String version = r.getVersion();
         int ok;
         if (withDuet)
-            ok = JOptionPane.showConfirmDialog(parent, MessageFormat.format(I18.get("tool_versions_remove_duet_msg"), version), I18.get("tool_versions_remove_title"), JOptionPane.OK_CANCEL_OPTION);
+            ok = JOptionPane.showConfirmDialog(parent, MessageFormat.format(I18.get("tool_tracks_delete_duet_msg"), version), I18.get("tool_tracks_delete_title"), JOptionPane.OK_CANCEL_OPTION);
         else
-            ok = JOptionPane.showConfirmDialog(parent, MessageFormat.format(I18.get("tool_versions_remove_msg"), version), I18.get("tool_versions_remove_title"), JOptionPane.OK_CANCEL_OPTION);
+            ok = JOptionPane.showConfirmDialog(parent, MessageFormat.format(I18.get("tool_tracks_delete_msg"), version), I18.get("tool_tracks_delete_title"), JOptionPane.OK_CANCEL_OPTION);
         if (ok == JOptionPane.OK_OPTION) {
             f.delete();
             return true;
         }
         return false;
-    }
-
-    /**
-     * Sets the asStandard attribute of the YassUtils class
-     *
-     * @param parent The new asStandard value
-     * @param prop   The new asStandard value
-     * @param t      The new asStandard value
-     * @return Description of the Return Value
-     */
-    public static String setAsStandard(Component parent, YassProperties prop, YassTable t) {
-        int ok = JOptionPane.showConfirmDialog(parent, "<html>" + I18.get("tool_versions_remove_all_msg"), I18.get("tool_versions_remove_all_title"), JOptionPane.OK_CANCEL_OPTION);
-        if (ok != JOptionPane.OK_OPTION) {
-            return null;
-        }
-
-        YassTableModel tm = (YassTableModel) t.getModel();
-        YassRow r = tm.getCommentRow("TITLE:");
-        YassRow r2 = tm.getCommentRow("ARTIST:");
-        if (r == null || r2 == null) {
-            return null;
-        }
-        String title = r.getComment();
-        String artist = r2.getComment();
-
-        if (r.hasVersion()) {
-            r.setVersion("");
-            t.setFilename(artist.trim() + " - " + title.trim() + ".txt");
-            String absFilename = t.getDir() + File.separator + t.getFilename();
-            t.storeFile(absFilename);
-        }
-        String absFilename = t.getDir() + File.separator + t.getFilename();
-
-        File dFiles[] = new File(t.getDir()).listFiles();
-        for (File dFile : dFiles) {
-            if (dFile.getName().toLowerCase().endsWith(".txt")) {
-                YassTable tt = new YassTable();
-                tt.loadFile(dFile.getAbsolutePath());
-                YassTableModel ttm = (YassTableModel) tt.getModel();
-                YassRow tr = ttm.getCommentRow("TITLE:");
-                if (tr.hasVersion()) {
-                    dFile.delete();
-                }
-            }
-        }
-        return absFilename;
     }
 
     /**
@@ -795,43 +742,6 @@ public class YassUtils {
     }
 
     /**
-     * Description of the Method
-     *
-     * @param bufferedImage Description of the Parameter
-     */
-    public static void waitForImage(BufferedImage bufferedImage) {
-        final ImageLoadStatus imageLoadStatus = new ImageLoadStatus();
-        bufferedImage.getHeight(
-                new ImageObserver() {
-                    public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
-                        if (infoflags == ALLBITS) {
-                            imageLoadStatus.heightDone = true;
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-        bufferedImage.getWidth(
-                new ImageObserver() {
-                    public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
-                        if (infoflags == ALLBITS) {
-                            imageLoadStatus.widthDone = true;
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-        while (!imageLoadStatus.widthDone && !imageLoadStatus.heightDone) {
-            try {
-                System.out.println("wait ");
-                Thread.sleep(50);
-            } catch (InterruptedException ignored) {
-
-            }
-        }
-    }
-
-    /**
      * Gets the scaledInstance attribute of the YassUtils object
      *
      * @param img          Description of the Parameter
@@ -1017,33 +927,105 @@ public class YassUtils {
     }
 
     /**
-     * Gets the titleVersion attribute of the YassUtils object
-     *
-     * @param s Description of the Parameter
-     * @return The titleVersion value
+     * Checks if file is a karaoke file.
+     * @param file path to file
+     * @return
      */
-    public String[] getTitleVersion(String s) {
-        String version = null;
-        int ti = s.indexOf("[");
-        if (ti > 0) {
-            int tii = s.indexOf("]", ti);
-            if (tii < 0) {
-                version = " " + s.substring(ti);
-            } else {
-                version = " " + s.substring(ti, tii + 1);
-            }
-        }
-        if (ti > 0 && s.charAt(ti - 1) == ' ') {
-            ti--;
-        }
-        if (ti > 0) {
-            s = s.substring(0, ti);
-        }
-
-        return new String[]{s, version};
+    public static boolean isKaraokeFile(String file) {
+        File f = new File(file);
+        return f.exists() && f.isFile() && YassUtils.isKaraokeFile(f);
     }
 
-    public int getBitCount(int n) {
+    public static boolean isKaraokeFile(File f) {
+        if (!f.getName().endsWith(".txt")) {
+            return false;
+        }
+
+        try {
+            unicode.UnicodeReader r = new unicode.UnicodeReader(new FileInputStream(f), null);
+            BufferedReader inputStream = new BufferedReader(r);
+            // BufferedReader inputStream = new BufferedReader(new FileReader(f));
+            String l;
+            while ((l = inputStream.readLine()) != null) {
+                int n = l.length();
+                if (n < 1) {
+                    continue;
+                }
+                if (n > 6) {
+                    l = l.substring(0, 6).toUpperCase();
+                    if (l.startsWith("#TITLE")) {
+                        inputStream.close();
+                        return true;
+                    }
+                }
+                if (l.startsWith("#")) {
+                    continue;
+                }
+                inputStream.close();
+                return false;
+            }
+            inputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean isValidKaraokeString(String s) {
+        boolean hasTitle = false;
+        boolean hasArtist = false;
+        try {
+            StringReader r = new StringReader(s);
+            BufferedReader inputStream = new BufferedReader(r);
+
+            String l;
+            while ((l = inputStream.readLine()) != null) {
+                if (l.startsWith("#")) {
+                    if (l.startsWith("#TITLE")) {
+                        hasTitle = true;
+                    }
+                    if (l.startsWith("#ARTIST")) {
+                        hasArtist = true;
+                    }
+                } else {
+                    if (!hasTitle || !hasArtist) {
+                        inputStream.close();
+                        return false;
+                    }
+                    if (l.startsWith("E") && l.trim().equals("E")) {
+                        inputStream.close();
+                        return true;
+                    }
+                }
+            }
+            inputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Gets all karaoke files of the given folder.
+     * @param folder path to folder
+     * @param songFileType only files that end with this string
+     * @return null if folder does not exist or is no folder
+     */
+    public static Vector<String> getKaraokeFiles(String folder, String songFileType) {
+        Vector<String> res = null;
+        File file = new File(folder);
+        if (file.exists() && file.isDirectory()) {
+            res = new Vector<>();
+            File[] files = file.listFiles((dir, name) -> name.endsWith(songFileType));
+            for (File f : files) {
+                if (YassUtils.isKaraokeFile(f))
+                    res.addElement(f.getAbsolutePath());
+            }
+        }
+        return res;
+    }
+
+    public static int getBitCount(int n) {
         int bits = 0;
         while (n > 0) {
             n >>= 1;
@@ -1052,7 +1034,7 @@ public class YassUtils {
         return bits;
     }
 
-    public Vector<Integer> getBitMask(int n) {
+    public static Vector<Integer> getBitMask(int n) {
         Vector<Integer> bits = new Vector<>();
         int bit = 0;
         while (n > 0) {

@@ -20,7 +20,6 @@ package yass;
 
 import org.tritonus.share.sampled.file.TAudioFileFormat;
 import yass.filter.YassFilter;
-import yass.screen.YassSongData;
 import yass.stats.YassStats;
 
 import javax.sound.sampled.AudioFileFormat;
@@ -1956,23 +1955,6 @@ public class YassSongList extends JTable {
     }
 
     /**
-     * Gets the files attribute of the YassSongList object
-     *
-     * @return The files value
-     */
-    public Vector<YassSongData> getSongData() {
-        Vector<YassSongData> v = new Vector<>();
-
-        Vector<YassSong> data = getUnfilteredData();
-        for (Enumeration<YassSong> e = data.elements(); e.hasMoreElements(); ) {
-            YassSong s = e.nextElement();
-            yass.screen.YassSongData sd = s.toSongData();
-            v.addElement(sd);
-        }
-        return v;
-    }
-
-    /**
      * Description of the Method
      */
     public void closeOpened() {
@@ -2554,7 +2536,7 @@ public class YassSongList extends JTable {
             File files[] = fdir.listFiles();
             int k = 0;
             for (File file : files) {
-                if (YassActions.isKaraokeFile(file)) {
+                if (YassUtils.isKaraokeFile(file)) {
                     k++;
                 }
             }

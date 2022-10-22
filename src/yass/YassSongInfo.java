@@ -1545,7 +1545,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                     }
 
                     String s = sb.toString();
-                    if (YassActions.isValidKaraokeString(s)) {
+                    if (YassUtils.isValidKaraokeString(s)) {
                         YassTable t1 = new YassTable();
                         t1.setText(s);
                         String newTitle = t1.getTitle().trim();
@@ -1580,7 +1580,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                 }
 
                 String tds = (String) td;
-                boolean ok = YassActions.isValidKaraokeString(tds);
+                boolean ok = YassUtils.isValidKaraokeString(tds);
                 if (!ok) {
                     repaint();
                     return;
@@ -2619,7 +2619,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                         e.printStackTrace();
                     }
                     String s = sb.toString();
-                    if (YassActions.isValidKaraokeString(s)) {
+                    if (YassUtils.isValidKaraokeString(s)) {
                         YassTable t = new YassTable();
                         t.setText(s);
                         String newTitle = t.getTitle().trim();
@@ -2719,7 +2719,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                 }
 
                 String tds = (String) td;
-                boolean ok = YassActions.isValidKaraokeString(tds);
+                boolean ok = YassUtils.isValidKaraokeString(tds);
                 if (!ok) {
                     dropTargetDropEvent.getDropTargetContext().dropComplete(
                             true);
