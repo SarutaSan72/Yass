@@ -1575,14 +1575,14 @@ public class YassActions implements DropTargetListener {
             table.lastNote();
         }
     };
-    private final Action prevVersion = new AbstractAction(I18.get("medit_tracks_prev")) {
+    private final Action activatePrevTrack = new AbstractAction(I18.get("medit_tracks_prev")) {
         public void actionPerformed(ActionEvent e) {
-            nextVersion(-1);
+            activateNextTrack(-1);
         }
     };
-    private final Action nextVersion = new AbstractAction(I18.get("medit_tracks_next")) {
+    private final Action activateNextTrack = new AbstractAction(I18.get("medit_tracks_next")) {
         public void actionPerformed(ActionEvent e) {
-            nextVersion(1);
+            activateNextTrack(1);
         }
     };
     private final Action saveAll = new AbstractAction(I18.get("medit_save_all")) {
@@ -2860,7 +2860,7 @@ public class YassActions implements DropTargetListener {
         }
     }
 
-    private void nextVersion(int b) {
+    private void activateNextTrack(int b) {
         int i = openTables.indexOf(table);
         int n = openTables.size();
         i += b;
@@ -2931,20 +2931,10 @@ public class YassActions implements DropTargetListener {
         return icons.get(s);
     }
 
-    /**
-     * Gets the autoCorrect attribute of the YassActions object
-     *
-     * @return The autoCorrect value
-     */
     public YassAutoCorrect getAutoCorrect() {
         return auto;
     }
 
-    /**
-     * Gets the mP3 attribute of the YassActions object
-     *
-     * @return The mP3 value
-     */
     public YassPlayer getMP3() {
         return mp3;
     }
@@ -3356,13 +3346,6 @@ public class YassActions implements DropTargetListener {
         menu.add(saveDuetAs);
         menu.add(mergeTracks);
         menu.add(deleteTrack);
-        menu.addSeparator();
-
-        // menu.add(saveAsFile);
-        // menu.add(saveAllFile);
-
-        // menu2.addSeparator();
-        // menu2.add(mergeVersions);
         menu.addSeparator();
         menu.add(gotoLibrary);
         menu.addSeparator();
@@ -5063,7 +5046,6 @@ public class YassActions implements DropTargetListener {
                     break;
                 }
 
-        //openTrack.setEnabled(true);
         saveTrack.setEnabled(!isTrackSaved);
         saveAll.setEnabled(!isAllSaved);
         closeTrack.setEnabled(isOpened);
@@ -5077,7 +5059,6 @@ public class YassActions implements DropTargetListener {
         saveDuetAs.setEnabled(isDuetTrack);
         deleteTrack.setEnabled(isOpened);
 
-        // mergeVersions.setEnabled(onoff);
         interruptPlay.setEnabled(isOpened);
         rollLeft.setEnabled(isOpened);
         rollRight.setEnabled(isOpened);
@@ -5135,8 +5116,8 @@ public class YassActions implements DropTargetListener {
         toggleVideo.setEnabled(isOpened);
 
         enableVideoAudio.setEnabled(isOpened);
-        //undo.setEnabled(onoff);
-        //redo.setEnabled(onoff);
+        // todo undo.setEnabled(onoff);
+        // todo redo.setEnabled(onoff);
         recordSelection.setEnabled(isOpened);
         recordAll.setEnabled(isOpened);
         selectLine.setEnabled(isOpened);
@@ -6326,14 +6307,6 @@ public class YassActions implements DropTargetListener {
         }
     }
 
-    /**
-     * Description of the Method
-     *
-     * @param artist  Description of the Parameter
-     * @param title   Description of the Parameter
-     * @param version Description of the Parameter
-     * @return Description of the Return Value
-     */
     public YassSong selectSong(String artist, String title, String version) {
         groups.setRowSelectionInterval(0, 0);
         groups.refresh();
@@ -7270,29 +7243,45 @@ public class YassActions implements DropTargetListener {
         insertNote.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.SHIFT_MASK));
         insertNote.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_MASK));
 
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_9, InputEvent.CTRL_MASK), "prevVersion");
-        am.put("prevVersion", prevVersion);
-        prevVersion.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_9, InputEvent.CTRL_MASK));
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_9, InputEvent.CTRL_MASK), "prevTrack");
+        am.put("prevTrack", activatePrevTrack);
+        activatePrevTrack.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_9, InputEvent.CTRL_MASK));
 
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_0, InputEvent.CTRL_MASK), "nextVersion");
-        am.put("nextVersion", nextVersion);
-        nextVersion.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_0, InputEvent.CTRL_MASK));
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_0, InputEvent.CTRL_MASK), "nextTrack");
+        am.put("nextTrack", activateNextTrack);
+        activateNextTrack.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_0, InputEvent.CTRL_MASK));
 
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.CTRL_MASK), "version1");
-        am.put("version1", activateTrack1);
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.CTRL_MASK), "track1");
+        am.put("track1", activateTrack1);
         activateTrack1.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.CTRL_MASK));
 
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.CTRL_MASK), "version2");
-        am.put("version2", activateTrack2);
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.CTRL_MASK), "track2");
+        am.put("track2", activateTrack2);
         activateTrack2.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.CTRL_MASK));
 
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.CTRL_MASK), "version3");
-        am.put("version3", activateTrack3);
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.CTRL_MASK), "track3");
+        am.put("track3", activateTrack3);
         activateTrack3.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.CTRL_MASK));
 
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_4, InputEvent.CTRL_MASK), "version4");
-        am.put("version4", activateTrack4);
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_4, InputEvent.CTRL_MASK), "track4");
+        am.put("track4", activateTrack4);
         activateTrack4.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_4, InputEvent.CTRL_MASK));
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_5, InputEvent.CTRL_MASK), "track5");
+        am.put("track5", activateTrack5);
+        activateTrack5.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_5, InputEvent.CTRL_MASK));
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_6, InputEvent.CTRL_MASK), "track6");
+        am.put("track6", activateTrack6);
+        activateTrack6.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_6, InputEvent.CTRL_MASK));
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_7, InputEvent.CTRL_MASK), "track7");
+        am.put("track7", activateTrack7);
+        activateTrack7.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_7, InputEvent.CTRL_MASK));
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_8, InputEvent.CTRL_MASK), "track8");
+        am.put("track8", activateTrack8);
+        activateTrack8.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_8, InputEvent.CTRL_MASK));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.ALT_MASK), "darkmode");
         am.put("darkmode", darkmode);
