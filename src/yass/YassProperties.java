@@ -438,7 +438,7 @@ public class YassProperties extends Properties {
 
         //non-editable
         p.put("welcome", "true");
-        p.put("recent-file", "");
+        p.put("recent-files", "");
     }
 
 

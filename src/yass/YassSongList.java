@@ -142,7 +142,7 @@ public class YassSongList extends JTable {
     JTableHeader header = null;
     String imageCacheName = null;
     Action editTitle =
-            new AbstractAction(I18.get("mlib_title")) {
+            new AbstractAction(I18.get("lib_title")) {
                 private static final long serialVersionUID = 7269157372761931907L;
 
                 public void actionPerformed(ActionEvent e) {
@@ -150,7 +150,7 @@ public class YassSongList extends JTable {
                 }
             };
     Action editArtist =
-            new AbstractAction(I18.get("mlib_artist")) {
+            new AbstractAction(I18.get("lib_artist")) {
                 private static final long serialVersionUID = -1816525890146966685L;
 
                 public void actionPerformed(ActionEvent e) {
@@ -158,7 +158,7 @@ public class YassSongList extends JTable {
                 }
             };
     Action editYear =
-            new AbstractAction(I18.get("mlib_year")) {
+            new AbstractAction(I18.get("lib_year")) {
                 private static final long serialVersionUID = -4168560310751030798L;
 
                 public void actionPerformed(ActionEvent e) {
@@ -166,7 +166,7 @@ public class YassSongList extends JTable {
                 }
             };
     Action editAlbum =
-            new AbstractAction(I18.get("mlib_album")) {
+            new AbstractAction(I18.get("lib_album")) {
                 private static final long serialVersionUID = 4315035614127491845L;
 
                 public void actionPerformed(ActionEvent e) {
@@ -174,7 +174,7 @@ public class YassSongList extends JTable {
                 }
             };
     Action editLength =
-            new AbstractAction(I18.get("mlib_length")) {
+            new AbstractAction(I18.get("lib_length")) {
                 private static final long serialVersionUID = -1647062542627535396L;
 
                 public void actionPerformed(ActionEvent e) {
@@ -182,7 +182,7 @@ public class YassSongList extends JTable {
                 }
             };
     Action editID =
-            new AbstractAction(I18.get("mlib_id")) {
+            new AbstractAction(I18.get("lib_id")) {
                 private static final long serialVersionUID = 7451707716005872195L;
 
                 public void actionPerformed(ActionEvent e) {
@@ -190,7 +190,7 @@ public class YassSongList extends JTable {
                 }
             };
     Action createNewEdition =
-            new AbstractAction(I18.get("mlib_edition_set")) {
+            new AbstractAction(I18.get("lib_edition_set")) {
                 private static final long serialVersionUID = -5267723344411712458L;
 
                 public void actionPerformed(ActionEvent e) {
@@ -198,7 +198,7 @@ public class YassSongList extends JTable {
                 }
             };
     Action setEditionToFolder =
-            new AbstractAction(I18.get("mlib_edition_folder")) {
+            new AbstractAction(I18.get("lib_edition_folder")) {
                 private static final long serialVersionUID = -7108009085416764637L;
 
                 public void actionPerformed(ActionEvent e) {
@@ -206,7 +206,7 @@ public class YassSongList extends JTable {
                 }
             };
     Action createNewFolder =
-            new AbstractAction(I18.get("mlib_folder_new")) {
+            new AbstractAction(I18.get("lib_folder_new")) {
                 private static final long serialVersionUID = 815074409752028181L;
 
                 public void actionPerformed(ActionEvent e) {
@@ -214,7 +214,7 @@ public class YassSongList extends JTable {
                 }
             };
     Action renameFolder =
-            new AbstractAction(I18.get("mlib_folder_rename")) {
+            new AbstractAction(I18.get("lib_folder_rename")) {
                 private static final long serialVersionUID = 7699133543149004374L;
 
                 public void actionPerformed(ActionEvent e) {
@@ -315,9 +315,9 @@ public class YassSongList extends JTable {
         getActionMap().put("editTitle", editTitle);
 
         JMenuItem menuItem = null;
-        combinedPopup.add(cgenre = new JMenu(I18.get("mlib_genre")));
-        combinedPopup.add(cedition = new JMenu(I18.get("mlib_edition")));
-        combinedPopup.add(clang = new JMenu(I18.get("mlib_language")));
+        combinedPopup.add(cgenre = new JMenu(I18.get("lib_genre")));
+        combinedPopup.add(cedition = new JMenu(I18.get("lib_edition")));
+        combinedPopup.add(clang = new JMenu(I18.get("lib_language")));
 
         combinedPopup.add(new JMenuItem(editYear));
         getInputMap().put(KeyStroke.getKeyStroke("F6"), "editYear");
@@ -337,14 +337,14 @@ public class YassSongList extends JTable {
         getActionMap().put("editID", editID);
 
         combinedPopup.addSeparator();
-        combinedPopup.add(menuItem = new JMenuItem(I18.get("mlib_undo_selected")));
+        combinedPopup.add(menuItem = new JMenuItem(I18.get("lib_undo_selected")));
         menuItem.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         undoSelection();
                     }
                 });
-        combinedPopup.add(menuItem = new JMenuItem(I18.get("mlib_save_selected")));
+        combinedPopup.add(menuItem = new JMenuItem(I18.get("lib_save_selected")));
         menuItem.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
@@ -354,14 +354,14 @@ public class YassSongList extends JTable {
 
 		/*
          *  combinedPopup.addSeparator();
-		 *  combinedPopup.add(menuItem = new JMenuItem(I18.get("mlib_open_folder")));
+		 *  combinedPopup.add(menuItem = new JMenuItem(I18.get("lib_open_folder")));
 		 *  menuItem.addActionListener(
 		 *  new ActionListener() {
 		 *  public void actionPerformed(ActionEvent e) {
 		 *  openSongFolder();
 		 *  }
 		 *  });
-		 *  combinedPopup.add(menuItem = new JMenuItem(I18.get("mlib_remove")));
+		 *  combinedPopup.add(menuItem = new JMenuItem(I18.get("lib_remove")));
 		 *  menuItem.addActionListener(
 		 *  new ActionListener() {
 		 *  public void actionPerformed(ActionEvent e) {
@@ -369,7 +369,7 @@ public class YassSongList extends JTable {
 		 *  }
 		 *  });
 		 */
-        languagePopup = new JMenu(I18.get("mlib_language"));
+        languagePopup = new JMenu(I18.get("lib_language"));
 
         Vector<String> langVector = new Vector<>();
         Vector<String> langIDVector = new Vector<>();
@@ -396,10 +396,10 @@ public class YassSongList extends JTable {
             langIDVector.add(sid);
         }
 
-        JMenu more = new JMenu(I18.get("mlib_language_more"));
+        JMenu more = new JMenu(I18.get("lib_language_more"));
         languagePopup.addSeparator();
         languagePopup.add(more);
-        JMenu cmore = new JMenu(I18.get("mlib_language_more"));
+        JMenu cmore = new JMenu(I18.get("lib_language_more"));
         clang.addSeparator();
         clang.add(cmore);
 
@@ -424,7 +424,7 @@ public class YassSongList extends JTable {
         langVector.toArray(langArray);
         langIDVector.toArray(langID);
 
-        genrePopup = new JMenu(I18.get("mlib_genre"));
+        genrePopup = new JMenu(I18.get("lib_genre"));
 
         StringTokenizer genres = new StringTokenizer(prop.getProperty("genre-tag"), "|");
         ActionListener ag =
@@ -444,10 +444,10 @@ public class YassSongList extends JTable {
             cgenre.add(menuItem);
             menuItem.addActionListener(ag);
         }
-        more = new JMenu(I18.get("mlib_genre_more"));
+        more = new JMenu(I18.get("lib_genre_more"));
         genrePopup.addSeparator();
         genrePopup.add(more);
-        cmore = new JMenu(I18.get("mlib_genre_more"));
+        cmore = new JMenu(I18.get("lib_genre_more"));
         cgenre.addSeparator();
         cgenre.add(cmore);
         genres = new StringTokenizer(prop.getProperty("genre-more-tag"), "|");
@@ -455,12 +455,12 @@ public class YassSongList extends JTable {
             String s = genres.nextToken();
 
             if (s.equals("MORE")) {
-                JMenu evenmore = new JMenu(I18.get("mlib_genre_more"));
+                JMenu evenmore = new JMenu(I18.get("lib_genre_more"));
                 more.addSeparator();
                 more.add(evenmore);
                 more = evenmore;
 
-                evenmore = new JMenu(I18.get("mlib_genre_more"));
+                evenmore = new JMenu(I18.get("lib_genre_more"));
                 cmore.addSeparator();
                 cmore.add(evenmore);
                 cmore = evenmore;
@@ -475,9 +475,9 @@ public class YassSongList extends JTable {
             }
         }
 
-        editionPopup = new JMenu(I18.get("mlib_edition"));
+        editionPopup = new JMenu(I18.get("lib_edition"));
 
-        menuItem = new JMenuItem(I18.get("mlib_edition_set"));
+        menuItem = new JMenuItem(I18.get("lib_edition_set"));
         menuItem.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
@@ -488,7 +488,7 @@ public class YassSongList extends JTable {
         editionPopup.add(setEditionToFolder);
         editionPopup.addSeparator();
 
-        menuItem = new JMenuItem(I18.get("mlib_edition_set"));
+        menuItem = new JMenuItem(I18.get("lib_edition_set"));
         menuItem.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
@@ -520,10 +520,10 @@ public class YassSongList extends JTable {
             menuItem.addActionListener(actionEdition);
         }
 
-        moreEditions = new JMenu(I18.get("mlib_edition_more"));
+        moreEditions = new JMenu(I18.get("lib_edition_more"));
         editionPopup.addSeparator();
         editionPopup.add(moreEditions);
-        cmoreEditions = new JMenu(I18.get("mlib_edition_more"));
+        cmoreEditions = new JMenu(I18.get("lib_edition_more"));
         cedition.addSeparator();
         cedition.add(cmoreEditions);
 
@@ -2488,12 +2488,12 @@ public class YassSongList extends JTable {
 
             if (++i > 20) {
                 i = 0;
-                JMenu evenmore = new JMenu(I18.get("mlib_edition_more"));
+                JMenu evenmore = new JMenu(I18.get("lib_edition_more"));
                 moreEditions.addSeparator();
                 moreEditions.add(evenmore);
                 moreEditions = evenmore;
 
-                evenmore = new JMenu(I18.get("mlib_edition_more"));
+                evenmore = new JMenu(I18.get("lib_edition_more"));
                 cmoreEditions.addSeparator();
                 cmoreEditions.add(evenmore);
                 cmoreEditions = evenmore;

@@ -59,7 +59,7 @@ public class YassSheetInfo extends JPanel {
     private static final int ACTIVATE_TRACK = 1;
     private static final int SHOW_ERRORS = 2;
     //private static final int SHOW_SELECT = 3;
-    private boolean isSelected = false;
+    //private boolean isSelected = false;
 
     private boolean hasErr = false;
 
@@ -189,6 +189,7 @@ public class YassSheetInfo extends JPanel {
     private void showErrors() {
         sheet.getActiveTable().getActions().showErrors.actionPerformed(null);
     }
+
     private boolean isActiveTrack() {
         YassTable table = sheet.getActiveTable();
         return table != null && track == table.getActions().getActiveTrack();
@@ -203,7 +204,7 @@ public class YassSheetInfo extends JPanel {
 
         // calculate ms in clicked track
         double minGapBeat = sheet.getMinGapInBeats();
-        double gapBeat = sheet.getGapInBeats(track) - minGapBeat;
+        double gapBeat = table.getGapInBeats() - minGapBeat;
         // click position in beats
         int w = getWidth()-1;
         if (x < sideBar) x = sideBar;
@@ -212,15 +213,9 @@ public class YassSheetInfo extends JPanel {
         w -= 2 * sideBar;
         int beat = (int)((minBeat + x*rangeBeat) / (double) w - gapBeat);
         double ms = sheet.getTable(track).beatToMs(beat);
-        int newpos = sheet.toTimeline(ms);
-
-        double minMs = sheet.getMinVisibleMs();
-        double maxMs = sheet.getMaxVisibleMs();
-        boolean visible = minMs < ms && ms < maxMs;
 
         // select note at ms in active track
-        int activeBeat = sheet.toBeat(ms);
-
+        int activeBeat = table.msToBeat(ms);
         int i= table.getIndexOfNoteBeforeBeat(activeBeat);
         if (i < 0)
             i = table.getPage(1);
@@ -231,12 +226,13 @@ public class YassSheetInfo extends JPanel {
             }
             table.setRowSelectionInterval(i, i);
             table.updatePlayerPosition();
-            if (! visible) table.zoomPage();
+            if (! sheet.isVisibleMs(ms)) table.zoomPage();
 
             if (exact) {
+                int newPos = sheet.toTimeline(ms);
                 int vx = sheet.getViewPosition().x;
-                int tx = Math.max(0, newpos - 200);
-                sheet.setPlayerPosition(newpos);
+                int tx = Math.max(0, newPos - 200);
+                sheet.setPlayerPosition(newPos);
                 sheet.slideRight(tx - vx);
             }
         }
@@ -286,7 +282,6 @@ public class YassSheetInfo extends JPanel {
         final int w = getWidth() - 2* sideBar - 1;
         final int h = getHeight();
 
-
         // sidebar
         if (currentDuetTrack >= 0) {
             g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
@@ -298,7 +293,7 @@ public class YassSheetInfo extends JPanel {
             g2.fillRect(0, 0, sideBar, h);
             g2.fillRect(sideBar+w+1, 0, sideBar, h);
         }
-        if (isActive) {
+        if (isActive && sheet.getTableCount() > 1) {
             g2.setColor(sheet.darkMode ? sheet.whiteDarkMode : sheet.white);
             g2.fillRect(3, 3, sideBar-6, h-6);
         }
@@ -327,7 +322,7 @@ public class YassSheetInfo extends JPanel {
 
         // shared notes
         double minGapBeat = sheet.getMinGapInBeats();
-        double gapBeat = sheet.getGapInBeats(track) - minGapBeat;
+        double gapBeat = table.getGapInBeats() - minGapBeat;
         if (currentDuetTrack >= 0) {
             int track2 = track - 1;
             YassTable table2 = sheet.getTable(track - 1);
@@ -385,9 +380,9 @@ public class YassSheetInfo extends JPanel {
         // selection
         double minMs = sheet.getMinVisibleMs(track);
         double maxMs = sheet.getMaxVisibleMs(track); //TODO DUET
-        rx = (int) (w * (gapBeat + sheet.toBeat(track, minMs) - minBeat) / (double) rangeBeat); //TODO DUET
+        rx = (int) (w * (gapBeat + table.msToBeat(minMs) - minBeat) / (double) rangeBeat); //TODO DUET
         if (isActive) {
-            int rx2 = (int) (w * (gapBeat + sheet.toBeat(track, maxMs) - minBeat) / (double) rangeBeat); //TODO DUET
+            int rx2 = (int) (w * (gapBeat + table.msToBeat(maxMs) - minBeat) / (double) rangeBeat); //TODO DUET
             g2.setColor(sheet.darkMode ? sheet.blueDragDarkMode : sheet.blueDrag);
             g2.fillRect(x + rx, y, rx2 - rx, h - hBar);
             g2.setColor(sheet.darkMode ? sheet.blackDarkMode : sheet.black);
@@ -482,7 +477,7 @@ public class YassSheetInfo extends JPanel {
         g2.setStroke(sheet.stdStroke);
 
         // cursor
-        int curBeat = sheet.toBeat(track, posMs);
+        int curBeat = table.msToBeat(posMs);
         rx = (int) (w * (gapBeat + curBeat - minBeat) / (double) rangeBeat); //TODO DUET
         g2.setColor(sheet.playerColor);
         g2.fillRect(x + rx - 1, y - 2, 2, h + 5);
@@ -523,14 +518,16 @@ public class YassSheetInfo extends JPanel {
 
         // version
         x = x + maskWidth + 6;
-        String v = table.getVersion();
-        y = txtBar - 3;
-        if (v != null) {
-            int vw = g2.getFontMetrics().stringWidth(v);
-            if (vw > versionWidth)
-                v = v.substring(0,10)+"...";
-            g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
-            g2.drawString(v, x, y);
+        if (versionWidth > 0) {
+            String v = table.getVersion();
+            y = txtBar - 3;
+            if (v != null) {
+                int vw = g2.getFontMetrics().stringWidth(v);
+                if (vw > versionWidth && versionWidth > 0 && v.length() > 10)
+                    v = v.substring(0, 10) + "...";
+                g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
+                g2.drawString(v, x, y);
+            }
         }
 
         // error selection

@@ -50,7 +50,7 @@ public class YassActions implements DropTargetListener {
     static int VIEW_LIBRARY = 1;
     static int VIEW_EDIT = 2;
     private int currentView = 0;
-    private Vector<YassTable> openTables = null;
+    private final Vector<YassTable> openTables = new Vector<>();
     private JPanel main = null;
     private JComponent libComponent = null, songComponent = null, songInfoComponent = null, playlistComponent = null, editComponent = null, trackComponent = null;
     private JApplet menuHolder = null;
@@ -163,7 +163,7 @@ public class YassActions implements DropTargetListener {
         }
     };
 
-    private final Action showAbout = new AbstractAction(I18.get("mlib_about")) {
+    private final Action showAbout = new AbstractAction(I18.get("lib_about")) {
         public void actionPerformed(ActionEvent e) {
             URL url = getClass().getResource("/yass/resources/img/about.gif");
             ImageIcon icon = url == null ? null : new ImageIcon(url);
@@ -176,85 +176,85 @@ public class YassActions implements DropTargetListener {
                         openURL(e1.getURL().toExternalForm());
                     }
                 });
-                JOptionPane.showMessageDialog(null, label, I18.get("mlib_about_title"), JOptionPane.PLAIN_MESSAGE, icon);
+                JOptionPane.showMessageDialog(null, label, I18.get("lib_about_title"), JOptionPane.PLAIN_MESSAGE, icon);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
     };
 
-    private final Action spellLyrics = new AbstractAction(I18.get("medit_spellcheck")) {
+    private final Action spellLyrics = new AbstractAction(I18.get("edit_spellcheck")) {
         public void actionPerformed(ActionEvent e) {
             lyrics.spellLyrics();
         }
     };
-    private final Action selectAllSongs = new AbstractAction(I18.get("mlib_select_all")) {
+    private final Action selectAllSongs = new AbstractAction(I18.get("lib_select_all")) {
         public void actionPerformed(ActionEvent e) {
             if (currentView == VIEW_LIBRARY)
                 songList.selectAll();
         }
     };
-    private final Action setTitle = new AbstractAction(I18.get("mlib_title")) {
+    private final Action setTitle = new AbstractAction(I18.get("lib_title")) {
         public void actionPerformed(ActionEvent e) {
             if (currentView == VIEW_LIBRARY)
                 songList.setTitle();
         }
     };
-    private final Action setArtist = new AbstractAction(I18.get("mlib_artist")) {
+    private final Action setArtist = new AbstractAction(I18.get("lib_artist")) {
         public void actionPerformed(ActionEvent e) {
             if (currentView == VIEW_LIBRARY)
                 songList.setArtist();
         }
     };
-    private final Action setYear = new AbstractAction(I18.get("mlib_year")) {
+    private final Action setYear = new AbstractAction(I18.get("lib_year")) {
         public void actionPerformed(ActionEvent e) {
             if (currentView == VIEW_LIBRARY)
                 songList.setYear();
         }
     };
-    private final Action setAlbum = new AbstractAction(I18.get("mlib_album")) {
+    private final Action setAlbum = new AbstractAction(I18.get("lib_album")) {
         public void actionPerformed(ActionEvent e) {
             if (currentView == VIEW_LIBRARY)
                 songList.setAlbum();
         }
     };
-    private final Action setLength = new AbstractAction(I18.get("mlib_length")) {
+    private final Action setLength = new AbstractAction(I18.get("lib_length")) {
         public void actionPerformed(ActionEvent e) {
             if (currentView == VIEW_LIBRARY)
                 songList.setLength();
         }
     };
-    private final Action setID = new AbstractAction(I18.get("mlib_id")) {
+    private final Action setID = new AbstractAction(I18.get("lib_id")) {
         public void actionPerformed(ActionEvent e) {
             if (currentView == VIEW_LIBRARY)
                 songList.setID();
         }
     };
-    private final Action setEncodingUTF8 = new AbstractAction(I18.get("mlib_encoding_utf8")) {
+    private final Action setEncodingUTF8 = new AbstractAction(I18.get("lib_encoding_utf8")) {
         public void actionPerformed(ActionEvent e) {
             if (currentView == VIEW_LIBRARY)
                 songList.setEncoding("UTF-8"); // saruta, Jan 2019: utf8-->UTF-8
         }
     };
-    private final Action setEncodingANSI = new AbstractAction(I18.get("mlib_encoding_ansi")) {
+    private final Action setEncodingANSI = new AbstractAction(I18.get("lib_encoding_ansi")) {
         public void actionPerformed(ActionEvent e) {
             if (currentView == VIEW_LIBRARY)
                 songList.setEncoding(null);
         }
     };
-    private final Action editRecent = new AbstractAction(I18.get("mlib_edit_recent")) {
+    private final Action editRecent = new AbstractAction(I18.get("lib_edit_recent")) {
         public void actionPerformed(ActionEvent e) {
             if (currentView == VIEW_EDIT) {
                 if (cancelOpen()) {
                     return;
                 }
             }
-            String filename = prop.getProperty("recent-files");
-            if (filename != null)
-                openFiles(filename, false);
+            String recent = prop.getProperty("recent-files");
+            if (recent != null)
+                openFiles(recent, false);
         }
     };
-    private final Action clearFilter = new AbstractAction(I18.get("mlib_find_clear")) {
+    private final Action clearFilter = new AbstractAction(I18.get("lib_find_clear")) {
         public void actionPerformed(ActionEvent e) {
             if (currentView == VIEW_LIBRARY) {
                 clearFilter();
@@ -262,16 +262,16 @@ public class YassActions implements DropTargetListener {
             }
         }
     };
-    private final Action findLyrics = new AbstractAction(I18.get("medit_lyrics_find")) {
+    private final Action findLyrics = new AbstractAction(I18.get("edit_lyrics_find")) {
         public void actionPerformed(ActionEvent e) {
             lyrics.find();
         }
     };
-    private final Action correctLibrary = new AbstractAction(I18.get("mlib_correct")) {
+    private final Action correctLibrary = new AbstractAction(I18.get("lib_correct")) {
         public void actionPerformed(ActionEvent e) {
             if (songList.getOptions() != YassSongList.DETAILS
                     || !songList.getShowErrors()) {
-                JOptionPane.showMessageDialog(getFrame(tab), I18.get("mlib_correct_error"), I18.get("mlib_correct"), JOptionPane.PLAIN_MESSAGE);
+                JOptionPane.showMessageDialog(getFrame(tab), I18.get("lib_correct_error"), I18.get("lib_correct"), JOptionPane.PLAIN_MESSAGE);
                 return;
             }
             songList.batchCorrect();
@@ -341,15 +341,14 @@ public class YassActions implements DropTargetListener {
             String coverID = prop.getProperty("cover-id");
             String backgroundID = prop.getProperty("background-id");
             String videoID = prop.getProperty("video-id");
-            String videodirID = prop.getProperty("videodir-id");
+            String videoDirID = prop.getProperty("videodir-id");
 
             songInfo.preventLoad(true);
 
             int ok = JOptionPane
                     .showConfirmDialog(
                             tab, "<html>"
-                                    + MessageFormat.format(
-                                    I18.get("tool_correct_files_msg"), n, coverID, backgroundID, videoID, videodirID), I18
+                                    + MessageFormat.format(I18.get("tool_correct_files_msg"), n, coverID, backgroundID, videoID, videoDirID), I18
                                     .get("tool_correct_files_title"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
             if (ok != JOptionPane.OK_OPTION) {
                 return;
@@ -455,47 +454,49 @@ public class YassActions implements DropTargetListener {
             activateTrack(7);
         }
     };
-    private final Action openSongFromLibrary = new AbstractAction(I18.get("mlib_edit_songs")) {
+    private final Action openSongFromLibrary = new AbstractAction(I18.get("lib_edit_songs")) {
         public void actionPerformed(ActionEvent e) {
-            openSelectedSongs();
+            Vector<String> fn = songList.getSelectedFiles();
+            if (fn != null)
+                openFiles(fn, false);
         }
     };
-    private final Action testMic = new AbstractAction(I18.get("mlib_test_mic")) {
+    private final Action testMic = new AbstractAction(I18.get("lib_test_mic")) {
         public void actionPerformed(ActionEvent e) {
             YassCaptureAudio cap = new YassCaptureAudio();
             cap.createGUI();
             cap.startCapture(getProperties().getProperty("control-mic"));
         }
     };
-    Action refreshLibrary = new AbstractAction(I18.get("mlib_refresh")) {
+    Action refreshLibrary = new AbstractAction(I18.get("lib_refresh")) {
         public void actionPerformed(ActionEvent e) {
             refreshLibrary();
         }
     };
-    private final Action printLibrary = new AbstractAction(I18.get("mlib_print")) {
+    private final Action printLibrary = new AbstractAction(I18.get("lib_print")) {
         public void actionPerformed(ActionEvent e) {
             songList.printSongs();
         }
     };
-    Action setPreviewStart = new AbstractAction(I18.get("mlib_previewstart")) {
+    Action setPreviewStart = new AbstractAction(I18.get("lib_previewstart")) {
         public void actionPerformed(ActionEvent e) {
             int[] inout = songInfo.getInOut();
             songList.setPreviewStart(inout[0]);
         }
     };
     Action setMedleyStartEnd = new AbstractAction(
-            I18.get("mlib_medleystartend")) {
+            I18.get("lib_medleystartend")) {
         public void actionPerformed(ActionEvent e) {
             int[] inout = songInfo.getInOut();
             songList.setMedleyStartEnd(inout[0], inout[1]);
         }
     };
-    private final Action togglePlaySong = new AbstractAction(I18.get("mlib_play_song")) {
+    private final Action togglePlaySong = new AbstractAction(I18.get("lib_play_song")) {
         public void actionPerformed(ActionEvent e) {
             togglePlaySong();
         }
     };
-    Action playSong = new AbstractAction(I18.get("mlib_play_song")) {
+    Action playSong = new AbstractAction(I18.get("lib_play_song")) {
         public void actionPerformed(ActionEvent e) {
             if (isFilterEditing()) {
                 return;
@@ -503,7 +504,7 @@ public class YassActions implements DropTargetListener {
             playSong();
         }
     };
-    Action stopPlaySong = new AbstractAction(I18.get("mlib_stop_song")) {
+    Action stopPlaySong = new AbstractAction(I18.get("lib_stop_song")) {
         public void actionPerformed(ActionEvent e) {
             if (isFilterEditing()) {
                 return;
@@ -511,7 +512,7 @@ public class YassActions implements DropTargetListener {
             stopPlaySong();
         }
     };
-    private final Action thumbnailLibrary = new AbstractAction(I18.get("mlib_thumbs")) {
+    private final Action thumbnailLibrary = new AbstractAction(I18.get("lib_thumbs")) {
         public void actionPerformed(ActionEvent e) {
             songList.startThumbnailer();
         }
@@ -533,7 +534,7 @@ public class YassActions implements DropTargetListener {
     };
 
     private final Action refreshPlayList = new AbstractAction(
-            I18.get("mlib_playlist_refresh")) {
+            I18.get("lib_playlist_refresh")) {
         public void actionPerformed(ActionEvent e) {
             int n = plBox.getSelectedIndex();
             if (n > 0) {
@@ -541,19 +542,19 @@ public class YassActions implements DropTargetListener {
             }
         }
     };
-    Action newEdition = new AbstractAction(I18.get("mlib_edition_new")) {
+    Action newEdition = new AbstractAction(I18.get("lib_edition_new")) {
         public void actionPerformed(ActionEvent e) {
             songList.newEdition();
             refreshGroups();
         }
     };
-    Action newFolder = new AbstractAction(I18.get("mlib_folder_new")) {
+    Action newFolder = new AbstractAction(I18.get("lib_folder_new")) {
         public void actionPerformed(ActionEvent e) {
             songList.newFolder();
             refreshGroups();
         }
     };
-    Action renameFolder = new AbstractAction(I18.get("mlib_folder_rename")) {
+    Action renameFolder = new AbstractAction(I18.get("lib_folder_rename")) {
         public void actionPerformed(ActionEvent e) {
             YassSong s = songList.getFirstSelectedSong();
             if (s == null) {
@@ -631,49 +632,49 @@ public class YassActions implements DropTargetListener {
             refreshGroups();
         }
     };
-    private final Action undoAllLibraryChanges = new AbstractAction(I18.get("mlib_undo_all")) {
+    private final Action undoAllLibraryChanges = new AbstractAction(I18.get("lib_undo_all")) {
         public void actionPerformed(ActionEvent e) {
             undoAllLibraryChanges();
             refreshGroups();
         }
     };
-    Action openSongFolder = new AbstractAction(I18.get("mlib_open_folder")) {
+    Action openSongFolder = new AbstractAction(I18.get("lib_open_folder")) {
         public void actionPerformed(ActionEvent e) {
             songList.openSongFolder();
         }
     };
-    private final Action copySongInfo = new AbstractAction(I18.get("mlib_copy_data")) {
+    private final Action copySongInfo = new AbstractAction(I18.get("lib_copy_data")) {
         public void actionPerformed(ActionEvent e) {
             songInfo.copy(songInfo.NONE);
         }
     };
-    private final Action copyCoverSongInfo = new AbstractAction(I18.get("mlib_copy_cover")) {
+    private final Action copyCoverSongInfo = new AbstractAction(I18.get("lib_copy_cover")) {
         public void actionPerformed(ActionEvent e) {
             songInfo.copyCover();
         }
     };
-    private final Action copyLyricsSongInfo = new AbstractAction(I18.get("mlib_copy_lyrics")) {
+    private final Action copyLyricsSongInfo = new AbstractAction(I18.get("lib_copy_lyrics")) {
         public void actionPerformed(ActionEvent e) {
             songInfo.copyLyrics();
         }
     };
     private final Action copyBackgroundSongInfo = new AbstractAction(
-            I18.get("mlib_copy_background")) {
+            I18.get("lib_copy_background")) {
         public void actionPerformed(ActionEvent e) {
             songInfo.copyBackground();
         }
     };
-    Action copyVideoSongInfo = new AbstractAction(I18.get("mlib_copy_video")) {
+    Action copyVideoSongInfo = new AbstractAction(I18.get("lib_copy_video")) {
         public void actionPerformed(ActionEvent e) {
             songInfo.copyVideo();
         }
     };
-    Action pasteSongInfo = new AbstractAction(I18.get("mlib_paste_data")) {
+    Action pasteSongInfo = new AbstractAction(I18.get("lib_paste_data")) {
         public void actionPerformed(ActionEvent e) {
             songInfo.paste();
         }
     };
-    Action addToPlayList = new AbstractAction(I18.get("mlib_playlist_add")) {
+    Action addToPlayList = new AbstractAction(I18.get("lib_playlist_add")) {
         public void actionPerformed(ActionEvent e) {
             if (!playlistToggle.isSelected())
                 showPlaylistMenu.actionPerformed(null);
@@ -689,7 +690,7 @@ public class YassActions implements DropTargetListener {
             }
         }
     };
-    private final Action removeFromPlayList = new AbstractAction(I18.get("mlib_playlist_remove")) {
+    private final Action removeFromPlayList = new AbstractAction(I18.get("lib_playlist_remove")) {
         public void actionPerformed(ActionEvent e) {
             if (!playlistToggle.isSelected())
                 showPlaylistMenu.actionPerformed(null);
@@ -697,13 +698,13 @@ public class YassActions implements DropTargetListener {
             songList.repaint();
         }
     };
-    private final Action movePlayListDown = new AbstractAction(I18.get("mlib_playlist_down")) {
+    private final Action movePlayListDown = new AbstractAction(I18.get("lib_playlist_down")) {
         public void actionPerformed(ActionEvent e) {
             playList.down();
         }
     };
     private final Action removePlayList = new AbstractAction(
-            I18.get("mlib_playlist_remove_disk")) {
+            I18.get("lib_playlist_remove_disk")) {
         public void actionPerformed(ActionEvent e) {
             int n = plBox.getSelectedIndex();
             if (n > 0) {
@@ -711,23 +712,23 @@ public class YassActions implements DropTargetListener {
             }
         }
     };
-    private final Action movePlayListUp = new AbstractAction(I18.get("mlib_playlist_up")) {
+    private final Action movePlayListUp = new AbstractAction(I18.get("lib_playlist_up")) {
         public void actionPerformed(ActionEvent e) {
             playList.up();
         }
     };
-    private final Action savePlayList = new AbstractAction(I18.get("mlib_playlist_save")) {
+    private final Action savePlayList = new AbstractAction(I18.get("lib_playlist_save")) {
         public void actionPerformed(ActionEvent e) {
             playList.storePlayList();
 
         }
     };
-    private final Action savePlayListAs = new AbstractAction(I18.get("mlib_playlist_save_as")) {
+    private final Action savePlayListAs = new AbstractAction(I18.get("lib_playlist_save_as")) {
         public void actionPerformed(ActionEvent e) {
             playList.storePlayListAs();
         }
     };
-    private final Action saveLibrary = new AbstractAction(I18.get("mlib_save_all")) {
+    private final Action saveLibrary = new AbstractAction(I18.get("lib_save_all")) {
         public void actionPerformed(ActionEvent e) {
             songList.store();
             saveLibrary.setEnabled(false);
@@ -739,7 +740,7 @@ public class YassActions implements DropTargetListener {
             }
         }
     };
-    private final Action showStartEnd = new AbstractAction(I18.get("medit_audio_offsets")) {
+    private final Action showStartEnd = new AbstractAction(I18.get("edit_audio_offsets")) {
         public void actionPerformed(ActionEvent e) {
             if (seDialog != null) {
                 if (seDialog.isShowing()) {
@@ -752,7 +753,7 @@ public class YassActions implements DropTargetListener {
             }
 
             JDialog dia = seDialog = new JDialog(new OwnerFrame());
-            dia.setTitle(I18.get("medit_audio_offsets_title"));
+            dia.setTitle(I18.get("edit_audio_offsets_title"));
             dia.setAlwaysOnTop(true);
             dia.setResizable(false);
             dia.addWindowListener(new WindowAdapter() {
@@ -803,7 +804,7 @@ public class YassActions implements DropTargetListener {
             dia.setVisible(true);
         }
     };
-    Action multiply = new AbstractAction(I18.get("medit_bpm_double")) {
+    Action multiply = new AbstractAction(I18.get("edit_bpm_double")) {
         public void actionPerformed(ActionEvent e) {
             table.multiply();
             if (bpmField != null) {
@@ -811,7 +812,7 @@ public class YassActions implements DropTargetListener {
             }
         }
     };
-    Action divide = new AbstractAction(I18.get("medit_bpm_half")) {
+    Action divide = new AbstractAction(I18.get("edit_bpm_half")) {
         public void actionPerformed(ActionEvent e) {
             table.divide();
             if (bpmField != null) {
@@ -819,7 +820,7 @@ public class YassActions implements DropTargetListener {
             }
         }
     };
-    Action showLyricsStart = new AbstractAction(I18.get("medit_gap")) {
+    Action showLyricsStart = new AbstractAction(I18.get("edit_gap")) {
         public void actionPerformed(ActionEvent e) {
             updateGap();
 
@@ -834,7 +835,7 @@ public class YassActions implements DropTargetListener {
             }
 
             JDialog dia = gapDialog = new JDialog(new OwnerFrame());
-            dia.setTitle(I18.get("medit_gap_title"));
+            dia.setTitle(I18.get("edit_gap_title"));
             dia.setAlwaysOnTop(true);
             dia.setResizable(false);
             dia.addWindowListener(new WindowAdapter() {
@@ -856,7 +857,7 @@ public class YassActions implements DropTargetListener {
             b.setFocusable(false);
 
             panel.addSeparator();
-            panel.add(new JLabel(I18.get("medit_bpm_title")));
+            panel.add(new JLabel(I18.get("edit_bpm_title")));
 
             double bpm = table.getBPM();
             bpmField = new JTextField(bpm + "", 5);
@@ -900,7 +901,7 @@ public class YassActions implements DropTargetListener {
             dia.setVisible(true);
         }
     };
-    Action showVideoGap = new AbstractAction(I18.get("medit_videogap")) {
+    Action showVideoGap = new AbstractAction(I18.get("edit_videogap")) {
         public void actionPerformed(ActionEvent e) {
             sheet.showVideo(true);
 
@@ -918,7 +919,7 @@ public class YassActions implements DropTargetListener {
             updateGap();
 
             JDialog fh = vgapDialog = new JDialog(new OwnerFrame());
-            fh.setTitle(I18.get("medit_videogap_title"));
+            fh.setTitle(I18.get("edit_videogap_title"));
             fh.setAlwaysOnTop(true);
             fh.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent e) {
@@ -939,7 +940,7 @@ public class YassActions implements DropTargetListener {
             video.setTime((int) time);
         }
     };
-    private final Action showLibTable = new AbstractAction(I18.get("mlib_source")) {
+    private final Action showLibTable = new AbstractAction(I18.get("lib_source")) {
         public void actionPerformed(ActionEvent e) {
             Vector<?> v = songList.getSelectedFiles();
             if (v.size() < 1 || v.size() > 10) {
@@ -950,7 +951,7 @@ public class YassActions implements DropTargetListener {
                 String fn = (String) en.nextElement();
 
                 JDialog fh = new JDialog(new OwnerFrame());
-                fh.setTitle(I18.get("mlib_source_title"));
+                fh.setTitle(I18.get("lib_source_title"));
                 fh.setAlwaysOnTop(true);
                 fh.addWindowListener(new WindowAdapter() {
                     public void windowClosing(WindowEvent e) {
@@ -971,12 +972,12 @@ public class YassActions implements DropTargetListener {
             }
         }
     };
-    private final Action showNothing = new AbstractAction(I18.get("medit_view_1")) {
+    private final Action showNothing = new AbstractAction(I18.get("edit_view_1")) {
         public void actionPerformed(ActionEvent e) {
             showNothing();
         }
     };
-    Action showBackground = new AbstractAction(I18.get("medit_view_2")) {
+    Action showBackground = new AbstractAction(I18.get("edit_view_2")) {
         public void actionPerformed(ActionEvent e) {
             sheet.showVideo(false);
             sheet.showBackground(true);
@@ -985,7 +986,7 @@ public class YassActions implements DropTargetListener {
             sheet.repaint();
         }
     };
-    Action showVideo = new AbstractAction(I18.get("medit_view_3")) {
+    Action showVideo = new AbstractAction(I18.get("edit_view_3")) {
         public void actionPerformed(ActionEvent e) {
             if (!YassVideoUtils.useFOBS) {
                 return;
@@ -1001,7 +1002,7 @@ public class YassActions implements DropTargetListener {
             sheet.repaint();
         }
     };
-    private final Action toggleVideo = new AbstractAction(I18.get("medit_video_toggle")) {
+    private final Action toggleVideo = new AbstractAction(I18.get("edit_video_toggle")) {
         public void actionPerformed(ActionEvent e) {
             boolean onoff = sheet.showVideo() || sheet.showBackground();
             onoff = !onoff;
@@ -1032,7 +1033,7 @@ public class YassActions implements DropTargetListener {
         }
     };
 
-    private final Action showHelp = new AbstractAction(I18.get("mlib_help_offline")) {
+    private final Action showHelp = new AbstractAction(I18.get("lib_help_offline")) {
         public void actionPerformed(ActionEvent e) {
             helpPane = new JTextPane();
             HTMLDocument doc = (HTMLDocument) helpPane
@@ -1071,7 +1072,7 @@ public class YassActions implements DropTargetListener {
             });
             helpPane.setEditable(false);
 
-            JFrame fh = new JFrame(I18.get("mlib_help_offline_title"));
+            JFrame fh = new JFrame(I18.get("lib_help_offline_title"));
             fh.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent e) {
                     e.getWindow().dispose();
@@ -1084,27 +1085,27 @@ public class YassActions implements DropTargetListener {
             fh.setVisible(true);
         }
     };
-    private final Action showOnlineHelp = new AbstractAction(I18.get("mlib_help_online")) {
+    private final Action showOnlineHelp = new AbstractAction(I18.get("lib_help_online")) {
         public void actionPerformed(ActionEvent e) {
             openURL("http://www.yass-along.com");
         }
     };
-    private final Action showOnlineHelpErrors = new AbstractAction(I18.get("mlib_help_online")) {
+    private final Action showOnlineHelpErrors = new AbstractAction(I18.get("lib_help_online")) {
         public void actionPerformed(ActionEvent e) {
             openURL("http://www.yass-along.com/errors");
         }
     };
-    private final Action showOnlineHelpBeat = new AbstractAction(I18.get("mlib_help_online")) {
+    private final Action showOnlineHelpBeat = new AbstractAction(I18.get("lib_help_online")) {
         public void actionPerformed(ActionEvent e) {
             openURL("http://www.yass-along.com/beats");
         }
     };
-    private final Action showOnlineHelpDuet = new AbstractAction(I18.get("mlib_help_online")) {
+    private final Action showOnlineHelpDuet = new AbstractAction(I18.get("lib_help_online")) {
         public void actionPerformed(ActionEvent e) {
             openURL("http://www.yass-along.com/duets");
         }
     };
-    private final Action editLyrics = new AbstractAction(I18.get("medit_lyrics_edit")) {
+    private final Action editLyrics = new AbstractAction(I18.get("edit_lyrics_edit")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             editLyrics();
@@ -1142,7 +1143,7 @@ public class YassActions implements DropTargetListener {
      * PRESSED 'A' RELEASED 'A' PRESSED 'A' RELEASED 'A' ... PRESSED 'A'
      * RELEASED 'A'
      */
-    Action playSelection = new AbstractAction(I18.get("medit_play_selection")) {
+    Action playSelection = new AbstractAction(I18.get("edit_play_selection")) {
         public void actionPerformed(ActionEvent e) {
             if (lyrics.isEditable() || songList.isEditing()
                     || isFilterEditing()) {
@@ -1153,7 +1154,7 @@ public class YassActions implements DropTargetListener {
         }
     };
     private final Action playSelectionWithMIDI = new AbstractAction(
-            I18.get("medit_play_selection_midi")) {
+            I18.get("edit_play_selection_midi")) {
         public void actionPerformed(ActionEvent e) {
             if (lyrics.isEditable() || songList.isEditing()
                     || isFilterEditing()) {
@@ -1164,7 +1165,7 @@ public class YassActions implements DropTargetListener {
         }
     };
     private final Action playSelectionWithMIDIAudio = new AbstractAction(
-            I18.get("medit_play_selection_midi_audio")) {
+            I18.get("edit_play_selection_midi_audio")) {
         public void actionPerformed(ActionEvent e) {
             if (lyrics.isEditable() || songList.isEditing()
                     || isFilterEditing()) {
@@ -1174,7 +1175,7 @@ public class YassActions implements DropTargetListener {
             playSelection(2);
         }
     };
-    private final Action playPage = new AbstractAction(I18.get("medit_play_page")) {
+    private final Action playPage = new AbstractAction(I18.get("edit_play_page")) {
         public void actionPerformed(ActionEvent e) {
             if (lyrics.isEditable() || songList.isEditing()
                     || isFilterEditing()) {
@@ -1183,7 +1184,7 @@ public class YassActions implements DropTargetListener {
             playPageOrFrozen(0, false);
         }
     };
-    private final Action playPageWithMIDI = new AbstractAction(I18.get("medit_play_page_midi")) {
+    private final Action playPageWithMIDI = new AbstractAction(I18.get("edit_play_page_midi")) {
         public void actionPerformed(ActionEvent e) {
             if (lyrics.isEditable() || songList.isEditing()
                     || isFilterEditing()) {
@@ -1192,7 +1193,7 @@ public class YassActions implements DropTargetListener {
             playPageOrFrozen(1, false);
         }
     };
-    private final Action playPageWithMIDIAudio = new AbstractAction(I18.get("medit_play_page_midi_audio")) {
+    private final Action playPageWithMIDIAudio = new AbstractAction(I18.get("edit_play_page_midi_audio")) {
         public void actionPerformed(ActionEvent e) {
             if (lyrics.isEditable() || songList.isEditing()
                     || isFilterEditing()) {
@@ -1201,7 +1202,7 @@ public class YassActions implements DropTargetListener {
             playPageOrFrozen(2, false);
         }
     };
-    private final Action playFrozen = new AbstractAction(I18.get("medit_copy_play")) {
+    private final Action playFrozen = new AbstractAction(I18.get("edit_copy_play")) {
         public void actionPerformed(ActionEvent e) {
             if (lyrics.isEditable() || songList.isEditing()
                     || isFilterEditing()) {
@@ -1210,7 +1211,7 @@ public class YassActions implements DropTargetListener {
             playPageOrFrozen(0, true);
         }
     };
-    private final Action playBefore = new AbstractAction(I18.get("medit_play_before")) {
+    private final Action playBefore = new AbstractAction(I18.get("edit_play_before")) {
         public void actionPerformed(ActionEvent e) {
             if (lyrics.isEditable() || songList.isEditing()
                     || isFilterEditing()) {
@@ -1220,7 +1221,7 @@ public class YassActions implements DropTargetListener {
         }
     };
 
-    private final Action playNext = new AbstractAction(I18.get("medit_play_next")) {
+    private final Action playNext = new AbstractAction(I18.get("edit_play_next")) {
         public void actionPerformed(ActionEvent e) {
             if (lyrics.isEditable() || songList.isEditing()
                     || isFilterEditing()) {
@@ -1230,7 +1231,7 @@ public class YassActions implements DropTargetListener {
         }
     };
 
-    private final Action playFrozenWithMIDI = new AbstractAction(I18.get("medit_copy_play_midi")) {
+    private final Action playFrozenWithMIDI = new AbstractAction(I18.get("edit_copy_play_midi")) {
         public void actionPerformed(ActionEvent e) {
             if (lyrics.isEditable() || songList.isEditing()
                     || isFilterEditing()) {
@@ -1240,7 +1241,7 @@ public class YassActions implements DropTargetListener {
         }
     };
 
-    private final Action playFrozenWithMIDIAudio = new AbstractAction(I18.get("medit_copy_play_midi_audio")) {
+    private final Action playFrozenWithMIDIAudio = new AbstractAction(I18.get("edit_copy_play_midi_audio")) {
         public void actionPerformed(ActionEvent e) {
             if (lyrics.isEditable() || songList.isEditing()
                     || isFilterEditing()) {
@@ -1250,7 +1251,7 @@ public class YassActions implements DropTargetListener {
         }
     };
 
-    private final Action recordSelection = new AbstractAction(I18.get("medit_record")) {
+    private final Action recordSelection = new AbstractAction(I18.get("edit_record")) {
         final long[] inout = new long[2];
 
         public void actionPerformed(ActionEvent e) {
@@ -1260,7 +1261,7 @@ public class YassActions implements DropTargetListener {
             }
             int i = table.getSelectionModel().getMinSelectionIndex();
             if (i < 0) {
-                JOptionPane.showMessageDialog(getTab(), "<html>" + I18.get("medit_record_error_msg"), I18.get("medit_record_error_title"), JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(getTab(), "<html>" + I18.get("edit_record_error_msg"), I18.get("edit_record_error_title"), JOptionPane.ERROR_MESSAGE);
                 return;
             }
             int j = table.getSelectionModel().getMaxSelectionIndex();
@@ -1281,7 +1282,7 @@ public class YassActions implements DropTargetListener {
                 String s = (String) JOptionPane.showInputDialog(
                         tab, "<html>"
                                 + MessageFormat.format(
-                                I18.get("medit_record_msg"), recordLength), I18.get("medit_record_title"), JOptionPane.INFORMATION_MESSAGE, null, speed, speed[def]);
+                                I18.get("edit_record_msg"), recordLength), I18.get("edit_record_title"), JOptionPane.INFORMATION_MESSAGE, null, speed, speed[def]);
 
                 if (s == null || s.length() < 1) {
                     return;
@@ -1301,7 +1302,7 @@ public class YassActions implements DropTargetListener {
                 prop.store();
 
                 // int ok = JOptionPane.showConfirmDialog(tab, "<html>" +
-                // MessageFormat.format(I18.get("medit_record_msg"), // recordLength), I18.get("medit_record_title"), // JOptionPane.OK_CANCEL_OPTION);
+                // MessageFormat.format(I18.get("edit_record_msg"), // recordLength), I18.get("edit_record_title"), // JOptionPane.OK_CANCEL_OPTION);
 
                 startRecording();
                 mp3.playSelection(inout[0], inout[1], null, timebase);
@@ -1309,7 +1310,7 @@ public class YassActions implements DropTargetListener {
         }
     };
 
-    private final Action setPlayTimebase = new AbstractAction(I18.get("medit_speed")) {
+    private final Action setPlayTimebase = new AbstractAction(I18.get("edit_speed")) {
         public void actionPerformed(ActionEvent e) {
             playSlower.actionPerformed(e);
         }
@@ -1334,25 +1335,25 @@ public class YassActions implements DropTargetListener {
         }
     };
 
-    private final Action playAll = new AbstractAction(I18.get("medit_play_all")) {
+    private final Action playAll = new AbstractAction(I18.get("edit_play_all")) {
         public void actionPerformed(ActionEvent e) {
             previewEdit(true);
             playAll(true);
         }
     };
-    private final Action playAllFromHere = new AbstractAction(I18.get("medit_play_remainder")) {
+    private final Action playAllFromHere = new AbstractAction(I18.get("edit_play_remainder")) {
         public void actionPerformed(ActionEvent e) {
             previewEdit(true);
             playAll(false);
         }
     };
-    private final Action fullscreen = new AbstractAction(I18.get("mlib_fullscreen")) {
+    private final Action fullscreen = new AbstractAction(I18.get("lib_fullscreen")) {
         public void actionPerformed(ActionEvent e) {
             fullscreen();
         }
     };
 
-    private final Action recordAll = new AbstractAction(I18.get("medit_record_all")) {
+    private final Action recordAll = new AbstractAction(I18.get("edit_record_all")) {
         public void actionPerformed(ActionEvent e) {
             if (lyrics.isEditable() || songList.isEditing()
                     || isFilterEditing()) {
@@ -1364,7 +1365,7 @@ public class YassActions implements DropTargetListener {
             mp3.playAll(null);
         }
     };
-    private final Action pasteRows = new AbstractAction(I18.get("medit_paste")) {
+    private final Action pasteRows = new AbstractAction(I18.get("edit_paste")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             table.pasteRows();
@@ -1375,7 +1376,7 @@ public class YassActions implements DropTargetListener {
             sheet.repaint();
         }
     };
-    private final Action pasteNotes = new AbstractAction(I18.get("medit_paste_notes")) {
+    private final Action pasteNotes = new AbstractAction(I18.get("edit_paste_notes")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             table.insertNotesHere();
@@ -1386,25 +1387,25 @@ public class YassActions implements DropTargetListener {
             sheet.repaint();
         }
     };
-    private final Action insertNote = new AbstractAction(I18.get("medit_add")) {
+    private final Action insertNote = new AbstractAction(I18.get("edit_add")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             table.insertNote();
         }
     };
-    private final Action removeRows = new AbstractAction(I18.get("medit_remove")) {
+    private final Action removeRows = new AbstractAction(I18.get("edit_remove")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             table.removeRows();
         }
     };
-    private final Action removeRowsWithLyrics = new AbstractAction(I18.get("medit_remove_with_lyrics")) {
+    private final Action removeRowsWithLyrics = new AbstractAction(I18.get("edit_remove_with_lyrics")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             table.removeRowsWithLyrics();
         }
     };
-    private final Action enableVideoPreview = new AbstractAction(I18.get("medit_playallvideo_toggle")) {
+    private final Action enableVideoPreview = new AbstractAction(I18.get("edit_playallvideo_toggle")) {
         public void actionPerformed(ActionEvent e) {
             // playAllVideoCBI
         }
@@ -1414,7 +1415,7 @@ public class YassActions implements DropTargetListener {
             video.muteVideo(!videoAudioButton.isSelected());
         }
     };
-    private final Action joinRows = new AbstractAction(I18.get("medit_join")) {
+    private final Action joinRows = new AbstractAction(I18.get("edit_join")) {
         public void actionPerformed(ActionEvent e) {
             if (lyrics.isEditable() || songList.isEditing()
                     || isFilterEditing()) {
@@ -1423,7 +1424,7 @@ public class YassActions implements DropTargetListener {
             table.joinRows();
         }
     };
-    private final Action splitRows = new AbstractAction(I18.get("medit_split")) {
+    private final Action splitRows = new AbstractAction(I18.get("edit_split")) {
         public void actionPerformed(ActionEvent e) {
             if (lyrics.isEditable() || songList.isEditing()
                     || isFilterEditing()) {
@@ -1432,7 +1433,7 @@ public class YassActions implements DropTargetListener {
             table.splitRows();
         }
     };
-    private final Action rollLeft = new AbstractAction(I18.get("medit_roll_left")) {
+    private final Action rollLeft = new AbstractAction(I18.get("edit_roll_left")) {
         public void actionPerformed(ActionEvent e) {
             if (lyrics.isEditable() || songList.isEditing()
                     || isFilterEditing()) {
@@ -1441,7 +1442,7 @@ public class YassActions implements DropTargetListener {
             table.rollLeft();
         }
     };
-    private final Action rollRight = new AbstractAction(I18.get("medit_roll_right")) {
+    private final Action rollRight = new AbstractAction(I18.get("edit_roll_right")) {
         public void actionPerformed(ActionEvent e) {
             if (lyrics.isEditable() || songList.isEditing()
                     || isFilterEditing()) {
@@ -1450,13 +1451,13 @@ public class YassActions implements DropTargetListener {
             table.rollRight();
         }
     };
-    private final Action togglePageBreak = new AbstractAction(I18.get("medit_break")) {
+    private final Action togglePageBreak = new AbstractAction(I18.get("edit_break")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             table.togglePageBreak();
         }
     };
-    private final Action removePageBreak = new AbstractAction(I18.get("medit_break_remove")) {
+    private final Action removePageBreak = new AbstractAction(I18.get("edit_break_remove")) {
         public void actionPerformed(ActionEvent e) {
             int row = table.getSelectionModel().getMinSelectionIndex() - 1;
             if (row < 1) {
@@ -1466,7 +1467,7 @@ public class YassActions implements DropTargetListener {
             table.setRowSelectionInterval(row, row);
         }
     };
-    private final Action copyRows = new AbstractAction(I18.get("medit_copy")) {
+    private final Action copyRows = new AbstractAction(I18.get("edit_copy")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             copyRows();
@@ -1477,19 +1478,19 @@ public class YassActions implements DropTargetListener {
             sheet.repaint();
         }
     };
-    private final Action prevPage = new AbstractAction(I18.get("medit_page_prev")) {
+    private final Action prevPage = new AbstractAction(I18.get("edit_page_prev")) {
         public void actionPerformed(ActionEvent e) {
             stopPlaying();
             table.gotoPage(-1);
         }
     };
-    private final Action nextPage = new AbstractAction(I18.get("medit_page_next")) {
+    private final Action nextPage = new AbstractAction(I18.get("edit_page_next")) {
         public void actionPerformed(ActionEvent e) {
             stopPlaying();
             table.gotoPage(1);
         }
     };
-    private final Action lessPages = new AbstractAction(I18.get("medit_page_less")) {
+    private final Action lessPages = new AbstractAction(I18.get("edit_page_less")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             int k = table.getMultiSize();
@@ -1505,7 +1506,7 @@ public class YassActions implements DropTargetListener {
             lyrics.repaintLineNumbers();
         }
     };
-    private final Action morePages = new AbstractAction(I18.get("medit_page_more")) {
+    private final Action morePages = new AbstractAction(I18.get("edit_page_more")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             setRelative(false);
@@ -1515,7 +1516,7 @@ public class YassActions implements DropTargetListener {
             lyrics.repaintLineNumbers();
         }
     };
-    private final Action onePage = new AbstractAction(I18.get("medit_page_one")) {
+    private final Action onePage = new AbstractAction(I18.get("edit_page_one")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             setRelative(true);
@@ -1525,7 +1526,7 @@ public class YassActions implements DropTargetListener {
             lyrics.repaintLineNumbers();
         }
     };
-    private final Action allRemainingPages = new AbstractAction(I18.get("medit_page_all_from_here")) {
+    private final Action allRemainingPages = new AbstractAction(I18.get("edit_page_all_from_here")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             setRelative(false);
@@ -1535,76 +1536,76 @@ public class YassActions implements DropTargetListener {
             lyrics.repaintLineNumbers();
         }
     };
-    private final Action shiftLeft = new AbstractAction(I18.get("medit_shift_left")) {
+    private final Action shiftLeft = new AbstractAction(I18.get("edit_shift_left")) {
         public void actionPerformed(ActionEvent e) {
             table.shiftBeat(-1);
         }
     };
-    private final Action shiftRight = new AbstractAction(I18.get("medit_shift_right")) {
+    private final Action shiftRight = new AbstractAction(I18.get("edit_shift_right")) {
         public void actionPerformed(ActionEvent e) {
             table.shiftBeat(+1);
         }
     };
-    private final Action shiftLeftRemainder = new AbstractAction(I18.get("medit_shift_left_remainder")) {
+    private final Action shiftLeftRemainder = new AbstractAction(I18.get("edit_shift_left_remainder")) {
         public void actionPerformed(ActionEvent e) {
             table.shiftRemainder(-1);
         }
     };
-    private final Action shiftRightRemainder = new AbstractAction(I18.get("medit_shift_right_remainder")) {
+    private final Action shiftRightRemainder = new AbstractAction(I18.get("edit_shift_right_remainder")) {
         public void actionPerformed(ActionEvent e) {
             table.shiftRemainder(+1);
         }
     };
-    private final Action home = new AbstractAction(I18.get("medit_home")) {
+    private final Action home = new AbstractAction(I18.get("edit_home")) {
         public void actionPerformed(ActionEvent e) {
             table.home();
         }
     };
-    private final Action end = new AbstractAction(I18.get("medit_end")) {
+    private final Action end = new AbstractAction(I18.get("edit_end")) {
         public void actionPerformed(ActionEvent e) {
             table.end();
         }
     };
-    private final Action first = new AbstractAction(I18.get("medit_first")) {
+    private final Action first = new AbstractAction(I18.get("edit_first")) {
         public void actionPerformed(ActionEvent e) {
             table.firstNote();
         }
     };
-    private final Action last = new AbstractAction(I18.get("medit_last")) {
+    private final Action last = new AbstractAction(I18.get("edit_last")) {
         public void actionPerformed(ActionEvent e) {
             table.lastNote();
         }
     };
-    private final Action activatePrevTrack = new AbstractAction(I18.get("medit_tracks_prev")) {
+    private final Action activatePrevTrack = new AbstractAction(I18.get("edit_tracks_prev")) {
         public void actionPerformed(ActionEvent e) {
             activateNextTrack(-1);
         }
     };
-    private final Action activateNextTrack = new AbstractAction(I18.get("medit_tracks_next")) {
+    private final Action activateNextTrack = new AbstractAction(I18.get("edit_tracks_next")) {
         public void actionPerformed(ActionEvent e) {
             activateNextTrack(1);
         }
     };
-    private final Action saveAll = new AbstractAction(I18.get("medit_save_all")) {
+    private final Action saveAll = new AbstractAction(I18.get("edit_save_all")) {
         public void actionPerformed(ActionEvent e) {
             if (lyrics.isEditable() || songList.isEditing() || isFilterEditing())
                 return;
-            if (JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(tab, I18.get("medit_save_all_msg"), I18.get("medit_save_all"), JOptionPane.OK_CANCEL_OPTION))
+            if (JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(tab, I18.get("edit_save_all_msg"), I18.get("edit_save_all"), JOptionPane.OK_CANCEL_OPTION))
                 return;
             save(openTables);
         }
     };
-    private final Action saveTrack = new AbstractAction(I18.get("medit_save_track")) {
+    private final Action saveTrack = new AbstractAction(I18.get("edit_save_track")) {
         public void actionPerformed(ActionEvent e) {
             if (table.getDuetTrackCount() > 0) {
                 if (JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(tab,
-                        MessageFormat.format(I18.get("medit_save_duet_msg"), table.getDuetTrackCount()),
-                        I18.get("medit_save_track"), JOptionPane.OK_CANCEL_OPTION))
+                        MessageFormat.format(I18.get("edit_save_duet_msg"), table.getDuetTrackCount()),
+                        I18.get("edit_save_track"), JOptionPane.OK_CANCEL_OPTION))
                     return;
             } else {
                 if (JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(tab,
-                        I18.get("medit_save_track_msg"),
-                        I18.get("medit_save_track"), JOptionPane.OK_CANCEL_OPTION))
+                        I18.get("edit_save_track_msg"),
+                        I18.get("edit_save_track"), JOptionPane.OK_CANCEL_OPTION))
                     return;
             }
             Vector<YassTable> v = new Vector<>();
@@ -1612,9 +1613,9 @@ public class YassActions implements DropTargetListener {
             save(v);
         }
     };
-    private final Action mergeTracks = new AbstractAction(I18.get("medit_tracks_merge")) {
+    private final Action mergeTracks = new AbstractAction(I18.get("edit_tracks_merge")) {
         public void actionPerformed(ActionEvent e) {
-            String filename = askFilename(I18.get("mlib_edit_file_msg"), FileDialog.SAVE);
+            String filename = askFilename(I18.get("lib_edit_file_msg"), FileDialog.SAVE);
             if (filename != null) {
                 YassTable mt = YassTable.mergeTables(openTables, prop);
                 if (!mt.storeFile(filename)) // todo warn
@@ -1623,10 +1624,10 @@ public class YassActions implements DropTargetListener {
             }
         }
     };
-    private final Action exchangeTracks = new AbstractAction(I18.get("medit_tracks_exchange")) {
+    private final Action exchangeTracks = new AbstractAction(I18.get("edit_tracks_exchange")) {
         public void actionPerformed(ActionEvent e) {
             if (table.getDuetTrackCount() == 2) {
-                YassTable[] tracks = getOpenDuetTables(table).toArray(new YassTable[0]);
+                YassTable[] tracks = getOpenTables(table).toArray(new YassTable[0]);
                 YassTable t = new YassTable();
                 t.loadTable(tracks[0], false);
                 tracks[0].loadTable(tracks[1], false);
@@ -1642,10 +1643,10 @@ public class YassActions implements DropTargetListener {
             }
         }
     };
-    private final Action saveAsFile = new AbstractAction(I18.get("mlib_save_as")) {
+    private final Action saveAsFile = new AbstractAction(I18.get("lib_save_as")) {
         public void actionPerformed(ActionEvent e) {
             Frame f = new Frame();
-            FileDialog fd = new FileDialog(f, I18.get("mlib_save_as_msg"), FileDialog.SAVE);
+            FileDialog fd = new FileDialog(f, I18.get("lib_save_as_msg"), FileDialog.SAVE);
             fd.setVisible(true);
             if (fd.getFile() != null) {
                 table.storeFile(fd.getDirectory() + File.separator + fd.getFile());
@@ -1654,26 +1655,26 @@ public class YassActions implements DropTargetListener {
             f.dispose();
         }
     };
-    private final Action closeAll = new AbstractAction(I18.get("medit_close_all")) {
+    private final Action closeAll = new AbstractAction(I18.get("edit_close_all")) {
         public void actionPerformed(ActionEvent e) {
-            closeSong();
+            closeAll();
         }
     };
-    private final Action reloadAll = new AbstractAction(I18.get("medit_reload")) {
+    private final Action reloadAll = new AbstractAction(I18.get("edit_reload")) {
         public void actionPerformed(ActionEvent e) {
             if (cancelOpen())
                 return;
-
-            String filename = prop.getProperty("recent-files");
-            if (filename == null)
+            String recent = prop.getProperty("recent-files");
+            if (recent == null)
                 return;
 
             int sel = table.getSelectionModel().getMinSelectionIndex();
             if (sel < 0)
                 sel = sheet.nextElement();
             final int selectRow = sel;
+            final int activeTrack = getActiveTrack();
 
-            openFiles(filename, false);
+            openFiles(recent, false);
             openEditor(selectRow >= 0);
 
             SwingUtilities.invokeLater(new Thread(() -> {
@@ -1683,15 +1684,13 @@ public class YassActions implements DropTargetListener {
                     table.zoomPage();
                     table.updatePlayerPosition();
                 }
-
                 lyrics.setPreventFireUpdate(false);
             }));
         }
     };
-    private final Action closeLibrary = new AbstractAction(I18.get("mlib_close")) {
+    private final Action closeLibrary = new AbstractAction(I18.get("lib_close")) {
         public void actionPerformed(ActionEvent e) {
             closeAllTables();
-            mp3.closeMP3();
             setLibraryLoaded(false);
 
             String filename = prop.getProperty("songlist-cache");
@@ -1714,145 +1713,145 @@ public class YassActions implements DropTargetListener {
             songList.load();
         }
     };
-    private final Action openTrack = new AbstractAction(I18.get("medit_tracks_open")) {
+    private final Action openTrack = new AbstractAction(I18.get("edit_tracks_open")) {
         public void actionPerformed(ActionEvent e) {
             openTrack();
         }
     };
-    private final Action closeTrack = new AbstractAction(I18.get("medit_tracks_close")) {
+    private final Action closeTrack = new AbstractAction(I18.get("edit_tracks_close")) {
         public void actionPerformed(ActionEvent e) {
             if (!cancelTrack())
                 closeTrack();
         }
     };
-    private final Action saveTrackAs = new AbstractAction(I18.get("medit_tracks_save")) {
+    private final Action saveTrackAs = new AbstractAction(I18.get("edit_tracks_save")) {
         public void actionPerformed(ActionEvent e) {
             saveTrackAs();
         }
     };
-    private final Action saveDuetAs = new AbstractAction(I18.get("medit_tracks_save_duet")) {
+    private final Action saveDuetAs = new AbstractAction(I18.get("edit_tracks_save_duet")) {
         public void actionPerformed(ActionEvent e) {
             saveDuetAs();
         }
     };
-    private final Action renameTrack = new AbstractAction(I18.get("medit_tracks_rename")) {
+    private final Action renameTrack = new AbstractAction(I18.get("edit_tracks_rename")) {
         public void actionPerformed(ActionEvent e) {
             renameTrack();
         }
     };
-    private final Action deleteTrack = new AbstractAction(I18.get("medit_tracks_delete")) {
+    private final Action deleteTrack = new AbstractAction(I18.get("edit_tracks_delete")) {
         public void actionPerformed(ActionEvent e) {
             deleteTrack();
         }
     };
-    private final Action newFile = new AbstractAction(I18.get("mlib_new")) {
+    private final Action newFile = new AbstractAction(I18.get("lib_new")) {
         public void actionPerformed(ActionEvent e) {
             createNewSong(null);
         }
     };
-    private final Action removeSong = new AbstractAction(I18.get("mlib_remove")) {
+    private final Action removeSong = new AbstractAction(I18.get("lib_remove")) {
         public void actionPerformed(ActionEvent e) {
             songList.removeSelectedSongs();
         }
     };
-    private final Action filterLibrary = new AbstractAction(I18.get("mlib_find")) {
+    private final Action filterLibrary = new AbstractAction(I18.get("lib_find")) {
         public void actionPerformed(ActionEvent e) {
             startFilterLibrary();
         }
     };
     /*
-     * Action importFiles = new AbstractAction(I18.get("mlib_import")) { public
+     * Action importFiles = new AbstractAction(I18.get("lib_import")) { public
      * void actionPerformed(ActionEvent e) { String songdir =
      * YassUtils.getSongDir(table, prop); if (songdir == null) { return; }
      * JFileChooser fileChooser = new JFileChooser(".");
      * fileChooser.setMultiSelectionEnabled(true);
      * fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-     * fileChooser.setDialogTitle(I18.get("mlib_import_title")); JPanel pan =
+     * fileChooser.setDialogTitle(I18.get("lib_import_title")); JPanel pan =
      * new JPanel(new BorderLayout()); JLabel label = new
-     * JLabel("<html><center><font color=gray>" + I18.get("mlib_import_msg") +
+     * JLabel("<html><center><font color=gray>" + I18.get("lib_import_msg") +
      * "</html>"); pan.add("Center", label); fileChooser.setAccessory(pan); int
      * status = fileChooser.showOpenDialog(tab); if (status ==
      * JFileChooser.APPROVE_OPTION) { File selectedFiles[] =
      * fileChooser.getSelectedFiles(); YassImport.importFiles(songList, prop, * selectedFiles); } } };
      */
-    private final Action importMetadata = new AbstractAction(I18.get("mlib_import_meta")) {
+    private final Action importMetadata = new AbstractAction(I18.get("lib_import_meta")) {
         public void actionPerformed(ActionEvent e) {
             songList.importMetadata();
         }
     };
-    private final Action exportMetadata = new AbstractAction(I18.get("mlib_export_meta")) {
+    private final Action exportMetadata = new AbstractAction(I18.get("lib_export_meta")) {
         public void actionPerformed(ActionEvent e) {
             songList.exportMetadata();
         }
     };
-    private final Action exit = new AbstractAction(I18.get("mlib_exit")) {
+    private final Action exit = new AbstractAction(I18.get("lib_exit")) {
         public void actionPerformed(ActionEvent e) {
             exit();
         }
     };
-    private final Action interruptPlay = new AbstractAction(I18.get("mlib_stop_song")) {
+    private final Action interruptPlay = new AbstractAction(I18.get("lib_stop_song")) {
         public void actionPerformed(ActionEvent e) {
             mp3.interruptMP3();
             // lyrics.finishEditing();
         }
     };
-    private final Action incHeight = new AbstractAction(I18.get("medit_height_inc")) {
+    private final Action incHeight = new AbstractAction(I18.get("edit_height_inc")) {
         public void actionPerformed(ActionEvent e) {
             table.shiftHeight(+1);
         }
     };
-    private final Action decHeight = new AbstractAction(I18.get("medit_height_dec")) {
+    private final Action decHeight = new AbstractAction(I18.get("edit_height_dec")) {
         public void actionPerformed(ActionEvent e) {
             table.shiftHeight(-1);
         }
     };
-    private final Action incLeft = new AbstractAction(I18.get("medit_length_left_inc")) {
+    private final Action incLeft = new AbstractAction(I18.get("edit_length_left_inc")) {
         public void actionPerformed(ActionEvent e) {
             table.shiftLeftEndian(+1);
         }
     };
-    private final Action decLeft = new AbstractAction(I18.get("medit_length_left_dec")) {
+    private final Action decLeft = new AbstractAction(I18.get("edit_length_left_dec")) {
         public void actionPerformed(ActionEvent e) {
             table.shiftLeftEndian(-1);
         }
     };
-    private final Action incRight = new AbstractAction(I18.get("medit_length_right_inc")) {
+    private final Action incRight = new AbstractAction(I18.get("edit_length_right_inc")) {
         public void actionPerformed(ActionEvent e) {
             table.shiftRightEndian(+1);
         }
     };
-    private final Action decRight = new AbstractAction(I18.get("medit_length_right_dec")) {
+    private final Action decRight = new AbstractAction(I18.get("edit_length_right_dec")) {
         public void actionPerformed(ActionEvent e) {
             table.shiftRightEndian(-1);
         }
     };
-    private final Action prevBeat = new AbstractAction(I18.get("medit_prev")) {
+    private final Action prevBeat = new AbstractAction(I18.get("edit_prev")) {
         public void actionPerformed(ActionEvent e) {
             table.prevBeat();
         }
     };
-    private final Action nextBeat = new AbstractAction(I18.get("medit_next")) {
+    private final Action nextBeat = new AbstractAction(I18.get("edit_next")) {
         public void actionPerformed(ActionEvent e) {
             table.nextBeat();
         }
     };
-    private final Action selectPrevBeat = new AbstractAction(I18.get("medit_select_left")) {
+    private final Action selectPrevBeat = new AbstractAction(I18.get("edit_select_left")) {
         public void actionPerformed(ActionEvent e) {
             table.selectPrevBeat();
         }
     };
-    private final Action selectNextBeat = new AbstractAction(I18.get("medit_select_right")) {
+    private final Action selectNextBeat = new AbstractAction(I18.get("edit_select_right")) {
         public void actionPerformed(ActionEvent e) {
             table.selectNextBeat();
         }
     };
     private final Action autoCorrectPageBreaks = new AbstractAction(
-            I18.get("medit_correct_breaks")) {
+            I18.get("edit_correct_breaks")) {
         public void actionPerformed(ActionEvent e) {
             trimPageBreaks();
         }
     };
-    private final Action golden = new AbstractAction(I18.get("medit_golden")) {
+    private final Action golden = new AbstractAction(I18.get("edit_golden")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             if (lyrics.isEditable() || songList.isEditing()
@@ -1862,7 +1861,7 @@ public class YassActions implements DropTargetListener {
             table.setType("*");
         }
     };
-    private final Action freestyle = new AbstractAction(I18.get("medit_freestyle")) {
+    private final Action freestyle = new AbstractAction(I18.get("edit_freestyle")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             if (lyrics.isEditable() || songList.isEditing()
@@ -1872,7 +1871,7 @@ public class YassActions implements DropTargetListener {
             table.setType("F");
         }
     };
-    private final Action rap = new AbstractAction(I18.get("medit_rap")) {
+    private final Action rap = new AbstractAction(I18.get("edit_rap")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             if (lyrics.isEditable() || songList.isEditing()
@@ -1882,7 +1881,7 @@ public class YassActions implements DropTargetListener {
             table.setType("R");
         }
     };
-    private final Action rapgolden = new AbstractAction(I18.get("medit_rapgolden")) {
+    private final Action rapgolden = new AbstractAction(I18.get("edit_rapgolden")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             if (lyrics.isEditable() || songList.isEditing()
@@ -1892,7 +1891,7 @@ public class YassActions implements DropTargetListener {
             table.setType("G");
         }
     };
-    private final Action darkmode = new AbstractAction(I18.get("medit_darkmode")) {
+    private final Action darkmode = new AbstractAction(I18.get("edit_darkmode")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             if (lyrics.isEditable() || songList.isEditing()
@@ -1903,12 +1902,12 @@ public class YassActions implements DropTargetListener {
             sheet.firePropsChanged();
         }
     };
-    private final Action detailLibrary = new AbstractAction(I18.get("mlib_details_toggle")) {
+    private final Action detailLibrary = new AbstractAction(I18.get("lib_details_toggle")) {
         public void actionPerformed(ActionEvent e) {
             updateSongInfo(detailLibrary);
         }
     };
-    private final Action standard = new AbstractAction(I18.get("medit_normal")) {
+    private final Action standard = new AbstractAction(I18.get("edit_normal")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             if (lyrics.isEditable() || songList.isEditing()
@@ -1918,23 +1917,23 @@ public class YassActions implements DropTargetListener {
             table.setType(":");
         }
     };
-    private final Action addEndian = new AbstractAction(I18.get("medit_length_right_inc")) {
+    private final Action addEndian = new AbstractAction(I18.get("edit_length_right_inc")) {
         public void actionPerformed(ActionEvent e) {
             table.shiftRightEndian(+1);
         }
     };
 
-    private final Action minus = new AbstractAction(I18.get("medit_minus")) {
+    private final Action minus = new AbstractAction(I18.get("edit_minus")) {
         public void actionPerformed(ActionEvent e) {
             lyrics.enter(YassRow.HYPHEN + "");
         }
     };
-    private final Action space = new AbstractAction(I18.get("medit_space")) {
+    private final Action space = new AbstractAction(I18.get("edit_space")) {
         public void actionPerformed(ActionEvent e) {
             lyrics.enter(YassRow.SPACE + "");
         }
     };
-    private final Action incGap = new AbstractAction(I18.get("medit_gap_add_10")) {
+    private final Action incGap = new AbstractAction(I18.get("edit_gap_add_10")) {
         public void actionPerformed(ActionEvent e) {
             if (gapDialog != null && gapDialog.isShowing()) {
                 table.addGap(+10);
@@ -1942,7 +1941,7 @@ public class YassActions implements DropTargetListener {
             }
         }
     };
-    private final Action decGap = new AbstractAction(I18.get("medit_gap_sub_10")) {
+    private final Action decGap = new AbstractAction(I18.get("edit_gap_sub_10")) {
         public void actionPerformed(ActionEvent e) {
             if (gapDialog != null && gapDialog.isShowing()) {
                 table.addGap(-10);
@@ -1950,7 +1949,7 @@ public class YassActions implements DropTargetListener {
             }
         }
     };
-    private final Action incGap2 = new AbstractAction(I18.get("medit_gap_add_1000")) {
+    private final Action incGap2 = new AbstractAction(I18.get("edit_gap_add_1000")) {
         public void actionPerformed(ActionEvent e) {
             if (gapDialog != null && gapDialog.isShowing()) {
                 table.addGap(+1000);
@@ -1958,7 +1957,7 @@ public class YassActions implements DropTargetListener {
             }
         }
     };
-    private final Action decGap2 = new AbstractAction(I18.get("medit_gap_sub_1000")) {
+    private final Action decGap2 = new AbstractAction(I18.get("edit_gap_sub_1000")) {
         public void actionPerformed(ActionEvent e) {
             if (gapDialog != null && gapDialog.isShowing()) {
                 table.addGap(-1000);
@@ -1966,44 +1965,42 @@ public class YassActions implements DropTargetListener {
             }
         }
     };
-    Action selectLine = new AbstractAction(I18.get("medit_select_line")) {
+    Action selectLine = new AbstractAction(I18.get("edit_select_line")) {
         public void actionPerformed(ActionEvent e) {
             table.selectLine();
         }
     };
-    Action viewAll = new AbstractAction(I18.get("medit_view_all")) {
+    Action viewAll = new AbstractAction(I18.get("edit_view_all")) {
         public void actionPerformed(ActionEvent e) {
             table.viewAll();
         }
     };
-    Action selectAll = new AbstractAction(I18.get("medit_select_all")) {
+    Action selectAll = new AbstractAction(I18.get("edit_select_all")) {
         public void actionPerformed(ActionEvent e) {
             table.selectAll();
         }
     };
-    private final Action homeSong = new AbstractAction(I18.get("mlib_home")) {
+    private final Action homeSong = new AbstractAction(I18.get("lib_home")) {
         public void actionPerformed(ActionEvent e) {
             songList.gotoSong(table);
         }
     };
-    private final Action showTable = new AbstractAction(I18.get("medit_source")) {
+    private final Action showTable = new AbstractAction(I18.get("edit_source")) {
         public void actionPerformed(ActionEvent e) {
+            if (table == null)
+                return;
             if (srcDialog != null) {
                 srcDialog.dispose();
                 srcDialog = null;
             }
-
             JDialog dia = srcDialog = new JDialog(new OwnerFrame());
-            dia.setTitle(I18.get("medit_source_title"));
+            dia.setTitle(I18.get("edit_source_title"));
             dia.setAlwaysOnTop(true);
             dia.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent e) {
                     e.getWindow().dispose();
                 }
             });
-            if (table == null) {
-                table = new YassTable();
-            }
             dia.add("Center", new JScrollPane(table));
             dia.pack();
             int w = 240;
@@ -2014,7 +2011,7 @@ public class YassActions implements DropTargetListener {
             dia.setVisible(true);
         }
     };
-    Action undo = new AbstractAction(I18.get("medit_undo")) {
+    Action undo = new AbstractAction(I18.get("edit_undo")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             if (lyrics.isEditable()) {
@@ -2025,7 +2022,7 @@ public class YassActions implements DropTargetListener {
             updateGap();
         }
     };
-    Action redo = new AbstractAction(I18.get("medit_redo")) {
+    Action redo = new AbstractAction(I18.get("edit_redo")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             if (lyrics.isEditable()) {
@@ -2036,7 +2033,7 @@ public class YassActions implements DropTargetListener {
             updateGap();
         }
     };
-    private final Action openFile = new AbstractAction(I18.get("mlib_edit_file")) {
+    private final Action openFile = new AbstractAction(I18.get("lib_edit_file")) {
         public void actionPerformed(ActionEvent e) {
             if (currentView == VIEW_EDIT) {
                 if (cancelOpen()) {
@@ -2045,7 +2042,7 @@ public class YassActions implements DropTargetListener {
             }
             String filename = e.getActionCommand();
             if (filename == null || !new File(filename).exists()) {
-                filename = askFilename(I18.get("mlib_edit_file_msg"), FileDialog.LOAD);
+                filename = askFilename(I18.get("lib_edit_file_msg"), FileDialog.LOAD);
             }
             if (filename == null) {
                 return;
@@ -2053,7 +2050,7 @@ public class YassActions implements DropTargetListener {
             openFiles(filename, false);
         }
     };
-    private final Action gotoLibrary = new AbstractAction(I18.get("medit_lib")) {
+    private final Action gotoLibrary = new AbstractAction(I18.get("edit_lib")) {
         public void actionPerformed(ActionEvent e) {
             if (currentView == VIEW_LIBRARY) {
                 return;
@@ -2064,7 +2061,6 @@ public class YassActions implements DropTargetListener {
             }
             YassTable lastTable = table;
             closeAllTables();
-            mp3.closeMP3();
             video.closeVideo();
             setView(VIEW_LIBRARY);
             if (!songList.isLoaded()) {
@@ -2079,13 +2075,13 @@ public class YassActions implements DropTargetListener {
             }
         }
     };
-    Action autoCorrect = new AbstractAction(I18.get("medit_correct_all")) {
+    Action autoCorrect = new AbstractAction(I18.get("edit_correct_all")) {
         public void actionPerformed(ActionEvent e) {
             auto.autoCorrectAllSafe(table);
         }
     };
     private final Action autoCorrectSpacing = new AbstractAction(
-            I18.get("medit_correct_space")) {
+            I18.get("edit_correct_space")) {
         public void actionPerformed(ActionEvent e) {
             boolean changed = auto.autoCorrectSpacing(table);
             if (changed) {
@@ -2096,7 +2092,7 @@ public class YassActions implements DropTargetListener {
         }
     };
     private final Action autoCorrectTransposed = new AbstractAction(
-            I18.get("medit_correct_heights")) {
+            I18.get("edit_correct_heights")) {
         public void actionPerformed(ActionEvent e) {
             boolean changed = auto.autoCorrectTransposed(table);
             if (changed) {
@@ -2106,7 +2102,7 @@ public class YassActions implements DropTargetListener {
             checkData(table, false, true);
         }
     };
-    private final Action showCopiedRows = new AbstractAction(I18.get("medit_copy_show")) {
+    private final Action showCopiedRows = new AbstractAction(I18.get("edit_copy_show")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             if (sheet != null) {
@@ -2120,7 +2116,7 @@ public class YassActions implements DropTargetListener {
             }
         }
     };
-    private final Action removeCopy = new AbstractAction(I18.get("medit_copy_remove")) {
+    private final Action removeCopy = new AbstractAction(I18.get("edit_copy_remove")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             if (sheet != null) {
@@ -2129,18 +2125,18 @@ public class YassActions implements DropTargetListener {
             }
         }
     };
-    private final Action showSongInfo = new AbstractAction(I18.get("mlib_info_toggle")) {
+    private final Action showSongInfo = new AbstractAction(I18.get("lib_info_toggle")) {
         public void actionPerformed(ActionEvent e) {
             updateSongInfo(showSongInfo);
         }
     };
     private final Action showSongInfoBackground = new AbstractAction(
-            I18.get("mlib_background_toggle")) {
+            I18.get("lib_background_toggle")) {
         public void actionPerformed(ActionEvent e) {
             updateSongInfo(showSongInfoBackground);
         }
     };
-    Action showErrors = new AbstractAction(I18.get("medit_errors")) {
+    Action showErrors = new AbstractAction(I18.get("edit_errors")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             if (errDialog != null) {
@@ -2154,7 +2150,7 @@ public class YassActions implements DropTargetListener {
             }
 
             JDialog dia = errDialog = new JDialog(new OwnerFrame());
-            dia.setTitle(I18.get("medit_errors_title"));
+            dia.setTitle(I18.get("edit_errors_title"));
             dia.setAlwaysOnTop(true);
             dia.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent e) {
@@ -2174,12 +2170,12 @@ public class YassActions implements DropTargetListener {
             dia.setVisible(true);
         }
     };
-    private final Action showPlaylist = new AbstractAction(I18.get("mlib_playlist_toggle")) {
+    private final Action showPlaylist = new AbstractAction(I18.get("lib_playlist_toggle")) {
         public void actionPerformed(ActionEvent e) {
             updateSongInfo(showPlaylist);
         }
     };
-    private final Action showOptions = new AbstractAction(I18.get("mlib_prefs_title")) {
+    private final Action showOptions = new AbstractAction(I18.get("lib_prefs_title")) {
         public void actionPerformed(ActionEvent e) {
             String oldDir = prop.getProperty("song-directory");
             String oldListDir = prop.getProperty("playlist-directory");
@@ -2240,7 +2236,7 @@ public class YassActions implements DropTargetListener {
             if (newDir != null && !importDir.startsWith(newDir)) {
                 prop.setProperty("import-directory", newDir);
                 prop.store();
-                JOptionPane.showMessageDialog(tab, I18.get("mlib_prefs_import_error"), I18.get("mlib_prefs_title"), JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(tab, I18.get("lib_prefs_import_error"), I18.get("lib_prefs_title"), JOptionPane.WARNING_MESSAGE);
             }
 
             boolean newMoveArticles = prop.get("use-articles").equals("true");
@@ -2278,18 +2274,18 @@ public class YassActions implements DropTargetListener {
         }
     };
     private final Action showPlaylistMenu = new AbstractAction(
-            I18.get("mlib_playlist_toggle")) {
+            I18.get("lib_playlist_toggle")) {
         public void actionPerformed(ActionEvent e) {
             playlistToggle.setSelected(!playlistToggle.isSelected());
             updateSongInfo(showPlaylist);
         }
     };
-    Action setLibrary = new AbstractAction(I18.get("mlib_set_library")) {
+    Action setLibrary = new AbstractAction(I18.get("lib_set_library")) {
         public void actionPerformed(ActionEvent e) {
             new YassLibOptions(prop, YassActions.this, songList, mp3);
         }
     };
-    private final Action enableAudio = new AbstractAction(I18.get("medit_audio_toggle")) {
+    private final Action enableAudio = new AbstractAction(I18.get("edit_audio_toggle")) {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() != mp3Button) {
                 mp3Button.setSelected(!mp3Button.isSelected());
@@ -2302,7 +2298,7 @@ public class YassActions implements DropTargetListener {
         }
     };
     private JCheckBoxMenuItem clicksCBI = null;
-    private final Action enableClicks = new AbstractAction(I18.get("medit_clicks_toggle")) {
+    private final Action enableClicks = new AbstractAction(I18.get("edit_clicks_toggle")) {
         public void actionPerformed(ActionEvent e) {
             mp3.setClicksEnabled(!mp3.isClicksEnabled());
             if (clicksCBI != null) {
@@ -2311,7 +2307,7 @@ public class YassActions implements DropTargetListener {
         }
     };
     private JCheckBoxMenuItem micCBI = null;
-    private final Action enableMic = new AbstractAction(I18.get("medit_mic_toggle")) {
+    private final Action enableMic = new AbstractAction(I18.get("edit_mic_toggle")) {
         public void actionPerformed(ActionEvent e) {
             mp3.setCapture(!mp3.isCapture());
             if (micCBI != null) {
@@ -2320,7 +2316,7 @@ public class YassActions implements DropTargetListener {
         }
     };
     private JCheckBoxMenuItem midiCBI = null;
-    private final Action enableMidi = new AbstractAction(I18.get("medit_midi_toggle")) {
+    private final Action enableMidi = new AbstractAction(I18.get("edit_midi_toggle")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
 
@@ -2338,7 +2334,7 @@ public class YassActions implements DropTargetListener {
             sheet.repaint();
         }
     };
-    Action absolute = new AbstractAction(I18.get("medit_align")) {
+    Action absolute = new AbstractAction(I18.get("edit_align")) {
         // Align
         public void actionPerformed(ActionEvent e) {
             if (lyrics.isEditable() || songList.isEditing()
@@ -2510,7 +2506,7 @@ public class YassActions implements DropTargetListener {
             } else if (osName.startsWith("Windows")) {
                 Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
             } else {
-                String[] browsers = {"firefox", "opera", "konqueror", "epiphany", "mozilla", "netscape"};
+                String[] browsers = {"firefox", "opera", "konqueror", "epiphany", "mozilla", "netscape", "chrome"};
                 String browser = null;
                 for (int count = 0; count < browsers.length && browser == null; count++) {
                     if (Runtime.getRuntime()
@@ -2567,7 +2563,7 @@ public class YassActions implements DropTargetListener {
                                     .getDeclaredMethod("openURL", String.class);
                             openURL.invoke(null, filename);
                         } else if (System.getProperty("os.name").startsWith("Linux")) {
-                            String[] apps = {"gnome-open", "kfmclient", "xdg-open", "gvfs-open", "firefox", "opera"};
+                            String[] apps = {"gnome-open", "kfmclient", "xdg-open", "gvfs-open", "firefox", "opera", "chrome"};
                             String app = null;
                             for (int i = 0; i < apps.length && app == null; i++) {
                                 if (Runtime
@@ -2611,17 +2607,17 @@ public class YassActions implements DropTargetListener {
             colors[i] = new Color(col.getRed(), col.getGreen(), col.getBlue(), 255);
         }
 
-        Color[] ncol = new Color[YassSheet.COLORSET_COUNT];
-        for (int i = 0; i < ncol.length; i++) {
+        Color[] colorSet = new Color[YassSheet.COLORSET_COUNT];
+        for (int i = 0; i < colorSet.length; i++) {
             String c = prop.getProperty("note-color-" + i);
-            Color col = Color.decode(c);
-            ncol[i] = new Color(col.getRed(), col.getGreen(), col.getBlue(), 221);
+            Color color = Color.decode(c);
+            colorSet[i] = new Color(color.getRed(), color.getGreen(), color.getBlue(), 221);
         }
-        sheet.setColors(ncol);
-        lyrics.setColors(ncol);
-        YassTableRenderer.setColors(ncol);
-        errBackground = ncol[YassSheet.COLOR_ERROR];
-        minorerrBackground = ncol[YassSheet.COLOR_WARNING];
+        sheet.setColors(colorSet);
+        lyrics.setColors(colorSet);
+        YassTableRenderer.setColors(colorSet);
+        errBackground = colorSet[YassSheet.COLOR_ERROR];
+        minorerrBackground = colorSet[YassSheet.COLOR_WARNING];
 
         boolean shade = prop.get("shade-notes").equals("true");
         sheet.shadeNotes(shade);
@@ -2690,13 +2686,12 @@ public class YassActions implements DropTargetListener {
         return table;
     }
 
-    public void setTable(YassTable t) {
-        if (table != null) {
+    public void setActiveTable(YassTable t) {
+        if (table != null)
             table.removePropertyChangeListener(propertyListener);
-        }
         table = t;
-        updateActions();
-        table.addPropertyChangeListener(propertyListener);
+        if (table != null)
+            table.addPropertyChangeListener(propertyListener);
     }
 
     public YassProperties getProperties() {
@@ -2704,57 +2699,43 @@ public class YassActions implements DropTargetListener {
     }
 
     public void closeAllTables() {
-        closeAll();
-        updateActions();
-
         if (srcDialog != null) {
             srcDialog.dispose();
             srcDialog = null;
         }
-
-        table = createNextTable();
-
-        lyrics.setTable(table);
-        sheet.setActiveTable(table);
+        openTables.clear();
+        sheet.removeAll();
+        setActiveTable(null);
+        lyrics.setTable(null);
+        sheet.setActiveTable(null);
         songList.closeOpened();
 
         isUpdating = true;
         updateLyrics();
-        errors.setTable(table);
+        errors.setTable(null);
         // updateMP3Info(table);
         // updateRaw();
         // updateCover();
         // updateBackground();
         // updateVideo();
         isUpdating = false;
+        updateTrackComponent();
+        updateActions();
     }
 
-    private void closeAll() {
-        if (openTables == null) {
-            openTables = new Vector<>();
-        }
-        if (openTables.size() > 0) {
-            openTables.clear();
-            sheet.removeAll();
-        }
-    }
-
+    /**
+     * Creates table and adds it to sheet.
+     * @return never null
+     */
     private YassTable createNextTable() {
-        if (openTables == null) {
-            return null;
-        }
-
-        int n = openTables.size();
         YassTable t = new YassTable();
         t.init(prop);
-        t.setTableColor(getTableColor(n));
-
+        t.setTableColor(getTableColor(openTables.size()));
         sheet.addTable(t);
         openTables.addElement(t);
         t.setSheet(sheet);
         t.setAutoCorrect(auto);
         t.setActions(this);
-
         registerEditorActions(t);
         // setDropTarget(t);
         t.addKeyListener(new KeyAdapter() {
@@ -2829,9 +2810,8 @@ public class YassActions implements DropTargetListener {
     }
 
     public YassTable firstTable() {
-        if (openTables == null || openTables.size() < 1) {
+        if (openTables.size() < 1)
             return null;
-        }
         return openTables.elementAt(0);
     }
 
@@ -2839,7 +2819,7 @@ public class YassActions implements DropTargetListener {
         int n = openTables.size();
         Component[] c = trackComponent.getComponents();
         if (c.length != n) {
-            Vector<YassSheetInfo> toRemove = new Vector(n);
+            Vector<YassSheetInfo> toRemove = new Vector<>(n);
             for (int i = 0; i < c.length; i++) {
                 if (c[i] instanceof YassSheetInfo) {
                     YassSheetInfo info = (YassSheetInfo) c[i];
@@ -2847,14 +2827,11 @@ public class YassActions implements DropTargetListener {
                     toRemove.add(info);
                 }
             }
-            for (Enumeration<YassSheetInfo> en = toRemove.elements(); en.hasMoreElements(); )
-                trackComponent.remove(en.nextElement());
+            for (YassSheetInfo info: toRemove)
+                trackComponent.remove(info);
             trackComponent.setLayout(new GridLayout(n, 1));
-            for (int i = 0; i < n; i++) {
+            for (int i = 0; i < n; i++)
                 trackComponent.add(new YassSheetInfo(sheet, i));
-            }
-            //getFrame(trackComponent).revalidate();
-            //getFrame(trackComponent).repaint();
             main.revalidate();
             main.repaint();
         }
@@ -2890,7 +2867,7 @@ public class YassActions implements DropTargetListener {
         int page = openTables.elementAt(i).getPageNumber(rowIndex);
 
         YassTable t = openTables.elementAt(i);
-        setTable(t);
+        setActiveTable(t);
 
         auto.checkData(table, false, true);
 
@@ -3019,8 +2996,6 @@ public class YassActions implements DropTargetListener {
     public void init(YassProperties p) {
         prop = p;
 
-        // storeColors();
-        // prop.store();
         loadColors();
         loadKeys();
         loadLayout();
@@ -3036,8 +3011,8 @@ public class YassActions implements DropTargetListener {
         }
         sheet.setLyricsLayout(layout);
 
-        String hLangs = prop.getProperty("note-naming-h").toLowerCase();
-        sheet.setHNoteEnabled(hLangs.contains(I18.getLanguage()));
+        String hLanguages = prop.getProperty("note-naming-h").toLowerCase();
+        sheet.setHNoteEnabled(hLanguages.contains(I18.getLanguage()));
 
         boolean autoTrim = prop.getProperty("auto-trim").equals("true");
         setAutoTrim(autoTrim);
@@ -3324,7 +3299,7 @@ public class YassActions implements DropTargetListener {
     public JMenuBar createEditMenu() {
         JMenuBar menuBar = new JMenuBar();
 
-        JMenu menu = new JMenu(I18.get("medit_file"));
+        JMenu menu = new JMenu(I18.get("edit_file"));
         menu.setMnemonic(KeyEvent.VK_F);
         menuBar.add(menu);
         menu.addMouseListener(new MouseAdapter() {
@@ -3351,7 +3326,7 @@ public class YassActions implements DropTargetListener {
         menu.addSeparator();
         menu.add(exit);
 
-        menu = new JMenu(I18.get("medit_edit"));
+        menu = new JMenu(I18.get("edit_edit"));
         menu.setMnemonic(KeyEvent.VK_E);
         menuBar.add(menu);
         menu.addMouseListener(new MouseAdapter() {
@@ -3403,7 +3378,7 @@ public class YassActions implements DropTargetListener {
 
         menu.add(showVideoGap);
 
-        menu = new JMenu(I18.get("medit_play"));
+        menu = new JMenu(I18.get("edit_play"));
         menu.setMnemonic(KeyEvent.VK_P);
         menuBar.add(menu);
         menu.addMouseListener(new MouseAdapter() {
@@ -3432,7 +3407,7 @@ public class YassActions implements DropTargetListener {
         clicksCBI.setState(true);
         micCBI.setState(true);
 
-        menu = new JMenu(I18.get("medit_view"));
+        menu = new JMenu(I18.get("edit_view"));
         menu.setMnemonic(KeyEvent.VK_V);
         menuBar.add(menu);
         menu.addMouseListener(new MouseAdapter() {
@@ -3472,7 +3447,7 @@ public class YassActions implements DropTargetListener {
         menu.add(darkmode);
         menu.add(fullscreen);
 
-        menu = new JMenu(I18.get("medit_lyrics"));
+        menu = new JMenu(I18.get("edit_lyrics"));
         menu.setMnemonic(KeyEvent.VK_L);
         menuBar.add(menu);
         menu.addMouseListener(new MouseAdapter() {
@@ -3504,7 +3479,7 @@ public class YassActions implements DropTargetListener {
         menu.add(findLyrics);
         menu.add(spellLyrics);
 
-        menu = new JMenu(I18.get("medit_extras"));
+        menu = new JMenu(I18.get("edit_extras"));
         menu.setMnemonic(KeyEvent.VK_X);
         menuBar.add(menu);
         menu.addMouseListener(new MouseAdapter() {
@@ -3521,7 +3496,7 @@ public class YassActions implements DropTargetListener {
         menu.addSeparator();
         menu.add(showOptions);
 
-        menu = new JMenu(I18.get("medit_help"));
+        menu = new JMenu(I18.get("edit_help"));
         menu.setMnemonic(KeyEvent.VK_H);
         menuBar.add(menu);
         menu.addMouseListener(new MouseAdapter() {
@@ -3537,7 +3512,7 @@ public class YassActions implements DropTargetListener {
 
     public JMenuBar createLibraryMenu() {
         JMenuBar menuBar = new JMenuBar();
-        JMenu menu = new JMenu(I18.get("mlib_file"));
+        JMenu menu = new JMenu(I18.get("lib_file"));
         menu.setMnemonic(KeyEvent.VK_F);
         menuBar.add(menu);
         menu.add(openSongFromLibrary);
@@ -3558,7 +3533,7 @@ public class YassActions implements DropTargetListener {
         menu.addSeparator();
         menu.add(exit);
 
-        menu = new JMenu(I18.get("mlib_edit"));
+        menu = new JMenu(I18.get("lib_edit"));
         menu.setMnemonic(KeyEvent.VK_E);
         menuBar.add(menu);
         menu.add(filterLibrary);
@@ -3566,7 +3541,7 @@ public class YassActions implements DropTargetListener {
         menu.add(selectAllSongs);
         menu.addSeparator();
 
-        JMenu menu2 = new JMenu(I18.get("mlib_set"));
+        JMenu menu2 = new JMenu(I18.get("lib_set"));
         menu2.add(setArtist);
         menu2.add(setTitle);
         menu2.add(songList.getGenreMenu());
@@ -3580,13 +3555,13 @@ public class YassActions implements DropTargetListener {
         menu.add(setPreviewStart);
         menu.add(setMedleyStartEnd);
 
-        encMenu = new JMenu(I18.get("mlib_encoding"));
+        encMenu = new JMenu(I18.get("lib_encoding"));
         encMenu.add(setEncodingUTF8);
         encMenu.add(setEncodingANSI);
         menu.add(encMenu);
 
         menu.addSeparator();
-        menu2 = new JMenu(I18.get("mlib_copy"));
+        menu2 = new JMenu(I18.get("lib_copy"));
         menu2.add(copyLyricsSongInfo);
         menu2.add(copyCoverSongInfo);
         menu2.add(copyBackgroundSongInfo);
@@ -3599,7 +3574,7 @@ public class YassActions implements DropTargetListener {
         menu.addSeparator();
         menu.add(removeSong);
 
-        menu = new JMenu(I18.get("mlib_view"));
+        menu = new JMenu(I18.get("lib_view"));
         menu.setMnemonic(KeyEvent.VK_V);
         menuBar.add(menu);
         menu.add(showPlaylistMenu);
@@ -3614,7 +3589,7 @@ public class YassActions implements DropTargetListener {
         menu.addSeparator();
         menu.add(fullscreen);
 
-        menu = new JMenu(I18.get("mlib_play"));
+        menu = new JMenu(I18.get("lib_play"));
         menu.setMnemonic(KeyEvent.VK_S);
         menuBar.add(menu);
         menu.add(playSong);
@@ -3628,14 +3603,14 @@ public class YassActions implements DropTargetListener {
         menu.add(refreshPlayList);
         menu.add(removePlayList);
 
-        menu = new JMenu(I18.get("mlib_extras"));
+        menu = new JMenu(I18.get("lib_extras"));
         menu.setMnemonic(KeyEvent.VK_X);
         menu.add(testMic);
         menu.addSeparator();
         menu.add(showOptions);
         menuBar.add(menu);
 
-        menu = new JMenu(I18.get("mlib_help"));
+        menu = new JMenu(I18.get("lib_help"));
         menu.setMnemonic(KeyEvent.VK_H);
         menuBar.add(menu);
         menu.add(showHelp);
@@ -4553,7 +4528,7 @@ public class YassActions implements DropTargetListener {
         return t;
     }
 
-    private final Action enableLyrics = new AbstractAction(I18.get("mlib_lyrics_toggle")) {
+    private final Action enableLyrics = new AbstractAction(I18.get("lib_lyrics_toggle")) {
         public void actionPerformed(ActionEvent e) {
             clearFilter();
             updateSongInfo(enableLyrics);
@@ -4703,12 +4678,6 @@ public class YassActions implements DropTargetListener {
     public void setProgress(int n) {
         progressBar.setValue(n);
         SwingUtilities.invokeLater(() -> progressBar.repaint());
-    }
-
-    private void openSelectedSongs() {
-        Vector<String> fn = songList.getSelectedFiles();
-        if (fn != null)
-            openFiles(fn, false);
     }
 
     public void refreshLibrary() {
@@ -4923,7 +4892,7 @@ public class YassActions implements DropTargetListener {
         if (!saveAll.isEnabled())
             return false;
         return JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(tab,
-                I18.get("medit_exit_cancel"), I18.get("medit_exit_title"), JOptionPane.OK_CANCEL_OPTION);
+                I18.get("edit_exit_cancel"), I18.get("edit_exit_title"), JOptionPane.OK_CANCEL_OPTION);
     }
 
     /**
@@ -4934,7 +4903,7 @@ public class YassActions implements DropTargetListener {
         if (table.isSaved())
             return false;
         return JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(tab,
-                I18.get("medit_tracks_exit_cancel"), I18.get("medit_exit_title"), JOptionPane.OK_CANCEL_OPTION);
+                I18.get("edit_tracks_exit_cancel"), I18.get("edit_exit_title"), JOptionPane.OK_CANCEL_OPTION);
     }
 
     public boolean isLibraryLoaded() {
@@ -5034,10 +5003,10 @@ public class YassActions implements DropTargetListener {
     }
 
     public void updateActions() {
-        boolean isOpened = openTables != null && openTables.size() > 0;
-        boolean isMoreThanOne = openTables != null && openTables.size() > 1;
+        boolean isOpened = openTables.size() > 0;
+        boolean isMoreThanOne = openTables.size() > 1;
         boolean isDuetTrack = table != null && table.getDuetTrack() > 0;
-        boolean isTrackSaved = table != null && table.isSaved();
+        boolean isTrackSaved = table == null || table.isSaved();
         boolean isAllSaved = true;
         if (isOpened)
             for (YassTable open : openTables)
@@ -5051,6 +5020,9 @@ public class YassActions implements DropTargetListener {
         closeTrack.setEnabled(isOpened);
         closeAll.setEnabled(isOpened);
         reloadAll.setEnabled(isOpened);
+
+        undo.setEnabled(isOpened); // todo
+        redo.setEnabled(isOpened);
 
         renameTrack.setEnabled(isDuetTrack);
         exchangeTracks.setEnabled(isDuetTrack);
@@ -5116,8 +5088,6 @@ public class YassActions implements DropTargetListener {
         toggleVideo.setEnabled(isOpened);
 
         enableVideoAudio.setEnabled(isOpened);
-        // todo undo.setEnabled(onoff);
-        // todo redo.setEnabled(onoff);
         recordSelection.setEnabled(isOpened);
         recordAll.setEnabled(isOpened);
         selectLine.setEnabled(isOpened);
@@ -5563,7 +5533,7 @@ public class YassActions implements DropTargetListener {
         if (rows.length == 1) {
             YassRow r = table.getRowAt(rows[0]);
             if (r.isGap()) {
-                String input = JOptionPane.showInputDialog(tab, I18.get("medit_lyrics_edit_gap_msg"), (int) (table.getGap()) + "");
+                String input = JOptionPane.showInputDialog(tab, I18.get("edit_lyrics_edit_gap_msg"), (int) (table.getGap()) + "");
                 try {
                     int gap = Integer.parseInt(input);
                     table.setGap(gap);
@@ -5576,7 +5546,7 @@ public class YassActions implements DropTargetListener {
                 return;
             }
             if (r.isComment() && r.getCommentTag().equals("START:")) {
-                String input = JOptionPane.showInputDialog(tab, I18.get("medit_lyrics_edit_start_msg"), (int) (table.getStart()) + "");
+                String input = JOptionPane.showInputDialog(tab, I18.get("edit_lyrics_edit_start_msg"), (int) (table.getStart()) + "");
                 try {
                     int val = Integer.parseInt(input);
                     setStart(val);
@@ -5585,7 +5555,7 @@ public class YassActions implements DropTargetListener {
             }
             if (r.isEnd()
                     || (r.isComment() && r.getCommentTag().equals("END:"))) {
-                String input = JOptionPane.showInputDialog(tab, I18.get("medit_lyrics_edit_end_msg"), (int) (table.getEnd()) + "");
+                String input = JOptionPane.showInputDialog(tab, I18.get("edit_lyrics_edit_end_msg"), (int) (table.getEnd()) + "");
                 try {
                     int val = Integer.parseInt(input);
                     table.setEnd(val);
@@ -6104,9 +6074,8 @@ public class YassActions implements DropTargetListener {
             if (YassUtils.isKaraokeFile(f))
                 all.add(f);
         }
-
         // collect all tracks
-        Vector<YassTable> duets = new Vector<>();
+        Vector<YassTable> multis = new Vector<>();
         Vector<YassTable> singles = new Vector<>();
         for (String f : all) {
             YassTable t = new YassTable();
@@ -6115,85 +6084,49 @@ public class YassActions implements DropTargetListener {
             if (multi > 1) {
                 Vector<YassTable> tracks = t.splitTable();
                 if (tracks != null)
-                    duets.addAll(tracks);
+                    multis.addAll(tracks);
             } else {
                 singles.add(t);
             }
         }
+
+        // add all (but only if not opened yet)
         Vector<YassTable> tables = new Vector<>();
-        tables.addAll(duets);
-        tables.addAll(singles);
+        for (YassTable t: multis) {
+            if (getOpenTables(t).size() == 0)
+                tables.add(t);
+        }
+        for (YassTable t: singles) {
+            if (getOpenTables(t).size() == 0)
+                tables.add(t);
+        }
         if (tables.size() < 1)
             return false;
 
         // open editor, load all tracks
-        boolean changed = false;
-        if (currentView == VIEW_EDIT && !append) {
+        if (!append) {
             closeAllTables();
-            mp3.closeMP3();
         }
-        if (!append)
-            closeAll();
         for (YassTable t2 : tables) {
-            if (append && openTables != null) {
-                boolean alreadyOpen = false;
-                for (YassTable open : openTables) {
-                    if (t2.getDir().equals(open.getDir()) && t2.getFilename().equals(open.getFilename())) {
-                        alreadyOpen = true;
-                        break;
-                    }
-                }
-                if (alreadyOpen)
-                    continue;
-            }
             YassTable t = createNextTable();
-            if (t != null) {
-                t.setPreventUndo(true);
-                t.removeAllRows();
-                t.loadTable(t2, true);
-                t.setPreventUndo(false);
-                changed = true;
-            }
+            t.setPreventUndo(true);
+            t.removeAllRows();
+            t.loadTable(t2, true);
+            t.setPreventUndo(false);
         }
-        if (!changed)
-            return false;
-        table = null;
+        setActiveTable(firstTable());
         setView(VIEW_EDIT);
         return true;
     }
 
     private void openEditor(boolean reload) {
-        if (table == null) {
-            table = firstTable();
-        }
-        if (table == null || table.getArtist() == null || table.getTitle() == null) {
+        if (table == null)
+            setActiveTable(firstTable());
+        if (table == null || table.getArtist() == null || table.getTitle() == null)
             return;
-        }
         updateTrackComponent();
-        String recentFiles = null;
-        for (Enumeration<YassTable> en = openTables.elements(); en.hasMoreElements(); ) {
-            YassTable yt = en.nextElement();
-            String fn = yt.getDir() + File.separator + yt.getFilename();
-            if (recentFiles == null) {
-                recentFiles = fn;
-            } else {
-                if (!recentFiles.contains(fn))
-                    recentFiles = recentFiles + ";" + fn;
-            }
-        }
-        if (recentFiles == null && table != null) {
-            String dir = table.getDir();
-            String filename = table.getFilename();
-            if (dir != null && filename != null)
-                recentFiles = dir + File.separator + filename;
-        }
-        if (recentFiles != null) {
-            prop.setProperty("recent-files", recentFiles);
-            prop.store();
-        }
-        if (table.getDir() != null && table.getMP3() != null) {
-            mp3.openMP3(table.getDir() + File.separator + table.getMP3());
-        }
+        storeRecentFiles();
+        mp3.openMP3(table.getDirMP3());
         updateTitle();
 
         sheet.setDuration(mp3.getDuration() / 1000.0);
@@ -6248,15 +6181,12 @@ public class YassActions implements DropTargetListener {
         // prevent unsetting saved icon
         isUpdating = true;
         updateLyrics();
-
         // updateMP3Info(table);
         // updateRaw();
         // updateCover();
         // updateBackground();
         // updateVideo();
-
-        updateVideo();
-
+        updateVideo(); // todo: really?
         isUpdating = false;
 
         boolean oldTrim = autoTrim();
@@ -6264,10 +6194,8 @@ public class YassActions implements DropTargetListener {
         checkData(table, false, true);
         setAutoTrim(oldTrim);
 
-        for (Enumeration<YassTable> en = openTables.elements(); en.hasMoreElements(); ) {
-            YassTable t = en.nextElement();
+        for (YassTable t: openTables)
             songList.addOpened(t);
-        }
 
         System.out.println("Searching for USB mic...");
         String device = prop.getProperty("control-mic");
@@ -6286,24 +6214,46 @@ public class YassActions implements DropTargetListener {
             mp3.setDemo(false);
             mp3.setCapture(0, device, 0);
             mp3.setCapture(true);
-            sheet.init(session, null);
+            sheet.init(session);
         } else
-            sheet.init(null, null);
+            sheet.init(null);
     }
 
+    /**
+     * Stores opened files in .yass file.
+     * */
+    public void storeRecentFiles() {
+        String recentFiles = null;
+        for (YassTable yt: openTables) {
+            String fn = yt.getDirFilename();
+            if (recentFiles == null)
+                recentFiles = fn;
+            else if (!recentFiles.contains(fn))
+                recentFiles = recentFiles + ";" + fn;
+        }
+        if (recentFiles == null && table != null)
+            recentFiles = table.getDirFilename();
+        if (recentFiles != null) {
+            prop.setProperty("recent-files", recentFiles);
+            prop.store();
+        }
+    }
 
     private void updateTitle() {
         Window root = SwingUtilities.getWindowAncestor(tab);
         if (root instanceof JFrame) {
-            String t = table.getTitle();
-            String a = table.getArtist();
-            if (t == null || a == null) {
+            if (table == null)
                 ((Frame) root).setTitle(I18.get("yass_title"));
-            } else {
-                ((Frame) root).setTitle(a + " - " + t + " "
-                        + I18.get("yass_title_appendix"));
+            else {
+                String t = table.getTitle();
+                String a = table.getArtist();
+                if (t == null || a == null) {
+                    ((Frame) root).setTitle(I18.get("yass_title"));
+                } else {
+                    ((Frame) root).setTitle(a + " - " + t + " "
+                            + I18.get("yass_title_appendix"));
+                }
             }
-
         }
     }
 
@@ -6328,6 +6278,8 @@ public class YassActions implements DropTargetListener {
     }
 
     private void updateLyrics() {
+        if (table == null)
+            return;
         String lang = table.getLanguage();
         if (lang == null) {
             lang = "EN_US";
@@ -6335,13 +6287,12 @@ public class YassActions implements DropTargetListener {
             lang = mapLanguage(lang);
         }
         lyrics.setLanguage(lang);
-
         updateGap();
     }
 
     private String mapLanguage(String lang) {
-        String dicts = prop.getProperty("dict-map");
-        StringTokenizer st = new StringTokenizer(dicts, "|");
+        String dictMap = prop.getProperty("dict-map");
+        StringTokenizer st = new StringTokenizer(dictMap, "|");
         while (st.hasMoreTokens()) {
             String language = st.nextToken();
             if (language.equals(lang)) {
@@ -6409,7 +6360,7 @@ public class YassActions implements DropTargetListener {
             if (t.isSaved() || stored.contains(t))
                 continue;
             if (t.getDuetTrack() > 0) {
-                Vector<YassTable> tracks = getOpenDuetTables(t);
+                Vector<YassTable> tracks = getOpenTables(t);
                 YassTable mt = YassTable.mergeTables(tracks, prop);
                 mt.storeFile(t.getDirFilename());
                 stored.addAll(tracks);
@@ -6425,7 +6376,7 @@ public class YassActions implements DropTargetListener {
     }
 
     private void saveTrackAs() {
-        String filename = askFilename(I18.get("mlib_edit_file_msg"), FileDialog.SAVE);
+        String filename = askFilename(I18.get("lib_edit_file_msg"), FileDialog.SAVE);
         if (filename != null) {
             if (!table.storeFile(filename)) // todo warn
                 return;
@@ -6457,9 +6408,9 @@ public class YassActions implements DropTargetListener {
     }
 
     private void saveDuetAs() {
-        String filename = askFilename(I18.get("mlib_edit_file_msg"), FileDialog.SAVE);
+        String filename = askFilename(I18.get("lib_edit_file_msg"), FileDialog.SAVE);
         if (filename != null) {
-            Vector<YassTable> tracks = getOpenDuetTables(table);
+            Vector<YassTable> tracks = getOpenTables(table);
             YassTable mt = YassTable.mergeTables(tracks, prop);
             if (!mt.storeFile(filename)) // todo warn
                 return;
@@ -6467,27 +6418,12 @@ public class YassActions implements DropTargetListener {
         }
     }
 
-    private boolean closeSong() {
-        if (cancelOpen()) {
-            return false;
-        }
-        closeAllTables();
-        mp3.closeMP3();
-        prop.remove("recent-files");
-        editRecent.setEnabled(false);
-        saveAll.setEnabled(false);
-        undo.setEnabled(false);
-        redo.setEnabled(false);
-        return true;
-    }
-
-
     private void renameTrack() {
         String old = table.getVersion();
         if (old == null || old.trim().length() < 1) {
             return;
         }
-        String v = JOptionPane.showInputDialog(tab, I18.get("medit_tracks_rename_title"), old);
+        String v = JOptionPane.showInputDialog(tab, I18.get("edit_tracks_rename_title"), old);
         if (v != null) {
             v = v.trim();
             if (v.length() > 1 && !v.equals(old))
@@ -6498,7 +6434,7 @@ public class YassActions implements DropTargetListener {
     private void openTrack() {
         if (cancelOpen())
             return;
-        String filename = askFilename(I18.get("mlib_edit_file_msg"), FileDialog.LOAD);
+        String filename = askFilename(I18.get("lib_edit_file_msg"), FileDialog.LOAD);
         if (filename != null)
             openFiles(filename, true);
     }
@@ -6524,20 +6460,18 @@ public class YassActions implements DropTargetListener {
     }
 
     private void closeTrack() {
-        if (openTables.size() == 1)
-            closeSong();
-        else {
-            for (YassTable t : getOpenDuetTables(table)) {
-                sheet.removeTable(t);
-                openTables.removeElement(t);
-            }
-            table = firstTable();
-            updateTrackComponent();
-            sheet.setActiveTable(table);
-            updateActions();
-            updateTitle();
-            lyrics.setTable(table);
-            sheet.setActiveTable(table);
+        for (YassTable t : getOpenTables(table)) {
+            sheet.removeTable(t);
+            openTables.removeElement(t);
+        }
+        setActiveTable(firstTable());
+        storeRecentFiles();
+        updateTrackComponent();
+        sheet.setActiveTable(table);
+        lyrics.setTable(table);
+        updateActions();
+        updateTitle();
+        if (table != null) { // todo: unused
             String vd = table.getVideo();
             if (video != null && vd != null) {
                 video.setVideo(table.getDir() + File.separator + vd);
@@ -6555,12 +6489,24 @@ public class YassActions implements DropTargetListener {
                 sheet.setBackgroundImage(img);
                 mp3.setBackgroundImage(img);
             }
-            sheet.repaint();
-            sheet.requestFocus();
         }
+        sheet.repaint();
+        sheet.requestFocus();
     }
 
-    private Vector<YassTable> getOpenDuetTables(YassTable table) {
+    private boolean closeAll() {
+        if (cancelOpen())
+            return false;
+        closeAllTables();
+        prop.remove("recent-files");
+        editRecent.setEnabled(false);
+        saveAll.setEnabled(false);
+        undo.setEnabled(false);
+        redo.setEnabled(false);
+        return true;
+    }
+
+    private Vector<YassTable> getOpenTables(YassTable table) {
         Vector<YassTable> tables = new Vector<>();
         for (YassTable open : openTables) {
             if (open.getDir().equals(table.getDir()) && open.getFilename().equals(table.getFilename()))
@@ -6716,8 +6662,6 @@ public class YassActions implements DropTargetListener {
             return null;
         }
 
-        mp3.closeMP3();
-
         Hashtable<?, ?> hash = wiz.getValues();
         String file = YassUtils.createSong(tab, hash, prop);
 
@@ -6769,12 +6713,12 @@ public class YassActions implements DropTargetListener {
         if (ask) {
             JPanel panel = new JPanel(new BorderLayout());
             JCheckBox box = null;
-            panel.add("Center", new JLabel("<html>" + I18.get("medit_correct_breaks_msg")));
+            panel.add("Center", new JLabel("<html>" + I18.get("edit_correct_breaks_msg")));
             panel.add(
                     "South", box = new JCheckBox("<html>"
-                            + I18.get("medit_correct_breaks_msg_hide")));
+                            + I18.get("edit_correct_breaks_msg_hide")));
 
-            int ok = JOptionPane.showConfirmDialog(tab, panel, I18.get("medit_correct_breaks_title"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+            int ok = JOptionPane.showConfirmDialog(tab, panel, I18.get("edit_correct_breaks_title"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (ok == JOptionPane.YES_OPTION) {
                 withMinors = true;
                 if (box.isSelected()) {

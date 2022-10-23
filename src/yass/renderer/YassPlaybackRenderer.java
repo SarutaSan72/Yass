@@ -30,23 +30,12 @@ import java.awt.image.BufferedImage;
  */
 public interface YassPlaybackRenderer {
 
-    int FOUR_TO_THREE = 0;
-
-    /**
-     * Gets the iD attribute of the YassPlaybackRenderer object
-     *
-     * @return The iD value
-     */
-    String getID();
-
-
     /**
      * Description of the Method
      *
      * @param s    Description of the Parameter
-     * @param prop Description of the Parameter
      */
-    void init(YassSession s, YassProperties prop);
+    void init(YassSession s);
 
 
     /**
@@ -55,15 +44,6 @@ public interface YassPlaybackRenderer {
      * @return The session value
      */
     YassSession getSession();
-
-
-    /**
-     * Sets the ratio attribute of the YassPlaybackRenderer object
-     *
-     * @param ratio The new ratio value
-     */
-    void setRatio(int ratio);
-
 
     /**
      * Sets the pause attribute of the YassPlaybackRenderer object

@@ -490,14 +490,12 @@ public class YassPlayer {
      */
     public void openMP3(String filename) {
         this.filename = filename;
-        if (filename == null) {
+        if (filename == null)
             return;
-        }
 
         File file = new File(filename);
         if (!file.exists()) {
-            playbackRenderer
-                    .setErrorMessage(I18.get("sheet_msg_audio_missing"));
+            playbackRenderer.setErrorMessage(I18.get("sheet_msg_audio_missing"));
             return;
         }
 
@@ -906,12 +904,6 @@ public class YassPlayer {
      */
     public long getPosition() {
         return position;
-    }
-
-    /**
-     * Description of the Method
-     */
-    public void closeMP3() {
     }
 
     /**

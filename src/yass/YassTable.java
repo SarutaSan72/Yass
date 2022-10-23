@@ -344,7 +344,25 @@ public class YassTable extends JTable {
     public void setFilename(String s) {
         txtFilename = s;
     }
-    public String getDirFilename() { return getDir() + File.separator + getFilename(); }
+
+    /**
+     * String dir/filename
+     * @return null if any is null
+     */
+    public String getDirFilename() {
+        if (dir == null || txtFilename == null)
+            return null;
+        return dir + File.separator + txtFilename;
+    }
+    /**
+     * String dir/mp3file
+     * @return null if any is null
+     */
+    public String getDirMP3() {
+        if (dir == null || mp3 == null)
+            return null;
+        return dir + File.separator + mp3;
+    }
 
     public String getCanonicalFilename() {
         String a = getArtist();
@@ -4026,7 +4044,7 @@ public class YassTable extends JTable {
     public int insertNotesHere() {
         if (sheet != null) {
             int pos = sheet.getPlayerPosition();
-            int beat = sheet.toBeat(pos);
+            int beat = msToBeat(pos);
             int startRow = getIndexOfNoteBeforeBeat(beat);
 
             String trstring = null;
@@ -5713,6 +5731,10 @@ public class YassTable extends JTable {
     }
     public int msToBeat(double ms) {
         return (int) ((ms - gap) * 4 * bpm / (60 * 1000));
+    }
+    public double getGapInBeats()
+    {
+        return gap * 4 * bpm / (60 * 1000);
     }
 
     public Vector<YassRow> getModelData() {

@@ -362,14 +362,7 @@ public class YassMain extends JApplet {
         if (actions.cancelOpen()) {
             return false;
         }
-
-        mp3.closeMP3();
-        YassTable table = actions.firstTable();
-        if (table != null) {
-            prop.setProperty("recent-file", table.getDir() + File.separator + table.getFilename());
-        } else {
-            prop.setProperty("recent-file", "");
-        }
+        actions.storeRecentFiles();
         songList.setDefaults();
         prop.store();
 

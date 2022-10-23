@@ -100,14 +100,14 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
     String template = "";
     JScrollPane scroll = null;
     Image fadebg = null, curbg = null;
-    Action copyCoverSongInfo = new AbstractAction(I18.get("mlib_copy_cover")) {
+    Action copyCoverSongInfo = new AbstractAction(I18.get("lib_copy_cover")) {
         private static final long serialVersionUID = 6596469459427208563L;
 
         public void actionPerformed(ActionEvent e) {
             copyCover();
         }
     };
-    Action copyLyricsSongInfo = new AbstractAction(I18.get("mlib_copy_lyrics")) {
+    Action copyLyricsSongInfo = new AbstractAction(I18.get("lib_copy_lyrics")) {
         private static final long serialVersionUID = -4907138676752964328L;
 
         public void actionPerformed(ActionEvent e) {
@@ -115,35 +115,35 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
         }
     };
     Action copyBackgroundSongInfo = new AbstractAction(
-            I18.get("mlib_copy_background")) {
+            I18.get("lib_copy_background")) {
         private static final long serialVersionUID = 2404221301071286281L;
 
         public void actionPerformed(ActionEvent e) {
             copyBackground();
         }
     };
-    Action copyVideoSongInfo = new AbstractAction(I18.get("mlib_copy_video")) {
+    Action copyVideoSongInfo = new AbstractAction(I18.get("lib_copy_video")) {
         private static final long serialVersionUID = -8957550925496316614L;
 
         public void actionPerformed(ActionEvent e) {
             copyVideo();
         }
     };
-    Action pasteSongInfo = new AbstractAction(I18.get("mlib_paste_data")) {
+    Action pasteSongInfo = new AbstractAction(I18.get("lib_paste_data")) {
         private static final long serialVersionUID = -6023118973603374571L;
 
         public void actionPerformed(ActionEvent e) {
             paste();
         }
     };
-    Action editPreviewStart = new AbstractAction(I18.get("mlib_previewstart")) {
+    Action editPreviewStart = new AbstractAction(I18.get("lib_previewstart")) {
         private static final long serialVersionUID = 6118683730246393909L;
 
         public void actionPerformed(ActionEvent e) {
             actions.setPreviewStart();
         }
     };
-    Action startPlaying = new AbstractAction(I18.get("mlib_play_song")) {
+    Action startPlaying = new AbstractAction(I18.get("lib_play_song")) {
         private static final long serialVersionUID = -5901642092940901086L;
 
         public void actionPerformed(ActionEvent e) {
@@ -151,14 +151,14 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
         }
     };
     Action editMedleyStartEnd = new AbstractAction(
-            I18.get("mlib_medleystartend")) {
+            I18.get("lib_medleystartend")) {
         private static final long serialVersionUID = 2177037933845333920L;
 
         public void actionPerformed(ActionEvent e) {
             actions.setMedleyStartEnd();
         }
     };
-    Action openSongFolder = new AbstractAction(I18.get("mlib_open_folder")) {
+    Action openSongFolder = new AbstractAction(I18.get("lib_open_folder")) {
         private static final long serialVersionUID = -4154556762419745007L;
 
         public void actionPerformed(ActionEvent e) {
