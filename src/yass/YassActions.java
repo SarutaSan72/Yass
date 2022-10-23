@@ -415,24 +415,44 @@ public class YassActions implements DropTargetListener {
             songList.batchProcess(false, msg);
         }
     };
-    private final Action version1 = new AbstractAction(I18.get("mpop_versions_1")) {
+    private final Action activateTrack1 = new AbstractAction(I18.get("mpop_tracks_1")) {
         public void actionPerformed(ActionEvent e) {
-            gotoVersion(0);
+            activateTrack(0);
         }
     };
-    private final Action version2 = new AbstractAction(I18.get("mpop_versions_2")) {
+    private final Action activateTrack2 = new AbstractAction(I18.get("mpop_tracks_2")) {
         public void actionPerformed(ActionEvent e) {
-            gotoVersion(1);
+            activateTrack(1);
         }
     };
-    private final Action version3 = new AbstractAction(I18.get("mpop_versions_3")) {
+    private final Action activateTrack3 = new AbstractAction(I18.get("mpop_tracks_3")) {
         public void actionPerformed(ActionEvent e) {
-            gotoVersion(2);
+            activateTrack(2);
         }
     };
-    private final Action version4 = new AbstractAction(I18.get("mpop_versions_4")) {
+    private final Action activateTrack4 = new AbstractAction(I18.get("mpop_tracks_4")) {
         public void actionPerformed(ActionEvent e) {
-            gotoVersion(3);
+            activateTrack(3);
+        }
+    };
+    private final Action activateTrack5 = new AbstractAction(I18.get("mpop_tracks_5")) {
+        public void actionPerformed(ActionEvent e) {
+            activateTrack(4);
+        }
+    };
+    private final Action activateTrack6 = new AbstractAction(I18.get("mpop_tracks_6")) {
+        public void actionPerformed(ActionEvent e) {
+            activateTrack(5);
+        }
+    };
+    private final Action activateTrack7 = new AbstractAction(I18.get("mpop_tracks_7")) {
+        public void actionPerformed(ActionEvent e) {
+            activateTrack(6);
+        }
+    };
+    private final Action activateTrack8 = new AbstractAction(I18.get("mpop_tracks_8")) {
+        public void actionPerformed(ActionEvent e) {
+            activateTrack(7);
         }
     };
     private final Action openSongFromLibrary = new AbstractAction(I18.get("mlib_edit_songs")) {
@@ -2850,37 +2870,30 @@ public class YassActions implements DropTargetListener {
         if (i > n - 1) {
             i = 0;
         }
-        gotoVersion(i);
+        activateTrack(i);
     }
 
     public int getActiveTrack() {
         return openTables.indexOf(table);
     }
 
-    public void gotoVersion(int b) {
+    /**
+     * Activate track (0 = track #1).
+     * @param i 0-7
+     */
+    public void activateTrack(int i) {
         int n = openTables.size();
-        if (b < 0 || b > n - 1) {
+        if (i < 0 || i > n - 1)
             return;
-        }
 
-        int rowIndex = sheet.firstVisibleNote(b);
-        int page = openTables.elementAt(b).getPageNumber(rowIndex);
+        int rowIndex = sheet.firstVisibleNote(i);
+        int page = openTables.elementAt(i).getPageNumber(rowIndex);
 
-        YassTable t = openTables.elementAt(b);
+        YassTable t = openTables.elementAt(i);
         setTable(t);
 
         auto.checkData(table, false, true);
 
-		/*
-        int sheet_pos = sheet.getPlayerPosition();
-        long ms_pos = sheet.fromTimeline(sheet_pos);
-        double view_x = ((JViewport) sheet.getParent()).getViewPosition().x;
-        double off = sheet_pos - view_x;
-        System.out.println("sheet_pos "+sheet_pos);
-		System.out.println("ms_pos "+ms_pos);
-		System.out.println("view_x "+view_x);
-		System.out.println("off "+off);
-		*/
         sheet.setActiveTable(table);
         String vd = table.getVideo();
         if (video != null && vd != null) {
@@ -2893,37 +2906,21 @@ public class YassActions implements DropTargetListener {
             if (file.exists()) {
                 try {
                     img = YassUtils.readImage(file);
-                } catch (Exception e) {
-                    img = null;
-                }
+                } catch (Exception ignored) {}
             }
             sheet.setBackgroundImage(img);
             mp3.setBackgroundImage(img);
         }
-
         updateTitle();
-
         lyrics.setTable(table);
-
         isUpdating = true;
-
-        // bug: startAutoSpellCheck triggers table update
-        updateLyrics();
-
+        updateLyrics(); // bug: startAutoSpellCheck triggers table update
         // updateMP3Info(table);
         // updateRaw();
         // updateCover();
         // updateBackground();
         // updateVideo();
         isUpdating = false;
-
-		/*
-		int new_sheet_pos = sheet.toTimeline(ms_pos);
-		System.out.println("new_sheet_pos "+new_sheet_pos);
-		sheet.setPlayerPosition(new_sheet_pos); ((JViewport)
-		sheet.getParent()).setViewPosition(new
-		Point(new_sheet_pos-(int)off,0)); sheet.repaint();
-        */
         SwingUtilities.invokeLater(() -> {
             if (page >= 0)
                 table.gotoPageNumber(page);
@@ -6541,7 +6538,7 @@ public class YassActions implements DropTargetListener {
                 return;
         } else {
             if (JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(tab,
-                    MessageFormat.format(I18.get("tool_tracks_delete_msg"), table.getFilename()),
+                    MessageFormat.format(I18.get("tool_tracks_delete_track_msg"), table.getFilename()),
                     I18.get("tool_tracks_delete_title"), JOptionPane.OK_CANCEL_OPTION))
                 return;
         }
@@ -7282,20 +7279,20 @@ public class YassActions implements DropTargetListener {
         nextVersion.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_0, InputEvent.CTRL_MASK));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.CTRL_MASK), "version1");
-        am.put("version1", version1);
-        version1.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.CTRL_MASK));
+        am.put("version1", activateTrack1);
+        activateTrack1.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_1, InputEvent.CTRL_MASK));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.CTRL_MASK), "version2");
-        am.put("version2", version2);
-        version2.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.CTRL_MASK));
+        am.put("version2", activateTrack2);
+        activateTrack2.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_2, InputEvent.CTRL_MASK));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.CTRL_MASK), "version3");
-        am.put("version3", version3);
-        version3.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.CTRL_MASK));
+        am.put("version3", activateTrack3);
+        activateTrack3.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_3, InputEvent.CTRL_MASK));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_4, InputEvent.CTRL_MASK), "version4");
-        am.put("version4", version4);
-        version4.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_4, InputEvent.CTRL_MASK));
+        am.put("version4", activateTrack4);
+        activateTrack4.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_4, InputEvent.CTRL_MASK));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.ALT_MASK), "darkmode");
         am.put("darkmode", darkmode);

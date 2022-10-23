@@ -1343,19 +1343,19 @@ public class YassTable extends JTable {
             if (inputStream != null) {
                 try {
                     inputStream.close();
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
             if (r != null) {
                 try {
                     r.close();
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
             if (fis != null) {
                 try {
                     fis.close();
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         }
@@ -5735,13 +5735,12 @@ public class YassTable extends JTable {
         return duetTrackCount;
     }
 
-    public class YassTableCellEditor extends AbstractCellEditor implements
+    public static class YassTableCellEditor extends AbstractCellEditor implements
             TableCellEditor {
         private static final long serialVersionUID = -5422573906886420055L;
         Dimension d = new Dimension(100, 100);
         JComboBox<?> ed = new JComboBox<Object>(new String[]{":", "*", "F", "R", "G"}) {
             private static final long serialVersionUID = 1L;
-
             public Dimension getPopupSize() {
                 return d;
             }

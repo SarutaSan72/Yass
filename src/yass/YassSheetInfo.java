@@ -45,7 +45,7 @@ public class YassSheetInfo extends JPanel {
     private static final int msgBar = 14;
     private static final int txtBar = 32;
     private static final int sideBar = 10;
-    private static final int selectBar = 20;
+    //private static final int selectBar = 20;
 
     private YassSheetListener sheetListener;
 
@@ -58,7 +58,7 @@ public class YassSheetInfo extends JPanel {
     private static final int NONE = 0;
     private static final int ACTIVATE_TRACK = 1;
     private static final int SHOW_ERRORS = 2;
-    private static final int SHOW_SELECT = 3;
+    //private static final int SHOW_SELECT = 3;
     private boolean isSelected = false;
 
     private boolean hasErr = false;
@@ -90,11 +90,11 @@ public class YassSheetInfo extends JPanel {
                     sheet.stopPlaying();
                 if (! isActiveTrack())
                     activateTrack();
-                if (hiliteCue == SHOW_SELECT) {
-                    isSelected = !isSelected;
-                    repaint();
-                }
-                else if (hiliteCue == SHOW_ERRORS)
+                //if (hiliteCue == SHOW_SELECT) {
+                //    isSelected = !isSelected;
+                //    repaint();
+                //}
+                if (hiliteCue == SHOW_ERRORS)
                     showErrors();
                 else {
                     SwingUtilities.invokeLater(() -> {
@@ -118,10 +118,8 @@ public class YassSheetInfo extends JPanel {
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                if (e.getY() > txtBar) {
-                    if (!(sheet.isPlaying() || sheet.isTemporaryStop()))
-                        moveTo(e.getX(), true);
-                }
+                if (!(sheet.isPlaying() || sheet.isTemporaryStop()))
+                    moveTo(e.getX(), true);
             }
             @Override
             public void mouseMoved(MouseEvent e) {
@@ -131,12 +129,12 @@ public class YassSheetInfo extends JPanel {
                         repaint();
                     }
                 }
-                else if (e.getX() > getWidth() - sideBar -selectBar && e.getY() < txtBar) {
+                /*else if (e.getX() > getWidth() - sideBar -selectBar && e.getY() < txtBar) {
                     if (hiliteCue != SHOW_SELECT) {
                         hiliteCue = SHOW_SELECT;
                         repaint();
                     }
-                }
+                }*/
                 else {
                     if (! isActiveTrack()) {
                         if (hiliteCue != ACTIVATE_TRACK) {
@@ -185,7 +183,7 @@ public class YassSheetInfo extends JPanel {
         if (table == null)
             return;
         if (track != table.getActions().getActiveTrack())
-            table.getActions().gotoVersion(track);
+            table.getActions().activateTrack(track);
         sheet.getActiveTable().getActions().checkData(table, false, true);
     }
     private void showErrors() {
@@ -207,9 +205,11 @@ public class YassSheetInfo extends JPanel {
         double minGapBeat = sheet.getMinGapInBeats();
         double gapBeat = sheet.getGapInBeats(track) - minGapBeat;
         // click position in beats
-        int w = getWidth();
-        if (x < 0) x = 0;
-        if (x > w) x = w;
+        int w = getWidth()-1;
+        if (x < sideBar) x = sideBar;
+        if (x > w-sideBar) x = w-sideBar;
+        x -= sideBar;
+        w -= 2 * sideBar;
         int beat = (int)((minBeat + x*rangeBeat) / (double) w - gapBeat);
         double ms = sheet.getTable(track).beatToMs(beat);
         int newpos = sheet.toTimeline(ms);
@@ -628,7 +628,7 @@ public class YassSheetInfo extends JPanel {
         }
 
         // artist/title/year
-        x = getWidth()-sideBar-selectBar;
+        x = getWidth()-sideBar; //-selectBar;
         String t = table.getTitle();
         String a = table.getArtist();
         String year = table.getYear();
@@ -680,7 +680,7 @@ public class YassSheetInfo extends JPanel {
         }
 
         // select
-        x = getWidth()-sideBar-selectBar;
+        /*x = getWidth()-sideBar-selectBar;
         if (hiliteCue == SHOW_SELECT) {
             g2.setColor(sheet.blue);
             g2.fillRect(x, 2, selectBar-2, txtBar-4);
@@ -690,6 +690,6 @@ public class YassSheetInfo extends JPanel {
             g2.fillRect(x+3, 2+3, selectBar-2-5, txtBar-4-5);
         }
         g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
-        g2.drawRect(x, 2, selectBar-2, txtBar-4);
+        g2.drawRect(x, 2, selectBar-2, txtBar-4);*/
     }
 }

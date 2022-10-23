@@ -348,41 +348,6 @@ public class YassUtils {
     }
 
     /**
-     * Description of the Method
-     *
-     * @param parent Description of the Parameter
-     * @param prop   Description of the Parameter
-     * @param t      Description of the Parameter
-     * @return Description of the Return Value
-     */
-    public static boolean removeVersion(Component parent, YassProperties prop, YassTable t, boolean withDuet) {
-        String absFilename = t.getDir() + File.separator + t.getFilename();
-        File f = new File(absFilename);
-
-        YassTableModel tm = (YassTableModel) t.getModel();
-        YassRow r = tm.getCommentRow("TITLE:");
-        if (r == null) {
-            return false;
-        }
-
-        if (!r.hasVersion()) {
-            JOptionPane.showMessageDialog(parent, "<html>" + I18.get("tool_tracks_delete_error") + "</html>", I18.get("tool_tracks_delete_title"), JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        String version = r.getVersion();
-        int ok;
-        if (withDuet)
-            ok = JOptionPane.showConfirmDialog(parent, MessageFormat.format(I18.get("tool_tracks_delete_duet_msg"), version), I18.get("tool_tracks_delete_title"), JOptionPane.OK_CANCEL_OPTION);
-        else
-            ok = JOptionPane.showConfirmDialog(parent, MessageFormat.format(I18.get("tool_tracks_delete_msg"), version), I18.get("tool_tracks_delete_title"), JOptionPane.OK_CANCEL_OPTION);
-        if (ok == JOptionPane.OK_OPTION) {
-            f.delete();
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Gets the wildcard attribute of the YassAutoCorrect object
      *
      * @param s  Description of the Parameter
