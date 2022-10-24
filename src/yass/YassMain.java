@@ -410,6 +410,7 @@ public class YassMain extends JApplet {
                         JViewport v = (JViewport) e.getSource();
                         Point p = v.getViewPosition();
                         Dimension r = v.getExtentSize();
+                        double minMs = sheet.getMinVisibleMs();
 
                         // LYRICS POSITION
                         String layout = prop.getProperty("editor-layout");
@@ -436,6 +437,8 @@ public class YassMain extends JApplet {
                             sheet.updateHeight();
                             actions.revalidateLyricsArea();
                         }
+                        YassTable t = actions.getTable();
+                        if (t != null) t.zoomPage();
                     }
                 });
 

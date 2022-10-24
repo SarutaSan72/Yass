@@ -1634,7 +1634,7 @@ public class YassActions implements DropTargetListener {
                 tracks[1].loadTable(t, false);
                 tracks[0].setSaved(false);
                 tracks[1].setSaved(false);
-                setSaved(false);
+                updateActions();
                 main.repaint();
             } else if (table.getDuetTrackCount() == 3) {
                 // todo
@@ -2033,7 +2033,7 @@ public class YassActions implements DropTargetListener {
             updateGap();
         }
     };
-    private final Action openFile = new AbstractAction(I18.get("lib_edit_file")) {
+    private final Action openFileFromLibrary = new AbstractAction(I18.get("lib_edit_file")) {
         public void actionPerformed(ActionEvent e) {
             if (currentView == VIEW_EDIT) {
                 if (cancelOpen()) {
@@ -2041,12 +2041,10 @@ public class YassActions implements DropTargetListener {
                 }
             }
             String filename = e.getActionCommand();
-            if (filename == null || !new File(filename).exists()) {
+            if (filename == null || !new File(filename).exists())
                 filename = askFilename(I18.get("lib_edit_file_msg"), FileDialog.LOAD);
-            }
-            if (filename == null) {
+            if (filename == null)
                 return;
-            }
             openFiles(filename, false);
         }
     };
@@ -2786,7 +2784,10 @@ public class YassActions implements DropTargetListener {
 
         if (currentView == VIEW_EDIT && autoTrim()
                 && (t.hasMinorPageBreakMessages() || t.hasPageBreakMessages())) {
+            boolean oldUndo = table.getPreventUndo();
+            table.setPreventUndo(true);
             trimPageBreaks();
+            table.setPreventUndo(oldUndo);
         }
 
         if (t.hasMinorPageBreakMessages()) {
@@ -2817,6 +2818,9 @@ public class YassActions implements DropTargetListener {
 
     private void updateTrackComponent() {
         int n = openTables.size();
+        for (int i = 0; i < n; i++)
+            openTables.elementAt(i).setTableColor(getTableColor(i));
+
         Component[] c = trackComponent.getComponents();
         if (c.length != n) {
             Vector<YassSheetInfo> toRemove = new Vector<>(n);
@@ -2868,8 +2872,7 @@ public class YassActions implements DropTargetListener {
 
         YassTable t = openTables.elementAt(i);
         setActiveTable(t);
-
-        auto.checkData(table, false, true);
+        updateActions();
 
         sheet.setActiveTable(table);
         String vd = table.getVideo();
@@ -3292,7 +3295,6 @@ public class YassActions implements DropTargetListener {
         showSongInfoBackground.putValue(AbstractAction.SMALL_ICON, getIcon("empty16Icon"));
 
         updateActions();
-        setSaved(true);
     }
 
 
@@ -3516,7 +3518,7 @@ public class YassActions implements DropTargetListener {
         menu.setMnemonic(KeyEvent.VK_F);
         menuBar.add(menu);
         menu.add(openSongFromLibrary);
-        menu.add(openFile);
+        menu.add(openFileFromLibrary);
         menu.add(editRecent);
         menu.addSeparator();
         menu.add(newFile);
@@ -4867,7 +4869,6 @@ public class YassActions implements DropTargetListener {
         menuHolder.validate();
 
         if (n == VIEW_EDIT) {
-            sheet.revalidate();
             openEditor(false);
             updateSheetProperties();
         } else if (n == VIEW_LIBRARY) {
@@ -4877,11 +4878,6 @@ public class YassActions implements DropTargetListener {
             songList.requestFocus();
         }
         menuHolder.repaint();
-    }
-
-    public void setSaved(boolean saved) {
-        saveAll.setEnabled(!saved);
-        updateActions();
     }
 
     /**
@@ -5008,12 +5004,15 @@ public class YassActions implements DropTargetListener {
         boolean isDuetTrack = table != null && table.getDuetTrack() > 0;
         boolean isTrackSaved = table == null || table.isSaved();
         boolean isAllSaved = true;
-        if (isOpened)
+        if (isOpened) {
             for (YassTable open : openTables)
                 if (!open.isSaved()) {
                     isAllSaved = false;
                     break;
                 }
+        }
+        boolean canUndo = table != null && table.canUndo();
+        boolean canRedo = table != null && table.canRedo();
 
         saveTrack.setEnabled(!isTrackSaved);
         saveAll.setEnabled(!isAllSaved);
@@ -5021,8 +5020,8 @@ public class YassActions implements DropTargetListener {
         closeAll.setEnabled(isOpened);
         reloadAll.setEnabled(isOpened);
 
-        undo.setEnabled(isOpened); // todo
-        redo.setEnabled(isOpened);
+        undo.setEnabled(canUndo);
+        redo.setEnabled(canRedo);
 
         renameTrack.setEnabled(isDuetTrack);
         exchangeTracks.setEnabled(isDuetTrack);
@@ -6090,6 +6089,11 @@ public class YassActions implements DropTargetListener {
             }
         }
 
+        // open editor, load all tracks
+        if (!append) {
+            closeAllTables();
+        }
+
         // add all (but only if not opened yet)
         Vector<YassTable> tables = new Vector<>();
         for (YassTable t: multis) {
@@ -6103,10 +6107,6 @@ public class YassActions implements DropTargetListener {
         if (tables.size() < 1)
             return false;
 
-        // open editor, load all tracks
-        if (!append) {
-            closeAllTables();
-        }
         for (YassTable t2 : tables) {
             YassTable t = createNextTable();
             t.setPreventUndo(true);
@@ -6149,33 +6149,40 @@ public class YassActions implements DropTargetListener {
             sheet.setBackgroundImage(img);
             mp3.setBackgroundImage(img);
         }
-        // sheet.init();
-        sheet.update();
-        sheet.requestFocus();
-        setRelative(true);
-        if (!reload) {
-            YassTable.setZoomMode(YassTable.ZOOM_ONE);
-            table.setMultiSize(1);
 
-            table.firstNote();
-            updatePlayerPosition();
-            sheet.repaint();
-        }
+        sheet.revalidate();
+        main.revalidate();
+        SwingUtilities.invokeLater(() -> {
+            // sheet.init();
+            sheet.update();
+            sheet.requestFocus();
+            setRelative(true);
+            if (!reload) {
+                YassTable.setZoomMode(YassTable.ZOOM_ONE);
+                table.setMultiSize(1);
+
+                table.firstNote();
+                updatePlayerPosition();
+                sheet.repaint();
+            }
+        });
+
         lyrics.setTable(table);
         lyrics.repaintLineNumbers();
 
-        table.getColumnModel().getColumn(0).setPreferredWidth(10);
-        table.getColumnModel().getColumn(0).setMaxWidth(10);
-        table.getColumnModel().getColumn(1).setPreferredWidth(50);
-        table.getColumnModel().getColumn(2).setPreferredWidth(50);
-        table.getColumnModel().getColumn(3).setPreferredWidth(50);
-
-        table.resetUndo();
-        undo.setEnabled(false);
-        redo.setEnabled(false);
-        table.addUndo();
-
-        setSaved(true);
+        for (YassTable t: openTables) {
+            t.getColumnModel().getColumn(0).setPreferredWidth(10);
+            t.getColumnModel().getColumn(0).setMaxWidth(10);
+            t.getColumnModel().getColumn(1).setPreferredWidth(50);
+            t.getColumnModel().getColumn(2).setPreferredWidth(50);
+            t.getColumnModel().getColumn(3).setPreferredWidth(50);
+            t.resetUndo();
+            t.addUndo();
+            boolean oldTrim = autoTrim();
+            setAutoTrim(false);
+            checkData(t, false, true);
+            setAutoTrim(oldTrim);
+        }
         updateActions();
 
         // prevent unsetting saved icon
@@ -6188,11 +6195,6 @@ public class YassActions implements DropTargetListener {
         // updateVideo();
         updateVideo(); // todo: really?
         isUpdating = false;
-
-        boolean oldTrim = autoTrim();
-        setAutoTrim(false);
-        checkData(table, false, true);
-        setAutoTrim(oldTrim);
 
         for (YassTable t: openTables)
             songList.addOpened(t);
@@ -6740,7 +6742,6 @@ public class YassActions implements DropTargetListener {
 
         boolean changed = auto.autoCorrectAllPageBreaks(table, withMinors);
         if (changed) {
-            table.addUndo();
             preventTrim = true;
             ((YassTableModel) table.getModel()).fireTableDataChanged();
 
@@ -6797,8 +6798,8 @@ public class YassActions implements DropTargetListener {
         openSongFromLibrary.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK), "openFile");
-        am.put("openFile", openFile);
-        openFile.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+        am.put("openFile", openFileFromLibrary);
+        openFileFromLibrary.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "playSong");
         am.put("playSong", playSong);

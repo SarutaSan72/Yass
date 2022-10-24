@@ -184,7 +184,6 @@ public class YassSheetInfo extends JPanel {
             return;
         if (track != table.getActions().getActiveTrack())
             table.getActions().activateTrack(track);
-        sheet.getActiveTable().getActions().checkData(table, false, true);
     }
     private void showErrors() {
         sheet.getActiveTable().getActions().showErrors.actionPerformed(null);
@@ -435,7 +434,9 @@ public class YassSheetInfo extends JPanel {
             ry = (int) ((h - hBar-4) * (r.getHeightInt() - minHeight) / (double) rangeHeight + 3);
             rw = (int) (w * r.getLengthInt() / rangeBeat + .5);
             Color hiliteFill = null;
-            if (r.isGolden()) {
+            if (r.hasMessage()) {
+                hiliteFill = colorSet[YassSheet.COLOR_ERROR];
+            } else if (r.isGolden()) {
                 hiliteFill = colorSet[YassSheet.COLOR_GOLDEN];
             } else if (r.isFreeStyle()) {
                 hiliteFill = colorSet[YassSheet.COLOR_FREESTYLE];
@@ -443,8 +444,6 @@ public class YassSheetInfo extends JPanel {
                 hiliteFill = colorSet[YassSheet.COLOR_RAP];
             } else if (r.isRapGolden()) {
                 hiliteFill = colorSet[YassSheet.COLOR_RAPGOLDEN];
-            } else if (r.hasMessage()) {
-                hiliteFill = colorSet[YassSheet.COLOR_ERROR];
             }
             if (hiliteFill != null) {
                 g3.setColor(hiliteFill);

@@ -748,7 +748,9 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
 
                 if (table.getPreventUndo()) {
                     table.setPreventUndo(false);
+                    table.setSaved(false);
                     table.addUndo();
+                    actions.updateActions();
                 }
                 if (actions != null) {
                     actions.showMessage(0);
@@ -845,8 +847,7 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
                 // LYRICS POSITION
                 boolean notInLyrics = true;
                 if (layout.equals("East")) {
-                    notInLyrics = (x - getViewPosition().x) < clip.width
-                            - lyricsWidth;
+                    notInLyrics = (x - getViewPosition().x) < clip.width - lyricsWidth;
                 } else if (layout.equals("West")) {
                     notInLyrics = (x - getViewPosition().x) > lyricsWidth;
                 }
@@ -917,8 +918,7 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
                     return;
                 }
 
-                if (YassTable.getZoomMode() == YassTable.ZOOM_ONE
-                        && dragMode != SLIDE) {
+                if (YassTable.getZoomMode() == YassTable.ZOOM_ONE && dragMode != SLIDE) {
                     temporaryZoomOff = true;
                     YassTable.setZoomMode(YassTable.ZOOM_MULTI);
                 }
