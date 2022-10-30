@@ -25,16 +25,11 @@ import java.io.FileOutputStream;
 import java.util.Hashtable;
 import java.util.Properties;
 
-/**
- * Description of the Class
- *
- * @author Saruta
- */
 public class YassProperties extends Properties {
     private static final long serialVersionUID = -8189893110989853544L;
-    private String userDir = System.getProperty("user.home");
-    private String yassDir = ".yass";
-    private String userProps = "user.xml";
+    private final String userDir = System.getProperty("user.home");
+    private final String yassDir = ".yass";
+    private final String userProps = "user.xml";
     private Hashtable<Object, Object> defaultProperties = null;
 
     public YassProperties() {
@@ -42,11 +37,6 @@ public class YassProperties extends Properties {
         load();
     }
 
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
     public boolean checkVersion() {
         String v = getProperty("yass-version");
         boolean old = v == null;
@@ -68,12 +58,6 @@ public class YassProperties extends Properties {
         return old;
     }
 
-
-    /**
-     * Gets the userDir attribute of the YassProperties object
-     *
-     * @return The userDir value
-     */
     public String getUserDir() {
         return userDir + File.separator + yassDir;
     }
@@ -86,9 +70,6 @@ public class YassProperties extends Properties {
         return (String)defaultProperties.get(key);
     }
 
-    /**
-     * Description of the Method
-     */
     public void load() {
         String propFile = userDir + File.separator + yassDir + File.separator + userProps;
         System.out.println("Loading properties: " + propFile);
@@ -113,13 +94,10 @@ public class YassProperties extends Properties {
         } catch (Exception e) {
             // not exists
         }
-
         // user props not found; fall back to defaults
-
         setDefaultProperties(this);
         loadDevices();
     }
-
 
     private void loadDevices() {
         String[] mics = YassCaptureAudio.getDeviceNames();
@@ -137,7 +115,7 @@ public class YassProperties extends Properties {
         String mic = getProperty("control-mic");
         if (mic == null || mic.trim().length() < 1) {
             for (String m : mics) {
-                if (m.indexOf("USBMIC") >= 0) {
+                if (m.contains("USBMIC")) {
                     mic = m;
                     put("control-mic", mic);
                     break;
@@ -152,10 +130,6 @@ public class YassProperties extends Properties {
         System.out.println("Selecting Mic: " + mic);
     }
 
-
-    /**
-     * Description of the Method
-     */
     public void setDefaultProperties(Hashtable<Object,Object> p) {
 
         p.put("default-programs", "C:/Program Files/Ultrastar Deluxe|C:/Program Files (x86)/UltraStar Deluxe|C:/Program Files/Ultrastar|C:/Programme/Ultrastar Deluxe|C:/Ultrastar Deluxe|C:/Programme/Ultrastar|C:/Ultrastar|D:/Ultrastar|E:/Ultrastar|F:/Ultrastar|/home/.ultrastardx|/home/.ultrastar|C:/Program Files (x86)/UltraStar Deluxe WorldParty|C:/Program Files/UltraStar Deluxe WorldParty|D:/UltraStar Deluxe WorldParty|C:/Program Files (x86)/Vocaluxe|C:/Program Files/Vocaluxe|D:/Vocaluxe|C:/Program Files (x86)/Performous|C:/Program Files/Performous");
@@ -441,16 +415,7 @@ public class YassProperties extends Properties {
         p.put("recent-files", "");
     }
 
-
-    /**
-     * Gets the property attribute of the YassProperties object
-     *
-     * @param key Description of the Parameter
-     * @param var Description of the Parameter
-     * @param val Description of the Parameter
-     * @return The property value
-     */
-    public String getProperty(String key, String var[], String val[]) {
+    public String getProperty(String key, String[] var, String[] val) {
         String s = getProperty(key);
         for (int i = 0; i < var.length; i++) {
             s = YassUtils.replace(s, var[i], val[i]);
@@ -458,32 +423,12 @@ public class YassProperties extends Properties {
         return s;
     }
 
-
-    /**
-     * Gets the property attribute of the YassProperties object
-     *
-     * @param key Description of the Parameter
-     * @param var Description of the Parameter
-     * @param val Description of the Parameter
-     * @return The property value
-     */
     public String getProperty(String key, String var, String val) {
         String s = getProperty(key);
         s = YassUtils.replace(s, var, val);
         return s;
     }
 
-
-    /**
-     * Gets the property attribute of the YassProperties object
-     *
-     * @param key  Description of the Parameter
-     * @param var1 Description of the Parameter
-     * @param val1 Description of the Parameter
-     * @param var2 Description of the Parameter
-     * @param val2 Description of the Parameter
-     * @return The property value
-     */
     public String getProperty(String key, String var1, String val1, String var2, String val2) {
         String s = getProperty(key);
         s = YassUtils.replace(s, var1, val1);
@@ -491,19 +436,6 @@ public class YassProperties extends Properties {
         return s;
     }
 
-
-    /**
-     * Gets the property attribute of the YassProperties object
-     *
-     * @param key  Description of the Parameter
-     * @param var1 Description of the Parameter
-     * @param val1 Description of the Parameter
-     * @param var2 Description of the Parameter
-     * @param val2 Description of the Parameter
-     * @param var3 Description of the Parameter
-     * @param val3 Description of the Parameter
-     * @return The property value
-     */
     public String getProperty(String key, String var1, String val1, String var2, String val2, String var3, String val3) {
         String s = getProperty(key);
         s = YassUtils.replace(s, var1, val1);
@@ -512,21 +444,6 @@ public class YassProperties extends Properties {
         return s;
     }
 
-
-    /**
-     * Gets the property attribute of the YassProperties object
-     *
-     * @param key  Description of the Parameter
-     * @param var1 Description of the Parameter
-     * @param val1 Description of the Parameter
-     * @param var2 Description of the Parameter
-     * @param val2 Description of the Parameter
-     * @param var3 Description of the Parameter
-     * @param val3 Description of the Parameter
-     * @param var4 Description of the Parameter
-     * @param val4 Description of the Parameter
-     * @return The property value
-     */
     public String getProperty(String key, String var1, String val1, String var2, String val2, String var3, String val3, String var4, String val4) {
         String s = getProperty(key);
         s = YassUtils.replace(s, var1, val1);
@@ -536,23 +453,6 @@ public class YassProperties extends Properties {
         return s;
     }
 
-
-    /**
-     * Gets the property attribute of the YassProperties object
-     *
-     * @param key  Description of the Parameter
-     * @param var1 Description of the Parameter
-     * @param val1 Description of the Parameter
-     * @param var2 Description of the Parameter
-     * @param val2 Description of the Parameter
-     * @param var3 Description of the Parameter
-     * @param val3 Description of the Parameter
-     * @param var4 Description of the Parameter
-     * @param val4 Description of the Parameter
-     * @param var5 Description of the Parameter
-     * @param val5 Description of the Parameter
-     * @return The property value
-     */
     public String getProperty(String key, String var1, String val1, String var2, String val2, String var3, String val3, String var4, String val4, String var5, String val5) {
         String s = getProperty(key);
         s = YassUtils.replace(s, var1, val1);
@@ -563,10 +463,6 @@ public class YassProperties extends Properties {
         return s;
     }
 
-
-    /**
-     * Description of the Method
-     */
     public void store() {
         String propDir = userDir + File.separator + yassDir;
         File propDirFile = new File(propDir);
@@ -578,14 +474,11 @@ public class YassProperties extends Properties {
             }
         }
         String propFile = propDir + File.separator + userProps;
-
         try {
             FileOutputStream fos = new FileOutputStream(propFile);
             storeToXML(fos, null);
             fos.flush();
-            // Evtl. unn�tig?!
             fos.close();
-            // Evtl. unn�tig?!
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error in storing properties to " + propFile, "Store properties", JOptionPane.ERROR_MESSAGE);
         }

@@ -1672,7 +1672,6 @@ public class YassActions implements DropTargetListener {
             if (sel < 0)
                 sel = sheet.nextElement();
             final int selectRow = sel;
-            final int activeTrack = getActiveTrack();
 
             openFiles(recent, false);
             openEditor(selectRow >= 0);
@@ -2374,11 +2373,9 @@ public class YassActions implements DropTargetListener {
                 // File(dir).exists()) {
                 // return;
                 // }
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        progressBar.repaint();
-                        new YassLibOptions(prop, YassActions.this, songList, mp3);
-                    }
+                SwingUtilities.invokeLater(() -> {
+                    progressBar.repaint();
+                    new YassLibOptions(prop, YassActions.this, songList, mp3);
                 });
             }
         });
@@ -2507,9 +2504,7 @@ public class YassActions implements DropTargetListener {
                 String[] browsers = {"firefox", "opera", "konqueror", "epiphany", "mozilla", "netscape", "chrome"};
                 String browser = null;
                 for (int count = 0; count < browsers.length && browser == null; count++) {
-                    if (Runtime.getRuntime()
-                            .exec(new String[]{"which", browsers[count]})
-                            .waitFor() == 0) {
+                    if (Runtime.getRuntime().exec(new String[]{"which", browsers[count]}).waitFor() == 0) {
                         browser = browsers[count];
                     }
                 }
@@ -2519,8 +2514,7 @@ public class YassActions implements DropTargetListener {
                     Runtime.getRuntime().exec(new String[]{browser, url});
                 }
             }
-        } catch (Exception e) {
-        }
+        } catch (Exception ignored) {}
     }
 
     public static void openURLFile(String fn) {
@@ -2573,7 +2567,6 @@ public class YassActions implements DropTargetListener {
                             }
                             if (app != null) {
                                 Runtime.getRuntime().exec(new String[]{app, filename});
-                            } else {
                             }
                         }
                     } catch (Exception ex) {
@@ -2630,9 +2623,8 @@ public class YassActions implements DropTargetListener {
 
         for (int i = 0; i < keycodes.length; i++) {
             String str = prop.getProperty("key-" + i);
-            int code = -1;
             try {
-                code = AWTKeyStroke.getAWTKeyStroke(str).getKeyCode();
+                int code = AWTKeyStroke.getAWTKeyStroke(str).getKeyCode();
                 if (code != -1) {
                     keycodes[i] = code;
                 }
@@ -2821,12 +2813,12 @@ public class YassActions implements DropTargetListener {
         for (int i = 0; i < n; i++)
             openTables.elementAt(i).setTableColor(getTableColor(i));
 
-        Component[] c = trackComponent.getComponents();
-        if (c.length != n) {
+        Component[] tcs = trackComponent.getComponents();
+        if (tcs.length != n) {
             Vector<YassSheetInfo> toRemove = new Vector<>(n);
-            for (int i = 0; i < c.length; i++) {
-                if (c[i] instanceof YassSheetInfo) {
-                    YassSheetInfo info = (YassSheetInfo) c[i];
+            for (Component tc : tcs) {
+                if (tc instanceof YassSheetInfo) {
+                    YassSheetInfo info = (YassSheetInfo) tc;
                     info.removeListener();
                     toRemove.add(info);
                 }
@@ -2987,10 +2979,8 @@ public class YassActions implements DropTargetListener {
 
         songList.addSongListListener(e -> {
             int state = e.getState();
-            switch (state) {
-                case YassSongListEvent.LOADED:
-                    groups.refreshCounters();
-                    break;
+            if (state == YassSongListEvent.LOADED) {
+                groups.refreshCounters();
             }
         });
         // setDropTarget(songList);
@@ -3880,7 +3870,7 @@ public class YassActions implements DropTargetListener {
         JToolBar t = new JToolBar(I18.get("tool_playlist"));
         t.setFloatable(false);
 
-        JButton b = null;
+        JButton b;
 
         t.add(b = new JButton());
         b.setAction(savePlayList);
@@ -4659,7 +4649,7 @@ public class YassActions implements DropTargetListener {
         progressBar.setValue(0);
 
         progressBar.setToolTipText("");
-        SwingUtilities.invokeLater(() -> progressBar.repaint());
+        SwingUtilities.invokeLater(progressBar::repaint);
     }
 
     public void setProgress(String s, int n) {
@@ -4668,18 +4658,18 @@ public class YassActions implements DropTargetListener {
         progressBar.setMaximum(n);
 
         progressBar.setToolTipText("");
-        SwingUtilities.invokeLater(() -> progressBar.repaint());
+        SwingUtilities.invokeLater(progressBar::repaint);
     }
 
     public void setProgress(String s, String t) {
         progressBar.setString(s);
         progressBar.setToolTipText(t);
-        SwingUtilities.invokeLater(() -> progressBar.repaint());
+        SwingUtilities.invokeLater(progressBar::repaint);
     }
 
     public void setProgress(int n) {
         progressBar.setValue(n);
-        SwingUtilities.invokeLater(() -> progressBar.repaint());
+        SwingUtilities.invokeLater(progressBar::repaint);
     }
 
     public void refreshLibrary() {
@@ -5508,10 +5498,10 @@ public class YassActions implements DropTargetListener {
         GraphicsConfiguration gc = gd.getDefaultConfiguration();
         BufferCapabilities bufCap = gc.getBufferCapabilities();
         boolean page = bufCap.isPageFlipping();
-        sb.append("Maximum Heap: " + (Runtime.getRuntime().maxMemory() / 1024 / 1024) + "MB\n");
-        sb.append("Occupied Heap: " + (Runtime.getRuntime().totalMemory() / 1024 / 1024) + "MB\n");
-        sb.append("Accelerated Memory: " + (sheet.getAvailableAcceleratedMemory() / 1024 / 1024) + "MB\n");
-        sb.append("Page Flipping: " + (page ? "supported" : "no") + "\n");
+        sb.append("Maximum Heap: ").append(Runtime.getRuntime().maxMemory() / 1024 / 1024).append("MB\n");
+        sb.append("Occupied Heap: ").append(Runtime.getRuntime().totalMemory() / 1024 / 1024).append("MB\n");
+        sb.append("Accelerated Memory: ").append(sheet.getAvailableAcceleratedMemory() / 1024 / 1024).append("MB\n");
+        sb.append("Page Flipping: ").append(page ? "supported" : "no").append("\n");
         return sb.toString();
     }
 
@@ -5540,7 +5530,7 @@ public class YassActions implements DropTargetListener {
                     table.firstNote();
                     table.repaint();
                     table.addUndo();
-                } catch (Exception ex) {
+                } catch (Exception ignored) {
                 }
                 return;
             }
@@ -5777,7 +5767,7 @@ public class YassActions implements DropTargetListener {
         int i;
         int j;
         long[] inout = new long[2];
-        long[][] clicks = null;
+        long[][] clicks;
         if (frozen) {
             long in = sheet.getInSnapshot();
             long out = sheet.getOutSnapshot();
@@ -5796,7 +5786,7 @@ public class YassActions implements DropTargetListener {
             if (i < 0) {
                 i = j = sheet.nextElement();
             }
-            int ij[] = table.enlargeToPages(i, j);
+            int[] ij = table.enlargeToPages(i, j);
             if (ij == null) {
                 return;
             }
@@ -5819,14 +5809,6 @@ public class YassActions implements DropTargetListener {
             mp3.setAudioEnabled(true);
         }
         mp3.playSelection(inout[0], inout[1], clicks, playTimebase);
-    }
-
-    Action getUndoAction() {
-        return undo;
-    }
-
-    Action getRedoAction() {
-        return redo;
     }
 
     public void previewEdit(boolean onoff) {
@@ -6142,8 +6124,7 @@ public class YassActions implements DropTargetListener {
             if (file.exists()) {
                 try {
                     img = YassUtils.readImage(file);
-                } catch (Exception e) {
-                    img = null;
+                } catch (Exception ignored) {
                 }
             }
             sheet.setBackgroundImage(img);
@@ -6534,7 +6515,6 @@ public class YassActions implements DropTargetListener {
                     boolean changed = false;
 
                     if (fileToRename != null) {
-                        row = row0;
                         while (++row < n) { // scan all songs with same dir
                             s1 = sm.getRowAt(row);
                             if (!s1.getDirectory().equals(dir))
@@ -6557,9 +6537,9 @@ public class YassActions implements DropTargetListener {
                         if (!folderfile.equals(rootfile)) {
                             folder = folderfile.getName();
                         }
-                        for (int i = 0; i < filesToInsert.length; i++) {
-                            if (filesToInsert[i] != null) {
-                                s = new YassSong(dir, folder, filesToInsert[i], "", "");
+                        for (String file : filesToInsert) {
+                            if (file != null) {
+                                s = new YassSong(dir, folder, file, "", "");
                                 songList.loadSongDetails(s, new YassTable());
                                 sm.getData().insertElementAt(s, row);
                                 songList.getUnfilteredData().addElement(s);
@@ -6714,11 +6694,9 @@ public class YassActions implements DropTargetListener {
 
         if (ask) {
             JPanel panel = new JPanel(new BorderLayout());
-            JCheckBox box = null;
+            JCheckBox box;
             panel.add("Center", new JLabel("<html>" + I18.get("edit_correct_breaks_msg")));
-            panel.add(
-                    "South", box = new JCheckBox("<html>"
-                            + I18.get("edit_correct_breaks_msg_hide")));
+            panel.add("South", box = new JCheckBox("<html>" + I18.get("edit_correct_breaks_msg_hide")));
 
             int ok = JOptionPane.showConfirmDialog(tab, panel, I18.get("edit_correct_breaks_title"), JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (ok == JOptionPane.YES_OPTION) {

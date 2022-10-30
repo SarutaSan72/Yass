@@ -29,17 +29,14 @@ import java.util.Vector;
  * @author Saruta
  */
 public class YassSheetInfo extends JPanel {
-    private YassSheet sheet;
-    private int track;
+    private final YassSheet sheet;
+    private final int track;
     private int minHeight;
-    private int maxHeight;
     private int minBeat;
-    private int maxBeat;
     private int rangeBeat;
     private int rangeHeight;
 
     double posMs = 0;
-    private boolean inited = false;
 
     private static final int notesBar = 50;
     private static final int msgBar = 14;
@@ -47,7 +44,7 @@ public class YassSheetInfo extends JPanel {
     private static final int sideBar = 10;
     //private static final int selectBar = 20;
 
-    private YassSheetListener sheetListener;
+    private final YassSheetListener sheetListener;
 
     public static Image err_page_icon = null, err_major_ico = null, err_file_icon = null, err_tags_icon = null, err_text_icon = null;
     public static Image no_err_page_icon = null, no_err_major_ico = null, no_err_file_icon = null, no_err_tags_icon = null, no_err_text_icon = null;
@@ -244,12 +241,9 @@ public class YassSheetInfo extends JPanel {
 
     private void setHeightRange(int minH, int maxH, int minB, int maxB) {
         minHeight = minH;
-        maxHeight = maxH;
         minBeat = minB;
-        maxBeat = maxB;
-        rangeBeat = maxBeat-minBeat;
-        rangeHeight = maxHeight-minHeight;
-        inited = true;
+        rangeBeat = maxB - minBeat;
+        rangeHeight = maxH - minHeight;
         repaint(0);
     }
 
@@ -492,8 +486,6 @@ public class YassSheetInfo extends JPanel {
             maskWidth = bitCount * 15;
             Vector<Integer> bitMask = YassUtils.getBitMask(currentDuetTrack);
             for (int i: bitMask) {
-                int j = i;
-                if (j >= 2) j = (int)Math.pow(2, j) -1;
                 g2.setColor(table.getTableColor());
                 g2.fillRect(x + i * 15, y-msgBar+2, 15, msgBar-2);
             }
@@ -519,10 +511,9 @@ public class YassSheetInfo extends JPanel {
         x = x + maskWidth + 6;
         if (versionWidth > 0) {
             String v = table.getVersion();
-            y = txtBar - 3;
             if (v != null) {
                 int vw = g2.getFontMetrics().stringWidth(v);
-                if (vw > versionWidth && versionWidth > 0 && v.length() > 10)
+                if (vw > versionWidth && v.length() > 10)
                     v = v.substring(0, 10) + "...";
                 g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
                 g2.drawString(v, x, y);
@@ -658,7 +649,6 @@ public class YassSheetInfo extends JPanel {
         int sw = g2.getFontMetrics().stringWidth(s);
         int sw1 = g2.getFontMetrics().stringWidth(s1);
         int sw2 = g2.getFontMetrics().stringWidth(s2);
-        y = txtBar - 3;
         if (sw < w-maskWidth-versionWidth-errorWidth-20) {
             if (! table.isSaved())
                 g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
