@@ -1717,6 +1717,11 @@ public class YassActions implements DropTargetListener {
             openTrack();
         }
     };
+    private final Action openFolder = new AbstractAction(I18.get("edit_tracks_open_folder")) {
+        public void actionPerformed(ActionEvent e) {
+            openFolder();
+        }
+    };
     private final Action closeTrack = new AbstractAction(I18.get("edit_tracks_close")) {
         public void actionPerformed(ActionEvent e) {
             if (!cancelTrack())
@@ -3301,6 +3306,7 @@ public class YassActions implements DropTargetListener {
         });
 
         menu.add(openTrack);
+        menu.add(openFolder);
         menu.add(saveTrack);
         menu.add(saveAll);
         menu.add(closeTrack);
@@ -6367,6 +6373,29 @@ public class YassActions implements DropTargetListener {
         }
     }
 
+    private String askFolderName() {
+        String defDir = table != null ? table.getDir() : null;
+        if (defDir == null)
+            defDir = prop.getProperty("song-directory");
+        if (defDir != null) {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setCurrentDirectory(new File(defDir));
+            chooser.setDialogTitle(I18.get("edit_tracks_open_folder"));
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            chooser.setAcceptAllFileFilterUsed(false);
+            chooser.getActionMap().get("New Folder").setEnabled(false);
+            chooser.setFileFilter(new javax.swing.filechooser.FileFilter(){
+                public boolean accept(File f) { return f.isDirectory(); }
+                public String getDescription() { return I18.get("edit_tracks_folder"); }
+
+            });
+            if (JFileChooser.APPROVE_OPTION == chooser.showDialog(tab, null))
+                return chooser.getSelectedFile().getAbsolutePath();
+
+        }
+        return null;
+    }
+
     /**
      * File selection dialog.
      *
@@ -6377,6 +6406,7 @@ public class YassActions implements DropTargetListener {
     private String askFilename(String msg, int type) {
         String filename = null;
         FileDialog fd = new FileDialog((JFrame) SwingUtilities.getWindowAncestor(tab), msg, type);
+        fd.setMultipleMode(true);
         fd.setFile("*.txt");
         String defDir = table != null ? table.getDir() : null;
         if (defDir == null)
@@ -6412,6 +6442,14 @@ public class YassActions implements DropTargetListener {
             if (v.length() > 1 && !v.equals(old))
                 table.setVersion(v);
         }
+    }
+
+    private void openFolder() {
+        if (cancelOpen())
+            return;
+        String folderName = askFolderName();
+        if (folderName != null)
+            openFiles(folderName, true);
     }
 
     private void openTrack() {
