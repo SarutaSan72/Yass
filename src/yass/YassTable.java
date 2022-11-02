@@ -47,11 +47,10 @@ public class YassTable extends JTable {
     public final static int ZOOM_TIME = 0;
     public final static int ZOOM_ONE = 1;
     public final static int ZOOM_MULTI = 2;
-    public final static int ZOOM_ALL = 3;
     public static int zoomMode = ZOOM_ONE;
 
     public int multiSize = 1;
-    private YassTableModel tm;
+    private final YassTableModel tm;
     private YassActions actions = null;
     private YassSheet sheet = null;
     private YassAutoCorrect auto = null;
@@ -60,6 +59,8 @@ public class YassTable extends JTable {
     private double bpm = 120, gap = 0, vgap = 0, start = 0, end = -1;
     private final int MAX_UNDO = 2048;
     private final Vector<YassUndoElement> undos = new Vector<>(MAX_UNDO);
+    // [0] = P1, [1] = P2, ...
+    private String[] duetSingerNames = new String[8];
     private int undoPos = -1, redoMax = 0;
     private boolean isRelative = false;
     private int multiplayer = 0;
@@ -83,7 +84,8 @@ public class YassTable extends JTable {
 
     private static UniversalDetector detector = null;
     private int duetTrack = -1;
-    private int duetTrackCount;
+    private String duetTrackName = null;
+    private int duetTrackCount = -1;
 
     public YassTable() {
         getTableHeader().setReorderingAllowed(false);
@@ -209,6 +211,10 @@ public class YassTable extends JTable {
         isRelative = false;
         multiplayer = 0;
         encoding = null;
+        duetTrack = -1;
+        duetTrackCount = -1;
+        duetTrackName = null;
+        Arrays.fill(duetSingerNames, null);
         if (actions != null)  actions.updateActions();
     }
 
@@ -356,9 +362,6 @@ public class YassTable extends JTable {
     public String getCanonicalFilename() {
         String a = getArtist();
         String t = getTitle();
-        String v = getVersion();
-        if (v != null && v.length() > 0)
-            return YassSong.toFilename(a + " - " + t + " [" + v + "].txt");
         return YassSong.toFilename(a + " - " + t + ".txt");
     }
 
@@ -731,28 +734,6 @@ public class YassTable extends JTable {
         return false;
     }
 
-    public String getVersion() {
-        YassRow r = tm.getCommentRow("TITLE:");
-        if (r == null) {
-            return null;
-        }
-        return r.getVersion();
-    }
-
-    public boolean setVersion(String s) {
-        YassRow r = tm.getCommentRow("TITLE:");
-        if (r == null) {
-            return false;
-        }
-        String old = r.getComment();
-        if (!s.equals(old)) {
-            r.setVersion(s);
-            tm.fireTableDataChanged();
-            return true;
-        }
-        return false;
-    }
-
     public String getGenre() {
         YassRow r = tm.getCommentRow("GENRE:");
         if (r == null) {
@@ -1115,7 +1096,7 @@ public class YassTable extends JTable {
         if (messages == null) {
             messages = new Hashtable<>();
         }
-        messages.put(key, new Boolean(true));
+        messages.put(key, Boolean.TRUE);
     }
 
     public boolean hasMinorPageBreakMessages() {
@@ -1231,6 +1212,13 @@ public class YassTable extends JTable {
         if (withDuet) {
             duetTrack = t.duetTrack;
             duetTrackCount = t.duetTrackCount;
+            duetTrackName = t.duetTrackName;
+        }
+        else {
+            duetTrack = -1;
+            duetTrackCount = -1;
+            duetTrackName = null;
+            Arrays.fill(duetSingerNames, null);
         }
         getModelData().clear();
         for (YassRow r: t.getModelData())
@@ -1239,21 +1227,16 @@ public class YassTable extends JTable {
     }
 
     public synchronized boolean loadFile(String filename) {
-        // System.out.println("Loading " + filename);
-
         File f = new File(filename);
-        if (!f.exists()) {
+        if (!f.exists())
             return false;
-        }
-        if (f.length() > 1024 * 1024) {
+        if (f.length() > 1024 * 1024)
             return false;
-        }
 
         dir = f.getAbsolutePath();
         int isep = dir.lastIndexOf(File.separator);
-        if (isep <= 0) {
+        if (isep <= 0)
             return false;
-        }
         txtFilename = dir.substring(isep + 1);
         dir = dir.substring(0, isep);
 
@@ -1296,14 +1279,12 @@ public class YassTable extends JTable {
             if (r != null) {
                 try {
                     r.close();
-                } catch (Exception ignored) {
-                }
+                } catch (Exception ignored) {}
             }
             if (fis != null) {
                 try {
                     fis.close();
-                } catch (Exception ignored) {
-                }
+                } catch (Exception ignored) {}
             }
         }
 
@@ -1334,8 +1315,7 @@ public class YassTable extends JTable {
             for (byte aFileData : fileData) {
                 // System.out.print((char) fileData[i]);
                 if (aFileData > 127 || aFileData < 0) {
-                    // System.out.print((int)fileData[i] + "  " + (char)
-                    // fileData[i] + "  ");
+                    // System.out.print((int)fileData[i] + "  " + (char)fileData[i] + "  ");
                     return true;
                 }
             }
@@ -1651,10 +1631,9 @@ public class YassTable extends JTable {
         }
         YassUndoElement ue;
         if (sheet != null) {
-            ue = new YassUndoElement(c, getSelectedRows(),
-                    sheet.getViewPosition(), sheet.getBeatSize(), bpm, gap, start, end, vgap, isRelative, saved);
+            ue = new YassUndoElement(c, getSelectedRows(), sheet.getViewPosition(), sheet.getBeatSize(), bpm, gap, start, end, vgap, isRelative, saved, duetTrack, duetTrackName, duetTrackCount, duetSingerNames);
         } else {
-            ue = new YassUndoElement(c, getSelectedRows(), new Point(), 0, bpm, gap, start, end, vgap, isRelative, saved);
+            ue = new YassUndoElement(c, getSelectedRows(), new Point(), 0, bpm, gap, start, end, vgap, isRelative, saved, duetTrack, duetTrackName, duetTrackCount, duetSingerNames);
         }
         undos.addElement(ue);
 
@@ -1706,6 +1685,10 @@ public class YassTable extends JTable {
         vgap = undoElem.vgap;
         isRelative = undoElem.isRelative;
         saved = undoElem.isSaved;
+        duetTrack = undoElem.duetTrack;
+        duetTrackCount = undoElem.duetTrackCount;
+        duetTrackName = undoElem.duetTrackName;
+        duetSingerNames = Arrays.copyOf(undoElem.duetSingerNames, undoElem.duetSingerNames.length);
         tm.setData(c);
         tm.fireTableDataChanged();
         preventUndo = oldUndo;
@@ -1756,6 +1739,10 @@ public class YassTable extends JTable {
         vgap = undoElem.vgap;
         isRelative = undoElem.isRelative;
         saved = undoElem.isSaved;
+        duetTrack = undoElem.duetTrack;
+        duetTrackCount = undoElem.duetTrackCount;
+        duetTrackName = undoElem.duetTrackName;
+        duetSingerNames = Arrays.copyOf(undoElem.duetSingerNames, undoElem.duetSingerNames.length);
         tm.setData(c);
         tm.fireTableDataChanged();
         preventUndo = oldUndo;
@@ -1806,27 +1793,10 @@ public class YassTable extends JTable {
         if (s.charAt(0) == '#') {
             int i = s.indexOf(':');
             if (i >= 0 && i + 1 < s.length()) {
-                String version = "";
                 String tag = s.substring(1, i + 1);
+                String ss = s;
                 s = s.substring(i + 1).trim();
-                if (tag.equals("TITLE:")) {
-                    int ti = s.indexOf("[");
-                    if (ti > 0) {
-                        int tii = s.indexOf("]", ti);
-                        if (tii < 0) {
-                            version = " " + s.substring(ti);
-                        } else {
-                            version = " " + s.substring(ti, tii + 1);
-                        }
-                    }
-                    if (ti > 0 && s.charAt(ti - 1) == ' ') {
-                        ti--;
-                    }
-                    if (ti > 0) {
-                        s = s.substring(0, ti);
-                    }
-                }
-                else if (tag.equals("MP3:")) {
+                if (tag.equals("MP3:")) {
                     mp3 = s;
                 } // bpm or gap are set to 0 for invalid input
                 else if (tag.equals("BPM:")) {
@@ -1841,8 +1811,20 @@ public class YassTable extends JTable {
                     vgap = Double.parseDouble(s.replace(',', '.'));
                 } else if (tag.equals("RELATIVE:")) {
                     isRelative = s.toLowerCase().equals("yes") || s.toLowerCase().equals("true");
+                } else if (tag.startsWith("DUETSINGERP")) {
+                    try {
+                        int p = Integer.parseInt("" + tag.charAt(11)) - 1; // P1=[0], P2=[1], ...
+                        if (duetSingerNames[p] != null) { // duplicate
+                            tm.addRow("#", tag, s, "", "", YassRow.INVALID_LINE);
+                            return true;
+                        }
+                        duetSingerNames[p] = s;
+                    } catch (Exception e) {
+                        tm.addRow("#", tag, s, "", "", YassRow.INVALID_LINE);
+                        return true;
+                    }
                 }
-                tm.addRow("#", tag, s, version, "");
+                tm.addRow("#", tag, s, "", "");
                 return true;
             }
             // non-tag comment
@@ -4861,26 +4843,60 @@ public class YassTable extends JTable {
     }
 
     /**
-     * Get player names from DUETSINGERP1/2 (default P1/P2 if not found).
-     * @return null if < 2 players
+     * Get singer name from DUETSINGERP[i+1].
+     * @return null if < 2 players or if not set
      */
-    public String[] getPlayerNames() {
+    public String getDuetSingerName(int i) {
         int multi = getMultiplayer();
-        if (multi < 2)
+        if (multi < 2 || i >= multi || i < 0)
             return null;
-        String versions = "";
-        for (int i = 1; i <= multi; i++) {
-            if (!versions.equals("")) versions += "; ";
-            YassRow pr = tm.getCommentRow("DUETSINGERP" + i + ":");
-            if (pr != null) {
-                versions += pr.getComment();
-                // found = true;
-            } else {
-                versions += "P" + i;
+        return duetSingerNames[i];
+    }
+
+    /**
+     * Set singer name for DUETSINGERP[i+1]. Inserts row if missing, just before row #BPM.
+     * @return false if < 2 players or if index invalid
+     */
+    public boolean setDuetSingerName(int i, String name) {
+        int multi = getMultiplayer();
+        if (multi < 2 || i >= multi || i < 0)
+            return false;
+        duetSingerNames[i] = name;
+
+        YassRow r = tm.getCommentRow("DUETSINGERP"+(i+1)+":");
+        if (r == null) {
+            r = new YassRow("#", "DUETSINGERP"+(i+1)+":", name, "", "");
+            YassRow bpm = tm.getCommentRow("BPM:");
+            int k = bpm != null ? tm.getData().indexOf(bpm) : 0;
+            tm.getData().insertElementAt(r, k);
+            tm.fireTableDataChanged();
+        } else {
+            String old = r.getComment();
+            if (!name.equals(old)) {
+                r.setComment(name);
+                int k = tm.getData().indexOf(r);
+                tm.fireTableRowsUpdated(k, k);
             }
         }
-        versions = versions.trim();
-        return versions.split("; ");
+        return true;
+    }
+
+    /**
+     * Gets singer names as "P1/P2/...", with "-" for unnamed singers, e.g. "-/-".
+     * @return never null
+     */
+    public String getDuetSingerNamesAsString() {
+        int multi = getMultiplayer();
+        if (multi < 2)
+            return "";
+        StringBuffer sb = new StringBuffer();
+        for (int i=0; i<multi; i++) {
+            if (sb.length() > 0)
+                sb.append('/');
+            String name = duetSingerNames[i];
+            sb.append(name != null ? name : "-");
+        }
+        return sb.toString();
     }
 
     /**
@@ -4889,22 +4905,21 @@ public class YassTable extends JTable {
      * @return null if < 2 players
      */
     public Vector<YassTable> splitTable() {
-        String[] trackNames = getPlayerNames();
-        if (trackNames == null) return null;
-        Vector<YassTable> trackTables = null;
+        int p = getMultiplayer();
+        if (p < 1) return null;
+        Vector<YassTable> trackTables;
         try {
             // create tables
-            trackTables = new Vector<>(trackNames.length);
-            for (int i = 0; i < trackNames.length; i++) {
+            trackTables = new Vector<>(p);
+            for (int i = 0; i < p; i++) {
                 YassTable t = new YassTable();
                 t.init(prop);
-                t.setDuetTrack(i + 1);
-                t.setDuetTrackCount(trackNames.length);
+                t.setDuetTrack(i + 1, getDuetSingerName(i));
+                t.setDuetTrackCount(p);
                 trackTables.addElement(t);
             }
 
             // copy header
-            int p = 0;
             for (YassTable t : trackTables) {
                 Vector<YassRow> trackData = t.getModelData();
                 for (YassRow r : getModelData()) {
@@ -4916,7 +4931,6 @@ public class YassTable extends JTable {
                 }
                 t.setDir(getDir());
                 t.setFilename(getFilename());
-                t.setVersion(trackNames[p++].trim()); // store track name in title tag
                 t.setBPM(getBPM());
                 t.setGap(getGap());
             }
@@ -4994,7 +5008,7 @@ public class YassTable extends JTable {
     }
 
     public static YassTable mergeTables(Vector<YassTable> tables, YassProperties prop) {
-        if (tables.size() < 2)
+        if (tables == null || tables.size() < 2)
             return null;
 
         String pd = prop.getProperty("duet-sequential");
@@ -5005,7 +5019,6 @@ public class YassTable extends JTable {
             double gap = t.getGap();
             double bpm = t.getBPM();
             double beatgap = gap * 4 / (60 * 1000 / bpm);
-
             for (YassRow r: t.getModelData()) {
                 if (r.isNote()) {
                     int b = r.getBeatInt();
@@ -5026,16 +5039,18 @@ public class YassTable extends JTable {
         }
 
         // get first note
-        int minbeat = Integer.MAX_VALUE;
-        YassTable mintable = null;
+        int minBeat = Integer.MAX_VALUE;
+        YassTable minTable = null;
         for (YassTable t: tables) {
             YassRow r = t.getFirstNote();
             int b = r.getBeatInt();
-            if (minbeat > b) {
-                minbeat = b;
-                mintable = t;
+            if (minBeat > b) {
+                minBeat = b;
+                minTable = t;
             }
         }
+        if (minTable == null)
+            return null;
 
         // @todo does not work with different bpm
 
@@ -5044,16 +5059,16 @@ public class YassTable extends JTable {
             for (YassRow r: t.getModelData()) {
                 if (r.isNote()) {
                     int b = r.getBeatInt();
-                    b = b - minbeat;
+                    b = b - minBeat;
                     r.setBeat(b);
                 }
                 if (r.isPageBreak()) {
                     int b = r.getBeatInt();
-                    b = b - minbeat;
+                    b = b - minBeat;
                     r.setBeat(b);
                     if (r.hasSecondBeat()) {
                         b = r.getSecondBeatInt();
-                        b = b - minbeat;
+                        b = b - minBeat;
                         r.setSecondBeat(b);
                     }
                 }
@@ -5061,91 +5076,65 @@ public class YassTable extends JTable {
         }
 
         // extract pages
-        Vector<Vector<YassPage>> tablepages = new Vector<>(tables.size());
+        Vector<Vector<YassPage>> tablePages = new Vector<>(tables.size());
         for (YassTable t: tables) {
-            Vector<YassPage> pages = t.getPages();
-            tablepages.addElement(pages);
+            tablePages.addElement(t.getPages());
         }
 
         // sort in order of appeareance
-        Vector<YassPage> orderedHeads = new Vector<>(tablepages.size());
-        for (Enumeration<Vector<YassPage>> en = tablepages.elements(); en.hasMoreElements(); ) {
-            Vector<YassPage> pages = en.nextElement();
-            if (pages.isEmpty()) {
+        Vector<YassPage> orderedPages = new Vector<>(tablePages.size());
+        for (Vector<YassPage> pages: tablePages) {
+            if (pages.isEmpty())
                 continue;
-            }
-            orderedHeads.addElement(pages.firstElement());
+            orderedPages.addElement(pages.firstElement());
         }
-        Collections.sort(orderedHeads);
+        Collections.sort(orderedPages);
 
-        tables.clear();
-        tablepages.clear();
-        String versions = "";
-        for (Enumeration<?> en = orderedHeads.elements(); en.hasMoreElements(); ) {
-            YassPage p = (YassPage) en.nextElement();
-            YassTable t = p.getTable();
-            tables.addElement(t);
-            Vector<YassPage> pages = t.getPages();
-            tablepages.addElement(pages);
-
-            String v = t.getVersion();
-            if (versions != "") versions += "; ";
-            versions += v;
+        Vector<YassTable> tables2 = new Vector<>();
+        Vector<Vector<YassPage>> tablePages2 = new Vector<>();
+        for (YassPage p: orderedPages) {
+            tables2.addElement(p.getTable());
+            tablePages2.addElement(p.getTable().getPages());
         }
 
         // copy header
         YassTable res = new YassTable();
         res.init(prop);
-        YassTableModel resmodel = (YassTableModel) res.getModel();
-        Vector<YassRow> resdata = resmodel.getData();
-
-        YassTableModel minmodel = (YassTableModel) mintable.getModel();
-        Vector<?> mindata = minmodel.getData();
-        for (Enumeration<?> en = mindata.elements(); en.hasMoreElements(); ) {
-            YassRow r = (YassRow) en.nextElement();
-            if (!r.isComment()) {
+        res.setDir(minTable.getDir());
+        Vector<YassRow> resData = res.getModelData();
+        for (YassRow r: minTable.getModelData()) {
+            if (!r.isComment())
                 break;
-            }
-            resdata.addElement(new YassRow(r));
+            resData.addElement(new YassRow(r));
         }
-        String[] vv = versions.split(";");
-        for (int i = 0; i < vv.length; i++) {
-            resdata.addElement(new YassRow("#", "DUETSINGERP" + (i + 1) + ":", vv[i].trim(), "", ""));
+        int i = 1;
+        for (YassTable t: tables2) {
+            String name = t.getDuetTrackName();
+            if (name != null && name.trim().length() > 0)
+                resData.addElement(new YassRow("#", "DUETSINGERP" + i + ":", name, "", ""));
+            i++;
         }
-        res.setDir(mintable.getDir());
 
         try {
             if (duetSequential) { // notes sorted by player
-                int i = 1;
-                for (Enumeration<YassTable> en = tables.elements(); en.hasMoreElements(); ) {
-                    resdata.addElement(new YassRow("P", i + "", "", "", ""));
-                    i++;
-                    YassTable t = en.nextElement();
-                    YassTableModel tm = (YassTableModel) t.getModel();
-                    Vector<?> data = tm.getData();
-                    for (Enumeration<?> ren = data.elements(); ren.hasMoreElements(); ) {
-                        YassRow r = (YassRow) ren.nextElement();
-                        if (r.isNoteOrPageBreak()) {
-                            resdata.addElement(r);
-                        }
+                i = 1;
+                for (YassTable t: tables2) {
+                    resData.addElement(new YassRow("P", i + "", "", "", ""));
+                    for (YassRow r: t.getModelData()) {
+                        if (r.isNoteOrPageBreak())
+                            resData.addElement(r);
                     }
+                    i++;
                 }
             } else { // all notes sorted by beats, page-by-page
-
                 boolean isEmpty = false;
                 while (!isEmpty) {
-
                     // get next page
                     int minpagebeat = Integer.MAX_VALUE;
                     YassPage minpage = null;
-                    for (Enumeration<Vector<YassPage>> en = tablepages.elements(); en
-                            .hasMoreElements(); ) {
-                        Vector<YassPage> pages = en
-                                .nextElement();
-                        if (pages.isEmpty()) {
+                    for (Vector<YassPage> pages: tablePages2) {
+                        if (pages.isEmpty())
                             continue;
-                        }
-
                         YassPage p = pages.firstElement();
                         int min = p.getMinBeat();
                         if (minpage == null || minpagebeat > min) {
@@ -5153,17 +5142,12 @@ public class YassTable extends JTable {
                             minpage = p;
                         }
                     }
-
                     // get intersecting page
                     Vector<YassPage> intersecting = new Vector<>();
-                    for (Enumeration<Vector<YassPage>> en = tablepages.elements(); en
-                            .hasMoreElements(); ) {
-                        Vector<?> pages = en.nextElement();
-                        if (pages.isEmpty()) {
+                    for (Vector<YassPage> pages: tablePages2) {
+                        if (pages.isEmpty())
                             continue;
-                        }
-
-                        YassPage p = (YassPage) pages.firstElement();
+                        YassPage p = pages.firstElement();
                         if (p == minpage) {
                             pages.removeElement(p);
                             continue;
@@ -5176,72 +5160,51 @@ public class YassTable extends JTable {
 
                     // combine pages, if equal
                     int matching = 0;
-                    for (Enumeration<YassPage> en = intersecting.elements(); en
-                            .hasMoreElements(); ) {
-                        YassPage p = en.nextElement();
-                        if (minpage.matches(p)) {
+                    for (YassPage p: intersecting) {
+                        if (minpage.matches(p))
                             matching++;
-                        }
                     }
-                    boolean combineTracks = matching > 0
-                            && matching == intersecting.size();
-
+                    boolean combineTracks = matching > 0 && matching == intersecting.size();
                     // add pages
-                    int player = tables.indexOf(minpage.getTable()) + 1;
+                    int player = tables2.indexOf(minpage.getTable()) + 1;
                     if (!combineTracks) {
-                        resdata.addElement(new YassRow("P", player + "", "", "", ""));
+                        resData.addElement(new YassRow("P", player + "", "", "", ""));
                     } else {
-                        resdata.addElement(new YassRow("P", "3", "", "", ""));
+                        resData.addElement(new YassRow("P", "3", "", "", ""));
                     }
                     YassRow pagebreak = null;
-                    Vector<?> rows = minpage.getRows();
-                    for (Enumeration<?> en = rows.elements(); en.hasMoreElements(); ) {
-                        YassRow r = (YassRow) en.nextElement();
-                        if (r.isNote()) {
-                            resdata.addElement(new YassRow(r));
-                        }
-                        if (r.isPageBreak()) {
+                    for (YassRow r: minpage.getRows()) {
+                        if (r.isNote())
+                            resData.addElement(new YassRow(r));
+                        if (r.isPageBreak())
                             pagebreak = r;
-                        }
                     }
 
                     if (!combineTracks) {
-                        for (Enumeration<YassPage> en = intersecting.elements(); en
-                                .hasMoreElements(); ) {
-                            YassPage p = en.nextElement();
-                            player = tables.indexOf(p.getTable()) + 1;
-                            resdata.addElement(new YassRow("P", player + "", "", "", ""));
-                            rows = p.getRows();
-                            for (Enumeration<?> ren = rows.elements(); ren
-                                    .hasMoreElements(); ) {
-                                YassRow r = (YassRow) ren.nextElement();
-                                if (r.isNote()) {
-                                    resdata.addElement(new YassRow(r));
-                                }
-                                if (pagebreak == null && r.isPageBreak()) {
+                        for (YassPage p: intersecting) {
+                            player = tables2.indexOf(p.getTable()) + 1;
+                            resData.addElement(new YassRow("P", player + "", "", "", ""));
+                            for (YassRow r: p.getRows()) {
+                                if (r.isNote())
+                                    resData.addElement(new YassRow(r));
+                               if (pagebreak == null && r.isPageBreak())
                                     pagebreak = r;
-                                }
                             }
                         }
                     }
 
                     isEmpty = true;
-                    for (Enumeration<Vector<YassPage>> en = tablepages.elements(); en
-                            .hasMoreElements(); ) {
-                        Vector<YassPage> pages = en
-                                .nextElement();
+                    for (Vector<YassPage> pages: tablePages2) {
                         if (!pages.isEmpty()) {
                             isEmpty = false;
                             break;
                         }
                     }
-
-                    if (!isEmpty && pagebreak != null) {
-                        resdata.addElement(new YassRow(pagebreak));
-                    }
+                    if (!isEmpty && pagebreak != null)
+                        resData.addElement(new YassRow(pagebreak));
                 }
             }
-            resdata.addElement(new YassRow("E", "", "", "", ""));
+            resData.addElement(new YassRow("E", "", "", "", ""));
             return res;
         } catch (Exception e) {
             e.printStackTrace();
@@ -5348,8 +5311,7 @@ public class YassTable extends JTable {
             ratings[i] = I18.get("session_rating_" + i);
         }
 
-        YassSession session = new YassSession(getArtist(), getTitle(),
-                tracksArray, startMillis, endMillis, ratings);
+        YassSession session = new YassSession(getArtist(), getTitle(), tracksArray, startMillis, endMillis, ratings);
         int noteScore = Integer.parseInt(prop.getProperty("max-points"));
         int goldenScore = Integer.parseInt(prop.getProperty("max-golden"));
         int lineScore = Integer.parseInt(prop.getProperty("max-linebonus"));
@@ -5480,28 +5442,49 @@ public class YassTable extends JTable {
         return ((YassTableModel) getModel()).getData();
     }
 
-    public void setDuetTrack(int duetTrack) {
+    /**
+     * Get track number and name from corresponding duet file (see YassTable.splitTable)
+     */
+    public void setDuetTrack(int duetTrack, String singerName) {
         this.duetTrack = duetTrack;
+        this.duetTrackName = singerName;
     }
 
+    /**
+     * Get track number in corresponding duet file (see YassTable.splitTable)
+     * @return -1 if not set
+     */
     public int getDuetTrack() {
         return duetTrack;
     }
 
+    /**
+     * Get track name from corresponding duet file (see YassTable.splitTable)
+     * @return null if not set
+     */
+    public String getDuetTrackName() {
+        return duetTrackName;
+    }
+
+    /**
+     * Set total number of tracks from corresponding duet file (see YassTable.splitTable)
+     */
     public void setDuetTrackCount(int duetTrackCount) {
         this.duetTrackCount = duetTrackCount;
     }
 
-    public int getDuetTrackCount() {
+    /**
+     * Get total number of tracks in corresponding duet file (see YassTable.splitTable)
+     * @return -1 if not set
+     */
+     public int getDuetTrackCount() {
         return duetTrackCount;
     }
 
     public static class YassTableCellEditor extends AbstractCellEditor implements
             TableCellEditor {
-        private static final long serialVersionUID = -5422573906886420055L;
         Dimension d = new Dimension(100, 100);
         JComboBox<?> ed = new JComboBox<Object>(new String[]{":", "*", "F", "R", "G"}) {
-            private static final long serialVersionUID = 1L;
             public Dimension getPopupSize() {
                 return d;
             }

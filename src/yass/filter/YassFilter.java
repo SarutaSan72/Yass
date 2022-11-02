@@ -386,7 +386,7 @@ public class YassFilter implements Cloneable {
                 containsIgnoreCase(s.getLanguage(), rule) ||
                 containsIgnoreCase(s.getEdition(), rule) ||
                 containsIgnoreCase(s.getGenre(), rule) ||
-                containsIgnoreCase(s.getVersion(), rule);
+                containsIgnoreCase(s.getDuetSingerNames(), rule);
     }
 }
 

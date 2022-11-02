@@ -43,7 +43,7 @@ public class YassSong implements Cloneable, Comparable<Object> {
     /**
      * Description of the Field
      */
-    public final static int SORT_BY_VERSION = 8;
+    public final static int SORT_BY_DUETSINGER = 8;
     /**
      * Description of the Field
      */
@@ -108,7 +108,6 @@ public class YassSong implements Cloneable, Comparable<Object> {
     private boolean saved = true, opened = false, locked = false;
     private YassTable openedTable = null;
     private String lyrics = null, sortedArtist = null;
-    private boolean hasVersions = false;
     /**
      * Constructor for the YassSong object
      *
@@ -233,24 +232,6 @@ public class YassSong implements Cloneable, Comparable<Object> {
      */
     public void setLyrics(String s) {
         lyrics = s;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-    public boolean hasVersions() {
-        return hasVersions;
-    }
-
-    /**
-     * Sets the hasVersions attribute of the YassSong object
-     *
-     * @param onoff The new hasVersions value
-     */
-    public void setHasVersions(boolean onoff) {
-        hasVersions = onoff;
     }
 
     /**
@@ -987,21 +968,11 @@ public class YassSong implements Cloneable, Comparable<Object> {
         }
     }
 
-    /**
-     * Gets the version attribute of the YassSong object
-     *
-     * @return The version value
-     */
-    public String getVersion() {
+    public String getDuetSingerNames() {
         return s[21];
     }
 
-    /**
-     * Sets the version attribute of the YassSong object
-     *
-     * @param val The new version value
-     */
-    public void setVersion(String val) {
+    public void setDuetSingerNames(String val) {
         s[21] = val;
     }
 
@@ -1210,16 +1181,13 @@ public class YassSong implements Cloneable, Comparable<Object> {
                 return res;
             }
 
-            String v = getVersion();
-
-            String rv = r.getVersion();
-            if (v == null) {
-                v = "";
-            }
-            if (rv == null) {
-                rv = "";
-            }
-            return col.compare(v.toLowerCase(), rv.toLowerCase());
+            String names = getDuetSingerNames();
+            String rnames = r.getDuetSingerNames();
+            if (names == null)
+                names = "";
+            if (rnames == null)
+                rnames = "";
+            return col.compare(names.toLowerCase(), rnames.toLowerCase());
         }
         if ((ordering & SORT_BY_TITLE) != 0) {
             String t = getTitle();
@@ -1234,17 +1202,13 @@ public class YassSong implements Cloneable, Comparable<Object> {
             if (res != 0) {
                 return f * res;
             }
-
-            String v = getVersion();
-
-            String rv = r.getVersion();
-            if (v == null) {
-                v = "";
-            }
-            if (rv == null) {
-                rv = "";
-            }
-            return col.compare(v.toLowerCase(), rv.toLowerCase());
+            String names = getDuetSingerNames();
+            String rnames = r.getDuetSingerNames();
+            if (names == null)
+                names = "";
+            if (rnames == null)
+                rnames = "";
+            return col.compare(names.toLowerCase(), rnames.toLowerCase());
         }
         if ((ordering & SORT_BY_EDITION) != 0) {
             String t = getEdition();
@@ -1286,31 +1250,6 @@ public class YassSong implements Cloneable, Comparable<Object> {
 
             t = getTitle();
             rt = r.getTitle();
-            if (t == null) {
-                t = "";
-            }
-            if (rt == null) {
-                rt = "";
-            }
-            return col.compare(t.toLowerCase(), rt.toLowerCase());
-        }
-        if ((ordering & SORT_BY_VERSION) != 0) {
-            String v = getVersion();
-            String rv = r.getVersion();
-            if (v == null) {
-                v = "";
-            }
-            if (rv == null) {
-                rv = "";
-            }
-            int res = col.compare(v.toLowerCase(), rv.toLowerCase());
-            if (res != 0) {
-                return f * res;
-            }
-
-            String t = getTitle();
-
-            String rt = r.getTitle();
             if (t == null) {
                 t = "";
             }

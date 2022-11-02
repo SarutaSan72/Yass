@@ -44,8 +44,8 @@ import java.util.*;
 public class YassActions implements DropTargetListener {
 
     private final YassSheet sheet;
-    public final static String VERSION = "2.4.0";
-    public final static String DATE = "10/2022";
+    public final static String VERSION = "2.5.0";
+    public final static String DATE = "11/2022";
 
     static int VIEW_LIBRARY = 1;
     static int VIEW_EDIT = 2;
@@ -542,19 +542,19 @@ public class YassActions implements DropTargetListener {
             }
         }
     };
-    Action newEdition = new AbstractAction(I18.get("lib_edition_new")) {
+    private final Action newEdition = new AbstractAction(I18.get("lib_edition_new")) {
         public void actionPerformed(ActionEvent e) {
             songList.newEdition();
             refreshGroups();
         }
     };
-    Action newFolder = new AbstractAction(I18.get("lib_folder_new")) {
+    private final Action newFolder = new AbstractAction(I18.get("lib_folder_new")) {
         public void actionPerformed(ActionEvent e) {
             songList.newFolder();
             refreshGroups();
         }
     };
-    Action renameFolder = new AbstractAction(I18.get("lib_folder_rename")) {
+    private final Action renameFolder = new AbstractAction(I18.get("lib_folder_rename")) {
         public void actionPerformed(ActionEvent e) {
             YassSong s = songList.getFirstSelectedSong();
             if (s == null) {
@@ -664,17 +664,17 @@ public class YassActions implements DropTargetListener {
             songInfo.copyBackground();
         }
     };
-    Action copyVideoSongInfo = new AbstractAction(I18.get("lib_copy_video")) {
+    private final Action copyVideoSongInfo = new AbstractAction(I18.get("lib_copy_video")) {
         public void actionPerformed(ActionEvent e) {
             songInfo.copyVideo();
         }
     };
-    Action pasteSongInfo = new AbstractAction(I18.get("lib_paste_data")) {
+    private final Action pasteSongInfo = new AbstractAction(I18.get("lib_paste_data")) {
         public void actionPerformed(ActionEvent e) {
             songInfo.paste();
         }
     };
-    Action addToPlayList = new AbstractAction(I18.get("lib_playlist_add")) {
+    private final Action addToPlayList = new AbstractAction(I18.get("lib_playlist_add")) {
         public void actionPerformed(ActionEvent e) {
             if (!playlistToggle.isSelected())
                 showPlaylistMenu.actionPerformed(null);
@@ -804,7 +804,7 @@ public class YassActions implements DropTargetListener {
             dia.setVisible(true);
         }
     };
-    Action multiply = new AbstractAction(I18.get("edit_bpm_double")) {
+    private final Action multiply = new AbstractAction(I18.get("edit_bpm_double")) {
         public void actionPerformed(ActionEvent e) {
             table.multiply();
             if (bpmField != null) {
@@ -812,7 +812,7 @@ public class YassActions implements DropTargetListener {
             }
         }
     };
-    Action divide = new AbstractAction(I18.get("edit_bpm_half")) {
+    private final Action divide = new AbstractAction(I18.get("edit_bpm_half")) {
         public void actionPerformed(ActionEvent e) {
             table.divide();
             if (bpmField != null) {
@@ -820,7 +820,7 @@ public class YassActions implements DropTargetListener {
             }
         }
     };
-    Action showLyricsStart = new AbstractAction(I18.get("edit_gap")) {
+    private final Action showLyricsStart = new AbstractAction(I18.get("edit_gap")) {
         public void actionPerformed(ActionEvent e) {
             updateGap();
 
@@ -901,7 +901,7 @@ public class YassActions implements DropTargetListener {
             dia.setVisible(true);
         }
     };
-    Action showVideoGap = new AbstractAction(I18.get("edit_videogap")) {
+    private final Action showVideoGap = new AbstractAction(I18.get("edit_videogap")) {
         public void actionPerformed(ActionEvent e) {
             sheet.showVideo(true);
 
@@ -1629,11 +1629,13 @@ public class YassActions implements DropTargetListener {
             if (table.getDuetTrackCount() == 2) {
                 YassTable[] tracks = getOpenTables(table).toArray(new YassTable[0]);
                 YassTable t = new YassTable();
-                t.loadTable(tracks[0], false);
-                tracks[0].loadTable(tracks[1], false);
-                tracks[1].loadTable(t, false);
+                t.loadTable(tracks[0], true);
+                tracks[0].loadTable(tracks[1], true);
+                tracks[1].loadTable(t, true);
                 tracks[0].setSaved(false);
                 tracks[1].setSaved(false);
+                tracks[0].addUndo();
+                tracks[1].addUndo();
                 updateActions();
                 main.repaint();
             } else if (table.getDuetTrackCount() == 3) {
@@ -6246,12 +6248,12 @@ public class YassActions implements DropTargetListener {
         }
     }
 
-    public YassSong selectSong(String artist, String title, String version) {
+    public YassSong selectSong(String artist, String title) {
         groups.setRowSelectionInterval(0, 0);
         groups.refresh();
         songList.setPreFilter(null);
         songList.filter(null);
-        Vector<?> v = songList.findSong(artist, title, version);
+        Vector<?> v = songList.findSong(artist, title);
         if (v == null || v.size() < 1) {
             songList.focusFirstVisible();
             return null;
@@ -6432,15 +6434,21 @@ public class YassActions implements DropTargetListener {
     }
 
     private void renameTrack() {
-        String old = table.getVersion();
-        if (old == null || old.trim().length() < 1) {
+        int p = table.getDuetTrack();
+        if (p < 0)
             return;
-        }
-        String v = JOptionPane.showInputDialog(tab, I18.get("edit_tracks_rename_title"), old);
-        if (v != null) {
-            v = v.trim();
-            if (v.length() > 1 && !v.equals(old))
-                table.setVersion(v);
+        String old = table.getDuetTrackName();
+        if (old == null)
+            old = "";
+        String name = JOptionPane.showInputDialog(tab, I18.get("edit_tracks_rename_title"), old);
+        if (name != null) {
+            name = name.trim();
+            if (name.length() > 1 && !name.equals(old)) {
+                table.setDuetTrack(p, name);
+                table.setSaved(false);
+                table.addUndo();
+                main.repaint();
+            }
         }
     }
 
@@ -6474,7 +6482,6 @@ public class YassActions implements DropTargetListener {
         }
         if (!new File(table.getDirFilename()).delete()) {
             // todo show error
-            // todo updateSonglistForVersion(table.getDir(), fileToRename, fileToRenameName, "", new String[] { fileToDelete1, fileToDelete2 }, null);
             return;
         }
         closeTrack();
@@ -6534,88 +6541,6 @@ public class YassActions implements DropTargetListener {
                 tables.add(open);
         }
         return tables;
-    }
-
-    private void updateSonglistForVersion(String dir, String fileToRename, String fileToRenameName, String fileToRenameVersion, String[] filesToDelete, String[] filesToInsert) {
-        if (songList != null) {
-            YassSongListModel sm = (YassSongListModel) songList.getModel();
-            int row = songList.getSelectedRow();
-            if (row >= 0) {
-                int n = sm.getRowCount();
-                YassSong s = sm.getRowAt(row);
-                int selectedRow = row;
-                if (s.getDirectory().equals(dir)) { // same song
-                    YassSong s1 = s;
-                    while (s1.getDirectory().equals(dir) && --row >= 0) {
-                        s1 = sm.getRowAt(row);
-                    }
-                    int row0 = row;
-                    boolean changed = false;
-
-                    if (fileToRename != null) {
-                        while (++row < n) { // scan all songs with same dir
-                            s1 = sm.getRowAt(row);
-                            if (!s1.getDirectory().equals(dir))
-                                break;
-                            String path = s1.getDirectory() + File.separator + s1.getFilename();
-                            if (path.equals(fileToRename)) {
-                                s1.setFilename(fileToRenameName);
-                                s1.setVersion(fileToRenameVersion);
-                                changed = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (filesToInsert != null) {
-                        row = row0 + 1;
-                        File folderfile = new File(dir).getParentFile();
-                        String root = prop.getProperty("song-directory");
-                        File rootfile = new File(root);
-                        String folder = "";
-                        if (!folderfile.equals(rootfile)) {
-                            folder = folderfile.getName();
-                        }
-                        for (String file : filesToInsert) {
-                            if (file != null) {
-                                s = new YassSong(dir, folder, file, "", "");
-                                songList.loadSongDetails(s, new YassTable());
-                                sm.getData().insertElementAt(s, row);
-                                songList.getUnfilteredData().addElement(s);
-                                selectedRow++;
-                            }
-                        }
-                        changed = true;
-                    }
-                    if (filesToDelete != null) {
-                        for (String s2 : filesToDelete) {
-                            if (s2 != null) {
-                                row = row0;
-                                while (++row < n) { // scan all songs with same dir
-                                    s1 = sm.getRowAt(row);
-                                    if (!s1.getDirectory().equals(dir))
-                                        break;
-                                    String path = s1.getDirectory() + File.separator + s1.getFilename();
-                                    if (path.equals(s2)) {
-                                        sm.getData().removeElementAt(row);
-                                        songList.getUnfilteredData().removeElement(s1);
-                                        n--;
-                                        selectedRow = row0 + 1;
-                                        changed = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if (changed) {
-                        sm.fireTableDataChanged();
-                        songList.storeCache();
-                    }
-                    setProgress(MessageFormat.format(I18.get("lib_msg"), sm.getData().size()), "");
-                    songList.setRowSelectionInterval(selectedRow, selectedRow);
-                }
-            }
-        }
     }
 
     public void filterLibrary() {

@@ -310,44 +310,6 @@ public class YassUtils {
     }
 
     /**
-     * Description of the Method
-     *
-     * @param parent Description of the Parameter
-     * @param prop   Description of the Parameter
-     * @param t      Description of the Parameter
-     * @return Description of the Return Value
-     */
-    public static String createVersion(Component parent, YassProperties prop, YassTable t) {
-        YassTableModel tm = (YassTableModel) t.getModel();
-        YassRow r = tm.getCommentRow("TITLE:");
-        if (r == null) {
-            return null;
-        }
-        String title = YassSong.toFilename(r.getComment());
-        String version = r.getVersion();
-        String newVersion = r.hasVersion() ? version : "UPDATE";
-        String artist = YassSong.toFilename(tm.getCommentRow("ARTIST:").getComment());
-
-        if (newVersion.equals("P1") || newVersion.equals("P2") || newVersion.equals("P3") || newVersion.equals("P4"))
-            newVersion = "P";
-
-        int k = 1;
-        String newVersion2 = newVersion + k;
-        String absFilename = t.getDir() + File.separator + artist + " - " + title + " [" + newVersion2 + "].txt";
-        File f = new File(absFilename);
-        while (f.exists()) {
-            newVersion2 = newVersion + k;
-            absFilename = t.getDir() + File.separator + artist + " - " + title + " [" + newVersion2 + "].txt";
-            f = new File(absFilename);
-            k++;
-        }
-        r.setVersion(newVersion2);
-        t.storeFile(f.getAbsolutePath());
-        r.setVersion(version);
-        return f.getAbsolutePath();
-    }
-
-    /**
      * Gets the wildcard attribute of the YassAutoCorrect object
      *
      * @param s  Description of the Parameter
@@ -443,7 +405,6 @@ public class YassUtils {
         String dir = t.getDir();
         String text = t.getFilename();
         String audio = t.getMP3();
-        String version = t.getVersion();
         String cover = t.getCover();
         String background = t.getBackgroundTag();
         String video = t.getVideo();
@@ -482,12 +443,7 @@ public class YassUtils {
             i = text.lastIndexOf(".");
             extension = text.substring(i);
             extension = extension.toLowerCase();
-
-            if (version == null || version.length() < 1) {
-                text = at + extension;
-            } else {
-                text = at + " [" + version + "]" + extension;
-            }
+            text = at + extension;
 
             filename = dir + File.separator + text;
             File newfile = new File(filename);

@@ -19,6 +19,7 @@
 package yass;
 
 import java.awt.*;
+import java.util.Arrays;
 import java.util.Vector;
 
 /**
@@ -27,18 +28,19 @@ import java.util.Vector;
  * @author Saruta
  */
 public class YassUndoElement {
-    public Vector<YassRow> data = null;
-    public int[] selectedRows = null;
-    public Point sheetViewPosition = new Point(0, 0);
-    public double sheetBeatSize = 0;
-    public double bpm, gap, start, end, vgap;
-    public boolean isRelative;
-    public boolean isSaved;
+    public final Vector<YassRow> data;
+    public final int[] selectedRows;
+    public final Point sheetViewPosition;
+    public final double sheetBeatSize, bpm, gap, start, end, vgap;
+    public final boolean isRelative, isSaved;
+    public final int duetTrack, duetTrackCount;
+    public final String duetTrackName;
+    public final String[] duetSingerNames;
 
-    public YassUndoElement(Vector<YassRow> d, int[] r, Point p, double w, double b, double g, double s, double e, double vg, boolean rel, boolean saved) {
+    public YassUndoElement(Vector<YassRow> d, int[] r, Point p, double w, double b, double g, double s, double e, double vg, boolean rel, boolean saved, int duetTrack, String duetTrackName, int duetTrackCount, String[] duetSingerNames) {
         data = d;
         selectedRows = r;
-        sheetViewPosition.setLocation(p.x, p.y);
+        sheetViewPosition = new Point(p.x, p.y);
         sheetBeatSize = w;
         bpm = b;
         gap = g;
@@ -47,27 +49,10 @@ public class YassUndoElement {
         vgap = vg;
         isRelative = rel;
         isSaved = saved;
-    }
-
-
-    /**
-     * Description of the Method
-     *
-     * @param r Description of the Parameter
-     * @param p Description of the Parameter
-     * @param w Description of the Parameter
-     */
-    public void set(int[] r, Point p, double w, double b, double g, double s, double e, double vg, boolean rel, boolean saved) {
-        selectedRows = r;
-        sheetViewPosition.setLocation(p.x, p.y);
-        sheetBeatSize = w;
-        bpm = b;
-        gap = g;
-        start = s;
-        end = e;
-        vgap = vg;
-        isRelative = rel;
-        isSaved = saved;
+        this.duetTrack = duetTrack;
+        this.duetTrackName = duetTrackName;
+        this.duetTrackCount = duetTrackCount;
+        this.duetSingerNames = Arrays.copyOf(duetSingerNames, duetSingerNames.length);
     }
 }
 

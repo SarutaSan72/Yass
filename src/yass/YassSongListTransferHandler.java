@@ -28,60 +28,26 @@ import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-/**
- * Description of the Class
- *
- * @author Saruta
- */
 public class YassSongListTransferHandler extends TransferHandler {
     private static final long serialVersionUID = 100465417509492151L;
-    YassSongList lib = null;
-    boolean isLib = false;
+    YassSongList lib;
+    boolean isLib;
     private int[] rows = null;
     private int addIndex = -1;
 
-
-    /**
-     * Constructor for the YassSongListTransferHandler object
-     *
-     * @param l     Description of the Parameter
-     * @param isLib Description of the Parameter
-     */
     public YassSongListTransferHandler(YassSongList l, boolean isLib) {
         lib = l;
         this.isLib = isLib;
     }
 
-
-    /**
-     * Description of the Method
-     *
-     * @param c Description of the Parameter
-     * @return Description of the Return Value
-     */
     protected Transferable createTransferable(JComponent c) {
         return new StringSelection(exportString(c));
     }
 
-
-    /**
-     * Gets the sourceActions attribute of the YassSongListTransferHandler object
-     *
-     * @param c Description of the Parameter
-     * @return The sourceActions value
-     */
     public int getSourceActions(JComponent c) {
         return COPY_OR_MOVE;
     }
 
-
-    /**
-     * Description of the Method
-     *
-     * @param c Description of the Parameter
-     * @param t Description of the Parameter
-     * @return Description of the Return Value
-     */
     public boolean importData(JComponent c, Transferable t) {
         /*
 		    if (canImportFileList(c, t.getTransferDataFlavors())) {
@@ -116,14 +82,6 @@ public class YassSongListTransferHandler extends TransferHandler {
         return false;
     }
 
-
-    /**
-     * Description of the Method
-     *
-     * @param c       Description of the Parameter
-     * @param flavors Description of the Parameter
-     * @return Description of the Return Value
-     */
     public boolean canImport(JComponent c, DataFlavor[] flavors) {
         for (DataFlavor flavor : flavors) {
             if (DataFlavor.stringFlavor.equals(flavor)) {
@@ -136,12 +94,6 @@ public class YassSongListTransferHandler extends TransferHandler {
         return false;
     }
 
-    /**
-     * Description of the Method
-     *
-     * @param c Description of the Parameter
-     * @return Description of the Return Value
-     */
     protected String exportString(JComponent c) {
         YassSongList table = (YassSongList) c;
         YassSongListModel sm = (YassSongListModel) table.getModel();
@@ -158,24 +110,12 @@ public class YassSongListTransferHandler extends TransferHandler {
             YassSong s = sm.getRowAt(row);
             String a = s.getArtist();
             String t = s.getTitle();
-            String v = s.getVersion();
-            if (v != null && v.length() > 0) {
-                pw.println(a + " : " + t + " [" + v + "]");
-            } else {
-                pw.println(a + " : " + t);
-            }
+            pw.println(a + " : " + t);
         }
         pw.close();
         return sw.toString();
     }
 
-
-    /**
-     * Description of the Method
-     *
-     * @param c   Description of the Parameter
-     * @param str Description of the Parameter
-     */
     protected void importString(JComponent c, String str) {
         if (isLib) {
             return;
@@ -227,28 +167,18 @@ public class YassSongListTransferHandler extends TransferHandler {
                 String artist = st.hasMoreTokens() ? st.nextToken().trim() : null;
                 String title = st.hasMoreTokens() ? st.nextToken().trim() : null;
                 if (artist != null && title != null) {
-                    String version = null;
-                    int k = title.indexOf("[");
-                    if (k > 0) {
-                        version = title.substring(k + 1, title.indexOf("]", k + 1));
-                        title = title.substring(0, k).trim();
-                    }
-
-                    YassSong s2 = target.getSong(artist, title, version);
+                    YassSong s2 = target.getSong(artist, title);
                     if (s2 != null) {
                         continue;
                     }
 
-                    YassSong s = lib.getSong(artist, title, version);
+                    YassSong s = lib.getSong(artist, title);
                     if (s != null) {
                         data.insertElementAt(s, addIndex2++);
                         s.setLocked(true);
                         lc++;
                     } else {
                         s = new YassSong("", "", "", artist, title);
-                        if (version != null) {
-                            s.setVersion(version);
-                        }
                         s.setIcon(YassSongList.brokenSong);
                         data.insertElementAt(s, addIndex2++);
                         s.setLocked(true);
@@ -268,14 +198,6 @@ public class YassSongListTransferHandler extends TransferHandler {
         }
     }
 
-
-    /**
-     * Description of the Method
-     *
-     * @param c      Description of the Parameter
-     * @param action Description of the Parameter
-     * @param td     Description of the Parameter
-     */
     protected void exportDone(JComponent c, Transferable td, int action) {
         if (isLib)
             return;

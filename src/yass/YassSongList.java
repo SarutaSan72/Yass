@@ -37,188 +37,91 @@ import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.*;
 
-/**
- * Description of the Class
- *
- * @author Saruta
- */
 public class YassSongList extends JTable {
-    /**
-     * Description of the Field
-     */
     public final static int TILE = 0;
-    /**
-     * Description of the Field
-     */
     public final static int DETAILS = 1;
-    /**
-     * Description of the Field
-     */
+
     public final static int ERRORS = 2;
-    /**
-     * Description of the Field
-     */
+
     public final static int SYMBOL = 3;
     private int options = SYMBOL;
-    private static final long serialVersionUID = -486812022089463735L;
-    /**
-     * Description of the Field
-     */
     public static ImageIcon brokenSong = null, noCover = null;
-    /**
-     * Description of the Field
-     */
-    public static Image openedIcon = null, videoIcon = null, nobackgroundIcon = null, perfectIcon = null, lockedIcon = null, multiIcon = null;
-    /**
-     * Description of the Field
-     */
-    public static String[] langArray, langID;
-    /**
-     * Description of the Field
-     */
-    public static Image[] langIcons = null;
-    /**
-     * Description of the Field
-     */
-    public static Image err_minorpage_icon = null, err_major_icon = null, err_file_icon = null, err_tags_icon = null, err_text_icon = null;
-    /**
-     * Description of the Field
-     */
-    public static int COMPLETE_COLUMN = 1;
-    /**
-     * Description of the Field
-     */
-    public static int ARTIST_COLUMN = 2;
-    //private int ICON_WIDTH = 240;
-    //private int ICON_HEIGHT = 80;
-    /**
-     * Description of the Field
-     */
-    public static int TITLE_COLUMN = 3;
-    /**
-     * Description of the Field
-     */
-    public static int VERSION_COLUMN = 4;
-    /**
-     * Description of the Field
-     */
-    public static int GENRE_COLUMN = 5;
-    /**
-     * Description of the Field
-     */
-    public static int EDITION_COLUMN = 6;
-    /**
-     * Description of the Field
-     */
-    public static int LANGUAGE_COLUMN = 7;
-    /**
-     * Description of the Field
-     */
-    public static int YEAR_COLUMN = 8;
-    /**
-     * Description of the Field
-     */
-    public static int FOLDER_COLUMN = 9;
-    /**
-     * Description of the Field
-     */
-    public static int ALBUM_COLUMN = 10;
-    /**
-     * Description of the Field
-     */
-    public static int LENGTH_COLUMN = 11;
-    /**
-     * Description of the Field
-     */
-    public static int ID_COLUMN = 12;
-    /**
-     * Description of the Field
-     */
-    public int FIRST_MSG_COLUMN = 13;
-    /**
-     * Description of the Field
-     */
-    public int FIRST_STATS_COLUMN = -1;
-    JTableHeader header = null;
-    String imageCacheName = null;
-    Action editTitle =
-            new AbstractAction(I18.get("lib_title")) {
-                private static final long serialVersionUID = 7269157372761931907L;
 
+    public static Image openedIcon = null, videoIcon = null, nobackgroundIcon = null, perfectIcon = null, lockedIcon = null, multiIcon = null;
+
+    public static String[] langArray, langID;
+
+    public static Image[] langIcons = null;
+
+    public static Image err_minorpage_icon = null, err_major_icon = null, err_file_icon = null, err_tags_icon = null, err_text_icon = null;
+
+    public static int COMPLETE_COLUMN = 1;
+
+    public static int ARTIST_COLUMN = 2;
+
+    public static int TITLE_COLUMN = 3;
+
+    public static int DUETSINGER_COLUMN = 4;
+
+    public static int GENRE_COLUMN = 5;
+
+    public static int EDITION_COLUMN = 6;
+
+    public static int LANGUAGE_COLUMN = 7;
+
+    public static int YEAR_COLUMN = 8;
+
+    public static int FOLDER_COLUMN = 9;
+
+    public static int ALBUM_COLUMN = 10;
+
+    public static int LENGTH_COLUMN = 11;
+
+    public static int ID_COLUMN = 12;
+
+    public int FIRST_MSG_COLUMN = 13;
+
+    public int FIRST_STATS_COLUMN = -1;
+    private JTableHeader header = null;
+    private String imageCacheName = null;
+    private final Action editTitle = new AbstractAction(I18.get("lib_title")) {
                 public void actionPerformed(ActionEvent e) {
                     setTitle();
                 }
             };
-    Action editArtist =
-            new AbstractAction(I18.get("lib_artist")) {
-                private static final long serialVersionUID = -1816525890146966685L;
-
+    private final Action editArtist = new AbstractAction(I18.get("lib_artist")) {
                 public void actionPerformed(ActionEvent e) {
                     setArtist();
                 }
             };
-    Action editYear =
-            new AbstractAction(I18.get("lib_year")) {
-                private static final long serialVersionUID = -4168560310751030798L;
-
+    private final Action editYear = new AbstractAction(I18.get("lib_year")) {
                 public void actionPerformed(ActionEvent e) {
                     setYear();
                 }
             };
-    Action editAlbum =
-            new AbstractAction(I18.get("lib_album")) {
-                private static final long serialVersionUID = 4315035614127491845L;
-
+    Action editAlbum = new AbstractAction(I18.get("lib_album")) {
                 public void actionPerformed(ActionEvent e) {
                     setAlbum();
                 }
             };
-    Action editLength =
-            new AbstractAction(I18.get("lib_length")) {
-                private static final long serialVersionUID = -1647062542627535396L;
-
+    Action editLength = new AbstractAction(I18.get("lib_length")) {
                 public void actionPerformed(ActionEvent e) {
                     setLength();
                 }
             };
-    Action editID =
-            new AbstractAction(I18.get("lib_id")) {
-                private static final long serialVersionUID = 7451707716005872195L;
-
+    Action editID = new AbstractAction(I18.get("lib_id")) {
                 public void actionPerformed(ActionEvent e) {
                     setID();
                 }
             };
-    Action createNewEdition =
-            new AbstractAction(I18.get("lib_edition_set")) {
-                private static final long serialVersionUID = -5267723344411712458L;
-
+    Action createNewEdition = new AbstractAction(I18.get("lib_edition_set")) {
                 public void actionPerformed(ActionEvent e) {
                     newEdition();
                 }
             };
-    Action setEditionToFolder =
-            new AbstractAction(I18.get("lib_edition_folder")) {
-                private static final long serialVersionUID = -7108009085416764637L;
-
+    Action setEditionToFolder = new AbstractAction(I18.get("lib_edition_folder")) {
                 public void actionPerformed(ActionEvent e) {
                     setEditionToFolder();
-                }
-            };
-    Action createNewFolder =
-            new AbstractAction(I18.get("lib_folder_new")) {
-                private static final long serialVersionUID = 815074409752028181L;
-
-                public void actionPerformed(ActionEvent e) {
-                    newFolder();
-                }
-            };
-    Action renameFolder =
-            new AbstractAction(I18.get("lib_folder_rename")) {
-                private static final long serialVersionUID = 7699133543149004374L;
-
-                public void actionPerformed(ActionEvent e) {
-                    renameFolder();
                 }
             };
     Color b1col = UIManager.getColor("Table.gridColor");
@@ -238,31 +141,30 @@ public class YassSongList extends JTable {
     boolean preventInteraction = false;
     YassFilter prefilter = null;
     FilterThread filterThread = null;
-    private YassSongListModel sm = null;
-    private YassAutoCorrect auto;
-    private YassProperties prop;
+    private YassSongListModel sm;
+    private final YassAutoCorrect auto;
+    private final YassProperties prop;
     private WorkerThread worker = null;
     private CorrectorThread corrector = null;
-    private YassActions actions;
+    private final YassActions actions;
     private long lastTime = -1;
     private String lastTimeString = "";
-    private Font big = new Font("SansSerif", Font.BOLD, 22);
-    private int ICON_WIDTH = 56;
-    private int ICON_HEIGHT = 56;
+    private final Font big = new Font("SansSerif", Font.BOLD, 22);
+    private final int ICON_WIDTH = 56;
+    private final int ICON_HEIGHT = 56;
     private boolean dirChanged = false;
-    private Color hi = new Color(245, 245, 245);
-    private Color red = new Color(1f, .8f, .8f);
-    private Color redsel = new Color(1f, .8f, .9f);
-    private Color hired = new Color(1f, .9f, .9f);
-    private String playlistFileType = null, songFileType = null;
+    private final Color hi = new Color(245, 245, 245);
+    private final Color red = new Color(1f, .8f, .8f);
+    private final Color redsel = new Color(1f, .8f, .9f);
+    private final Color hired = new Color(1f, .9f, .9f);
+    private final String playlistFileType, songFileType;
     private Vector<String> pldata = null;
     private int sortbyCol = -1;
-    private JPopupMenu combinedPopup;
-    private Vector<String> editions = null;
-    private JMenu moreEditions = null, cmoreEditions = null;
-    private ActionListener actionEdition;
-    private ItemListener itemEdition;
-    private JMenu languagePopup, genrePopup, editionPopup, sortbyPopup;
+    private final JPopupMenu combinedPopup;
+    private final Vector<String> editions;
+    private JMenu moreEditions, cmoreEditions;
+    private final ActionListener actionEdition;
+    private final JMenu languagePopup, genrePopup, editionPopup, sortbyPopup;
     private String emptyString = I18.get("songlist_msg_empty");
     private boolean showErrors = false;
     private boolean showStats = false;
@@ -314,7 +216,6 @@ public class YassSongList extends JTable {
         getInputMap().put(KeyStroke.getKeyStroke("F4"), "editTitle");
         getActionMap().put("editTitle", editTitle);
 
-        JMenuItem menuItem = null;
         combinedPopup.add(cgenre = new JMenu(I18.get("lib_genre")));
         combinedPopup.add(cedition = new JMenu(I18.get("lib_edition")));
         combinedPopup.add(clang = new JMenu(I18.get("lib_language")));
@@ -336,21 +237,12 @@ public class YassSongList extends JTable {
         getInputMap().put(KeyStroke.getKeyStroke("F7"), "editID");
         getActionMap().put("editID", editID);
 
+        JMenuItem menuItem;
         combinedPopup.addSeparator();
         combinedPopup.add(menuItem = new JMenuItem(I18.get("lib_undo_selected")));
-        menuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        undoSelection();
-                    }
-                });
+        menuItem.addActionListener(e -> undoSelection());
         combinedPopup.add(menuItem = new JMenuItem(I18.get("lib_save_selected")));
-        menuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        storeSelection();
-                    }
-                });
+        menuItem.addActionListener(e -> storeSelection());
 
 		/*
          *  combinedPopup.addSeparator();
@@ -374,12 +266,7 @@ public class YassSongList extends JTable {
         Vector<String> langVector = new Vector<>();
         Vector<String> langIDVector = new Vector<>();
         StringTokenizer languages = new StringTokenizer(prop.getProperty("language-tag"), "|");
-        ActionListener al =
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        setSelectionLanguage(e.getActionCommand());
-                    }
-                };
+        ActionListener al = e -> setSelectionLanguage(e.getActionCommand());
 
         while (languages.hasMoreTokens()) {
             String s = languages.nextToken();
@@ -427,12 +314,7 @@ public class YassSongList extends JTable {
         genrePopup = new JMenu(I18.get("lib_genre"));
 
         StringTokenizer genres = new StringTokenizer(prop.getProperty("genre-tag"), "|");
-        ActionListener ag =
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        setSelectionGenre(e.getActionCommand());
-                    }
-                };
+        ActionListener ag = e -> setSelectionGenre(e.getActionCommand());
         while (genres.hasMoreTokens()) {
             String s = genres.nextToken();
 
@@ -478,36 +360,21 @@ public class YassSongList extends JTable {
         editionPopup = new JMenu(I18.get("lib_edition"));
 
         menuItem = new JMenuItem(I18.get("lib_edition_set"));
-        menuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        newEdition();
-                    }
-                });
+        menuItem.addActionListener(e -> newEdition());
         editionPopup.add(menuItem);
         editionPopup.add(setEditionToFolder);
         editionPopup.addSeparator();
 
         menuItem = new JMenuItem(I18.get("lib_edition_set"));
-        menuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        newEdition();
-                    }
-                });
+        menuItem.addActionListener(e -> newEdition());
         cedition.add(menuItem);
         cedition.add(setEditionToFolder);
         cedition.addSeparator();
 
-        actionEdition =
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        setSelectionEdition(e.getActionCommand());
-                    }
-                };
+        actionEdition =e -> setSelectionEdition(e.getActionCommand());
 
         StringTokenizer edis = new StringTokenizer(prop.getProperty("edition-tag"), "|");
-        editionPopup.addItemListener(itemEdition);
+        //editionPopup.addItemListener(itemEdition);
         while (edis.hasMoreTokens()) {
             String s = edis.nextToken();
 
@@ -605,45 +472,42 @@ public class YassSongList extends JTable {
                     }
 
                 });
-        sm.addTableModelListener(
-                new TableModelListener() {
-                    public void tableChanged(TableModelEvent e) {
-                        int col = e.getColumn();
-                        if (col != ARTIST_COLUMN && col != TITLE_COLUMN) {
-                            return;
-                        }
+        sm.addTableModelListener(e -> {
+            int col1 = e.getColumn();
+            if (col1 != ARTIST_COLUMN && col1 != TITLE_COLUMN) {
+                return;
+            }
 
-                        int row = e.getFirstRow();
-                        YassSong s = sm.getRowAt(row);
-                        String filename = s.getDirectory() + File.separator + s.getFilename();
-                        YassTable t = new YassTable();
-                        t.init(prop);
-                        t.removeAllRows();
-                        t.loadFile(filename);
-                        YassTableModel tm = (YassTableModel) t.getModel();
-                        if (col == ARTIST_COLUMN) {
-                            YassRow r = tm.getCommentRow("ARTIST:");
-                            if (r != null) {
-                                String a = s.getArtist();
-                                String olda = r.getComment();
-                                if (!a.equals(olda)) {
-                                    r.setComment(a);
-                                    t.storeFile(filename);
-                                }
-                            }
-                        } else if (col == TITLE_COLUMN) {
-                            YassRow r = tm.getCommentRow("TITLE:");
-                            if (r != null) {
-                                String a = s.getTitle();
-                                String olda = r.getComment();
-                                if (!a.equals(olda)) {
-                                    r.setComment(a);
-                                    t.storeFile(filename);
-                                }
-                            }
-                        }
+            int row = e.getFirstRow();
+            YassSong s = sm.getRowAt(row);
+            String filename = s.getDirectory() + File.separator + s.getFilename();
+            YassTable t = new YassTable();
+            t.init(prop);
+            t.removeAllRows();
+            t.loadFile(filename);
+            YassTableModel tm = (YassTableModel) t.getModel();
+            if (col1 == ARTIST_COLUMN) {
+                YassRow r = tm.getCommentRow("ARTIST:");
+                if (r != null) {
+                    String a1 = s.getArtist();
+                    String olda = r.getComment();
+                    if (!a1.equals(olda)) {
+                        r.setComment(a1);
+                        t.storeFile(filename);
                     }
-                });
+                }
+            } else if (col1 == TITLE_COLUMN) {
+                YassRow r = tm.getCommentRow("TITLE:");
+                if (r != null) {
+                    String a1 = s.getTitle();
+                    String olda = r.getComment();
+                    if (!a1.equals(olda)) {
+                        r.setComment(a1);
+                        t.storeFile(filename);
+                    }
+                }
+            }
+        });
 
         // putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         ((DefaultCellEditor) getDefaultEditor(String.class)).setClickCountToStart(10);
@@ -817,13 +681,11 @@ public class YassSongList extends JTable {
                     }
                 });
         header = getTableHeader();
-        header.addMouseListener(
-                new MouseAdapter() {
+        header.addMouseListener(new MouseAdapter() {
                     public void mousePressed(MouseEvent e) {
                         boolean isPopup = e.isPopupTrigger() || (e.getModifiers() & InputEvent.BUTTON1_MASK) == 0;
-                        if (isPopup) {
+                        //if (isPopup)
                             // sortbyPopup.show(e.getComponent(), e.getX(), e.getY());
-                        }
                     }
 
 
@@ -833,14 +695,11 @@ public class YassSongList extends JTable {
                             // sortbyPopup.show(e.getComponent(), e.getX(), e.getY());
                             return;
                         }
-
-                        if (preventInteraction) {
+                        if (preventInteraction)
                             return;
-                        }
 
                         int x = e.getX();
                         int y = e.getY();
-
                         TableColumnModel colModel = getColumnModel();
                         int col = colModel.getColumnIndexAtX(x);
                         Object o = colModel.getColumn(col).getHeaderRenderer();
@@ -1050,19 +909,15 @@ public class YassSongList extends JTable {
         int n = sel.size();
         String msg = n > 1 ? MessageFormat.format(I18.get("mpop_length_msg_2"), n) : I18.get("mpop_length_msg_1");
         input = JOptionPane.showInputDialog(actions.getTab(), msg, input);
-        if (input == null) {
+        if (input == null)
             return;
-        }
-        for (Enumeration<YassSong> en = sel.elements(); en.hasMoreElements(); ) {
-            YassSong s = en.nextElement();
+        for (YassSong s: sel) {
             s.setLength(input);
             s.setSaved(false);
 
         }
         setSaved(false);
         repaint();
-
-        return;
     }
 
     /**
@@ -1090,8 +945,6 @@ public class YassSongList extends JTable {
         }
         setSaved(false);
         repaint();
-
-        return;
     }
 
     /**
@@ -1114,8 +967,6 @@ public class YassSongList extends JTable {
         }
         setSaved(false);
         repaint();
-
-        return;
     }
 
     /**
@@ -1147,8 +998,7 @@ public class YassSongList extends JTable {
                         s.setSaved(false);
                         changed = true;
                     }
-                } catch (Exception e) {
-                }
+                } catch (Exception ignored) {}
             }
         }
         if (changed) {
@@ -1187,8 +1037,7 @@ public class YassSongList extends JTable {
                             changed = true;
                         }
                     }
-                } catch (Exception e) {
-                }
+                } catch (Exception ignored) { }
             }
         }
         if (changed) {
@@ -1227,8 +1076,7 @@ public class YassSongList extends JTable {
                             changed = true;
                         }
                     }
-                } catch (Exception e) {
-                }
+                } catch (Exception ignored) {}
             }
         }
         if (changed) {
@@ -1265,8 +1113,6 @@ public class YassSongList extends JTable {
         actions.refreshGroups();
         updateSelectionEdition();
         repaint();
-
-        return;
     }
 
     /**
@@ -1308,8 +1154,6 @@ public class YassSongList extends JTable {
         actions.refreshGroups();
         updateSelectionEdition();
         repaint();
-
-        return;
     }
 
     /**
@@ -1463,7 +1307,6 @@ public class YassSongList extends JTable {
         }
         setSaved(false);
         repaint();
-        return;
     }
 
     /**
@@ -1732,7 +1575,7 @@ public class YassSongList extends JTable {
      */
     public Vector<YassSong> getSelectedSongs() {
         Vector<YassSong> v = new Vector<>();
-        int rows[] = getSelectedRows();
+        int[] rows = getSelectedRows();
         if (rows == null) {
             return null;
         }
@@ -1795,8 +1638,7 @@ public class YassSongList extends JTable {
         if (s == null) {
             return -1;
         }
-        int i = sm.getData().indexOf(s);
-        return i;
+        return sm.getData().indexOf(s);
     }
 
     /**
@@ -1934,7 +1776,7 @@ public class YassSongList extends JTable {
      * @return The selectedFile value
      */
     public Vector<String> getSelectedFiles() {
-        int rows[] = getSelectedRows();
+        int[] rows = getSelectedRows();
         if (rows == null || rows.length < 1) {
             return null;
         }
@@ -1991,7 +1833,7 @@ public class YassSongList extends JTable {
             YassSong s = e.nextElement();
             String dir2 = s.getDirectory();
             String txt2 = s.getFilename();
-            if (txt2 != null && txt.equals(txt2) && dir2 != null && dir.equals(dir2)) {
+            if (txt.equals(txt2) && dir.equals(dir2)) {
                 setRowSelectionInterval(i, i);
                 Rectangle r = getCellRect(i, 0, true);
                 scrollRectToVisible(r);
@@ -2103,7 +1945,7 @@ public class YassSongList extends JTable {
             fixWidth(0, 0);
             fixWidth(COMPLETE_COLUMN, 0);
             fixWidth(ARTIST_COLUMN, 0);
-            fixWidth(VERSION_COLUMN, 0);
+            fixWidth(DUETSINGER_COLUMN, 0);
             preferWidth(TITLE_COLUMN, 160);
             for (int i = TITLE_COLUMN + 1; i < FIRST_MSG_COLUMN; i++) {
                 fixWidth(i, 0);
@@ -2121,7 +1963,7 @@ public class YassSongList extends JTable {
                 fixWidth(COMPLETE_COLUMN, 0);
                 preferWidth(ARTIST_COLUMN, 50);
                 preferWidth(TITLE_COLUMN, 80);
-                fixWidth(VERSION_COLUMN, 0);
+                fixWidth(DUETSINGER_COLUMN, 0);
                 fixWidth(GENRE_COLUMN, 0);
                 fixWidth(EDITION_COLUMN, 0);
                 fixWidth(LANGUAGE_COLUMN, 0);
@@ -2135,7 +1977,7 @@ public class YassSongList extends JTable {
                 fixWidth(COMPLETE_COLUMN, 25);
                 preferWidth(ARTIST_COLUMN, 180);
                 preferWidth(TITLE_COLUMN, 200);
-                fixWidth(VERSION_COLUMN, 0);
+                fixWidth(DUETSINGER_COLUMN, 0);
                 preferWidth(GENRE_COLUMN, 80);
                 preferWidth(EDITION_COLUMN, 100);
                 preferWidth(LANGUAGE_COLUMN, 100);
@@ -2309,8 +2151,8 @@ public class YassSongList extends JTable {
         if (col == TITLE_COLUMN) {
             YassSong.ordering = YassSong.SORT_BY_TITLE;
         }
-        if (col == VERSION_COLUMN) {
-            YassSong.ordering = YassSong.SORT_BY_VERSION;
+        if (col == DUETSINGER_COLUMN) {
+            YassSong.ordering = YassSong.SORT_BY_DUETSINGER;
         }
         if (col == EDITION_COLUMN) {
             YassSong.ordering = YassSong.SORT_BY_EDITION;
@@ -2364,7 +2206,7 @@ public class YassSongList extends JTable {
      * @param language The new selectionLanguage value
      */
     public void setSelectionLanguage(String language) {
-        int rows[] = getSelectedRows();
+        int[] rows = getSelectedRows();
         boolean changed = false;
         for (int row : rows) {
             YassSong s = sm.getRowAt(row);
@@ -2407,7 +2249,7 @@ public class YassSongList extends JTable {
      * @param genre The new selectionGenre value
      */
     public void setSelectionGenre(String genre) {
-        int rows[] = getSelectedRows();
+        int[] rows = getSelectedRows();
         boolean changed = false;
         for (int row : rows) {
             YassSong s = sm.getRowAt(row);
@@ -2437,7 +2279,7 @@ public class YassSongList extends JTable {
      * @param edition The new selectionEdition value
      */
     public void setSelectionEdition(String edition) {
-        int rows[] = getSelectedRows();
+        int[] rows = getSelectedRows();
         boolean changed = false;
         for (int row : rows) {
             YassSong s = sm.getRowAt(row);
@@ -2513,7 +2355,7 @@ public class YassSongList extends JTable {
      * Description of the Method
      */
     public void removeSelectedSongs() {
-        int rows[] = getSelectedRows();
+        int[] rows = getSelectedRows();
         if (rows == null || rows.length < 1) {
             return;
         }
@@ -2533,7 +2375,7 @@ public class YassSongList extends JTable {
             YassSong s = sm.getRowAt(rows[i]);
             String dir = s.getDirectory();
             File fdir = new File(dir);
-            File files[] = fdir.listFiles();
+            File[] files = fdir.listFiles();
             int k = 0;
             for (File file : files) {
                 if (YassUtils.isKaraokeFile(file)) {
@@ -2772,14 +2614,12 @@ public class YassSongList extends JTable {
         if (worker != null) {
             worker.notInterrupted = false;
             while (worker.state != YassSongListEvent.FINISHED) {
-                Thread.currentThread();
                 Thread.yield();
             }
         }
         if (corrector != null) {
             corrector.notInterrupted = false;
             while (!corrector.finished) {
-                Thread.currentThread();
                 Thread.yield();
             }
         }
@@ -2895,39 +2735,6 @@ public class YassSongList extends JTable {
             storeCache();
             updateSelectionEdition();
             repaint();
-        }
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @param filename Description of the Parameter
-     */
-    public void updateSong(String filename) {
-        String dir = prop.getProperty("song-directory");
-        if (dir == null) {
-            return;
-        }
-
-        if (!filename.startsWith(dir)) {
-            return;
-        }
-        // outside song dir --> skip
-
-        Vector<YassSong> data = sm.getData();
-        int i = 0;
-        for (Enumeration<YassSong> e = data.elements(); e.hasMoreElements(); ) {
-            YassSong s = e.nextElement();
-            String sfilename = s.getDirectory() + File.separator + s.getFilename();
-            if (filename.equals(sfilename)) {
-                YassTable t = new YassTable();
-                if (loadSongDetails(s, t)) {
-                    storeCache();
-                    sm.fireTableRowsUpdated(i, i);
-                }
-                return;
-            }
-            i++;
         }
     }
 
@@ -3072,13 +2879,7 @@ public class YassSongList extends JTable {
         Point or = viewport.getViewPosition();
         Dimension dim = viewport.getExtentSize();
         if (y >= or.y && y <= or.y + dim.height) {
-            SwingUtilities.invokeLater(
-                    new Runnable() {
-                        public void run() {
-                            repaint();
-                        }
-                    });
-
+            SwingUtilities.invokeLater(() -> repaint());
         }
     }
 
@@ -3096,10 +2897,8 @@ public class YassSongList extends JTable {
         while (n-- > 0 && storeThread.started && !storeThread.finished) {
             storeThread.notInterrupted = false;
             try {
-                Thread.currentThread();
                 Thread.sleep(200);
-            } catch (Exception e) {
-            }
+            } catch (Exception ignored) { }
         }
         if (n > 0) {
             storeThread = new StoreThread();
@@ -3113,7 +2912,7 @@ public class YassSongList extends JTable {
     public void storeSelection() {
         YassTable t = new YassTable();
         t.init(prop);
-        int rows[] = getSelectedRows();
+        int[] rows = getSelectedRows();
         Vector<YassSong> sel = getSelectedSongs();
         for (Enumeration<YassSong> en = sel.elements(); en.hasMoreElements(); ) {
             YassSong s = en.nextElement();
@@ -3145,7 +2944,7 @@ public class YassSongList extends JTable {
     public void undoSelection() {
         YassTable t = new YassTable();
         Vector<YassSong> sel = getSelectedSongs();
-        int rows[] = getSelectedRows();
+        int[] rows = getSelectedRows();
         for (Enumeration<YassSong> en = sel.elements(); en.hasMoreElements(); ) {
             YassSong s = en.nextElement();
             if (!s.isSaved()) {
@@ -3177,7 +2976,7 @@ public class YassSongList extends JTable {
      * Description of the Method
      */
     public void undoAll() {
-        int rows[] = getSelectedRows();
+        int[] rows = getSelectedRows();
 
         YassTable t = new YassTable();
         Vector<YassSong> data = sm.getData();
@@ -3294,9 +3093,8 @@ public class YassSongList extends JTable {
             String tmp = prop.getProperty("temp-dir");
             String title = YassSong.toFilename(s.getTitle());
             String artist = YassSong.toFilename(s.getArtist());
-            String version = YassSong.toFilename(s.getVersion());
             String folder = s.getFolder();
-            String fname = tmp + File.separator + artist + " - " + title + " [" + version + "] [CO] @ " + folder + ".jpg";
+            String fname = tmp + File.separator + artist + " - " + title + " [CO] @ " + folder + ".jpg";
             File file = new File(fname);
             if (file.exists()) {
                 String dir = t.getDir();
@@ -3321,7 +3119,7 @@ public class YassSongList extends JTable {
                     YassAutoCorrect.insertCover(t, newfile);
                 }
             }
-            fname = tmp + File.separator + artist + " - " + title + " [" + version + "] [BG] @ " + folder + ".jpg";
+            fname = tmp + File.separator + artist + " - " + title + " [BG] @ " + folder + ".jpg";
             file = new File(fname);
             if (file.exists()) {
                 String dir = t.getDir();
@@ -3347,7 +3145,7 @@ public class YassSongList extends JTable {
                 }
             }
             file = null;
-            String at = artist + " - " + title + " [" + version + "] [VD#";
+            String at = artist + " - " + title + " [VD#";
             File tmpfile = new File(tmp);
             File files[] = tmpfile.listFiles();
             for (File file2 : files) {
@@ -3425,7 +3223,6 @@ public class YassSongList extends JTable {
         String filename = s.getDirectory() + File.separator + s.getFilename();
         String title = "";
         String artist = "";
-        String version = "";
         String mp3 = "";
         String cover = "";
         String background = "";
@@ -3440,7 +3237,8 @@ public class YassSongList extends JTable {
         String rel = "";
         String bpm = "";
         String gap = "";
-        String multiplayer = "";
+        int multiplayer = 0;
+        String duetSingerNames = "";
         String album = "";
         String id = "";
         String versionid = "";
@@ -3465,10 +3263,6 @@ public class YassSongList extends JTable {
             YassTableModel tm = (YassTableModel) t.getModel();
             YassRow r = tm.getCommentRow("TITLE:");
             title = r != null ? r.getComment() : "";
-            version = t.getVersion();
-            if (version == null) {
-                version = "";
-            }
             r = tm.getCommentRow("ARTIST:");
             artist = r != null ? r.getComment() : "";
             r = tm.getCommentRow("MP3:");
@@ -3516,7 +3310,13 @@ public class YassSongList extends JTable {
             r = tm.getCommentRow("MEDLEYENDBEAT:");
             medleyendbeat = r != null ? r.getComment() : "";
 
-            multiplayer = t.getMultiplayer() + "";
+            multiplayer = t.getMultiplayer();
+            String multiplayerString = "";
+            if (multiplayer > 1) {
+                duetSingerNames = t.getDuetSingerNamesAsString();
+                multiplayerString = multiplayer+"";
+            }
+
             encoding = t.getEncoding();
             if (encoding==null) encoding="";
 
@@ -3534,9 +3334,9 @@ public class YassSongList extends JTable {
                 }
                 s.setSortedArtist(sorted_artist);
             }
-            if (!version.equals(s.getVersion())) {
+            if (!duetSingerNames.equals(s.getDuetSingerNames())) {
                 changed = true;
-                s.setVersion(version);
+                s.setDuetSingerNames(duetSingerNames);
             }
             if (!mp3.equals(s.getMP3())) {
                 changed = true;
@@ -3624,9 +3424,13 @@ public class YassSongList extends JTable {
                 s.setMedleyEndBeat(medleyendbeat);
             }
 
-            if (!multiplayer.equals(s.getMultiplayer())) {
+            if (!multiplayerString.equals(s.getMultiplayer())) {
                 changed = true;
-                s.setMultiplayer(multiplayer);
+                s.setMultiplayer(multiplayerString);
+            }
+            if (!duetSingerNames.equals(s.getDuetSingerNames())) {
+                changed = true;
+                s.setDuetSingerNames(duetSingerNames);
             }
             if (!encoding.equals(s.getEncoding())) {
                 changed = true;
@@ -3657,9 +3461,7 @@ public class YassSongList extends JTable {
             }
             s.clearStats();
             if (showStats) {
-                Vector<?> stats = YassStats.getAllStats();
-                for (Enumeration<?> en = stats.elements(); en.hasMoreElements(); ) {
-                    YassStats st = (YassStats) en.nextElement();
+                for (YassStats st: YassStats.getAllStats()) {
                     st.calcStats(s, t);
                     changed = true;
                 }
@@ -3673,14 +3475,12 @@ public class YassSongList extends JTable {
      */
     public void focusFirstVisible() {
         SwingUtilities.invokeLater(
-                new Runnable() {
-                    public void run() {
-                        if (getRowCount() < 1) {
-                            return;
-                        }
-                        requestFocusInWindow();
-                        changeSelection(0, 0, false, false);
+                () -> {
+                    if (getRowCount() < 1) {
+                        return;
                     }
+                    requestFocusInWindow();
+                    changeSelection(0, 0, false, false);
                 });
 
     }
@@ -4101,7 +3901,7 @@ public class YassSongList extends JTable {
         try {
             BufferedReader inputStream = new BufferedReader(new FileReader(file));
             String line;
-            String col[] = new String[10];
+            String[] col = new String[10];
             int ci = 0;
             String artist = null;
             String title = null;
@@ -4174,7 +3974,7 @@ public class YassSongList extends JTable {
 				 *  System.out.println("extract year: "+year);
 				 *  System.out.println();
 				 */
-                Vector<YassSong> v = findSong(artist, title, null);
+                Vector<YassSong> v = findSong(artist, title);
                 for (Enumeration<YassSong> en = v.elements(); en.hasMoreElements(); ) {
                     YassSong s = en.nextElement();
 
@@ -4331,7 +4131,7 @@ public class YassSongList extends JTable {
         if (line < 1) {
             line = 1;
         }
-        int rows[] = getSelectedRows();
+        int[] rows = getSelectedRows();
         if (rows == null || rows.length != 1) {
             return;
         }
@@ -4372,7 +4172,7 @@ public class YassSongList extends JTable {
         if (lineOut < lineIn) {
             lineOut = lineIn;
         }
-        int rows[] = getSelectedRows();
+        int[] rows = getSelectedRows();
         if (rows == null || rows.length != 1) {
             return;
         }
@@ -4559,8 +4359,7 @@ public class YassSongList extends JTable {
             while (!filterThread.isFinished && --n > 0) {
                 try {
                     Thread.currentThread().wait(100);
-                } catch (Exception e) {
-                }
+                } catch (Exception ignored) {}
             }
         }
     }
@@ -4600,8 +4399,8 @@ public class YassSongList extends JTable {
             }
             outputStream.close();
             return true;
-        } catch (Exception e) {
-        } finally {
+        } catch (Exception ignored) {}
+        finally {
             try {
                 if (bw != null) {
                     bw.close();
@@ -4612,8 +4411,7 @@ public class YassSongList extends JTable {
                 if (fos != null) {
                     fos.close();
                 }
-            } catch (Exception ex) {
-            }
+            } catch (Exception ignored) {}
         }
         return false;
     }
@@ -4645,7 +4443,6 @@ public class YassSongList extends JTable {
                 if (l.startsWith("#SONG:")) {
                     if (key != null) {
                         lyricsCache.put(key, sb.toString());
-                        key = null;
                         sb = new StringBuffer(4000);
                     }
                     key = l.substring(6);
@@ -4671,33 +4468,16 @@ public class YassSongList extends JTable {
         sm.fireTableDataChanged();
     }
 
-    /**
-     * Gets the song attribute of the YassSongList object
-     *
-     * @param artist  Description of the Parameter
-     * @param title   Description of the Parameter
-     * @param version Description of the Parameter
-     * @return The song value
-     */
-    public YassSong getSong(String artist, String title, String version) {
-        Vector<YassSong> data = sm.getData();
-        YassSong s = null;
-        if (artist == null || title == null) {
+    public YassSong getSong(String artist, String title) {
+        if (artist == null || title == null)
             return null;
-        }
-
-        for (Enumeration<YassSong> en = data.elements(); en.hasMoreElements(); ) {
-            s = en.nextElement();
+        for (YassSong s: sm.getData()) {
             String artist2 = s.getArtist();
             String title2 = s.getTitle();
-            if (artist2 == null || title2 == null) {
+            if (artist2 == null || title2 == null)
                 continue;
-            }
-            if (artist.equals(artist2) && title.equals(title2)) {
-                if (version == null || version.equals(s.getVersion())) {
-                    return s;
-                }
-            }
+            if (artist.equals(artist2) && title.equals(title2))
+                return s;
         }
         return null;
     }
@@ -4706,11 +4486,10 @@ public class YassSongList extends JTable {
      * Description of the Method
      *
      * @param title   Description of the Parameter
-     * @param version Description of the Parameter
      * @param artist  Description of the Parameter
      * @return Description of the Return Value
      */
-    public Vector<YassSong> findSong(String artist, String title, String version) {
+    public Vector<YassSong> findSong(String artist, String title) {
         Vector<YassSong> hits = new Vector<>();
         if (artist == null || title == null) {
             return null;
@@ -4724,13 +4503,8 @@ public class YassSongList extends JTable {
             s = en.nextElement();
             String artist2 = s.getArtist().toLowerCase().trim();
             String title2 = s.getTitle().toLowerCase().trim();
-            if (artist2 == null || title2 == null) {
-                continue;
-            }
             if (artist2.equals(artist) && (title2.startsWith(title) || title.startsWith(title2))) {
-                if (version == null || version.equals(s.getVersion())) {
-                    hits.addElement(s);
-                }
+                hits.addElement(s);
             }
         }
         if (hits.size() < 1) {
@@ -4792,7 +4566,7 @@ public class YassSongList extends JTable {
      * @author Saruta
      */
     class SortByAction implements ActionListener {
-        private int col = 0;
+        private final int col;
 
 
         /**
@@ -4906,57 +4680,13 @@ public class YassSongList extends JTable {
                 if (data.size() >= 0) {
                     setRowSelectionInterval(0, 0);
                 }
-            } catch (Exception e) {
-            }
+            } catch (Exception ignored) {}
 
             actions.setProgress(0);
             actions.setProgress(MessageFormat.format(I18.get("lib_msg"), data.size()), dir);
 
             state = YassSongListEvent.FINISHED;
             fireSongListChanged(state);
-        }
-
-        /**
-         * Description of the Method
-         *
-         * @param d Description of the Parameter
-         * @return Description of the Return Value
-         */
-        public Vector<YassSong> removeVersions(Vector<?> d) {
-            Vector<YassSong> v = new Vector<>(d.size());
-
-            for (Enumeration<?> en = d.elements(); en.hasMoreElements(); ) {
-                YassSong s = (YassSong) en.nextElement();
-                v.addElement(s);
-            }
-            return v;
-        }
-
-        /**
-         * Description of the Method
-         */
-        public void loadImageCache() {
-            imageCacheName = prop.getProperty("songlist-imagecache");
-
-            Vector<YassSong> data = sm.getData();
-            int i = 0;
-            for (Enumeration<YassSong> en = data.elements(); en.hasMoreElements() && notInterrupted; ) {
-                YassSong s = en.nextElement();
-                String at = YassSong.toFilename(s.getArtist() + " - " + s.getTitle() + " @ " + s.getFolder());
-                File cacheFile = new File(imageCacheName + File.separator + at + ".jpg");
-                if (cacheFile.exists()) {
-                    try {
-                        Image img = javax.imageio.ImageIO.read(cacheFile);
-                        s.setIcon(new ImageIcon(img));
-                    } catch (Exception e) {
-                        s.setIcon(null);
-                    }
-                }
-
-                repaintIfVisible(i);
-                sm.fireTableRowsUpdated(i, i);
-                i++;
-            }
         }
 
         /**
@@ -5069,7 +4799,7 @@ public class YassSongList extends JTable {
      *
      */
     class ThumbnailerThread extends Thread {
-        String dir = null;
+        String dir;
         boolean notInterrupted = true;
 
 
@@ -5132,7 +4862,7 @@ public class YassSongList extends JTable {
             finished = false;
             notInterrupted = true;
 
-            int rows[] = getSelectedRows();
+            int[] rows = getSelectedRows();
 
             actions.setLibraryLoaded(false);
 
@@ -5148,7 +4878,6 @@ public class YassSongList extends JTable {
                 }
                 actions.setProgress(++i);
                 actions.setProgress(MessageFormat.format(I18.get("lib_msg_store_n"), i), s.getDirectory());
-                Thread.currentThread();
                 Thread.yield();
             }
 
@@ -5232,40 +4961,7 @@ public class YassSongList extends JTable {
                                 auto.autoCorrectAllSafe(t);
                             }
                         }
-						/*
-						 *  if (backup) {
-						 *  String oldVersion = t.getVersion();
-						 *  String autoversion = "AUTO";
-						 *  if (oldVersion.length()>0) {
-						 *  if (oldVersion.indexOf("_AUTO")>=0)
-						 *  autoversion = oldVersion;
-						 *  else if (! oldVersion.equals("AUTO"))
-						 *  autoversion = oldVersion+"_AUTO";
-						 *  }
-						 *  getTitle returns title without version
-						 *  filename = t.getDir() + File.separator + t.getArtist() + " - " + s.getTitle() + " ["+autoversion+"].txt";
-						 *  t.setVersion(autoversion);
-						 *  t.storeFile(filename);
-						 *  t.setVersion(oldVersion);
-						 *  }
-						 *  else {
-						 *  filename = t.getDir() + File.separator + t.getFilename();
-						 *  t.storeFile(filename);
-						 *  File dir = new File(t.getDir());
-						 *  if (dir.exists()) {
-						 *  File[] files = dir.listFiles();
-						 *  for (int k=0; k<files.length; k++) {
-						 *  String name = files[k].getName();
-						 *  String namelow = name.toLowerCase();
-						 *  if (namelow.endsWith(".txt")) {
-						 *  if (name.indexOf("[AUTO]") >=0 || name.indexOf("_AUTO") >=0)
-						 *  files[k].delete();
-						 *  }
-						 *  }
-						 *  }
-						 *  }
-						 */
-                        filename = t.getDir() + File.separator + t.getFilename();
+						filename = t.getDir() + File.separator + t.getFilename();
                         t.storeFile(filename);
                         s.setDirectory(t.getDir());
                         s.setFilename(t.getFilename());
@@ -5291,11 +4987,9 @@ public class YassSongList extends JTable {
             actions.setProgress(0);
             actions.setProgress(MessageFormat.format(I18.get("lib_msg"), data.size()), dir);
 
-            SwingUtilities.invokeLater(new Runnable() {
-			   public void run() {
-                   if (autoAction != null) autoAction.setEnabled(true);
-			   }
-			 });
+            SwingUtilities.invokeLater(() -> {
+                if (autoAction != null) autoAction.setEnabled(true);
+            });
         }
     }
 
@@ -5399,16 +5093,15 @@ public class YassSongList extends JTable {
      *
      */
     class SongHeaderRenderer extends JLabel implements TableCellRenderer {
-        private static final long serialVersionUID = -7168701811270714078L;
         boolean isSelected = false;
         boolean isSelectable = false;
         boolean isSorted = false;
         Color gray = new Color(180, 180, 180);
         boolean err_minorpage, err_major, err_file, err_text, err_tags;
 
-        private Font font = new Font("SansSerif", Font.PLAIN, 12);
+        private final Font font = new Font("SansSerif", Font.PLAIN, 12);
         private Dimension dim = new Dimension(6, 180);
-        private Dimension minDim = new Dimension(6, 15);
+        private final Dimension minDim = new Dimension(6, 15);
 
         /**
          * Gets the selected attribute of the SongHeaderRenderer object
@@ -5474,15 +5167,10 @@ public class YassSongList extends JTable {
             boolean isMessage = vColIndex < FIRST_STATS_COLUMN;
             boolean isStats = vColIndex >= FIRST_STATS_COLUMN;
 
-            if (!isMessage && !isStats) {
-                title = I18.get(value.toString());
-                description = I18.get(value.toString() + "_msg");
-            }
-
             setSelectable(false);
             if (isMessage) {
                 title = I18.get(value.toString());
-                description = I18.get(value.toString() + "_msg");
+                description = I18.get(value + "_msg");
 
                 int msgi = vColIndex - FIRST_MSG_COLUMN;
                 String msg = YassRow.ALL_MESSAGES[msgi];
@@ -5702,7 +5390,7 @@ public class YassSongList extends JTable {
                 hilight = (YassSong.ordering & YassSong.SORT_BY_COMPLETE) != 0 && vColIndex == COMPLETE_COLUMN;
             }
             if (!hilight) {
-                hilight = (YassSong.ordering & YassSong.SORT_BY_VERSION) != 0 && vColIndex == VERSION_COLUMN;
+                hilight = (YassSong.ordering & YassSong.SORT_BY_DUETSINGER) != 0 && vColIndex == DUETSINGER_COLUMN;
             }
             if (!hilight) {
                 hilight = (YassSong.ordering & YassSong.SORT_BY_GENRE) != 0 && vColIndex == GENRE_COLUMN;
@@ -5820,9 +5508,6 @@ public class YassSongList extends JTable {
          * @return The tableCellRendererComponent value
          */
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int vColIndex) {
-            if (value == null) {
-                value = "";
-            }
             YassSong s = sm.getRowAt(rowIndex);
             if (s == null) {
                 return this;
@@ -5929,14 +5614,14 @@ public class YassSongList extends JTable {
     class SongTitleRenderer extends JLabel implements TableCellRenderer {
         private static final long serialVersionUID = -1054349571120736221L;
         Font bigFont = null;
-        String t, a, g, l, e, y, f, v, multi, al, len;
+        String t, a, g, l, e, y, f, ds, multi, al, len;
         boolean bold, underlined, opened, locked, video, nobackground, perfect;
         int langIndex = -1;
         boolean err_minorpage, err_major, err_file, err_text, err_tags;
 
-        private Font font = new Font("SansSerif", Font.PLAIN, 12);
+        private final Font font = new Font("SansSerif", Font.PLAIN, 12);
 
-        private Hashtable<String, String> i18Labels = new Hashtable<>();
+        private final Hashtable<String, String> i18Labels = new Hashtable<>();
 
 
         /**
@@ -5953,9 +5638,6 @@ public class YassSongList extends JTable {
          */
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int vColIndex) {
 
-            if (value == null) {
-                value = "";
-            }
             YassSong s = sm.getRowAt(rowIndex);
             if (s == null) {
                 return this;
@@ -6025,9 +5707,9 @@ public class YassSongList extends JTable {
                     i18Labels.put(key, f = I18.get(key));
                 }
             }
-            v = s.getVersion();
-            if (v == null || v.length() < 1) {
-                v = "";
+            ds = s.getDuetSingerNames();
+            if (ds == null || ds.length() < 1) {
+                ds = "";
             }
             al = s.getAlbum();
             if (al == null || al.length() < 1) {
@@ -6083,9 +5765,6 @@ public class YassSongList extends JTable {
                     t = "<b>" + t + "</b>";
                 }
                 setText("<html>" + t);
-                if (v.length() > 0) {
-                    setText("<html>" + t + " [" + v + "]");
-                }
             } else if (options == SYMBOL) {
                 if (s.isOpened()) {
                     t = "<u>" + t + "</u>";
@@ -6144,11 +5823,6 @@ public class YassSongList extends JTable {
 
             Shape shape = g2d.getClip();
 
-            if (getOptions() == TILE) {
-                // debug: clipping error
-                //g2d.setClip(new java.awt.geom.RoundRectangle2D.Double(0, 1, getWidth(), getHeight() - 1, 10, 10));
-            }
-
             if (!isOpaque()) {
                 Dimension d = YassSongList.this.getSize();
                 Color bg = getBackground();
@@ -6185,7 +5859,6 @@ public class YassSongList extends JTable {
             int width_icon = ICON_HEIGHT;
             int x_text = width_icon + 3;
             int max_width = width - x_text - 20;
-            int v_width = 60;
             boolean ch = false;
             while (t.length() > 0 && fm.stringWidth(t) > max_width) {
                 t = t.substring(0, t.length() - 1);
@@ -6205,12 +5878,12 @@ public class YassSongList extends JTable {
             }
             ch = false;
 
-            while (v.length() > 0 && fm.stringWidth(v) > v_width) {
-                v = v.substring(0, v.length() - 1);
+            while (ds.length() > 0 && fm.stringWidth(ds) > max_width) {
+                ds = ds.substring(0, ds.length() - 1);
                 ch = true;
             }
             if (ch) {
-                v += "...";
+                ds += "...";
             }
             ch = false;
 
@@ -6227,7 +5900,10 @@ public class YassSongList extends JTable {
                 extra = y;
             } else if (extraCol == YassSongList.ALBUM_COLUMN) {
                 extra = al;
-            } else if (extraCol == YassSongList.LENGTH_COLUMN) {
+            } else if (extraCol == YassSongList.DUETSINGER_COLUMN) {
+                extra = ds;
+            }
+            else if (extraCol == YassSongList.LENGTH_COLUMN) {
                 int sec = 0;
                 try {
                     sec = Integer.parseInt(len);
@@ -6269,10 +5945,6 @@ public class YassSongList extends JTable {
                     extraCol_x += 20;
                 }
                 g2.drawString(extra, extraCol_x, height - 6);
-            }
-            if (v.length() > 0) {
-                int extraCol_x = width - fm.stringWidth("[" + v + "]") - 4;
-                g2.drawString("[" + v + "]", extraCol_x, 2 * sh);
             }
             if (video && videoIcon != null) {
                 g2.drawImage(videoIcon, ICON_WIDTH - 16, height - 16, null);
@@ -6319,9 +5991,8 @@ public class YassSongList extends JTable {
      *
      */
     class SongMessageRenderer extends SongRenderer {
-        private static final long serialVersionUID = -4287036798468224688L;
-        private Font stdFont = new Font("SansSerif", Font.PLAIN, 11);
-        private Font smallFont = new Font("SansSerif", Font.PLAIN, 9);
+        private final Font stdFont = new Font("SansSerif", Font.PLAIN, 11);
+        private final Font smallFont = new Font("SansSerif", Font.PLAIN, 9);
 
 
         /**
@@ -6362,7 +6033,7 @@ public class YassSongList extends JTable {
     class FilterThread extends Thread {
         boolean isInterrupted = false;
         boolean isFinished = false;
-        private String str = null;
+        private String str;
 
 
         /**
@@ -6435,7 +6106,6 @@ public class YassSongList extends JTable {
                 if (currentTime > startTime + 300) {
                     actions.setProgress(k);
                     actions.setProgress(MessageFormat.format(I18.get("lib_msg_filter_n"), k), s.getDirectory());
-                    Thread.currentThread();
                     Thread.yield();
                 }
 
@@ -6450,7 +6120,7 @@ public class YassSongList extends JTable {
                         YassFilter.containsIgnoreCase(s.getLanguage(), str) ||
                         YassFilter.containsIgnoreCase(s.getEdition(), str) ||
                         YassFilter.containsIgnoreCase(s.getGenre(), str) ||
-                        YassFilter.containsIgnoreCase(s.getVersion(), str);
+                        YassFilter.containsIgnoreCase(s.getDuetSingerNames(), str);
 
                 if (filterAll) {
                     String txt = s.getLyrics();
@@ -6511,13 +6181,10 @@ public class YassSongList extends JTable {
                 actions.setProgress(MessageFormat.format(I18.get("lib_msg_matches"), sm.getData().size()), dir);
             }
 
-            SwingUtilities.invokeLater(
-                    new Runnable() {
-                        public void run() {
-                            changeSelection(0, 0, false, false);
-                            repaint();
-                        }
-                    });
+            SwingUtilities.invokeLater(() -> {
+                changeSelection(0, 0, false, false);
+                repaint();
+            });
             isFinished = true;
         }
     }

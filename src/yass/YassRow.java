@@ -316,31 +316,12 @@ public class YassRow implements Cloneable, Comparable<Object> {
         s[3] = val + "";
     }
 
-
-    // todo: could be optimized by adding fields
-
-    public String getVersion() {
-        if (s[3].length() < 3) {
-            return "";
-        }
-        return s[3].substring(2, s[3].length() - 1);
-    }
-
-    public void setVersion(String val) {
-        // speeds up toString()
-        s[3] = val.length() > 0 ? " [" + val + "]" : "";
-    }
-
     public String getText() {
         return s[4];
     }
 
     public void setText(String val) {
         s[4] = val;
-    }
-
-    public boolean hasVersion() {
-        return s[3].length() > 0;
     }
 
     public boolean hasSecondBeat() {
@@ -545,6 +526,9 @@ public class YassRow implements Cloneable, Comparable<Object> {
             }
             return ss;
         }
+        if (isMultiplayer()) {
+            return s[0] + " " + s[1];
+        }
         return s[0] + s[1] + s[2] + s[3] + s[4];
     }
 
@@ -590,20 +574,6 @@ public class YassRow implements Cloneable, Comparable<Object> {
             return false;
         if (!s[1].equals(r.s[1]))
             return false;
-        // quick hack; version should become standard tag
-        if (s[1].equals("TITLE:")) {
-            String ts = s[2];
-            String rs = r.s[2];
-            int i = ts.indexOf("[");
-            int ri = rs.indexOf("[");
-            if (i > 0) {
-                ts = ts.substring(0, i).trim();
-            }
-            if (ri > 0) {
-                rs = rs.substring(0, ri).trim();
-            }
-            return ts.equals(rs);
-        }
         if (!s[2].equals(r.s[2]))
             return false;
         if (!s[3].equals(r.s[3]))

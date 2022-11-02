@@ -100,7 +100,7 @@ public class PrintDetails implements PrintPlugin {
         if ((YassSong.ordering & YassSong.SORT_BY_COMPLETE) != 0) {
             str = str + I18.get("print_details_sort_2");
         }
-        if ((YassSong.ordering & YassSong.SORT_BY_VERSION) != 0) {
+        if ((YassSong.ordering & YassSong.SORT_BY_DUETSINGER) != 0) {
             str = str + I18.get("print_details_sort_3");
         }
         if ((YassSong.ordering & YassSong.SORT_BY_GENRE) != 0) {
@@ -295,10 +295,6 @@ public class PrintDetails implements PrintPlugin {
                 i++;
                 String complete = s.getComplete();
                 String title = s.getTitle();
-                String version = s.getVersion();
-                if (version != null && version.length() < 1) {
-                    version = null;
-                }
                 String artist = s.getSortedArtist();
                 if (artist == null) {
                     artist = s.getArtist();
@@ -376,9 +372,8 @@ public class PrintDetails implements PrintPlugin {
                 if (show[2]) {
                     Phrase phr;
                     phr = new Phrase(new Chunk(title, FontFactory.getFont(FontFactory.HELVETICA, 9, Font.PLAIN, new Color(0, 0, 0))));
-                    if (version != null) {
-                        phr.add(new Chunk("  " + version, FontFactory.getFont(FontFactory.HELVETICA, 7, Font.ITALIC, new Color(84, 84, 84))));
-                    }
+                    //if (version != null)
+                    //    phr.add(new Chunk("  " + version, FontFactory.getFont(FontFactory.HELVETICA, 7, Font.ITALIC, new Color(84, 84, 84))));
                     datatable.addCell(phr);
                 }
                 if (show[3]) {

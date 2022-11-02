@@ -267,7 +267,6 @@ public class YassFilesFilter extends YassFilter {
 
             String text = t.getFilename();
             String audio = t.getMP3();
-            String version = t.getVersion();
             String cover = t.getCover();
             String background = t.getBackgroundTag();
             String video = t.getVideo();
@@ -292,13 +291,7 @@ public class YassFilesFilter extends YassFilter {
             i = text.lastIndexOf(".");
             extension = text.substring(i);
             extension = extension.toLowerCase();
-
-            if (version == null || version.length() < 1) {
-                std = at + extension;
-            } else {
-                std = at + " [" + version + "]" + extension;
-            }
-
+            std = at + extension;
             if (!text.equals(std)) {
                 // System.out.println("Uncommon karaoke filename: " + text);
                 return true;

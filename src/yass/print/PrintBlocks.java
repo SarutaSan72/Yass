@@ -279,10 +279,6 @@ public class PrintBlocks implements PrintPlugin {
                 i++;
                 String complete = s.getComplete();
                 String title = s.getTitle();
-                String version = s.getVersion();
-                if (version != null && version.length() < 1) {
-                    version = null;
-                }
                 String artist = s.getSortedArtist();
                 if (artist == null) {
                     artist = s.getArtist();
@@ -436,9 +432,8 @@ public class PrintBlocks implements PrintPlugin {
                 Chunk ch3 = null;
 
                 Phrase phr = new Phrase(ch = new Chunk(title, FontFactory.getFont(FontFactory.HELVETICA, fsBody, Font.PLAIN, new Color(0, 0, 0))));
-                if (version != null) {
-                    phr.add(ch2 = new Chunk("  " + version, FontFactory.getFont(FontFactory.HELVETICA, fsVersion, Font.ITALIC, new Color(84, 84, 84))));
-                }
+                //if (version != null) {
+                //    phr.add(ch2 = new Chunk("  " + version, FontFactory.getFont(FontFactory.HELVETICA, fsVersion, Font.ITALIC, new Color(84, 84, 84))));
                 String hasvideo = (showComplete && complete.equals("V")) ? videoString : null;
                 if (hasvideo != null) {
                     phr.add(ch3 = new Chunk("  " + hasvideo, FontFactory.getFont(FontFactory.HELVETICA, fsVersion, Font.ITALIC, new Color(84, 84, 84))));
@@ -458,9 +453,8 @@ public class PrintBlocks implements PrintPlugin {
                     }
                     if (ww >= headerwidths[show[0] ? 1 : 0] - 10) {
                         Phrase phr2 = new Phrase(ch = new Chunk(title, FontFactory.getFont(FontFactory.HELVETICA, --size, Font.PLAIN, new Color(0, 0, 0))));
-                        if (version != null) {
-                            phr2.add(ch2 = new Chunk("  " + version, FontFactory.getFont(FontFactory.HELVETICA, --size2, Font.ITALIC, new Color(84, 84, 84))));
-                        }
+                        //if (version != null) {
+                        //    phr2.add(ch2 = new Chunk("  " + version, FontFactory.getFont(FontFactory.HELVETICA, --size2, Font.ITALIC, new Color(84, 84, 84))));
                         if (hasvideo != null) {
                             phr2.add(ch3 = new Chunk("  " + hasvideo, FontFactory.getFont(FontFactory.HELVETICA, size2, Font.ITALIC, new Color(84, 84, 84))));
                         }

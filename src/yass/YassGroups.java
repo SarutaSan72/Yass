@@ -499,14 +499,7 @@ public class YassGroups extends JTable implements DropTargetListener {
                                 String artist = st.hasMoreTokens() ? st.nextToken().trim() : null;
                                 String title = st.hasMoreTokens() ? st.nextToken().trim() : null;
                                 if (artist != null && title != null) {
-                                    String version = null;
-                                    int k = title.indexOf("[");
-                                    if (k > 0) {
-                                        version = title.substring(k + 1, title.indexOf("]", k));
-                                        title = title.substring(0, k).trim();
-                                    }
-
-                                    YassSong s = songList.getSong(artist, title, version);
+                                    YassSong s = songList.getSong(artist, title);
                                     if (s != null) {
                                         f.drop(rule, s);
                                         if (!s.isSaved()) {

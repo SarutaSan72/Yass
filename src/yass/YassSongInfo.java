@@ -486,14 +486,10 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
             return s;
         }
 
-        int at = s.indexOf("[");
-        if (at < 0) {
-            at = s.lastIndexOf(".");
-        }
+        int at = s.lastIndexOf(".");
         if (at < 0) {
             at = s.length();
         }
-
         String trim = s.substring(0, at);
         String ext = s.substring(at);
         while (trim.length() > 1 && fm.stringWidth(trim + "~" + ext) > w) {
@@ -1004,11 +1000,8 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
 
         String title = YassSong.toFilename(song.getTitle());
         String artist = YassSong.toFilename(song.getArtist());
-        String version = YassSong.toFilename(song.getVersion());
         String folder = song.getFolder();
-        String filename = tmp + File.separator + artist + " - " + title + " ["
-                + version + "] [CO] @ " + folder + ".jpg";
-
+        String filename = tmp + File.separator + artist + " - " + title + " [CO] @ " + folder + ".jpg";
         File file = new File(filename);
         if (local == null) {
             try {
@@ -1034,11 +1027,8 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
 
         String title = YassSong.toFilename(song.getTitle());
         String artist = YassSong.toFilename(song.getArtist());
-        String version = YassSong.toFilename(song.getVersion());
         String folder = song.getFolder();
-        String filename = tmp + File.separator + artist + " - " + title + " ["
-                + version + "] [CO] @ " + folder + ".jpg";
-
+        String filename = tmp + File.separator + artist + " - " + title + " [CO] @ " + folder + ".jpg";
         return new File(filename);
     }
 
@@ -1074,18 +1064,15 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
 
         String title = YassSong.toFilename(s.getTitle());
         String artist = YassSong.toFilename(s.getArtist());
-        String version = YassSong.toFilename(s.getVersion());
         String folder = s.getFolder();
 
-        String filename = tmp + File.separator + artist + " - " + title + " ["
-                + version + "] [BG] @ " + folder + ".jpg";
+        String filename = tmp + File.separator + artist + " - " + title + " [BG] @ " + folder + ".jpg";
         File file = new File(filename);
         if (file.exists()) {
             file.delete();
         }
 
-        filename = tmp + File.separator + artist + " - " + title + " ["
-                + version + "] [CO] @ " + folder + ".jpg";
+        filename = tmp + File.separator + artist + " - " + title + " [CO] @ " + folder + ".jpg";
         file = new File(filename);
         if (file.exists()) {
             file.delete();
@@ -1106,11 +1093,8 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
 
         String title = YassSong.toFilename(song.getTitle());
         String artist = YassSong.toFilename(song.getArtist());
-        String version = YassSong.toFilename(song.getVersion());
         String folder = song.getFolder();
-        String filename = tmp + File.separator + artist + " - " + title + " ["
-                + version + "] [BG] @ " + folder + ".jpg";
-
+        String filename = tmp + File.separator + artist + " - " + title + " [BG] @ " + folder + ".jpg";
         return new File(filename);
     }
 
@@ -1128,10 +1112,9 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
 
         String title = YassSong.toFilename(song.getTitle());
         String artist = YassSong.toFilename(song.getArtist());
-        String version = YassSong.toFilename(song.getVersion());
         String folder = song.getFolder();
 
-        String at = artist + " - " + title + " [" + version + "] [VD#";
+        String at = artist + " - " + title + " [VD#";
         File files[] = tmpfile.listFiles();
         for (File file : files) {
             String name = file.getName();
@@ -1176,11 +1159,8 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
 
         String title = YassSong.toFilename(song.getTitle());
         String artist = YassSong.toFilename(song.getArtist());
-        String v = song.getVersion();
-        String version = YassSong.toFilename(v);
         String folder = song.getFolder();
-        String filename = tmp + File.separator + artist + " - " + title + " ["
-                + version + "] [BG] @ " + folder + ".jpg";
+        String filename = tmp + File.separator + artist + " - " + title + " [BG] @ " + folder + ".jpg";
 
         File file = new File(filename);
         if (local == null) {
@@ -1208,8 +1188,6 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
 
         String title = YassSong.toFilename(song.getTitle());
         String artist = YassSong.toFilename(song.getArtist());
-        String v = song.getVersion();
-        String version = YassSong.toFilename(v);
         String folder = song.getFolder();
 
         String name = local.getName();
@@ -1224,8 +1202,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
             }
         }
 
-        String filename = tmp + File.separator + artist + " - " + title + " ["
-                + version + "] [VD#" + vg + "] @ " + folder + ext;
+        String filename = tmp + File.separator + artist + " - " + title + " [VD#" + vg + "] @ " + folder + ext;
         File file = new File(filename);
         YassUtils.copyFile(local, file);
     }
@@ -1550,9 +1527,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                         t1.setText(s);
                         String newTitle = t1.getTitle().trim();
                         String newArtist = t1.getArtist().trim();
-                        String newVersion = t1.getVersion().trim();
-                        YassSong newSong = actions.selectSong(newArtist,
-                                newTitle, newVersion);
+                        YassSong newSong = actions.selectSong(newArtist, newTitle);
                         if (newSong != null) {
                             song = newSong;
                             updateText(s, encoding);
@@ -1597,10 +1572,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
 
                 String newTitle = t1.getTitle().trim();
                 String newArtist = t1.getArtist().trim();
-                String newVersion = t1.getVersion().trim();
-
-                YassSong newSong = actions.selectSong(newArtist, newTitle,
-                        newVersion);
+                YassSong newSong = actions.selectSong(newArtist, newTitle);
                 if (newSong != null) {
                     song = newSong;
                     updateText(tds, null);
@@ -2499,8 +2471,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                     t.setText(s);
                     String newTitle = t.getTitle().trim();
                     String newArtist = t.getArtist().trim();
-                    String newVersion = t.getVersion().trim();
-                    actions.selectSong(newArtist, newTitle, newVersion);
+                    actions.selectSong(newArtist, newTitle);
                 }
             }
         } catch (Exception e) {
@@ -2624,15 +2595,10 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                         t.setText(s);
                         String newTitle = t.getTitle().trim();
                         String newArtist = t.getArtist().trim();
-                        String newVersion = t.getVersion().trim();
                         String oldTitle = song.getTitle().trim();
                         String oldArtist = song.getArtist().trim();
-                        String oldVersion = song.getVersion().trim();
-                        if (!oldTitle.equals(newTitle)
-                                || !oldArtist.equals(newArtist)
-                                || !oldVersion.equals(newVersion)) {
-                            dropTargetDropEvent.getDropTargetContext()
-                                    .dropComplete(true);
+                        if (!oldTitle.equals(newTitle) || !oldArtist.equals(newArtist)) {
+                            dropTargetDropEvent.getDropTargetContext().dropComplete(true);
                             repaint();
                             return;
                         }
@@ -2738,14 +2704,10 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
 
                 String newTitle = t.getTitle().trim();
                 String newArtist = t.getArtist().trim();
-                String newVersion = t.getVersion().trim();
                 String oldTitle = song.getTitle().trim();
                 String oldArtist = song.getArtist().trim();
-                String oldVersion = song.getVersion().trim();
-                if (!oldTitle.equals(newTitle) || !oldArtist.equals(newArtist)
-                        || !oldVersion.equals(newVersion)) {
-                    dropTargetDropEvent.getDropTargetContext().dropComplete(
-                            true);
+                if (!oldTitle.equals(newTitle) || !oldArtist.equals(newArtist)) {
+                    dropTargetDropEvent.getDropTargetContext().dropComplete(true);
                     repaint();
                     return;
                 }

@@ -270,7 +270,7 @@ public class YassSheetInfo extends JPanel {
         Color[] colorSet = sheet.getColors();
 
         int x = 0, y = txtBar, rx, ry, rw;
-        final int versionWidth = sheet.getTableCount() > 1 ? 100 : 0;
+        final int trackNameWidth = sheet.getTableCount() > 1 ? 100 : 0;
         final int hBar = msgBar + txtBar;
         final int w = getWidth() - 2* sideBar - 1;
         final int h = getHeight();
@@ -507,21 +507,21 @@ public class YassSheetInfo extends JPanel {
             g2.drawRect(x, y-msgBar+2, maskWidth, msgBar-2);
         }
 
-        // version
+        // track name
         x = x + maskWidth + 6;
-        if (versionWidth > 0) {
-            String v = table.getVersion();
-            if (v != null) {
-                int vw = g2.getFontMetrics().stringWidth(v);
-                if (vw > versionWidth && v.length() > 10)
-                    v = v.substring(0, 10) + "...";
+        if (trackNameWidth > 0) {
+            String name = table.getDuetTrackName();
+            if (name != null) {
+                int sw = g2.getFontMetrics().stringWidth(name);
+                if (sw > trackNameWidth && name.length() > 10)
+                    name = name.substring(0, 10) + "...";
                 g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
-                g2.drawString(v, x, y);
+                g2.drawString(name, x, y);
             }
         }
 
         // error selection
-        x = x + versionWidth + 6;
+        x = x + trackNameWidth + 6;
         int errorWidth = 190;
         int goldenPoints = table.getGoldenPoints();
         int idealGoldenPoints = table.getIdealGoldenPoints();
@@ -649,20 +649,20 @@ public class YassSheetInfo extends JPanel {
         int sw = g2.getFontMetrics().stringWidth(s);
         int sw1 = g2.getFontMetrics().stringWidth(s1);
         int sw2 = g2.getFontMetrics().stringWidth(s2);
-        if (sw < w-maskWidth-versionWidth-errorWidth-20) {
+        if (sw2 < w-maskWidth-trackNameWidth-errorWidth-20) {
+            g2.setColor(sheet.darkMode ? sheet.hiGrayDarkMode : sheet.hiGray);
+            g2.drawString(s2, x - sw2 - 4, y);
+        }
+        if (sw1 < w-sw) {
+            g2.setColor(sheet.darkMode ? sheet.hiGrayDarkMode : sheet.hiGray);
+            g2.drawString(s1, x - sw1 - 4, y-msgBar);
+        }
+        if (sw < w) {
             if (! table.isSaved())
                 g2.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
             else
                 g2.setColor(sheet.darkMode ? sheet.hiGrayDarkMode : sheet.hiGray);
-            g2.drawString(s, x - sw - 4, y);
-        }
-        if (sw2 < w-sw1) {
-            g2.setColor(sheet.darkMode ? sheet.hiGrayDarkMode : sheet.hiGray);
-            g2.drawString(s2, x - sw2 - 4, y-msgBar);
-        }
-        if (sw1 < w) {
-            g2.setColor(sheet.darkMode ? sheet.hiGrayDarkMode : sheet.hiGray);
-            g2.drawString(s1, sideBar + 4, y-msgBar);
+            g2.drawString(s, sideBar + 4, y-msgBar);
         }
 
         // select
