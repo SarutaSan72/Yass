@@ -38,9 +38,6 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.*;
 
-/**
- * @author Saruta
- */
 public class YassActions implements DropTargetListener {
 
     private final YassSheet sheet;
@@ -55,7 +52,6 @@ public class YassActions implements DropTargetListener {
     private JComponent libComponent = null, songComponent = null, songInfoComponent = null, playlistComponent = null, editComponent = null, trackComponent = null;
     private JApplet menuHolder = null;
     private Rectangle songBounds = null;
-    // , correctFileNamesButton, correctTagsButton;
     private final JProgressBar progressBar;
     private JComponent tab = null;
     private JMenu encMenu = null;
@@ -1627,36 +1623,92 @@ public class YassActions implements DropTargetListener {
     private final Action exchangeTracks = new AbstractAction(I18.get("edit_tracks_exchange")) {
         public void actionPerformed(ActionEvent e) {
             if (table.getDuetTrackCount() == 2) {
-                YassTable[] tracks = getOpenTables(table).toArray(new YassTable[0]);
-                YassTable t = new YassTable();
-                t.loadTable(tracks[0], true);
-                tracks[0].loadTable(tracks[1], true);
-                tracks[1].loadTable(t, true);
-                tracks[0].setSaved(false);
-                tracks[1].setSaved(false);
-                tracks[0].addUndo();
-                tracks[1].addUndo();
-                updateActions();
+                exchangeTracks(new int[]{1,0});
                 main.repaint();
-            } else if (table.getDuetTrackCount() == 3) {
-                // todo
-            } else if (table.getDuetTrackCount() == 4) {
-                // todo
+            } else if (table.getDuetTrackCount() > 2) {
+                YassTable[] tracks = getOpenTables(table).toArray(new YassTable[0]);
+                JPanel grid = new JPanel(new GridLayout(tracks.length, 2));
+                final JComboBox[] nameCombo = new JComboBox[tracks.length];
+                final String[] prev = new String[1];
+                for (int i = 0; i < tracks.length; i++)
+                {
+                    String[] names = new String[tracks.length];
+                    for (int j=0; j<tracks.length; j++) {
+                        names[j] = (i+1) + ": " + tracks[j].getDuetTrackName();
+                    }
+                    nameCombo[i] = new JComboBox(names);
+                    nameCombo[i].setName("cb"+i);
+                    nameCombo[i].setSelectedIndex(i);
+                    nameCombo[i].addItemListener(e1 -> {
+                        if (e1.getStateChange() == ItemEvent.DESELECTED) {
+                            prev[0] = e1.getItem().toString().substring(3);
+                        }
+                        else {
+                            String sel = e1.getItem().toString().substring(3);
+                            String cbName = ((JComboBox) e1.getSource()).getName();
+                            for (int j = 0; j < tracks.length; j++) {
+                                if (cbName.equals("cb" + j))
+                                    continue;
+                                String sel2 = nameCombo[j].getSelectedItem().toString().substring(3);
+                                if (sel.equals(sel2)) {
+                                    nameCombo[j].setSelectedItem((j+1) + ": " + prev[0]);
+                                }
+                            }
+                        }
+                    });
+                    grid.add(nameCombo[i]);
+                }
+                JDialog dia = new JDialog(new OwnerFrame());
+                dia.setTitle(I18.get("edit_tracks_exchange"));
+                dia.setAlwaysOnTop(true);
+                dia.addWindowListener(new WindowAdapter() {
+                    public void windowClosing(WindowEvent e) {
+                        e.getWindow().dispose();
+                    }
+                });
+                dia.add("Center", grid);
+                JPanel buttons = new JPanel();
+                JButton b;
+                buttons.add(b = new JButton("Ok"));
+                b.addActionListener(e2 -> {
+                    dia.dispose();
+                    int[] order = new int[tracks.length];
+                    for (int j = 0; j < tracks.length; j++)
+                        order[j] = nameCombo[j].getSelectedIndex();
+                    exchangeTracks(order);
+                });
+                buttons.add(b = new JButton("Cancel"));
+                b.addActionListener(e2 -> dia.dispose());
+                dia.add("South", buttons);
+                dia.pack();
+                int w = 200;
+                dia.setSize(w, dia.getHeight());
+                dia.setLocationRelativeTo(main);
+                dia.setVisible(true);
             }
         }
     };
-    private final Action saveAsFile = new AbstractAction(I18.get("lib_save_as")) {
-        public void actionPerformed(ActionEvent e) {
-            Frame f = new Frame();
-            FileDialog fd = new FileDialog(f, I18.get("lib_save_as_msg"), FileDialog.SAVE);
-            fd.setVisible(true);
-            if (fd.getFile() != null) {
-                table.storeFile(fd.getDirectory() + File.separator + fd.getFile());
-            }
-            fd.dispose();
-            f.dispose();
+
+    private void exchangeTracks(int[] order) {
+        YassTable[] tracks = getOpenTables(table).toArray(new YassTable[0]);
+        YassTable[] t = new YassTable[tracks.length];
+        for (int i=0; i< tracks.length; i++) {
+            t[i] = new YassTable();
+            t[i].loadTable(tracks[i], true);
         }
-    };
+        for (int i=0; i < tracks.length; i++) {
+            tracks[i].loadTable(t[order[i]], true);
+            tracks[i].setSaved(false);
+            tracks[i].setDuetTrack(t[order[i]].getDuetTrack(), tracks[i].getDuetTrackName());
+        }
+        for (int i=0; i < tracks.length; i++) {
+            getAutoCorrect().checkData(tracks[i], true, true);
+            tracks[i].addUndo();
+        }
+        updateActions();
+        main.repaint();
+    }
+
     private final Action closeAll = new AbstractAction(I18.get("edit_close_all")) {
         public void actionPerformed(ActionEvent e) {
             closeAll();
@@ -2017,7 +2069,7 @@ public class YassActions implements DropTargetListener {
             dia.setVisible(true);
         }
     };
-    Action undo = new AbstractAction(I18.get("edit_undo")) {
+    private final Action undo = new AbstractAction(I18.get("edit_undo")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             if (lyrics.isEditable()) {
@@ -2028,7 +2080,7 @@ public class YassActions implements DropTargetListener {
             updateGap();
         }
     };
-    Action redo = new AbstractAction(I18.get("edit_redo")) {
+    private final Action redo = new AbstractAction(I18.get("edit_redo")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
             if (lyrics.isEditable()) {

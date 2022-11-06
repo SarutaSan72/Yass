@@ -41,7 +41,7 @@ public class YassSheetInfo extends JPanel {
     private static final int notesBar = 50;
     private static final int msgBar = 14;
     private static final int txtBar = 32;
-    private static final int sideBar = 10;
+    private static final int sideBar = 16;
     //private static final int selectBar = 20;
 
     private final YassSheetListener sheetListener;
@@ -288,7 +288,7 @@ public class YassSheetInfo extends JPanel {
         }
         if (isActive && sheet.getTableCount() > 1) {
             g2.setColor(sheet.darkMode ? sheet.whiteDarkMode : sheet.white);
-            g2.fillRect(3, 3, sideBar-6, h-6);
+            g2.fillRect(4, 3, sideBar-8, h-6);
         }
 
         // background
