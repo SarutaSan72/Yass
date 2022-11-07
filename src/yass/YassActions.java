@@ -1766,6 +1766,11 @@ public class YassActions implements DropTargetListener {
             songList.load();
         }
     };
+    private final Action openFile = new AbstractAction(I18.get("edit_file_open")) {
+        public void actionPerformed(ActionEvent e) {
+            openFile();
+        }
+    };
     private final Action openTrack = new AbstractAction(I18.get("edit_tracks_open")) {
         public void actionPerformed(ActionEvent e) {
             openTrack();
@@ -3359,20 +3364,21 @@ public class YassActions implements DropTargetListener {
             }
         });
 
-        menu.add(openTrack);
+        menu.add(openFile);
         menu.add(openFolder);
-        menu.add(saveTrack);
         menu.add(saveAll);
-        menu.add(closeTrack);
-        menu.add(closeAll);
         menu.add(reloadAll);
         menu.addSeparator();
+        menu.add(openTrack);
         menu.add(renameTrack);
         menu.add(exchangeTracks);
+        menu.add(saveTrack);
         menu.add(saveTrackAs);
         menu.add(saveDuetAs);
         menu.add(mergeTracks);
         menu.add(deleteTrack);
+        menu.add(closeTrack);
+        menu.add(closeAll);
         menu.addSeparator();
         menu.add(gotoLibrary);
         menu.addSeparator();
@@ -3391,6 +3397,19 @@ public class YassActions implements DropTargetListener {
         menu.addSeparator();
         menu.add(selectLine);
         menu.add(selectAll);
+        menu.add(selectNextBeat);
+        menu.add(selectPrevBeat);
+        menu.addSeparator();
+        menu.add(decLeft);
+        menu.add(incLeft);
+        menu.add(decRight);
+        menu.add(incRight);
+        menu.add(shiftLeft);
+        menu.add(shiftRight);
+        menu.add(shiftLeftRemainder);
+        menu.add(shiftRightRemainder);
+        menu.add(incHeight);
+        menu.add(decHeight);
         menu.addSeparator();
         menu.add(copyRows);
         menu.add(pasteRows);
@@ -5066,6 +5085,7 @@ public class YassActions implements DropTargetListener {
 
         saveTrack.setEnabled(!isTrackSaved);
         saveAll.setEnabled(!isAllSaved);
+        openTrack.setEnabled(isOpened);
         closeTrack.setEnabled(isOpened);
         closeAll.setEnabled(isOpened);
         reloadAll.setEnabled(isOpened);
@@ -6509,7 +6529,15 @@ public class YassActions implements DropTargetListener {
             return;
         String folderName = askFolderName();
         if (folderName != null)
-            openFiles(folderName, true);
+            openFiles(folderName, false);
+    }
+
+    private void openFile() {
+        if (cancelOpen())
+            return;
+        String filename = askFilename(I18.get("lib_edit_file_msg"), FileDialog.LOAD);
+        if (filename != null)
+            openFiles(filename, false);
     }
 
     private void openTrack() {
@@ -6885,9 +6913,13 @@ public class YassActions implements DropTargetListener {
         reloadAll.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
         am.put("reloadAll", reloadAll);
 
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK), "openTrack");
-        am.put("openFile", openTrack);
-        openTrack.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK), "openFile");
+        am.put("openFile", openFile);
+        openFile.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK), "openFolder");
+        am.put("openFolder", openFolder);
+        openFolder.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK), "gotoLibrary");
         am.put("gotoLibrary", gotoLibrary);
@@ -6895,29 +6927,45 @@ public class YassActions implements DropTargetListener {
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK | InputEvent.ALT_MASK), "shiftLeftRemainder");
         am.put("shiftLeftRemainder", shiftLeftRemainder);
+        shiftLeftRemainder.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK | InputEvent.ALT_MASK));
+
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK | InputEvent.ALT_MASK), "shiftRightRemainder");
         am.put("shiftRightRemainder", shiftRightRemainder);
+        shiftRightRemainder.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK | InputEvent.ALT_MASK));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.CTRL_MASK | InputEvent.ALT_MASK), "shiftLeft");
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.SHIFT_MASK), "shiftLeft");
         am.put("shiftLeft", shiftLeft);
+        shiftLeft.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.CTRL_MASK | InputEvent.ALT_MASK));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.CTRL_MASK | InputEvent.ALT_MASK), "shiftRight");
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.SHIFT_MASK), "shiftRight");
         am.put("shiftRight", shiftRight);
+        shiftRight.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.CTRL_MASK | InputEvent.ALT_MASK));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK), "decHeight");
         am.put("decHeight", decHeight);
+        decHeight.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK));
+
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK), "incHeight");
         am.put("incHeight", incHeight);
+        incHeight.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK));
+
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.CTRL_MASK), "decLeft");
         am.put("decLeft", decLeft);
+        decLeft.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.CTRL_MASK));
+
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.CTRL_MASK), "incLeft");
         am.put("incLeft", incLeft);
+        incLeft.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.CTRL_MASK));
+
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.ALT_MASK), "decRight");
         am.put("decRight", decRight);
+        decRight.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.ALT_MASK));
+
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_MASK), "incRight");
         am.put("incRight", incRight);
+        incRight.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_MASK));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), "prevPage");
         am.put("prevPage", prevPage);

@@ -946,6 +946,14 @@ public class YassUtils {
         return res;
     }
 
+    /**
+     * Gets number of bits for a given number n.
+     * Examples:
+     *  n=3 --> 2 bits
+     *  n=4 --> 3 bits
+     * @param n
+     * @return
+     */
     public static int getBitCount(int n) {
         int bits = 0;
         while (n > 0) {
@@ -955,6 +963,23 @@ public class YassUtils {
         return bits;
     }
 
+    /**
+     * Gets bit mask for a given number n.
+     * Examples:
+     *  n=1 --> [0]
+     *  n=2 --> [1]
+     *  n=3 --> [0,1]
+     *  n=4 --> [2]
+     *  n=5 --> [0,2]
+     *  n=6 --> [1,2]
+     *  n=7 --> [0,1,2]
+     *  n=8 --> [3]
+     *  n=9 --> [0,3]
+     *  ...
+     *  n=15 --> [0,1,2,3]
+     * @param n
+     * @return
+     */
     public static Vector<Integer> getBitMask(int n) {
         Vector<Integer> bits = new Vector<>();
         int bit = 0;
@@ -965,6 +990,24 @@ public class YassUtils {
             ++bit;
         }
         return bits;
+    }
+
+    /**
+     * Gets [count] powers of two.
+     * Examples:
+     *  n=4 --> [1,2,4,8]
+     * @param count
+     * @return
+     */
+    public static Vector<Integer> getPow2(int count) {
+        Vector<Integer> pow2 = new Vector<>();
+        int n = 1;
+        while (count > 0) {
+            pow2.add(n);
+            n <<= 1;
+            --count;
+        }
+        return pow2;
     }
 
     static class ImageLoadStatus {

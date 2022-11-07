@@ -1062,11 +1062,8 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
                         break;
                     } else if (table.getMultiSize() > 1
                             && r.x < x
-                            && (((next == null || next.isPageBreak() || next
-                            .hasType(YassRectangle.END)) && x < r.x
-                            + r.width) || (next != null
-                            && (!next.isPageBreak() && !next
-                            .hasType(YassRectangle.END)) && x < next.x))
+                            && (((next == null || next.isPageBreak() || next.hasType(YassRectangle.END)) && x < r.x + r.width) ||
+                            (next != null && (!next.isPageBreak() && !next.hasType(YassRectangle.END)) && x < next.x))
                             && y > clip.height - BOTTOM_BORDER
                             && y < clip.height - BOTTOM_BORDER + 16) {
                         hiliteAction = ACTION_CONTROL_ALT;
@@ -5100,13 +5097,13 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
     public int nextNote(int track, int pos) {
         YassRectangle r;
         int i = 0;
+        if (track < 0 || track >= rects.size())
+            return -1;
         for (Enumeration<?> e = rects.elementAt(track).elements(); e.hasMoreElements(); i++) {
             r = (YassRectangle) e.nextElement();
-            if (! r.isPageBreak() && !r.isType(YassRectangle.GAP) &&
-                    !r.isType(YassRectangle.START)&& !r.isType(YassRectangle.END))
-                if (r.x - 1 >= pos || r.x + r.width >= pos) {
+            if (! r.isPageBreak() && !r.isType(YassRectangle.GAP) && !r.isType(YassRectangle.START)&& !r.isType(YassRectangle.END))
+                if (r.x - 1 >= pos || r.x + r.width >= pos)
                     return i;
-                }
         }
         return -1;
     }

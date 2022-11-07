@@ -2772,42 +2772,39 @@ public class YassTable extends JTable {
         sheet.repaint();
     }
 
+    /**
+     * Enlarge current span to full pages.
+     * @param i span start
+     * @param j span end
+     * @return [s,e] where
+     *  s = note before i that starts a page
+     *  e = note after j that ends a page
+     */
     public int[] enlargeToPages(int i, int j) {
-        if (i < 0) {
+        if (i < 0)
             return null;
-        }
-
         int n = getRowCount();
+        if (i >= n)
+            return null;
         YassRow r = getRowAt(i);
-
-        if (r.isEnd()) {
+        if (r.isEnd())
             return new int[]{i, i};
-        }
-
-        while (!(r.isNote()) && i > 0) {
+        while (!(r.isNote()) && i > 0)
             r = getRowAt(--i);
-        }
         // move back until i-->note
         boolean inHeader = !r.isNote();
         YassRow r2 = getRowAt(j);
-        while (!(r2.isNote()) && j < n - 1) {
+        while (!(r2.isNote()) && j < n - 1)
             r2 = getRowAt(++j);
-        }
         // // move forward until j-->note
-        if (inHeader) {
+        if (inHeader)
             return new int[]{i, j - 1};
-        }
-
         r = getRowAt(i);
-        while (r.isNote() && i > 0) {
+        while (r.isNote() && i > 0)
             r = getRowAt(--i);
-        }
-
         r2 = getRowAt(j);
-        while (r2.isNote() && j < n - 1) {
+        while (r2.isNote() && j < n - 1)
             r2 = getRowAt(++j);
-        }
-
         return new int[]{i + 1, j - 1};
     }
 
@@ -4909,13 +4906,15 @@ public class YassTable extends JTable {
         if (p < 1) return null;
         Vector<YassTable> trackTables;
         try {
+            int trackCount = YassUtils.getBitCount(p);
+
             // create tables
-            trackTables = new Vector<>(p);
-            for (int i = 0; i < p; i++) {
+            trackTables = new Vector<>(trackCount);
+            for (int i = 0; i < trackCount; i++) {
                 YassTable t = new YassTable();
                 t.init(prop);
                 t.setDuetTrack(i + 1, getDuetSingerName(i));
-                t.setDuetTrackCount(p);
+                t.setDuetTrackCount(trackCount);
                 trackTables.addElement(t);
             }
 
@@ -4951,12 +4950,13 @@ public class YassTable extends JTable {
                     }
                     continue;
                 }
-                if (r.isNote() && p > 0 && p != 3) { // add to player <p>
-                    tracksData[p - 1].addElement(new YassRow(r));
-                } else if (r.isNote() && (p == 0 || p == 3)) { // add to all players
-                    for (Vector<YassRow> trackData : tracksData) {
-                        trackData.addElement(new YassRow(r));
-                    }
+                if (r.isNote() && p == 0) { // add to all players
+                    for (int i = 0; i < trackTables.size(); i++)
+                        tracksData[i].addElement(new YassRow(r));
+                }
+                if (r.isNote() && p > 0) { // add to all player in bitmask
+                    for (int k: YassUtils.getBitMask(p))
+                        tracksData[k].addElement(new YassRow(r));
                 } else if (r.isPageBreak()) {
                     for (Vector<YassRow> trackData : tracksData) {
                         int lastIndex = trackData.size() - 1;

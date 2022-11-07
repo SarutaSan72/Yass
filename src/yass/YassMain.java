@@ -308,7 +308,7 @@ public class YassMain extends JApplet {
         if (argv == null)
             return;
 
-        argv = new String[] { "C:\\Users\\Frank\\Desktop\\The Beatles - If I Fell" };
+        argv = new String[] { "D:\\Projekte\\Yass Along\\songs\\Unknown - Brother Jacob\\Unknown - Brother Jacob [MULTI].txt" };
         for (String arg : argv) {
             String low = arg.toLowerCase();
             if (low.equals("-convert"))
