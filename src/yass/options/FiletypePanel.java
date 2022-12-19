@@ -46,9 +46,9 @@ public class FiletypePanel extends OptionsPanel {
         addSeparator();
         addBoolean(I18.get("options_filetypes_utf8_bom"), "utf8-without-bom", I18.get("options_filetypes_utf8_bom_enable"));
         addBoolean("", "utf8-always", I18.get("options_filetypes_utf8_always"));
-        addSeparator();
-        addBoolean(I18.get("options_filetypes_duet_seq"), "duet-sequential", I18.get("options_filetypes_duet_seq_enable"));
-        addComment(I18.get("options_filetypes_duet_seq_comment"));
+        //addSeparator();
+        //addBoolean(I18.get("options_filetypes_duet_seq"), "duet-sequential", I18.get("options_filetypes_duet_seq_enable"));
+        //addComment(I18.get("options_filetypes_duet_seq_comment"));
     }
 }
 

@@ -4822,20 +4822,15 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
         int maxH = -128;
         int minBeat = 10000;
         int maxBeat = 0;
-        Enumeration<YassTable> et = tables.elements();
-        for (Enumeration<Vector<YassRectangle>> e = rects.elements(); e.hasMoreElements() && et.hasMoreElements(); ) {
-            e.nextElement();
-            YassTable t = et.nextElement();
-            int n = t.getRowCount();
-            YassRow row;
-            for (int i = 0; i < n; i++) {
-                row = t.getRowAt(i);
-                if (row.isNote()) {
-                    int height = row.getHeightInt();
+        for (YassTable t: tables) {
+            int gapBeat = (int)(t.getGapInBeats() + 0.5);
+            for (YassRow r: t.getModelData()) {
+                if (r.isNote()) {
+                    int height = r.getHeightInt();
                     minH = Math.min(minH, height);
                     maxH = Math.max(maxH, height);
-                    minBeat = Math.min(minBeat, row.getBeatInt());
-                    maxBeat = Math.max(maxBeat, row.getBeatInt() + row.getLengthInt());
+                    minBeat = Math.min(minBeat, gapBeat + r.getBeatInt());
+                    maxBeat = Math.max(maxBeat, gapBeat + r.getBeatInt() + r.getLengthInt());
                 }
             }
         }
@@ -4860,11 +4855,11 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
                 Thread.sleep(100);
             } catch (Exception ignored) {}
         }
-        int[] minmax = getHeightRange();
-        minHeight = minmax[0];
-        maxHeight = minmax[1];
-        minBeat = minmax[2];
-        maxBeat = minmax[3];
+        int[] range = getHeightRange();
+        minHeight = range[0];
+        maxHeight = range[1];
+        minBeat = range[2];
+        maxBeat = range[3];
         fireRangeChanged(minHeight, maxHeight, minBeat, maxBeat);
 
         Enumeration<YassTable> et = tables.elements();

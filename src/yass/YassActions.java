@@ -1699,12 +1699,13 @@ public class YassActions implements DropTargetListener {
         for (int i=0; i < tracks.length; i++) {
             tracks[i].loadTable(t[order[i]], true);
             tracks[i].setSaved(false);
-            tracks[i].setDuetTrack(t[order[i]].getDuetTrack(), tracks[i].getDuetTrackName());
+            tracks[i].setDuetTrack(t[i].getDuetTrack(), t[order[i]].getDuetTrackName());
         }
         for (int i=0; i < tracks.length; i++) {
             getAutoCorrect().checkData(tracks[i], true, true);
             tracks[i].addUndo();
         }
+        sheet.init();
         updateActions();
         main.repaint();
     }
@@ -1730,15 +1731,15 @@ public class YassActions implements DropTargetListener {
             openFiles(recent, false);
             openEditor(selectRow >= 0);
 
-            SwingUtilities.invokeLater(new Thread(() -> {
+            SwingUtilities.invokeLater(() -> {
                 lyrics.setPreventFireUpdate(true);
-                if (selectRow >= 0) {
+                if (selectRow >= 0 && selectRow < table.getRowCount()) {
                     table.setRowSelectionInterval(selectRow, selectRow);
                     table.zoomPage();
                     table.updatePlayerPosition();
                 }
                 lyrics.setPreventFireUpdate(false);
-            }));
+            });
         }
     };
     private final Action closeLibrary = new AbstractAction(I18.get("lib_close")) {
@@ -6141,7 +6142,7 @@ public class YassActions implements DropTargetListener {
         for (String f : all) {
             YassTable t = new YassTable();
             t.loadFile(f);
-            int multi = t.getMultiplayer();
+            int multi = t.getMaxP();
             if (multi > 1) {
                 Vector<YassTable> tracks = t.splitTable();
                 if (tracks != null)

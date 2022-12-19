@@ -281,7 +281,7 @@ public class YassProperties extends Properties {
 
         p.put("utf8-without-bom", "true");
         p.put("utf8-always", "false");
-        p.put("duet-sequential", "true");
+        //p.put("duet-sequential", "true");
 
         p.put("floatable", "false");
 

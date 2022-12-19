@@ -397,7 +397,11 @@ public class YassRow implements Cloneable, Comparable<Object> {
         return s[0].equals("G");
     }
 
-    public boolean isMultiplayer() {
+    /**
+     * Checks if row is "P [n]"
+     * @return
+     */
+    public boolean isP() {
         return s[0].equals("P");
     }
 
@@ -488,7 +492,7 @@ public class YassRow implements Cloneable, Comparable<Object> {
                 ss = ss + " " + s[4];
             }
             return ss;
-        } else if (isMultiplayer()) {
+        } else if (isP()) {
             return s[0] + " " + s[1];
         }
         return s[0] + s[1] + s[2] + s[3] + s[4];
@@ -526,7 +530,7 @@ public class YassRow implements Cloneable, Comparable<Object> {
             }
             return ss;
         }
-        if (isMultiplayer()) {
+        if (isP()) {
             return s[0] + " " + s[1];
         }
         return s[0] + s[1] + s[2] + s[3] + s[4];
