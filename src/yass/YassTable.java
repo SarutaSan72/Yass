@@ -63,7 +63,7 @@ public class YassTable extends JTable {
     private String[] duetSingerNames = new String[8];
     private int undoPos = -1, redoMax = 0;
     private boolean isRelative = false;
-    private int multiplayer = 0;
+    private int maxP = 0;
     private Color myColor = null;
     private boolean saved = true;
     private boolean isLoading = false;
@@ -209,7 +209,7 @@ public class YassTable extends JTable {
         start = 0;
         end = -1;
         isRelative = false;
-        multiplayer = 0;
+        maxP = 0;
         encoding = null;
         duetTrack = -1;
         duetTrackCount = -1;
@@ -686,8 +686,33 @@ public class YassTable extends JTable {
         return s.equals("yes") || s.equals("true");
     }
 
-    public int getMultiplayer() {
-        return multiplayer;
+    /**
+     * Gets largest P number (singer mask) in file.
+     * Examples:
+     *  P 2 ==> 2
+     *  P 4 ==> 4
+     *  P 8 ==> 8
+     *
+     *  To get the actual track number, {@link YassUtils#getBitCount(int)}
+     *  Examples:
+     *   P 1 ==> 1
+     *   P 2 ==> 2
+     *   P 4 ==> 3
+     *   P 8 ==> 4
+     * @return
+     */
+    public int getMaxP() {
+        return maxP;
+    }
+
+    /**
+     * Gets number of singers, as determined by largest P number in file.
+     * @return >= 1
+     */
+    public int getPlayerCount() {
+        if (maxP > 1)
+            return YassUtils.getBitCount(maxP);
+        return 1;
     }
 
     public String getArtist() {
@@ -1871,7 +1896,7 @@ public class YassTable extends JTable {
                 tm.addRow("P", pnum, "", "", "", ""); // add space (not stored, see YassRow.toString)
                 if (pn > 0) {
                     if (pn == 3) pn = 0; // P0 = P3 = both
-                    multiplayer = Math.max(multiplayer, pn);
+                    maxP = Math.max(maxP, pn);
                 }
                 return true;
             } catch (Exception e) {
@@ -2645,9 +2670,7 @@ public class YassTable extends JTable {
         YassPage p = null;
 
         boolean first = true;
-        for (Enumeration<?> en = tm.getData().elements(); en.hasMoreElements(); ) {
-            YassRow r = (YassRow) en.nextElement();
-
+        for (YassRow r: tm.getData()) {
             if (r.isNote()) {
                 if (first) {
                     p = new YassPage(this);
@@ -3778,7 +3801,7 @@ public class YassTable extends JTable {
         if (sheet != null) {
             int pos = sheet.getPlayerPosition();
             int beat = msToBeat(pos);
-            int startRow = getIndexOfNoteBeforeBeat(beat);
+            //int startRow = getIndexOfNoteBeforeBeat(beat);
 
             String trstring = null;
             try {
@@ -4844,8 +4867,8 @@ public class YassTable extends JTable {
      * @return null if < 2 players or if not set
      */
     public String getDuetSingerName(int i) {
-        int multi = getMultiplayer();
-        if (multi < 2 || i >= multi || i < 0)
+        int n = getPlayerCount();
+        if (n < 2 || i >= n || i < 0)
             return null;
         return duetSingerNames[i];
     }
@@ -4855,8 +4878,8 @@ public class YassTable extends JTable {
      * @return false if < 2 players or if index invalid
      */
     public boolean setDuetSingerName(int i, String name) {
-        int multi = getMultiplayer();
-        if (multi < 2 || i >= multi || i < 0)
+        int n = getPlayerCount();
+        if (n < 2 || i >= n || i < 0)
             return false;
         duetSingerNames[i] = name;
 
@@ -4883,11 +4906,11 @@ public class YassTable extends JTable {
      * @return never null
      */
     public String getDuetSingerNamesAsString() {
-        int multi = getMultiplayer();
-        if (multi < 2)
+        int n = getPlayerCount();
+        if (n < 2)
             return "";
         StringBuffer sb = new StringBuffer();
-        for (int i=0; i<multi; i++) {
+        for (int i=0; i<n; i++) {
             if (sb.length() > 0)
                 sb.append('/');
             String name = duetSingerNames[i];
@@ -4902,12 +4925,11 @@ public class YassTable extends JTable {
      * @return null if < 2 players
      */
     public Vector<YassTable> splitTable() {
-        int p = getMultiplayer();
-        if (p < 1) return null;
+        int trackCount = getPlayerCount();
+        if (trackCount < 2)
+            return null;
         Vector<YassTable> trackTables;
         try {
-            int trackCount = YassUtils.getBitCount(p);
-
             // create tables
             trackTables = new Vector<>(trackCount);
             for (int i = 0; i < trackCount; i++) {
@@ -4938,11 +4960,11 @@ public class YassTable extends JTable {
             Vector<YassRow>[] tracksData = new Vector[trackTables.size()];
             for (int i = 0; i < tracksData.length; i++)
                 tracksData[i] = trackTables.elementAt(i).getModelData();
-            p = 0;
+            int p = 0;
             for (YassRow r : getModelData()) {
                 if (r.isComment())
                     continue;
-                if (r.isMultiplayer()) {
+                if (r.isP()) {
                     try {
                         p = r.getBeatInt();
                     } catch (Exception e) {
@@ -5011,29 +5033,28 @@ public class YassTable extends JTable {
         if (tables == null || tables.size() < 2)
             return null;
 
-        String pd = prop.getProperty("duet-sequential");
-        boolean duetSequential = pd != null && pd.equals("true");
+        // always true; "P 3" is deprecated (and buggy)
+        // String pd = prop.getProperty("duet-sequential");
+        //boolean duetSequential = pd != null && pd.equals("true");
+        boolean duetSequential = true;
 
-        // remove gap in all tables
+        // copy
+        Vector<YassTable> tables2 = new Vector<>();
         for (YassTable t: tables) {
-            double gap = t.getGap();
-            double bpm = t.getBPM();
-            double beatgap = gap * 4 / (60 * 1000 / bpm);
+            YassTable t2 = new YassTable();
+            t2.loadTable(t, true);
+            tables2.add(t2);
+        }
+        // remove gap in all tables
+        for (YassTable t: tables2) {
+            int beatGap = (int) (t.getGapInBeats() + 0.5);
             for (YassRow r: t.getModelData()) {
-                if (r.isNote()) {
-                    int b = r.getBeatInt();
-                    b = b + (int) (beatgap + .5);
-                    r.setBeat(b);
-                }
-                if (r.isPageBreak()) {
-                    int b = r.getBeatInt();
-                    b = b + (int) (beatgap + .5);
-                    r.setBeat(b);
-                    if (r.hasSecondBeat()) {
-                        b = r.getSecondBeatInt();
-                        b = b + (int) (beatgap + .5);
-                        r.setSecondBeat(b);
-                    }
+                if (r.isNote())
+                    r.setBeat(r.getBeatInt() + beatGap);
+                else if (r.isPageBreak()) {
+                    r.setBeat(r.getBeatInt() + beatGap);
+                    if (r.hasSecondBeat())
+                        r.setSecondBeat(r.getSecondBeatInt() + beatGap);
                 }
             }
         }
@@ -5041,7 +5062,7 @@ public class YassTable extends JTable {
         // get first note
         int minBeat = Integer.MAX_VALUE;
         YassTable minTable = null;
-        for (YassTable t: tables) {
+        for (YassTable t: tables2) {
             YassRow r = t.getFirstNote();
             int b = r.getBeatInt();
             if (minBeat > b) {
@@ -5055,46 +5076,16 @@ public class YassTable extends JTable {
         // @todo does not work with different bpm
 
         // move first beat to zero
-        for (YassTable t: tables) {
+        for (YassTable t: tables2) {
             for (YassRow r: t.getModelData()) {
-                if (r.isNote()) {
-                    int b = r.getBeatInt();
-                    b = b - minBeat;
-                    r.setBeat(b);
-                }
+                if (r.isNote())
+                    r.setBeat(r.getBeatInt() - minBeat);
                 if (r.isPageBreak()) {
-                    int b = r.getBeatInt();
-                    b = b - minBeat;
-                    r.setBeat(b);
-                    if (r.hasSecondBeat()) {
-                        b = r.getSecondBeatInt();
-                        b = b - minBeat;
-                        r.setSecondBeat(b);
-                    }
+                    r.setBeat(r.getBeatInt() - minBeat);
+                    if (r.hasSecondBeat())
+                        r.setSecondBeat(r.getSecondBeatInt() - minBeat);
                 }
             }
-        }
-
-        // extract pages
-        Vector<Vector<YassPage>> tablePages = new Vector<>(tables.size());
-        for (YassTable t: tables) {
-            tablePages.addElement(t.getPages());
-        }
-
-        // sort in order of appeareance
-        Vector<YassPage> orderedPages = new Vector<>(tablePages.size());
-        for (Vector<YassPage> pages: tablePages) {
-            if (pages.isEmpty())
-                continue;
-            orderedPages.addElement(pages.firstElement());
-        }
-        Collections.sort(orderedPages);
-
-        Vector<YassTable> tables2 = new Vector<>();
-        Vector<Vector<YassPage>> tablePages2 = new Vector<>();
-        for (YassPage p: orderedPages) {
-            tables2.addElement(p.getTable());
-            tablePages2.addElement(p.getTable().getPages());
         }
 
         // copy header
@@ -5124,84 +5115,66 @@ public class YassTable extends JTable {
                         if (r.isNoteOrPageBreak())
                             resData.addElement(r);
                     }
-                    i++;
+                    i<<=1;
                 }
             } else { // all notes sorted by beats, page-by-page
-                boolean isEmpty = false;
-                while (!isEmpty) {
-                    // get next page
-                    int minpagebeat = Integer.MAX_VALUE;
-                    YassPage minpage = null;
-                    for (Vector<YassPage> pages: tablePages2) {
-                        if (pages.isEmpty())
-                            continue;
-                        YassPage p = pages.firstElement();
-                        int min = p.getMinBeat();
-                        if (minpage == null || minpagebeat > min) {
-                            minpagebeat = min;
-                            minpage = p;
-                        }
-                    }
+
+                // extract pages & sort in order of appearance
+                Vector<YassPage> allPages = new Vector<>(tables2.size());
+                i = 1;
+                for (YassTable t: tables2) {
+                    Vector<YassPage> pages = t.getPages();
+                    for (YassPage p: pages)
+                        p.setPlayer(i);
+                    allPages.addAll(pages);
+                    i <<= 1;
+                }
+                Collections.sort(allPages);
+
+                Vector<YassPage> usedPages = new Vector<>(allPages.size());
+                for (YassPage p: allPages) {
                     // get intersecting page
                     Vector<YassPage> intersecting = new Vector<>();
-                    for (Vector<YassPage> pages: tablePages2) {
-                        if (pages.isEmpty())
-                            continue;
-                        YassPage p = pages.firstElement();
-                        if (p == minpage) {
-                            pages.removeElement(p);
-                            continue;
-                        }
-                        if (minpage.intersects(p)) {
+                    for (YassPage p2: allPages) {
+                        if (p != p2 && p.getTable() != p2.getTable() && p.intersects(p2))
                             intersecting.addElement(p);
-                            pages.removeElement(p);
-                        }
                     }
 
                     // combine pages, if equal
-                    int matching = 0;
-                    for (YassPage p: intersecting) {
-                        if (minpage.matches(p))
-                            matching++;
+                    int bitMask = 1 << p.getPlayer();
+                    for (YassPage p2: intersecting) {
+                        if (p.getTable() != p2.getTable() && p.matches(p2))
+                            bitMask |= 1 << p2.getPlayer();
                     }
-                    boolean combineTracks = matching > 0 && matching == intersecting.size();
-                    // add pages
-                    int player = tables2.indexOf(minpage.getTable()) + 1;
-                    if (!combineTracks) {
-                        resData.addElement(new YassRow("P", player + "", "", "", ""));
-                    } else {
-                        resData.addElement(new YassRow("P", "3", "", "", ""));
-                    }
-                    YassRow pagebreak = null;
-                    for (YassRow r: minpage.getRows()) {
+                    // add current page
+                    resData.addElement(new YassRow("P", bitMask + "", "", "", ""));
+                    YassRow pageBreak = null; // keep last page break, drop all others
+                    for (YassRow r: p.getRows()) {
                         if (r.isNote())
                             resData.addElement(new YassRow(r));
                         if (r.isPageBreak())
-                            pagebreak = r;
+                            pageBreak = r;
                     }
+                    usedPages.add(p);
 
-                    if (!combineTracks) {
-                        for (YassPage p: intersecting) {
-                            player = tables2.indexOf(p.getTable()) + 1;
-                            resData.addElement(new YassRow("P", player + "", "", "", ""));
-                            for (YassRow r: p.getRows()) {
+                    // add intersecting pages, if not equal (otherwise they are contained in bitmask)
+                    for (YassPage p2: intersecting) {
+                        int k = tables2.indexOf(p.getTable()) + 1;
+                        if ((bitMask & 1 << k) == 0) {
+                            resData.addElement(new YassRow("P", bitMask + "", "", "", ""));
+                            for (YassRow r : p2.getRows()) {
                                 if (r.isNote())
                                     resData.addElement(new YassRow(r));
-                               if (pagebreak == null && r.isPageBreak())
-                                    pagebreak = r;
+                                if (pageBreak == null && r.isPageBreak())
+                                    pageBreak = r;
                             }
                         }
+                        usedPages.add(p2);
                     }
 
-                    isEmpty = true;
-                    for (Vector<YassPage> pages: tablePages2) {
-                        if (!pages.isEmpty()) {
-                            isEmpty = false;
-                            break;
-                        }
-                    }
-                    if (!isEmpty && pagebreak != null)
-                        resData.addElement(new YassRow(pagebreak));
+                    // add page break, if not last page
+                    if (pageBreak != null && usedPages.size() < allPages.size())
+                        resData.addElement(new YassRow(pageBreak));
                 }
             }
             resData.addElement(new YassRow("E", "", "", "", ""));
@@ -5430,8 +5403,16 @@ public class YassTable extends JTable {
     public double beatToMs(int beat) {
         return 1000 * 60 * beat / (4 * bpm) + gap;
     }
+
+    /**
+     * Converts milliseconds to beats (rounded down).
+     */
     public int msToBeat(double ms) {
         return (int) ((ms - gap) * 4 * bpm / (60 * 1000));
+    }
+
+    public double msToBeatExact(double ms) {
+        return ((ms - gap) * 4 * bpm / (double)(60 * 1000));
     }
     public double getGapInBeats()
     {
@@ -5443,7 +5424,7 @@ public class YassTable extends JTable {
     }
 
     /**
-     * Get track number and name from corresponding duet file (see YassTable.splitTable)
+     * Set track number and name from corresponding duet file (see YassTable.splitTable)
      */
     public void setDuetTrack(int duetTrack, String singerName) {
         this.duetTrack = duetTrack;
