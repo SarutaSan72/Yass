@@ -126,6 +126,8 @@ public class YassSheetInfo extends JPanel {
             }
             @Override
             public void mouseMoved(MouseEvent e) {
+                if (sheet.isPlaying())
+                    return;
                 if (e.getX() > 130 && e.getX() < 330 && e.getY() < txtBar && hasErr) {
                     if (hiliteCue != SHOW_ERRORS) {
                         hiliteCue = SHOW_ERRORS;
@@ -413,7 +415,7 @@ public class YassSheetInfo extends JPanel {
                     g3.setStroke(minLineStroke);
                 } else {
                     g3.setColor(sheet.darkMode ? sheet.dkGrayDarkMode : sheet.dkGray);
-                    g3.setStroke(medLineStroke);
+                    g3.setStroke(maxLineStroke);
                 }
                 g3.draw(new Line2D.Double(x + rx, y + h - hBar - ry, x + rx + rw, y + h - hBar - ry));
                 if (rPrev != null && rPrev.isNote()) {
@@ -466,7 +468,7 @@ public class YassSheetInfo extends JPanel {
         // cursor
         rxx = (w * (gapBeat + table.msToBeatExact(posMs)) / (double) (minBeat + rangeBeat));
         g2.setColor(sheet.playerColor);
-        g2.fill(new Rectangle2D.Double(x + rxx, y - 3, 1, h + 5));
+        g2.fill(new Rectangle2D.Double(x + rxx, y - 3, 2, h + 5));
 
         // track name
         x = x + 6;

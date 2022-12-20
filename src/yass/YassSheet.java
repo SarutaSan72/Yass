@@ -300,6 +300,8 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
     private BufferedImage videoFrame = null;
     private YassSession session = null;
 
+    private boolean isMousePressed = false;
+
     public YassSheet() {
         super(false);
         setFocusable(true);
@@ -704,6 +706,9 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
         addMouseListener(new MouseAdapter() {
             public void mouseReleased(MouseEvent e) {
                 hiliteAction = ACTION_NONE;
+                if (! isMousePressed)
+                    return;
+                isMousePressed = false;
 
                 if (table == null) {
                     return;
@@ -740,27 +745,39 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
                 }
 
                 if (hiliteCue == PREV_PAGE_PRESSED) {
-                    firePropertyChange("page", null, new Integer(-1));
+                    SwingUtilities.invokeLater(() -> {
+                        firePropertyChange("page", null, new Integer(-1));
+                    });
                     hiliteCue = UNDEFINED;
                 }
                 if (hiliteCue == NEXT_PAGE_PRESSED) {
-                    firePropertyChange("page", null, new Integer(+1));
+                    SwingUtilities.invokeLater(() -> {
+                        firePropertyChange("page", null, new Integer(+1));
+                    });
                     hiliteCue = UNDEFINED;
                 }
                 if (hiliteCue == PLAY_NOTE_PRESSED) {
-                    firePropertyChange("play", null, "start");
+                    SwingUtilities.invokeLater(() -> {
+                        firePropertyChange("play", null, "start");
+                    });
                     hiliteCue = UNDEFINED;
                 }
                 if (hiliteCue == PLAY_PAGE_PRESSED) {
-                    firePropertyChange("play", null, "page");
+                    SwingUtilities.invokeLater(() -> {
+                        firePropertyChange("play", null, "page");
+                    });
                     hiliteCue = UNDEFINED;
                 }
                 if (hiliteCue == PLAY_BEFORE_PRESSED) {
-                    firePropertyChange("play", null, "before");
+                    SwingUtilities.invokeLater(() -> {
+                        firePropertyChange("play", null, "before");
+                    });
                     hiliteCue = UNDEFINED;
                 }
                 if (hiliteCue == PLAY_NEXT_PRESSED) {
-                    firePropertyChange("play", null, "next");
+                    SwingUtilities.invokeLater(() -> {
+                        firePropertyChange("play", null, "next");
+                    });
                     hiliteCue = UNDEFINED;
                 }
 
@@ -869,6 +886,7 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
                     e.consume();
                     return;
                 }
+                isMousePressed = true; // not while playing
                 int x = e.getX();
                 int y = e.getY();
                 if (x > clip.x + LEFT_BORDER && x < clip.x + LEFT_BORDER + LEFT_BORDER && y > dim.height - BOTTOM_BORDER) {
@@ -1412,6 +1430,8 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
 
             public void mouseDragged(MouseEvent e) {
                 if (rect == null)
+                    return;
+                if (! isMousePressed)
                     return;
                 boolean left = SwingUtilities.isLeftMouseButton(e);
                 Point p = e.getPoint();
@@ -2917,7 +2937,7 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
 
         TOP_PLAYER_BUTTONS = dim.height - BOTTOM_BORDER - 64;
 
-        int next = nextElement(playerPos);
+        int next = nextElementStarting(playerPos);
         if (next >= 0) {
             YassRectangle rec = rect.elementAt(next);
             if (rec.hasType(YassRectangle.GAP) && next + 1 < rect.size()) {
@@ -5036,10 +5056,19 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
         return b;
     }
 
+    /**
+     * Finds first element that starts or ends after current position (or directly at)
+     * @return index, -1 if not found
+     */
     public int nextElement() {
         return nextElement(playerPos);
     }
 
+    /**
+     * Finds first element that starts or ends after given position (or directly at)
+     * @param pos
+     * @return index, -1 if not found
+     */
     public int nextElement(int pos) {
         YassRectangle r;
         int i = 0;
@@ -5051,6 +5080,25 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
         }
         return -1;
     }
+
+    /**
+     * Finds first element that starts after given position (or nearly at)
+     * @param pos
+     * @return index, -1 if not found
+     */
+    public int nextElementStarting(int pos) {
+        YassRectangle r;
+        int i = 0;
+        for (Enumeration<?> e = rect.elements(); e.hasMoreElements(); i++) {
+            r = (YassRectangle) e.nextElement();
+            if (r.x >= pos - 2) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /* not used
     public int nextElement(int track, int pos) {
         YassRectangle r;
         int i = 0;
@@ -5061,7 +5109,7 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
             }
         }
         return -1;
-    }
+    }*/
 
     public int firstVisibleNote() {
         int x = clip.x + LEFT_BORDER;

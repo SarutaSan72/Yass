@@ -1255,16 +1255,16 @@ public class YassPlayer {
                 playbackRenderer.setErrorMessage(null);
 
                 if (useCapture) {
-                    int trackCount = playbackRenderer.getSession()
-                            .getTrackCount();
-                    for (int t = 0; t < trackCount; t++) {
-                        playbackRenderer.getSession().getTrack(t)
-                                .getPlayerNotes().removeAllElements();
-                    }
-                    for (Enumeration<String> devEnum = devices.elements(); devEnum
-                            .hasMoreElements(); ) {
-                        String device = devEnum.nextElement();
-                        capture.startQuery(device);
+                    YassSession session = playbackRenderer.getSession();
+                    if (session != null) {
+                        int trackCount = session.getTrackCount();
+                        for (int t = 0; t < trackCount; t++) {
+                            session.getTrack(t).getPlayerNotes().removeAllElements();
+                        }
+                        for (Enumeration<String> devEnum = devices.elements(); devEnum.hasMoreElements(); ) {
+                            String device = devEnum.nextElement();
+                            capture.startQuery(device);
+                        }
                     }
                 }
 

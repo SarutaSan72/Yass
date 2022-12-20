@@ -5770,11 +5770,12 @@ public class YassActions implements DropTargetListener {
         if (mode == 1 || !r0.isNoteOrPageBreak()) {
             pos = end - beforeNextMs;
             if (pos < 0) pos = 0;
-        } else if (r0.isNote())
+        } else if (r0.isNote()) {
             pos = (long) table.beatToMs(r0.getBeatInt() + r0.getLengthInt());
-        else // if (r0.isPageBreak())
+        }
+        else { // if (r0.isPageBreak())
             pos = (long) sheet.getLeftMs();
-
+        }
         startPlaying();
 
         mp3.setMIDIEnabled(false);

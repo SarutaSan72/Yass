@@ -45,7 +45,7 @@ public class YassSongList extends JTable {
     private int options = SYMBOL;
     public static ImageIcon brokenSong = null, noCover = null;
 
-    public static Image openedIcon = null, videoIcon = null, nobackgroundIcon = null, perfectIcon = null, lockedIcon = null, multiIcon = null;
+    public static Image openedIcon = null, videoIcon = null, nobackgroundIcon = null, perfectIcon = null, lockedIcon = null;
 
     public static String[] langArray, langID;
 
@@ -773,7 +773,6 @@ public class YassSongList extends JTable {
             brokenSong = new ImageIcon(getClass().getResource("/yass/resources/img/Broken.jpg"));
             openedIcon = new ImageIcon(getClass().getResource("/yass/resources/img/GrayOpen16.gif")).getImage();
             videoIcon = new ImageIcon(getClass().getResource("/yass/resources/img/Video.gif")).getImage();
-            multiIcon = new ImageIcon(getClass().getResource("/yass/resources/img/Multi.gif")).getImage();
             nobackgroundIcon = new ImageIcon(getClass().getResource("/yass/resources/img/NoBackground.gif")).getImage();
             perfectIcon = new ImageIcon(getClass().getResource("/yass/resources/img/Perfect.gif")).getImage();
             lockedIcon = new ImageIcon(getClass().getResource("/yass/resources/img/Locked.gif")).getImage();
@@ -5817,7 +5816,8 @@ public class YassSongList extends JTable {
          * @param g2 Description of the Parameter
          */
         public void paintComponent(Graphics g2) {
-            Graphics2D g2d = (Graphics2D) g2;
+            Graphics2D g2d = (Graphics2D) g2.create();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             Shape shape = g2d.getClip();
 
@@ -5970,12 +5970,15 @@ public class YassSongList extends JTable {
                 g2.drawImage(lockedIcon, -2, height - 16, null);
             }
 
-            if (multi.length() > 0 && multiIcon != null) {
-                g2.drawImage(multiIcon, width - 30, height - 20, null);
-                g2.drawString(multi, width - 30 + 18, height - 6);
+            if (multi.length() > 0) {
+                g2d.setStroke(new BasicStroke(0.5f));
+                g2d.drawOval(width - 26, height - 16,10,10);
+                g2d.drawOval(width - 32, height - 16,10,10);
+                g2d.drawString(multi, width - 30 + 18, height - 6);
             }
-
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_DEFAULT);
             g2d.setClip(shape);
+            g2d.dispose();
         }
 
         //public void validate() { if (getOptions()==TILE) super.validate(); }
