@@ -2742,6 +2742,8 @@ public class YassTable extends JTable {
         }
 
         int n = getRowCount();
+        if (i==n-1) // only end selected => select row before
+            i--;
         int[] ij = null;
         if (zoomMode == ZOOM_ONE) {
             ij = enlargeToPages(i, j);
@@ -3352,7 +3354,9 @@ public class YassTable extends JTable {
             while ((!r.isNote()) && row < n - 1) {
                 r = getRowAt(++row);
             }
-            // if (row==n-1) --> select END
+            if (row==n-1) { // select END --> no
+                return;
+            }
         }
 
         setRowSelectionInterval(row, row);

@@ -4837,6 +4837,11 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
         return pan;
     }
 
+    /**
+     * Calculates min/max bounds for all tables (heights and beats).
+     * Table gaps are added to beats (rounded to next beat).
+     * @return
+     */
     public int[] getHeightRange() {
         int minH = 128;
         int maxH = -128;
