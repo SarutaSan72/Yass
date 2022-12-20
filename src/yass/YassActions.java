@@ -1616,7 +1616,7 @@ public class YassActions implements DropTargetListener {
                 YassTable mt = YassTable.mergeTables(openTables, prop);
                 if (!mt.storeFile(filename)) // todo warn
                     return;
-                openFiles(filename, true);
+                openFiles(filename, false);
             }
         }
     };
