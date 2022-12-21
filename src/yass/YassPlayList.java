@@ -20,7 +20,6 @@ package yass;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -28,19 +27,12 @@ import java.awt.event.KeyListener;
 import java.io.*;
 import java.util.*;
 
-/**
- * Description of the Class
- *
- * @author Saruta
- */
 public class YassPlayList extends JPanel implements TabChangeListener {
-
-    private static final long serialVersionUID = 6857000906844623492L;
     String listTitle = null;
-    private YassActions actions = null;
-    private YassProperties prop;
-    private YassSongList list = null;
-    private YassSongList lib = null;
+    private final YassActions actions;
+    private final YassProperties prop;
+    private final YassSongList list;
+    private final YassSongList lib;
     private Vector<YassPlayListModel> playlists = null;
     private String listFilename = null;
     private boolean mustRefresh = false;
@@ -77,18 +69,15 @@ public class YassPlayList extends JPanel implements TabChangeListener {
         list.setTableHeader(null);
         list.renderLocked(false);
 
-        list.getTable().getModel().addTableModelListener(
-                new TableModelListener() {
-                    public void tableChanged(TableModelEvent e) {
-                        int i = e.getFirstRow();
-                        if (i == TableModelEvent.HEADER_ROW) {
-                            return;
-                        }
-                        if (i < 0) {
-                            return;
-                        }
-                        setChanged(true);
+        list.getTable().getModel().addTableModelListener(e -> {
+                    int i = e.getFirstRow();
+                    if (i == TableModelEvent.HEADER_ROW) {
+                        return;
                     }
+                    if (i < 0) {
+                        return;
+                    }
+                    setChanged(true);
                 });
 
         KeyListener[] key = list.getKeyListeners();
@@ -119,23 +108,20 @@ public class YassPlayList extends JPanel implements TabChangeListener {
             lib.setTransferHandler(new YassSongListTransferHandler(lib, true));
             //list.setFilterList(lib);
 
-            lib.addSongListListener(
-                    new YassSongListListener() {
-                        public void stateChanged(YassSongListEvent e) {
-                            int state = e.getState();
-                            switch (state) {
-                                case YassSongListEvent.LOADED:
-                                    loadPlayLists();
-                                    if (mustRefresh) {
-                                        refresh();
-                                    }
-                                    break;
-                                case YassSongListEvent.THUMBNAILING:
-                                    break;
-                                case YassSongListEvent.FINISHED:
-                                    list.repaint();
-                                    break;
-                            }
+            lib.addSongListListener(e -> {
+                        int state = e.getState();
+                        switch (state) {
+                            case YassSongListEvent.LOADED:
+                                loadPlayLists();
+                                if (mustRefresh) {
+                                    refresh();
+                                }
+                                break;
+                            case YassSongListEvent.THUMBNAILING:
+                                break;
+                            case YassSongListEvent.FINISHED:
+                                list.repaint();
+                                break;
                         }
                     });
         }
@@ -171,7 +157,6 @@ public class YassPlayList extends JPanel implements TabChangeListener {
                 if (l.length() < 1) {
                     continue;
                 }
-                char c = l.charAt(0);
                 if (l.startsWith("#Playlist")) {
                     inputStream.close();
                     return true;
@@ -274,7 +259,7 @@ public class YassPlayList extends JPanel implements TabChangeListener {
                 try {
                     String filename = pf.getCanonicalPath();
                     if (!filename.startsWith(sd.getCanonicalPath())) {
-                        File pfiles[] = pf.listFiles();
+                        File[] pfiles = pf.listFiles();
                         for (File pfile : pfiles) {
                             if (pfile.getName().toLowerCase().endsWith(playlistFileType) && isPlayList(pfile)) {
                                 YassPlayListModel pl = getPlayListFile(pfile.getAbsolutePath());
@@ -287,7 +272,7 @@ public class YassPlayList extends JPanel implements TabChangeListener {
                             }
                         }
                     }
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         }
@@ -341,17 +326,12 @@ public class YassPlayList extends JPanel implements TabChangeListener {
         }
     }
 
-    /**
-     * Adds a feature to the Songs attribute of the YassPlayList object
-     *
-     * @param v The feature to be added to the Songs attribute
-     */
     public void addSongs(Vector<?> v) {
         YassSongListModel m = (YassSongListModel) list.getTable().getModel();
         boolean changed = false;
         for (Enumeration<?> en = v.elements(); en.hasMoreElements(); ) {
             YassSong s = (YassSong) en.nextElement();
-            if (m.getData().indexOf(s) >= 0) {
+            if (m.getData().contains(s)) {
                 continue;
             }
             m.addRow(s);
@@ -368,31 +348,23 @@ public class YassPlayList extends JPanel implements TabChangeListener {
         }
     }
 
-    /**
-     * Description of the Method
-     */
     public void refreshWhenLoaded() {
         mustRefresh = true;
     }
 
-    /**
-     * Description of the Method
-     */
     public void refresh() {
         YassSongListModel m = (YassSongListModel) list.getTable().getModel();
         Vector<YassSong> data = m.getData();
         Vector<YassSong> olddata = (Vector<YassSong>) data.clone();
         data.removeAllElements();
 
-        for (Enumeration<YassSong> en = olddata.elements(); en.hasMoreElements(); ) {
-            YassSong s = en.nextElement();
-            YassSong s2 = lib.getSong(s.getArtist(), s.getTitle(), s.getVersion());
+        for (YassSong s: olddata) {
+            YassSong s2 = lib.getSong(s.getArtist(), s.getTitle());
             if (s2 != null) {
                 data.addElement(s2);
             } else {
                 data.addElement(s2 = new YassSong("", "", "", s.getArtist(), s.getTitle()));
                 s2.setIcon(YassSongList.brokenSong);
-                s2.setVersion(s.getVersion());
             }
             s2.setSaved(s.isSaved());
             s2.setLocked(true);
@@ -400,9 +372,6 @@ public class YassPlayList extends JPanel implements TabChangeListener {
         m.fireTableDataChanged();
     }
 
-    /**
-     * Description of the Method
-     */
     public void removeAllSongs() {
         JTable t = list.getTable();
         YassSongListModel m = (YassSongListModel) t.getModel();
@@ -421,24 +390,16 @@ public class YassPlayList extends JPanel implements TabChangeListener {
         mustRefresh = false;
     }
 
-    /**
-     * Description of the Method
-     */
     public void removeSongs() {
         JTable t = list.getTable();
-        int rows[] = t.getSelectedRows();
+        int[] rows = t.getSelectedRows();
         if (rows == null || rows.length == 0) {
             return;
         }
         removeSongs(rows);
     }
 
-    /**
-     * Description of the Method
-     *
-     * @param rows Description of the Parameter
-     */
-    public void removeSongs(int rows[]) {
+    public void removeSongs(int[] rows) {
         JTable t = list.getTable();
         YassSongListModel m = (YassSongListModel) t.getModel();
         Vector<?> data = m.getData();
@@ -462,15 +423,12 @@ public class YassPlayList extends JPanel implements TabChangeListener {
         setChanged(changed);
     }
 
-    /**
-     * Description of the Method
-     */
     public void up() {
         JTable t = list.getTable();
         YassSongListModel m = (YassSongListModel) t.getModel();
         Vector<YassSong> data = m.getData();
 
-        int rows[] = t.getSelectedRows();
+        int[] rows = t.getSelectedRows();
         if (rows == null || rows.length == 0) {
             return;
         }
@@ -480,7 +438,7 @@ public class YassPlayList extends JPanel implements TabChangeListener {
             return;
         }
 
-        int i = 0;
+        int i;
         for (i = 0; i < rows.length; i++) {
             YassSong o = data.remove(rows[i]);
             data.insertElementAt(o, rows[i] - 1);
@@ -501,15 +459,12 @@ public class YassPlayList extends JPanel implements TabChangeListener {
         t.scrollRectToVisible(rr);
     }
 
-    /**
-     * Description of the Method
-     */
     public void down() {
         JTable t = list.getTable();
         YassSongListModel m = (YassSongListModel) t.getModel();
         Vector<YassSong> data = m.getData();
 
-        int rows[] = t.getSelectedRows();
+        int[] rows = t.getSelectedRows();
         if (rows == null || rows.length == 0) {
             return;
         }
@@ -519,7 +474,7 @@ public class YassPlayList extends JPanel implements TabChangeListener {
             return;
         }
 
-        int i = 0;
+        int i;
         for (i = rows.length - 1; i >= 0; i--) {
             YassSong o = data.remove(rows[i]);
             data.insertElementAt(o, rows[i] + 1);
@@ -554,7 +509,7 @@ public class YassPlayList extends JPanel implements TabChangeListener {
         if (input == null || input.trim().length() < 1) {
             return true;
         }
-        boolean same = listTitle != null && input.equals(listTitle);
+        boolean same = input.equals(listTitle);
         if (same) {
             return storePlayList();
         }
@@ -583,9 +538,7 @@ public class YassPlayList extends JPanel implements TabChangeListener {
             }
         }
 
-        boolean exists = false;
         if (new File(filename).exists()) {
-            exists = true;
             int ok = JOptionPane.showConfirmDialog(SwingUtilities.getWindowAncestor(this), I18.get("playlist_store_error"), I18.get("playlist_store_title"), JOptionPane.OK_CANCEL_OPTION);
             if (ok != JOptionPane.OK_OPTION) {
                 return false;
@@ -644,7 +597,7 @@ public class YassPlayList extends JPanel implements TabChangeListener {
         Vector<?> data = m.getData();
         int n = data.size();
 
-        PrintWriter outputStream = null;
+        PrintWriter outputStream;
         try {
             outputStream = new PrintWriter(new FileWriter(filename));
 
@@ -777,7 +730,7 @@ public class YassPlayList extends JPanel implements TabChangeListener {
 
             StringWriter sw = new StringWriter();
             char[] buffer = new char[1024];
-            int readCount = 0;
+            int readCount;
             while ((readCount = fr.read(buffer)) > 0) {
                 sw.write(buffer, 0, readCount);
             }
@@ -822,8 +775,6 @@ public class YassPlayList extends JPanel implements TabChangeListener {
     public YassPlayListModel getPlayList(String txt) {
         YassPlayListModel pl = new YassPlayListModel();
 
-        YassSongListModel m = (YassSongListModel) list.getModel();
-
         try {
             BufferedReader inputStream = new BufferedReader(new StringReader(txt));
             String l;
@@ -831,7 +782,7 @@ public class YassPlayList extends JPanel implements TabChangeListener {
             while ((l = inputStream.readLine()) != null) {
                 StringTokenizer ll = new StringTokenizer(l, ":");
                 String artist = null;
-                String title = null;
+                String title;
 
                 if (ll.hasMoreTokens()) {
                     artist = ll.nextToken().trim();
@@ -849,24 +800,15 @@ public class YassPlayList extends JPanel implements TabChangeListener {
                             int k = artist.indexOf(':');
                             pl.setName(artist.substring(k + 1).trim());
                         }
-                        artist = null;
                         continue;
                     }
                 }
                 if (ll.hasMoreTokens()) {
                     title = ll.nextToken().trim();
-
-                    String version = null;
-                    int k = title.indexOf("[");
-                    if (k > 0) {
-                        version = title.substring(k + 1, title.indexOf("]", k));
-                        title = title.substring(0, k);
-                    }
-                    YassSong s = lib.getSong(artist, title, version);
+                    YassSong s = lib.getSong(artist, title);
                     if (s == null) {
                         s = new YassSong("", "", "", artist, title);
                         s.setIcon(YassSongList.brokenSong);
-                        s.setVersion(version);
                     }
                     if (!pl.contains(s)) {
                         pl.addElement(s);

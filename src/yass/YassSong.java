@@ -43,7 +43,7 @@ public class YassSong implements Cloneable, Comparable<Object> {
     /**
      * Description of the Field
      */
-    public final static int SORT_BY_VERSION = 8;
+    public final static int SORT_BY_DUETSINGER = 8;
     /**
      * Description of the Field
      */
@@ -108,7 +108,6 @@ public class YassSong implements Cloneable, Comparable<Object> {
     private boolean saved = true, opened = false, locked = false;
     private YassTable openedTable = null;
     private String lyrics = null, sortedArtist = null;
-    private boolean hasVersions = false;
     /**
      * Constructor for the YassSong object
      *
@@ -233,24 +232,6 @@ public class YassSong implements Cloneable, Comparable<Object> {
      */
     public void setLyrics(String s) {
         lyrics = s;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-    public boolean hasVersions() {
-        return hasVersions;
-    }
-
-    /**
-     * Sets the hasVersions attribute of the YassSong object
-     *
-     * @param onoff The new hasVersions value
-     */
-    public void setHasVersions(boolean onoff) {
-        hasVersions = onoff;
     }
 
     /**
@@ -987,21 +968,11 @@ public class YassSong implements Cloneable, Comparable<Object> {
         }
     }
 
-    /**
-     * Gets the version attribute of the YassSong object
-     *
-     * @return The version value
-     */
-    public String getVersion() {
+    public String getDuetSingerNames() {
         return s[21];
     }
 
-    /**
-     * Sets the version attribute of the YassSong object
-     *
-     * @param val The new version value
-     */
-    public void setVersion(String val) {
+    public void setDuetSingerNames(String val) {
         s[21] = val;
     }
 
@@ -1210,16 +1181,13 @@ public class YassSong implements Cloneable, Comparable<Object> {
                 return res;
             }
 
-            String v = getVersion();
-
-            String rv = r.getVersion();
-            if (v == null) {
-                v = "";
-            }
-            if (rv == null) {
-                rv = "";
-            }
-            return col.compare(v.toLowerCase(), rv.toLowerCase());
+            String names = getDuetSingerNames();
+            String rnames = r.getDuetSingerNames();
+            if (names == null)
+                names = "";
+            if (rnames == null)
+                rnames = "";
+            return col.compare(names.toLowerCase(), rnames.toLowerCase());
         }
         if ((ordering & SORT_BY_TITLE) != 0) {
             String t = getTitle();
@@ -1234,17 +1202,13 @@ public class YassSong implements Cloneable, Comparable<Object> {
             if (res != 0) {
                 return f * res;
             }
-
-            String v = getVersion();
-
-            String rv = r.getVersion();
-            if (v == null) {
-                v = "";
-            }
-            if (rv == null) {
-                rv = "";
-            }
-            return col.compare(v.toLowerCase(), rv.toLowerCase());
+            String names = getDuetSingerNames();
+            String rnames = r.getDuetSingerNames();
+            if (names == null)
+                names = "";
+            if (rnames == null)
+                rnames = "";
+            return col.compare(names.toLowerCase(), rnames.toLowerCase());
         }
         if ((ordering & SORT_BY_EDITION) != 0) {
             String t = getEdition();
@@ -1286,31 +1250,6 @@ public class YassSong implements Cloneable, Comparable<Object> {
 
             t = getTitle();
             rt = r.getTitle();
-            if (t == null) {
-                t = "";
-            }
-            if (rt == null) {
-                rt = "";
-            }
-            return col.compare(t.toLowerCase(), rt.toLowerCase());
-        }
-        if ((ordering & SORT_BY_VERSION) != 0) {
-            String v = getVersion();
-            String rv = r.getVersion();
-            if (v == null) {
-                v = "";
-            }
-            if (rv == null) {
-                rv = "";
-            }
-            int res = col.compare(v.toLowerCase(), rv.toLowerCase());
-            if (res != 0) {
-                return f * res;
-            }
-
-            String t = getTitle();
-
-            String rt = r.getTitle();
             if (t == null) {
                 t = "";
             }
@@ -1611,114 +1550,6 @@ public class YassSong implements Cloneable, Comparable<Object> {
             }
         }
         return true;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-    public yass.screen.YassSongData toSongData() {
-        String artist = getArtist();
-        String title = getTitle();
-        String genre = getGenre();
-        String edition = getEdition();
-        String language = getLanguage();
-        String folder = getFolder();
-        String album = getAlbum();
-        int year = -1;
-        try {
-            year = Integer.parseInt(getYear());
-        } catch (Exception ignored) {
-        }
-        int length = -1;
-        try {
-            length = Integer.parseInt(getLength().replace(',', '.'));
-        } catch (Exception ignored) {
-        }
-        int start = -1;
-        try {
-            start = Integer.parseInt(getStart().replace(',', '.'));
-        } catch (Exception ignored) {
-        }
-        int end = -1;
-        try {
-            end = Integer.parseInt(getEnd().replace(',', '.'));
-        } catch (Exception ignored) {
-        }
-        double bpm = -1;
-        try {
-            bpm = Double.parseDouble(getBPM().replace(',', '.'));
-        } catch (Exception ignored) {
-        }
-        int gap = -1;
-        try {
-            gap = (int) Double.parseDouble(getGap().replace(',', '.'));
-        } catch (Exception ignored) {
-        }
-        int medleyStartBeat = -1;
-        try {
-            medleyStartBeat = Integer.parseInt(getMedleyStartBeat());
-        } catch (Exception ignored) {
-        }
-        int medleyEndBeat = -1;
-        try {
-            medleyEndBeat = Integer.parseInt(getMedleyEndBeat());
-        } catch (Exception ignored) {
-        }
-        int previewStart = -1;
-        try {
-            previewStart = Integer.parseInt(getPreviewStart().replace(',', '.'));
-        } catch (Exception ignored) {
-        }
-        int multiplayer = -1;
-        try {
-            multiplayer = Integer.parseInt(getMultiplayer());
-        } catch (Exception ignored) {
-        }
-
-        String dir = getDirectory();
-        File txt = new File(dir + File.separator + getFilename());
-        if (!txt.exists()) {
-            txt = null;
-        }
-        File thumbnail = new File(dir + File.separator + getCover());
-        if (!thumbnail.exists()) {
-            thumbnail = null;
-        }
-        File cover = new File(dir + File.separator + getCover());
-        if (!cover.exists()) {
-            cover = null;
-        }
-        File background = new File(dir + File.separator + getBackground());
-        if (!background.exists()) {
-            background = null;
-        }
-        File audio = new File(dir + File.separator + getMP3());
-        if (!audio.exists()) {
-            audio = null;
-        }
-        File video = new File(dir + File.separator + getVideo());
-        if (!video.exists()) {
-            video = null;
-        }
-
-        int medleyStartMillis = -1;
-        int medleyEndMillis = -1;
-        if (medleyStartBeat > 0) {
-            double in = Math.max(0, 60 * medleyStartBeat / (4.0 * bpm) + gap / 1000.0);
-            medleyStartMillis = (int) (1000 * in);
-        }
-        if (medleyEndBeat > 0) {
-            double out = Math.max(0, 60 * medleyEndBeat / (4.0 * bpm) + gap / 1000.0);
-            medleyEndMillis = (int) (1000 * out);
-        }
-        int previewStartMillis = -1;
-        if (previewStart > 0) {
-            previewStartMillis = 1000 * previewStart;
-        }
-
-        return new yass.screen.YassSongData(artist, title, genre, edition, language, folder, album, year, length, start, end, bpm, gap, medleyStartMillis, medleyEndMillis, previewStartMillis, multiplayer, txt, thumbnail, cover, background, audio, video);
     }
 }
 

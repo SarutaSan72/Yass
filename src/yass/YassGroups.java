@@ -18,9 +18,6 @@
 
 package yass;
 
-import yass.filter.YassFilter;
-import yass.screen.YassScreenGroup;
-
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
@@ -38,6 +35,8 @@ import java.io.File;
 import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.*;
+
+import yass.filter.YassFilter;
 
 /**
  * Description of the Class
@@ -279,80 +278,6 @@ public class YassGroups extends JTable implements DropTargetListener {
     }
 
     /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-    public Vector<Vector<YassScreenGroup>> toScreenGroups() {
-        Vector<Vector<YassScreenGroup>> groups = new Vector<>();
-
-        String screenGroups = prop.getProperty("screen-groups");
-        StringTokenizer groupTokens = new StringTokenizer(screenGroups, "|");
-        while (groupTokens.hasMoreTokens()) {
-            Vector<YassScreenGroup> subgroups = new Vector<>();
-
-            String g = groupTokens.nextToken();
-            String filterGroups = prop.getProperty("group-" + g);
-
-            StringTokenizer filterTokens = new StringTokenizer(filterGroups, "|");
-            while (filterTokens.hasMoreTokens()) {
-                String t = filterTokens.nextToken();
-
-                if (t.equals("generic")) {
-                    YassFilter gf = YassFilter.createFilter(g);
-                    if (gf != null) {
-                        String rules[] = gf.getGenericRules(songList.getUnfilteredData());
-                        if (rules != null) {
-                            for (String rule1 : rules) {
-                                t = rule1;
-                                YassFilter f = YassFilter.createFilter(g);
-                                f.setRule(t);
-
-                                Vector<Integer> matches = new Vector<>();
-                                Vector<?> all = songList.getUnfilteredData();
-                                f.start(all);
-                                int i = 0;
-                                for (Enumeration<?> e = all.elements(); e.hasMoreElements(); i++) {
-                                    YassSong s = (YassSong) e.nextElement();
-                                    if (f.accept(s)) {
-                                        matches.addElement(new Integer(i));
-                                    }
-                                }
-                                f.stop();
-                                if (matches.size() > 0) {
-                                    subgroups.add(new YassScreenGroup(g, t, matches));
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    YassFilter f = YassFilter.createFilter(g);
-                    f.setRule(t);
-
-                    Vector<Integer> matches = new Vector<>();
-                    Vector<?> all = songList.getUnfilteredData();
-                    f.start(all);
-                    int i = 0;
-                    for (Enumeration<?> e = all.elements(); e.hasMoreElements(); i++) {
-                        YassSong s = (YassSong) e.nextElement();
-                        if (f.accept(s)) {
-                            matches.addElement(new Integer(i));
-                        }
-                    }
-                    f.stop();
-                    if (matches.size() > 0) {
-                        subgroups.add(new yass.screen.YassScreenGroup(g, t, matches));
-                    }
-                }
-            }
-            if (subgroups.size() > 0) {
-                groups.addElement(subgroups);
-            }
-        }
-        return groups;
-    }
-
-    /**
      * Sets the toolBar attribute of the YassGroups object
      *
      * @param rule The new toolBar value
@@ -574,14 +499,7 @@ public class YassGroups extends JTable implements DropTargetListener {
                                 String artist = st.hasMoreTokens() ? st.nextToken().trim() : null;
                                 String title = st.hasMoreTokens() ? st.nextToken().trim() : null;
                                 if (artist != null && title != null) {
-                                    String version = null;
-                                    int k = title.indexOf("[");
-                                    if (k > 0) {
-                                        version = title.substring(k + 1, title.indexOf("]", k));
-                                        title = title.substring(0, k).trim();
-                                    }
-
-                                    YassSong s = songList.getSong(artist, title, version);
+                                    YassSong s = songList.getSong(artist, title);
                                     if (s != null) {
                                         f.drop(rule, s);
                                         if (!s.isSaved()) {

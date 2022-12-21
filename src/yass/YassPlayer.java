@@ -29,8 +29,6 @@ import yass.renderer.YassNote;
 import yass.renderer.YassPlaybackRenderer;
 import yass.renderer.YassPlayerNote;
 import yass.renderer.YassSession;
-import yass.screen.YassScreen;
-
 import javax.sound.sampled.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -48,18 +46,15 @@ public class YassPlayer {
     public static final boolean DEBUG = false;
     byte[] memcache = null;
     byte[] clickmemcache = null;
-    AdvancedPlayer clickplayer = null;
     boolean midiEnabled = false, midisEnabled = false;
     boolean playAudio = true;
     boolean playClicks = true;
     boolean hasPlaybackRenderer = true;
     boolean live = false;
     MessageFormat latency = new MessageFormat(I18.get("sheet_msg_latency"));
-    String bufferlost = I18.get("sheet_msg_buffer_lost");
     private YassPlaybackRenderer playbackRenderer;
     private YassMIDI midi;
     private YassVideo video = null;
-    // private Clip click;
     private byte midis[][];
     private long duration = 0, position = -1, seekInOffset = 0,
             seekOutOffset = 0, seekInOffsetMs = 0, seekOutOffsetMs = 0;
@@ -75,26 +70,19 @@ public class YassPlayer {
     private boolean ogg = false;
     private boolean createWaveform = false;
     private boolean demo = false;
-    private Vector<String> devices = new Vector<>(YassScreen.MAX_PLAYERS);
-    private int[] playerdevice = new int[YassScreen.MAX_PLAYERS];
-    private int[] playerchannel = new int[YassScreen.MAX_PLAYERS];
-    private YassPlayerNote[] playernote = new YassPlayerNote[YassScreen.MAX_PLAYERS * 2];
+    private int MAX_PLAYERS = 2;
+    private Vector<String> devices = new Vector<>(MAX_PLAYERS);
+    private int[] playerdevice = new int[MAX_PLAYERS];
+    private int[] playerchannel = new int[MAX_PLAYERS];
+    private YassPlayerNote[] playernote = new YassPlayerNote[MAX_PLAYERS * 2];
     private BufferedImage bgImage = null;
     private Vector<YassPlayerListener> listeners = null;
-    /**
-     * Description of the Method
-     */
     private byte[] audioBytes;
     private AudioFormat audioBytesFormat = null;
     private int audioBytesChannels = 2;
     private float audioBytesSampleRate = 44100;
     private int audioBytesSampleSize = 2;
 
-    /**
-     * Constructor for the YassPlayer object
-     *
-     * @param s Description of the Parameter
-     */
     public YassPlayer(YassPlaybackRenderer s) {
         playbackRenderer = s;
 
@@ -172,13 +160,6 @@ public class YassPlayer {
         // }
 
         initCapture();
-
-		/*
-         * ByteArrayInputStream clickbin = new
-		 * ByteArrayInputStream(clickmemcache); clickplayer = new
-		 * AdvancedPlayer(clickbin); clickplayer.setVolume(1); } catch
-		 * (Exception e) { e.printStackTrace(); }
-		 */
         synth.start();
     }
 
@@ -509,14 +490,12 @@ public class YassPlayer {
      */
     public void openMP3(String filename) {
         this.filename = filename;
-        if (filename == null) {
+        if (filename == null)
             return;
-        }
 
         File file = new File(filename);
         if (!file.exists()) {
-            playbackRenderer
-                    .setErrorMessage(I18.get("sheet_msg_audio_missing"));
+            playbackRenderer.setErrorMessage(I18.get("sheet_msg_audio_missing"));
             return;
         }
 
@@ -928,12 +907,6 @@ public class YassPlayer {
     }
 
     /**
-     * Description of the Method
-     */
-    public void closeMP3() {
-    }
-
-    /**
      * Adds a feature to the PlayerListener attribute of the YassPlayer object
      *
      * @param p The feature to be added to the PlayerListener attribute
@@ -1282,16 +1255,16 @@ public class YassPlayer {
                 playbackRenderer.setErrorMessage(null);
 
                 if (useCapture) {
-                    int trackCount = playbackRenderer.getSession()
-                            .getTrackCount();
-                    for (int t = 0; t < trackCount; t++) {
-                        playbackRenderer.getSession().getTrack(t)
-                                .getPlayerNotes().removeAllElements();
-                    }
-                    for (Enumeration<String> devEnum = devices.elements(); devEnum
-                            .hasMoreElements(); ) {
-                        String device = devEnum.nextElement();
-                        capture.startQuery(device);
+                    YassSession session = playbackRenderer.getSession();
+                    if (session != null) {
+                        int trackCount = session.getTrackCount();
+                        for (int t = 0; t < trackCount; t++) {
+                            session.getTrack(t).getPlayerNotes().removeAllElements();
+                        }
+                        for (Enumeration<String> devEnum = devices.elements(); devEnum.hasMoreElements(); ) {
+                            String device = devEnum.nextElement();
+                            capture.startQuery(device);
+                        }
                     }
                 }
 

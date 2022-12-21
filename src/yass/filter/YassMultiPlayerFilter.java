@@ -44,7 +44,7 @@ public class YassMultiPlayerFilter extends YassFilter {
      * @return The extraInfo value
      */
     public int getExtraInfo() {
-        return YassSongList.FOLDER_COLUMN;
+        return YassSongList.DUETSINGER_COLUMN;
     }
 
 

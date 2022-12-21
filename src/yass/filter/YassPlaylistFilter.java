@@ -153,13 +153,7 @@ public class YassPlaylistFilter extends YassFilter {
                 if (ll.hasMoreTokens()) {
                     title = ll.nextToken().trim();
 
-                    String version = "";
-                    int k = title.indexOf("[");
-                    if (k > 0) {
-                        version = title.substring(k + 1, title.indexOf("]", k));
-                        title = title.substring(0, k);
-                    }
-                    String key = artist + " : " + title + " [" + version + "]";
+                    String key = artist + " : " + title;
                     Vector<String> v = songs.get(key);
                     if (v == null) {
                         v = new Vector<>(3);
@@ -232,8 +226,7 @@ public class YassPlaylistFilter extends YassFilter {
 
         String artist = s.getArtist();
         String title = s.getTitle();
-        String version = s.getVersion();
-        String key = artist + " : " + title + " [" + version + "]";
+        String key = artist + " : " + title;
 
         if (pl.contains(key)) {
             return;
@@ -278,10 +271,6 @@ public class YassPlaylistFilter extends YassFilter {
 
             for (Enumeration<?> en = pl.elements(); en.hasMoreElements(); ) {
                 String line = (String) en.nextElement();
-                int i = line.lastIndexOf(" [");
-                if (i > 0) {
-                    line = line.substring(0, i);
-                }
                 outputStream.println(line);
             }
             outputStream.close();
@@ -326,11 +315,7 @@ public class YassPlaylistFilter extends YassFilter {
         } else if (rule.equals("unspecified")) {
             String artist = s.getArtist();
             String title = s.getTitle();
-            String version = s.getVersion();
-            if (version == null) {
-                version = "";
-            }
-            String key = artist + " - " + title + " [" + version + "]";
+            String key = artist + " - " + title;
             Vector<?> v = songs.get(key);
             if (v == null) {
                 hit = true;
@@ -338,11 +323,7 @@ public class YassPlaylistFilter extends YassFilter {
         } else {
             String artist = s.getArtist();
             String title = s.getTitle();
-            String version = s.getVersion();
-            if (version == null) {
-                version = "";
-            }
-            String key = artist + " : " + title + " [" + version + "]";
+            String key = artist + " : " + title;
             Vector<?> v = songs.get(key);
             if (v != null) {
                 for (Enumeration<?> en = v.elements(); en.hasMoreElements(); ) {

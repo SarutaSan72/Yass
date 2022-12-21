@@ -18,20 +18,16 @@
 
 package yass;
 
-import unicode.UnicodeReader;
 import org.mozilla.universalchardet.Constants;
 import org.mozilla.universalchardet.UniversalDetector;
-
+import unicode.UnicodeReader;
 import yass.renderer.YassLine;
 import yass.renderer.YassNote;
 import yass.renderer.YassSession;
 import yass.renderer.YassTrack;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -47,50 +43,27 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.util.*;
 
-/**
- * Description of the Class
- *
- * @author Saruta
- */
 public class YassTable extends JTable {
-    /**
-     * Description of the Field
-     */
     public final static int ZOOM_TIME = 0;
-    /**
-     * Description of the Field
-     */
     public final static int ZOOM_ONE = 1;
-    /**
-     * Description of the Field
-     */
-    public static int zoomMode = ZOOM_ONE;
-    /**
-     * Description of the Field
-     */
     public final static int ZOOM_MULTI = 2;
-    /**
-     * Description of the Field
-     */
-    public final static int ZOOM_ALL = 3;
-    private static final long serialVersionUID = 9021366386206950968L;
-    /**
-     * Description of the Field
-     */
+    public static int zoomMode = ZOOM_ONE;
+
     public int multiSize = 1;
-    private YassTableModel tm;
+    private final YassTableModel tm;
     private YassActions actions = null;
     private YassSheet sheet = null;
     private YassAutoCorrect auto = null;
     private YassProperties prop = null;
     private String mp3 = null, dir = null, txtFilename = null;
     private double bpm = 120, gap = 0, vgap = 0, start = 0, end = -1;
-    private int MAX_UNDO = 2048;
-    private Vector<YassUndoElement> undos = new Vector<>(
-            MAX_UNDO);
+    private final int MAX_UNDO = 2048;
+    private final Vector<YassUndoElement> undos = new Vector<>(MAX_UNDO);
+    // [0] = P1, [1] = P2, ...
+    private String[] duetSingerNames = new String[8];
     private int undoPos = -1, redoMax = 0;
     private boolean isRelative = false;
-    private int multiplayer = 0;
+    private int maxP = 0;
     private Color myColor = null;
     private boolean saved = true;
     private boolean isLoading = false;
@@ -110,10 +83,10 @@ public class YassTable extends JTable {
     private String goldenDiff;
 
     private static UniversalDetector detector = null;
+    private int duetTrack = -1;
+    private String duetTrackName = null;
+    private int duetTrackCount = -1;
 
-    /**
-     * Constructor for the YassTable object
-     */
     public YassTable() {
         getTableHeader().setReorderingAllowed(false);
         createDefaultColumnsFromModel();
@@ -124,11 +97,9 @@ public class YassTable extends JTable {
         setTransferHandler(new YassTableTransferHandler());
 
         getSelectionModel().addListSelectionListener(
-                new ListSelectionListener() {
-                    public void valueChanged(ListSelectionEvent e) {
-                        if (sheet != null) {
-                            sheet.repaint();
-                        }
+                e -> {
+                    if (sheet != null) {
+                        sheet.repaint();
                     }
                 });
         addMouseMotionListener(new MouseMotionAdapter() {
@@ -182,286 +153,53 @@ public class YassTable extends JTable {
 
         boolean oldUndo = preventUndo;
         preventUndo = true;
+        setModel(tm = new YassTableModel());
+        addTableModelListener();
         removeAllRows();
         preventUndo = oldUndo;
     }
 
-    /**
-     * Gets the zoomMode attribute of the YassTable class
-     *
-     * @return The zoomMode value
-     */
-    public static int getZoomMode() {
-        return zoomMode;
-    }
+    private void addTableModelListener() {
+        tm.addTableModelListener(e -> {
+            int i = e.getFirstRow();
+            int j = e.getLastRow();
+            int t = e.getType();
+            if (i == TableModelEvent.HEADER_ROW)
+                return;
+            if (i < 0)
+                return;
 
-    /**
-     * Sets the zoomMode attribute of the YassTable class
-     *
-     * @param i The new zoomMode value
-     */
-    public static void setZoomMode(int i) {
-        zoomMode = i;
-    }
+            if (!(isLoading || preventUndo)) {
+                setSaved(false);
+                addUndo();
+            }
 
-    /**
-     * Gets the uTF8 attribute of the YassTable object
-     *
-     * @return The uTF8 value
-     */
-    public String getEncoding() {
-        return encoding;
-    }
+            // don't check comment header
+            // (done only after loading && focusGained)
+            boolean checkAll = t != TableModelEvent.UPDATE;
+            if (actions != null && !preventAutoCheck) {
+                actions.checkData(YassTable.this, checkAll, checkAll);
+            }
 
-    /**
-     * Sets the uTF8 attribute of the YassTable object
-     *
-     * @param s The new encoding value
-     */
-    public void setEncoding(String s) {
-        encoding = s;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-    public boolean showMessages() {
-        return showMessages;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @param onoff Description of the Parameter
-     */
-    public void showMessages(boolean onoff) {
-        showMessages = onoff;
-    }
-
-    /**
-     * Gets the saved attribute of the YassTable object
-     *
-     * @return The saved value
-     */
-    public boolean isSaved() {
-        return saved;
-    }
-
-    /**
-     * Sets the saved attribute of the YassTable object
-     *
-     * @param onoff The new saved value
-     */
-    public void setSaved(boolean onoff) {
-        saved = onoff;
-    }
-
-    /**
-     * Gets the tableColor attribute of the YassTable object
-     *
-     * @return The tableColor value
-     */
-    public Color getTableColor() {
-        return myColor;
-    }
-
-    /**
-     * Sets the tableColor attribute of the YassTable object
-     *
-     * @param c The new tableColor value
-     */
-    public void setTableColor(Color c) {
-        myColor = c;
-    }
-
-    /**
-     * Description of the Method
-     */
-    public void updatePlayerPosition() {
-        if (actions != null) {
-            actions.updatePlayerPosition();
-        }
-    }
-
-    /**
-     * Gets the preventUndo attribute of the YassTable object
-     *
-     * @return The preventUndo value
-     */
-    public boolean getPreventUndo() {
-        return preventUndo;
-    }
-
-    /**
-     * Sets the preventUndo attribute of the YassTable object
-     *
-     * @param onoff The new preventUndo value
-     */
-    public void setPreventUndo(boolean onoff) {
-        preventUndo = onoff;
-    }
-
-    /**
-     * Gets the preventAutoCheck attribute of the YassTable object
-     *
-     * @return The preventAutoCheck value
-     */
-    public boolean getPreventAutoCheck() {
-        return preventAutoCheck;
-    }
-
-    /**
-     * Sets the preventAutoCheck attribute of the YassTable object
-     *
-     * @param onoff The new preventAutoCheck value
-     */
-    public void setPreventAutoCheck(boolean onoff) {
-        preventAutoCheck = onoff;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @param onoff Description of the Parameter
-     */
-    public void preventLyricsUpdate(boolean onoff) {
-        lyricsChanged = !onoff;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-    public boolean lyricsChanged() {
-        return lyricsChanged;
-    }
-
-    /**
-     * Gets the actions attribute of the YassTable object
-     *
-     * @return The actions value
-     */
-    public YassActions getActions() {
-        return actions;
-    }
-
-    /**
-     * Sets the actions attribute of the YassTable object
-     *
-     * @param a The new actions value
-     */
-    public void setActions(YassActions a) {
-        actions = a;
-    }
-
-    /**
-     * Sets the sheet attribute of the YassTable object
-     *
-     * @param s The new sheet value
-     */
-    public void setSheet(YassSheet s) {
-        sheet = s;
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @param p Description of the Parameter
-     */
-    public void init(YassProperties p) {
-        prop = p;
-    }
-
-    /**
-     * Gets the properties attribute of the YassTable object
-     *
-     * @return The properties value
-     */
-    public YassProperties getProperties() {
-        return prop;
-    }
-
-    /**
-     * Gets the autoCorrect attribute of the YassTable object
-     *
-     * @return The autoCorrect value
-     */
-    public YassAutoCorrect getAutoCorrect() {
-        return auto;
-    }
-
-    /**
-     * Sets the autoCorrect attribute of the YassTable object
-     *
-     * @param a The new autoCorrect value
-     */
-    public void setAutoCorrect(YassAutoCorrect a) {
-        auto = a;
-    }
-
-    /**
-     * Description of the Method
-     */
-    public void removeAllRows() {
-        if (tm == null) {
-            setModel(tm = new YassTableModel());
-
-            // TableColumn col = getColumnModel().getColumn(0);
-            // col.setCellEditor(new YassTableCellEditor());
-
-            tm.addTableModelListener(new TableModelListener() {
-                public void tableChanged(TableModelEvent e) {
-                    int i = e.getFirstRow();
-                    int j = e.getLastRow();
-                    int t = e.getType();
-                    if (i == TableModelEvent.HEADER_ROW) {
-                        return;
-                    }
-                    if (i < 0) {
-                        return;
-                    }
-                    // DEBUG: gets triggered for mouse drags
-                    // so we cannot just addUndo() for txt input
-
-                    if (!isLoading) {
-                        setSaved(false);
-                        if (actions != null) {
-                            actions.setSaved(false);
-                        }
-                    }
-
-                    // don't check comment header
-                    // (done only after loading && focusGained)
-                    boolean checkAll = t != TableModelEvent.UPDATE;
-                    if (actions != null && !preventAutoCheck) {
-                        actions.checkData(YassTable.this, checkAll, checkAll);
-                    }
-
-                    repaint();
-                    if (sheet != null) {
-                        int n = getRowCount();
-                        if (i >= n || j >= n || t != TableModelEvent.UPDATE) {
-                            sheet.init();
-                        }
-                        // errors may affect unchanged notes
-                        // so always update all rows
-                        if (t == TableModelEvent.UPDATE) {
-                            sheet.updateActiveTable();
-                            // zoomPage();
-                            // updatePlayerPosition();
-                            sheet.repaint();
-                            sheet.firePropsChanged();
-                        }
-                    }
+            repaint();
+            if (sheet != null) {
+                int n = getRowCount();
+                if (i >= n || j >= n || t != TableModelEvent.UPDATE) {
+                    sheet.init();
                 }
-            });
-        } else {
-            tm.getData().clear();
-        }
-
+                // errors may affect unchanged notes
+                // so always update all rows
+                if (t == TableModelEvent.UPDATE) {
+                    sheet.updateActiveTable(); // todo really active?
+                    sheet.repaint();
+                    sheet.firePropsChanged();
+                }
+            }
+            if (actions != null) actions.updateActions();
+        });
+    }
+    public void removeAllRows() {
+        tm.getData().clear();
         resetUndo();
         addUndo();
         mp3 = dir = txtFilename = null;
@@ -471,24 +209,117 @@ public class YassTable extends JTable {
         start = 0;
         end = -1;
         isRelative = false;
-        multiplayer = 0;
+        maxP = 0;
         encoding = null;
+        duetTrack = -1;
+        duetTrackCount = -1;
+        duetTrackName = null;
+        Arrays.fill(duetSingerNames, null);
+        if (actions != null)  actions.updateActions();
     }
 
-    /**
-     * Gets the mP3 attribute of the YassTable object
-     *
-     * @return The mP3 value
-     */
+    public static int getZoomMode() {
+        return zoomMode;
+    }
+
+    public static void setZoomMode(int i) {
+        zoomMode = i;
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(String s) {
+        encoding = s;
+    }
+
+    public boolean showMessages() {
+        return showMessages;
+    }
+
+    public void showMessages(boolean onoff) {
+        showMessages = onoff;
+    }
+
+    public boolean isSaved() {
+        return saved;
+    }
+
+    public void setSaved(boolean onoff) {
+        saved = onoff;
+    }
+
+    public Color getTableColor() {
+        return myColor;
+    }
+
+    public void setTableColor(Color c) {
+        myColor = c;
+    }
+
+    public void updatePlayerPosition() {
+        if (actions != null) {
+            actions.updatePlayerPosition();
+        }
+    }
+
+    public boolean getPreventUndo() {
+        return preventUndo;
+    }
+
+    public void setPreventUndo(boolean onoff) {
+        preventUndo = onoff;
+    }
+
+    public boolean getPreventAutoCheck() {
+        return preventAutoCheck;
+    }
+
+    public void setPreventAutoCheck(boolean onoff) {
+        preventAutoCheck = onoff;
+    }
+
+    public void preventLyricsUpdate(boolean onoff) {
+        lyricsChanged = !onoff;
+    }
+
+    public boolean lyricsChanged() {
+        return lyricsChanged;
+    }
+
+    public YassActions getActions() {
+        return actions;
+    }
+
+    public void setActions(YassActions a) {
+        actions = a;
+    }
+
+    public void setSheet(YassSheet s) {
+        sheet = s;
+    }
+
+    public void init(YassProperties p) {
+        prop = p;
+    }
+
+    public YassProperties getProperties() {
+        return prop;
+    }
+
+    public YassAutoCorrect getAutoCorrect() {
+        return auto;
+    }
+
+    public void setAutoCorrect(YassAutoCorrect a) {
+        auto = a;
+    }
+
     public String getMP3() {
         return mp3;
     }
 
-    /**
-     * Sets the mP3 attribute of the YassTable object
-     *
-     * @param s The new mP3 value
-     */
     public void setMP3(String s) {
         mp3 = s;
         YassRow r = tm.getCommentRow("MP3:");
@@ -498,92 +329,66 @@ public class YassTable extends JTable {
         r.setComment(s);
     }
 
-    /**
-     * Gets the dir attribute of the YassTable object
-     *
-     * @return The dir value
-     */
-    public String getDir() {
-        return dir;
-    }
-
-    /**
-     * Sets the dir attribute of the YassTable object
-     *
-     * @param d The new dir value
-     */
+    public String getDir() { return dir; }
     public void setDir(String d) {
         dir = d;
     }
-
-    /**
-     * Gets the filename attribute of the YassTable object
-     *
-     * @return The filename value
-     */
     public String getFilename() {
         return txtFilename;
     }
-
-    public String getCanonicalFilename() {
-        String a = getArtist();
-        String t = getTitle();
-        String v = getVersion();
-        if (v != null && v.length() > 0)
-            return YassSong.toFilename(a + " - " + t + " [" + v + "].txt");
-        return YassSong.toFilename(a + " - " + t + ".txt");
-    }
-    /**
-     * Sets the filename attribute of the YassTable object
-     *
-     * @param s The new filename value
-     */
     public void setFilename(String s) {
         txtFilename = s;
     }
 
     /**
-     * Gets the gap attribute of the YassTable object
-     *
-     * @return The gap value
+     * String dir/filename
+     * @return null if any is null
      */
+    public String getDirFilename() {
+        if (dir == null || txtFilename == null)
+            return null;
+        return dir + File.separator + txtFilename;
+    }
+    /**
+     * String dir/mp3file
+     * @return null if any is null
+     */
+    public String getDirMP3() {
+        if (dir == null || mp3 == null)
+            return null;
+        return dir + File.separator + mp3;
+    }
+
+    public String getCanonicalFilename() {
+        String a = getArtist();
+        String t = getTitle();
+        return YassSong.toFilename(a + " - " + t + ".txt");
+    }
+
     public double getGap() {
         return gap;
     }
 
-    /**
-     * Sets the gap attribute of the YassTable object
-     *
-     * @param g The new gap value
-     */
     public void setGap(double g) {
         gap = g;
-        String s = new Integer((int) gap).toString();
+        String s = Integer.toString((int) gap);
         YassRow r = tm.getCommentRow("GAP:");
         if (r == null) {
             r = new YassRow("#", "GAP:", s, "", "");
             YassRow v = tm.getCommentRow("BPM:");
             int i = v != null ? tm.getData().indexOf(v) : 0;
             tm.getData().insertElementAt(r, i + 1);
-
-            addUndo();
             tm.fireTableDataChanged();
         } else {
             String old = r.getComment();
             if (!s.equals(old)) {
                 r.setComment(s);
-                addUndo();
                 int k = tm.getData().indexOf(r);
                 tm.fireTableRowsUpdated(k, k);
             }
         }
     }
 
-    /**
-     * Adds a feature to the Gap attribute of the YassTable object
-     *
-     * @param g The feature to be added to the Gap attribute
-     */
     public void addGap(double g) {
         setGap(getGap() + g);
         if (sheet != null) {
@@ -592,24 +397,14 @@ public class YassTable extends JTable {
         }
     }
 
-    /**
-     * Gets the bPM attribute of the YassTable object
-     *
-     * @return The bPM value
-     */
     public double getBPM() {
         return bpm;
     }
 
-    /**
-     * Sets the BPM attribute of the YassTable object
-     *
-     * @param b The new bPM value
-     */
     public void setBPM(double b) {
         bpm = b;
 
-        String s = new Double(bpm).toString();
+        String s = Double.toString(bpm);
         s = s.replace('.', ',');
         if (s.endsWith(",00")) {
             s = s.substring(0, s.length() - 3);
@@ -623,14 +418,11 @@ public class YassTable extends JTable {
             YassRow v = tm.getCommentRow("GAP:");
             int i = v != null ? tm.getData().indexOf(v) : 0;
             tm.getData().insertElementAt(r, i);
-
-            addUndo();
             tm.fireTableDataChanged();
         } else {
             String old = r.getComment();
             if (!s.equals(old)) {
                 r.setComment(s);
-                addUndo();
                 int k = tm.getData().indexOf(r);
                 tm.fireTableRowsUpdated(k, k);
             }
@@ -639,11 +431,6 @@ public class YassTable extends JTable {
         repaint();
     }
 
-    /**
-     * Sets the bPM attribute of the YassTable object
-     *
-     * @param s The new bPM value
-     */
     public void setBPM(String s) {
         if (s == null || s.length() < 1) {
             return;
@@ -655,55 +442,36 @@ public class YassTable extends JTable {
         }
     }
 
-    /**
-     * Gets the start attribute of the YassTable object
-     *
-     * @return The start value
-     */
     public double getStart() {
         return start;
     }
 
-    /**
-     * Sets the start attribute of the YassTable object
-     *
-     * @param b The new start value
-     */
     public void setStart(double b) {
         start = b;
 
-        String s = new Double(start).toString();
+        String s = Double.toString(start);
         YassRow r = tm.getCommentRow("START:");
         if (r == null && start > 0) {
             r = new YassRow("#", "START:", s, "", "");
             YassRow v = tm.getCommentRow("GAP:");
             int i = v != null ? tm.getData().indexOf(v) + 1 : 0;
             tm.getData().insertElementAt(r, i);
-
-            addUndo();
             tm.fireTableDataChanged();
         } else if (start <= 0) {
             if (r != null) {
                 tm.getData().removeElement(r);
-                addUndo();
                 tm.fireTableDataChanged();
             }
         } else {
             String old = r.getComment();
             if (!s.equals(old)) {
                 r.setComment(s);
-                addUndo();
                 int k = tm.getData().indexOf(r);
                 tm.fireTableRowsUpdated(k, k);
             }
         }
     }
 
-    /**
-     * Sets the start attribute of the YassTable object
-     *
-     * @param s The new start value
-     */
     public void setStart(String s) {
         if (s == null || s.length() < 1) {
             return;
@@ -715,55 +483,36 @@ public class YassTable extends JTable {
         }
     }
 
-    /**
-     * Gets the end attribute of the YassTable object
-     *
-     * @return The end value
-     */
     public double getEnd() {
         return end;
     }
 
-    /**
-     * Sets the end attribute of the YassTable object
-     *
-     * @param b The new end value
-     */
     public void setEnd(double b) {
         end = b;
 
-        String s = new Double(end).toString();
+        String s = Double.toString(end);
         YassRow r = tm.getCommentRow("END:");
         if (r == null && end >= 0) {
             r = new YassRow("#", "END:", s, "", "");
             YassRow v = tm.getCommentRow("GAP:");
             int i = v != null ? tm.getData().indexOf(v) + 1 : 0;
             tm.getData().insertElementAt(r, i);
-
-            addUndo();
             tm.fireTableDataChanged();
         } else if (end < 0) {
             if (r != null) {
                 tm.getData().removeElement(r);
-                addUndo();
                 tm.fireTableDataChanged();
             }
         } else {
             String old = r.getComment();
             if (!s.equals(old)) {
                 r.setComment(s);
-                addUndo();
                 int k = tm.getData().indexOf(r);
                 tm.fireTableRowsUpdated(k, k);
             }
         }
     }
 
-    /**
-     * Sets the end attribute of the YassTable object
-     *
-     * @param s The new end value
-     */
     public void setEnd(String s) {
         if (s == null || s.length() < 1) {
             return;
@@ -775,23 +524,13 @@ public class YassTable extends JTable {
         }
     }
 
-    /**
-     * Gets the videoGap attribute of the YassTable object
-     *
-     * @return The videoGap value
-     */
     public double getVideoGap() {
         return vgap;
     }
 
-    /**
-     * Sets the videoGap attribute of the YassTable object
-     *
-     * @param g The new videoGap value
-     */
     public void setVideoGap(double g) {
         vgap = g;
-        String s = new Double(vgap).toString().replace('.', ',');
+        String s = Double.toString(vgap).replace('.', ',');
         if (s.endsWith(",0")) {
             s = s.substring(0, s.length() - 2);
         }
@@ -801,36 +540,23 @@ public class YassTable extends JTable {
             YassRow v = tm.getCommentRow("VIDEO:");
             int i = v != null ? tm.getData().indexOf(v) : 0;
             tm.getData().insertElementAt(r, i + 1);
-
-            addUndo();
             tm.fireTableDataChanged();
         } else {
             String old = r.getComment();
             if (!s.equals(old)) {
                 r.setComment(s);
-                addUndo();
                 int k = tm.getData().indexOf(r);
                 tm.fireTableRowsUpdated(k, k);
             }
         }
     }
 
-    /**
-     * Sets the videoGap attribute of the YassTable object
-     *
-     * @param vg The new videoGap value
-     */
     public void setVideoGap(String vg) {
         vg = vg.replace(',', '.');
         double vgap = Double.parseDouble(vg);
         setVideoGap(vgap);
     }
 
-    /**
-     * Gets the previewStart attribute of the YassTable object
-     *
-     * @return The previewStart value
-     */
     public double getPreviewStart() {
         YassRow r = tm.getCommentRow("PREVIEWSTART:");
         if (r == null) {
@@ -842,13 +568,8 @@ public class YassTable extends JTable {
         return Double.parseDouble(p);
     }
 
-    /**
-     * Sets the videoGap attribute of the YassTable object
-     *
-     * @param g The new videoGap value
-     */
     public void setPreviewStart(double g) {
-        String s = new Double(g).toString().replace('.', ',');
+        String s = Double.toString(g).replace('.', ',');
         if (s.endsWith(",0")) {
             s = s.substring(0, s.length() - 2);
         }
@@ -858,36 +579,23 @@ public class YassTable extends JTable {
             YassRow v = tm.getCommentRow("GAP:");
             int i = v != null ? tm.getData().indexOf(v) : 0;
             tm.getData().insertElementAt(r, i + 1);
-
-            addUndo();
             tm.fireTableDataChanged();
         } else {
             String old = r.getComment();
             if (!s.equals(old)) {
                 r.setComment(s);
-                addUndo();
                 int k = tm.getData().indexOf(r);
                 tm.fireTableRowsUpdated(k, k);
             }
         }
     }
 
-    /**
-     * Sets the previewStart attribute of the YassTable object
-     *
-     * @param p The new previewStart value
-     */
     public void setPreviewStart(String p) {
         p = p.replace(',', '.');
         double pp = Double.parseDouble(p);
         setPreviewStart(pp);
     }
 
-    /**
-     * Gets the medleyStartBeat attribute of the YassTable object
-     *
-     * @return The medleyStartBeat value
-     */
     public int getMedleyStartBeat() {
         YassRow r = tm.getCommentRow("MEDLEYSTARTBEAT:");
         if (r == null) {
@@ -898,11 +606,6 @@ public class YassTable extends JTable {
         return Integer.parseInt(p);
     }
 
-    /**
-     * Sets the medleyStartBeat attribute of the YassTable object
-     *
-     * @param g The new medleyStartBeat value
-     */
     public void setMedleyStartBeat(int g) {
         String s = g + "";
         YassRow r = tm.getCommentRow("MEDLEYSTARTBEAT:");
@@ -914,25 +617,17 @@ public class YassTable extends JTable {
             }
             int i = v != null ? tm.getData().indexOf(v) : 0;
             tm.getData().insertElementAt(r, i + 1);
-
-            addUndo();
             tm.fireTableDataChanged();
         } else {
             String old = r.getComment();
             if (!s.equals(old)) {
                 r.setComment(s);
-                addUndo();
                 int k = tm.getData().indexOf(r);
                 tm.fireTableRowsUpdated(k, k);
             }
         }
     }
 
-    /**
-     * Gets the medleyEndBeat attribute of the YassTable object
-     *
-     * @return The medleyEndBeat value
-     */
     public int getMedleyEndBeat() {
         YassRow r = tm.getCommentRow("MEDLEYENDBEAT:");
         if (r == null) {
@@ -943,11 +638,6 @@ public class YassTable extends JTable {
         return Integer.parseInt(p);
     }
 
-    /**
-     * Sets the medleyEndBeat attribute of the YassTable object
-     *
-     * @param g The new medleyEndBeat value
-     */
     public void setMedleyEndBeat(int g) {
         String s = g + "";
         YassRow r = tm.getCommentRow("MEDLEYENDBEAT:");
@@ -962,45 +652,27 @@ public class YassTable extends JTable {
             }
             int i = v != null ? tm.getData().indexOf(v) : 0;
             tm.getData().insertElementAt(r, i + 1);
-
-            addUndo();
             tm.fireTableDataChanged();
         } else {
             String old = r.getComment();
             if (!s.equals(old)) {
                 r.setComment(s);
-                addUndo();
                 int k = tm.getData().indexOf(r);
                 tm.fireTableRowsUpdated(k, k);
             }
         }
     }
 
-    /**
-     * Sets the medleyStartBeat attribute of the YassTable object
-     *
-     * @param p The new medleyStartBeat value
-     */
     public void setMedleyStartBeat(String p) {
         int pp = Integer.parseInt(p);
         setMedleyStartBeat(pp);
     }
 
-    /**
-     * Sets the medleyEndBeat attribute of the YassTable object
-     *
-     * @param p The new medleyEndBeat value
-     */
     public void setMedleyEndBeat(String p) {
         int pp = Integer.parseInt(p);
         setMedleyEndBeat(pp);
     }
 
-    /**
-     * Gets the relative attribute of the YassTable object
-     *
-     * @return The relative value
-     */
     public boolean isRelative() {
         YassRow r = tm.getCommentRow("RELATIVE:");
         if (r == null) {
@@ -1015,19 +687,34 @@ public class YassTable extends JTable {
     }
 
     /**
-     * Gets the multiplayer attribute of the YassTable object
+     * Gets largest P number (singer mask) in file.
+     * Examples:
+     *  P 2 ==> 2
+     *  P 4 ==> 4
+     *  P 8 ==> 8
      *
-     * @return The multiplayer value
+     *  To get the actual track number, {@link YassUtils#getBitCount(int)}
+     *  Examples:
+     *   P 1 ==> 1
+     *   P 2 ==> 2
+     *   P 4 ==> 3
+     *   P 8 ==> 4
+     * @return
      */
-    public int getMultiplayer() {
-        return multiplayer;
+    public int getMaxP() {
+        return maxP;
     }
 
     /**
-     * Gets the artist attribute of the YassTable object
-     *
-     * @return The artist value
+     * Gets number of singers, as determined by largest P number in file.
+     * @return >= 1
      */
+    public int getPlayerCount() {
+        if (maxP > 1)
+            return YassUtils.getBitCount(maxP);
+        return 1;
+    }
+
     public String getArtist() {
         YassRow r = tm.getCommentRow("ARTIST:");
         if (r == null) {
@@ -1036,11 +723,6 @@ public class YassTable extends JTable {
         return r.getComment();
     }
 
-    /**
-     * Gets the title attribute of the YassTable object
-     *
-     * @return The title value
-     */
     public String getTitle() {
         YassRow r = tm.getCommentRow("TITLE:");
         if (r == null) {
@@ -1049,12 +731,6 @@ public class YassTable extends JTable {
         return r.getComment();
     }
 
-    /**
-     * Sets the title attribute of the YassTable object
-     *
-     * @param s The new title value
-     * @return Description of the Return Value
-     */
     public boolean setTitle(String s) {
         YassRow r = tm.getCommentRow("TITLE:");
         if (r == null) {
@@ -1063,19 +739,12 @@ public class YassTable extends JTable {
         String old = r.getComment();
         if (!s.equals(old)) {
             r.setComment(s);
-            addUndo();
             tm.fireTableDataChanged();
             return true;
         }
         return false;
     }
 
-    /**
-     * Sets the artist attribute of the YassTable object
-     *
-     * @param s The new artist value
-     * @return Description of the Return Value
-     */
     public boolean setArtist(String s) {
         YassRow r = tm.getCommentRow("ARTIST:");
         if (r == null) {
@@ -1084,52 +753,12 @@ public class YassTable extends JTable {
         String old = r.getComment();
         if (!s.equals(old)) {
             r.setComment(s);
-            addUndo();
             tm.fireTableDataChanged();
             return true;
         }
         return false;
     }
 
-    /**
-     * Gets the version attribute of the YassTable object
-     *
-     * @return The version value
-     */
-    public String getVersion() {
-        YassRow r = tm.getCommentRow("TITLE:");
-        if (r == null) {
-            return null;
-        }
-        return r.getVersion();
-    }
-
-    /**
-     * Sets the version attribute of the YassTable object
-     *
-     * @param s The new version value
-     * @return Description of the Return Value
-     */
-    public boolean setVersion(String s) {
-        YassRow r = tm.getCommentRow("TITLE:");
-        if (r == null) {
-            return false;
-        }
-        String old = r.getComment();
-        if (!s.equals(old)) {
-            r.setVersion(s);
-            addUndo();
-            tm.fireTableDataChanged();
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Gets the genre attribute of the YassTable object
-     *
-     * @return The genre value
-     */
     public String getGenre() {
         YassRow r = tm.getCommentRow("GENRE:");
         if (r == null) {
@@ -1138,11 +767,6 @@ public class YassTable extends JTable {
         return r.getComment();
     }
 
-    /**
-     * Gets the edition attribute of the YassTable object
-     *
-     * @return The edition value
-     */
     public String getEdition() {
         YassRow r = tm.getCommentRow("EDITION:");
         if (r == null) {
@@ -1151,11 +775,6 @@ public class YassTable extends JTable {
         return r.getComment();
     }
 
-    /**
-     * Gets the album attribute of the YassTable object
-     *
-     * @return The album value
-     */
     public String getAlbum() {
         YassRow r = tm.getCommentRow("ALBUM:");
         if (r == null) {
@@ -1164,11 +783,6 @@ public class YassTable extends JTable {
         return r.getComment();
     }
 
-    /**
-     * Gets the iD attribute of the YassTable object
-     *
-     * @return The iD value
-     */
     public String getID() {
         YassRow r = tm.getCommentRow("ID:");
         if (r == null) {
@@ -1177,11 +791,6 @@ public class YassTable extends JTable {
         return r.getComment();
     }
 
-    /**
-     * Gets the length attribute of the YassTable object
-     *
-     * @return The length value
-     */
     public String getLength() {
         YassRow r = tm.getCommentRow("LENGTH:");
         if (r == null) {
@@ -1190,11 +799,6 @@ public class YassTable extends JTable {
         return r.getComment();
     }
 
-    /**
-     * Gets the cover attribute of the YassTable object
-     *
-     * @return The cover value
-     */
     public String getCover() {
         YassRow r = tm.getCommentRow("COVER:");
         if (r == null) {
@@ -1203,11 +807,6 @@ public class YassTable extends JTable {
         return r.getComment();
     }
 
-    /**
-     * Gets the background attribute of the YassTable object
-     *
-     * @return The background value
-     */
     public String getBackgroundTag() {
         YassRow r = tm.getCommentRow("BACKGROUND:");
         if (r == null) {
@@ -1216,11 +815,6 @@ public class YassTable extends JTable {
         return r.getComment();
     }
 
-    /**
-     * Gets the video attribute of the YassTable object
-     *
-     * @return The video value
-     */
     public String getVideo() {
         YassRow r = tm.getCommentRow("VIDEO:");
         if (r == null) {
@@ -1229,11 +823,6 @@ public class YassTable extends JTable {
         return r.getComment();
     }
 
-    /**
-     * Gets the language attribute of the YassTable object
-     *
-     * @return The language value
-     */
     public String getLanguage() {
         YassRow r = tm.getCommentRow("LANGUAGE:");
         if (r == null) {
@@ -1242,11 +831,6 @@ public class YassTable extends JTable {
         return r.getComment();
     }
 
-    /**
-     * Gets the year attribute of the YassTable object
-     *
-     * @return The year value
-     */
     public String getYear() {
         YassRow r = tm.getCommentRow("YEAR:");
         if (r == null) {
@@ -1255,12 +839,6 @@ public class YassTable extends JTable {
         return r.getComment();
     }
 
-    /**
-     * Sets the genre attribute of the YassTable object
-     *
-     * @param s The new genre value
-     * @return Description of the Return Value
-     */
     public boolean setGenre(String s) {
         YassRow r = tm.getCommentRow("GENRE:");
         if (r == null) {
@@ -1274,15 +852,12 @@ public class YassTable extends JTable {
             }
             int i = v != null ? tm.getData().indexOf(v) + 1 : 0;
             tm.getData().insertElementAt(r, i);
-
-            addUndo();
             tm.fireTableDataChanged();
             return true;
         } else {
             String old = r.getComment();
             if (!s.equals(old)) {
                 r.setComment(s);
-                addUndo();
                 int k = tm.getData().indexOf(r);
                 tm.fireTableRowsUpdated(k, k);
                 return true;
@@ -1291,12 +866,6 @@ public class YassTable extends JTable {
         return false;
     }
 
-    /**
-     * Sets the edition attribute of the YassTable object
-     *
-     * @param s The new edition value
-     * @return Description of the Return Value
-     */
     public boolean setEdition(String s) {
         YassRow r = tm.getCommentRow("EDITION:");
         if (r == null) {
@@ -1307,15 +876,12 @@ public class YassTable extends JTable {
             }
             int i = v != null ? tm.getData().indexOf(v) + 1 : 0;
             tm.getData().insertElementAt(r, i);
-
-            addUndo();
             tm.fireTableDataChanged();
             return true;
         } else {
             String old = r.getComment();
             if (!s.equals(old)) {
                 r.setComment(s);
-                addUndo();
                 int k = tm.getData().indexOf(r);
                 tm.fireTableRowsUpdated(k, k);
                 return true;
@@ -1324,12 +890,6 @@ public class YassTable extends JTable {
         return false;
     }
 
-    /**
-     * Sets the language attribute of the YassTable object
-     *
-     * @param s The new language value
-     * @return Description of the Return Value
-     */
     public boolean setLanguage(String s) {
         YassRow r = tm.getCommentRow("LANGUAGE:");
         if (r == null) {
@@ -1337,15 +897,12 @@ public class YassTable extends JTable {
             YassRow v = tm.getCommentRow("ARTIST:");
             int i = v != null ? tm.getData().indexOf(v) + 1 : 0;
             tm.getData().insertElementAt(r, i);
-
-            addUndo();
             tm.fireTableDataChanged();
             return true;
         } else {
             String old = r.getComment();
             if (!s.equals(old)) {
                 r.setComment(s);
-                addUndo();
                 int k = tm.getData().indexOf(r);
                 tm.fireTableRowsUpdated(k, k);
                 return true;
@@ -1354,12 +911,6 @@ public class YassTable extends JTable {
         return false;
     }
 
-    /**
-     * Sets the year attribute of the YassTable object
-     *
-     * @param s The new year value
-     * @return Description of the Return Value
-     */
     public boolean setYear(String s) {
         if (s != null && (s.trim().equals("0") || s.trim().length() < 1)) {
             s = null;
@@ -1380,21 +931,17 @@ public class YassTable extends JTable {
             }
             int i = v != null ? tm.getData().indexOf(v) + 1 : 0;
             tm.getData().insertElementAt(r, i);
-
-            addUndo();
             tm.fireTableDataChanged();
             return true;
         } else if (s == null) {
             if (r != null) {
                 tm.getData().removeElement(r);
-                addUndo();
                 tm.fireTableDataChanged();
             }
         } else {
             String old = r.getComment();
             if (!s.equals(old)) {
                 r.setComment(s);
-                addUndo();
                 int k = tm.getData().indexOf(r);
                 tm.fireTableRowsUpdated(k, k);
                 return true;
@@ -1403,12 +950,6 @@ public class YassTable extends JTable {
         return false;
     }
 
-    /**
-     * Sets the album attribute of the YassTable object
-     *
-     * @param s The new album value
-     * @return Description of the Return Value
-     */
     public boolean setAlbum(String s) {
         YassRow r = tm.getCommentRow("ALBUM:");
         if (r == null) {
@@ -1419,15 +960,12 @@ public class YassTable extends JTable {
             }
             int i = v != null ? tm.getData().indexOf(v) + 1 : 0;
             tm.getData().insertElementAt(r, i);
-
-            addUndo();
             tm.fireTableDataChanged();
             return true;
         } else {
             String old = r.getComment();
             if (!s.equals(old)) {
                 r.setComment(s);
-                addUndo();
                 int k = tm.getData().indexOf(r);
                 tm.fireTableRowsUpdated(k, k);
                 return true;
@@ -1436,12 +974,6 @@ public class YassTable extends JTable {
         return false;
     }
 
-    /**
-     * Sets the iD attribute of the YassTable object
-     *
-     * @param s The new iD value
-     * @return Description of the Return Value
-     */
     public boolean setID(String s) {
         YassRow r = tm.getCommentRow("ID:");
         if (r == null) {
@@ -1452,15 +984,12 @@ public class YassTable extends JTable {
             }
             int i = v != null ? tm.getData().indexOf(v) + 1 : 0;
             tm.getData().insertElementAt(r, i);
-
-            addUndo();
             tm.fireTableDataChanged();
             return true;
         } else {
             String old = r.getComment();
             if (!s.equals(old)) {
                 r.setComment(s);
-                addUndo();
                 int k = tm.getData().indexOf(r);
                 tm.fireTableRowsUpdated(k, k);
                 return true;
@@ -1469,12 +998,6 @@ public class YassTable extends JTable {
         return false;
     }
 
-    /**
-     * Sets the length attribute of the YassTable object
-     *
-     * @param s The new length value
-     * @return Description of the Return Value
-     */
     public boolean setLength(String s) {
         YassRow r = tm.getCommentRow("LENGTH:");
         if (r == null) {
@@ -1485,15 +1008,12 @@ public class YassTable extends JTable {
             }
             int i = v != null ? tm.getData().indexOf(v) + 1 : 0;
             tm.getData().insertElementAt(r, i);
-
-            addUndo();
             tm.fireTableDataChanged();
             return true;
         } else {
             String old = r.getComment();
             if (!s.equals(old)) {
                 r.setComment(s);
-                addUndo();
                 int k = tm.getData().indexOf(r);
                 tm.fireTableRowsUpdated(k, k);
                 return true;
@@ -1502,12 +1022,6 @@ public class YassTable extends JTable {
         return false;
     }
 
-    /**
-     * Sets the cover attribute of the YassTable object
-     *
-     * @param s The new cover value
-     * @return Description of the Return Value
-     */
     public boolean setCover(String s) {
         YassRow r = tm.getCommentRow("COVER:");
         if (r == null) {
@@ -1518,15 +1032,12 @@ public class YassTable extends JTable {
             }
             int i = v != null ? tm.getData().indexOf(v) + 1 : 0;
             tm.getData().insertElementAt(r, i);
-
-            addUndo();
             tm.fireTableDataChanged();
             return true;
         } else {
             String old = r.getComment();
             if (!s.equals(old)) {
                 r.setComment(s);
-                addUndo();
                 int k = tm.getData().indexOf(r);
                 tm.fireTableRowsUpdated(k, k);
                 return true;
@@ -1535,12 +1046,6 @@ public class YassTable extends JTable {
         return false;
     }
 
-    /**
-     * Sets the background attribute of the YassTable object
-     *
-     * @param s The new background value
-     * @return Description of the Return Value
-     */
     public boolean setBackground(String s) {
         YassRow r = tm.getCommentRow("BACKGROUND:");
         if (r == null) {
@@ -1554,15 +1059,12 @@ public class YassTable extends JTable {
             }
             int i = v != null ? tm.getData().indexOf(v) + 1 : 0;
             tm.getData().insertElementAt(r, i);
-
-            addUndo();
             tm.fireTableDataChanged();
             return true;
         } else {
             String old = r.getComment();
             if (!s.equals(old)) {
                 r.setComment(s);
-                addUndo();
                 int k = tm.getData().indexOf(r);
                 tm.fireTableRowsUpdated(k, k);
                 return true;
@@ -1571,12 +1073,6 @@ public class YassTable extends JTable {
         return false;
     }
 
-    /**
-     * Sets the video attribute of the YassTable object
-     *
-     * @param s The new video value
-     * @return Description of the Return Value
-     */
     public boolean setVideo(String s) {
         YassRow r = tm.getCommentRow("VIDEO:");
         if (r == null) {
@@ -1593,15 +1089,12 @@ public class YassTable extends JTable {
             }
             int i = v != null ? tm.getData().indexOf(v) + 1 : 0;
             tm.getData().insertElementAt(r, i);
-
-            addUndo();
             tm.fireTableDataChanged();
             return true;
         } else {
             String old = r.getComment();
             if (!s.equals(old)) {
                 r.setComment(s);
-                addUndo();
                 int k = tm.getData().indexOf(r);
                 tm.fireTableRowsUpdated(k, k);
                 return true;
@@ -1610,12 +1103,6 @@ public class YassTable extends JTable {
         return false;
     }
 
-    /**
-     * Description of the Method
-     *
-     * @param key Description of the Parameter
-     * @return Description of the Return Value
-     */
     public boolean hasMessage(String key) {
         if (messages == null) {
             return false;
@@ -1623,9 +1110,6 @@ public class YassTable extends JTable {
         return messages.contains(key);
     }
 
-    /**
-     * Sets the hasMessage attribute of the YassTable object
-     */
     public void resetMessages() {
         if (messages == null) {
             messages = new Hashtable<>();
@@ -1633,23 +1117,13 @@ public class YassTable extends JTable {
         messages.clear();
     }
 
-    /**
-     * Sets the message attribute of the YassTable object
-     *
-     * @param key The feature to be added to the Message attribute
-     */
     public void addMessage(String key) {
         if (messages == null) {
             messages = new Hashtable<>();
         }
-        messages.put(key, new Boolean(true));
+        messages.put(key, Boolean.TRUE);
     }
 
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
     public boolean hasMinorPageBreakMessages() {
         if (messages == null || auto == null) {
             return false;
@@ -1664,11 +1138,6 @@ public class YassTable extends JTable {
         return false;
     }
 
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
     public boolean hasPageBreakMessages() {
         if (messages == null || auto == null) {
             return false;
@@ -1683,11 +1152,6 @@ public class YassTable extends JTable {
         return false;
     }
 
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
     public boolean hasTransposedMessages() {
         if (messages == null || auto == null) {
             return false;
@@ -1702,11 +1166,6 @@ public class YassTable extends JTable {
         return false;
     }
 
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
     public boolean hasFileNameMessages() {
         if (messages == null || auto == null) {
             return false;
@@ -1721,11 +1180,6 @@ public class YassTable extends JTable {
         return false;
     }
 
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
     public boolean hasSpacingMessages() {
         if (messages == null || auto == null) {
             return false;
@@ -1740,11 +1194,6 @@ public class YassTable extends JTable {
         return false;
     }
 
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
     public boolean hasUnhandledError() {
         if (messages == null || auto == null) {
             return false;
@@ -1759,11 +1208,6 @@ public class YassTable extends JTable {
         return false;
     }
 
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
     public boolean hasTagsMessages() {
         if (messages == null || auto == null) {
             return false;
@@ -1778,38 +1222,46 @@ public class YassTable extends JTable {
         return false;
     }
 
-    /**
-     * Gets the commentRow attribute of the YassTable object
-     *
-     * @param s Description of the Parameter
-     * @return The commentRow value
-     */
     public YassRow getCommentRow(String s) {
         return tm.getCommentRow(s);
     }
 
-    /**
-     * Description of the Method
-     *
-     * @param filename Description of the Parameter
-     * @return Description of the Return Value
-     */
-    public synchronized boolean loadFile(String filename) {
-        // System.out.println("Loading " + filename);
+    public synchronized boolean loadTable(YassTable t, boolean withDuet) {
+        if (t == null)
+            return false;
+        dir = t.dir;
+        txtFilename = t.txtFilename;
+        isRelative = false;
+        encoding = t.getEncoding();
+        relativePageBreak = 0;
+        if (withDuet) {
+            duetTrack = t.duetTrack;
+            duetTrackCount = t.duetTrackCount;
+            duetTrackName = t.duetTrackName;
+        }
+        else {
+            duetTrack = -1;
+            duetTrackCount = -1;
+            duetTrackName = null;
+            Arrays.fill(duetSingerNames, null);
+        }
+        getModelData().clear();
+        for (YassRow r: t.getModelData())
+            addRow(r.toString());
+        return true;
+    }
 
+    public synchronized boolean loadFile(String filename) {
         File f = new File(filename);
-        if (!f.exists()) {
+        if (!f.exists())
             return false;
-        }
-        if (f.length() > 1024 * 1024) {
+        if (f.length() > 1024 * 1024)
             return false;
-        }
 
         dir = f.getAbsolutePath();
         int isep = dir.lastIndexOf(File.separator);
-        if (isep <= 0) {
+        if (isep <= 0)
             return false;
-        }
         txtFilename = dir.substring(isep + 1);
         dir = dir.substring(0, isep);
 
@@ -1846,20 +1298,18 @@ public class YassTable extends JTable {
             if (inputStream != null) {
                 try {
                     inputStream.close();
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
             if (r != null) {
                 try {
                     r.close();
-                } catch (Exception e) {
-                }
+                } catch (Exception ignored) {}
             }
             if (fis != null) {
                 try {
                     fis.close();
-                } catch (Exception e) {
-                }
+                } catch (Exception ignored) {}
             }
         }
 
@@ -1890,8 +1340,7 @@ public class YassTable extends JTable {
             for (byte aFileData : fileData) {
                 // System.out.print((char) fileData[i]);
                 if (aFileData > 127 || aFileData < 0) {
-                    // System.out.print((int)fileData[i] + "  " + (char)
-                    // fileData[i] + "  ");
+                    // System.out.print((int)fileData[i] + "  " + (char)fileData[i] + "  ");
                     return true;
                 }
             }
@@ -2007,12 +1456,6 @@ public class YassTable extends JTable {
         return enc;
     }
 
-    /**
-     * Sets the text attribute of the YassTable object
-     *
-     * @param s The new text value
-     * @return Description of the Return Value
-     */
     public synchronized boolean setText(String s) {
         if (s == null) {
             return false;
@@ -2054,12 +1497,6 @@ public class YassTable extends JTable {
         return true;
     }
 
-    /**
-     * Description of the Method
-     *
-     * @param filename Description of the Parameter
-     * @return Description of the Return Value
-     */
     public boolean storeFile(String filename) {
         // System.out.println("Storing "+tm.getCommentRow("ARTIST:").getComment()+" - "+tm.getCommentRow("TITLE:").getComment());
 
@@ -2075,9 +1512,9 @@ public class YassTable extends JTable {
             StringWriter errors = new StringWriter();
             new Exception().printStackTrace(new PrintWriter(errors));
             String msg = "Cannot store file: properties not initialized. Please send me the following stacktrace:\n"
-                    + errors.toString();
+                    + errors;
             System.out.println(msg);
-            JTextArea text = new JTextArea(msg.toString());
+            JTextArea text = new JTextArea(msg);
             text.setOpaque(false);
             JOptionPane.showMessageDialog(null, text);
             return false;
@@ -2189,30 +1626,16 @@ public class YassTable extends JTable {
         return success;
     }
 
-    /**
-     * Description of the Method
-     */
     public void resetUndo() {
         undos.removeAllElements();
         undoPos = -1;
         redoMax = 0;
-        if (actions != null) {
-            actions.getUndoAction().setEnabled(false);
-        }
-        if (actions != null) {
-            actions.getRedoAction().setEnabled(false);
-        }
+        if (actions != null) actions.updateActions();
     }
 
-    /**
-     * Adds a feature to the Undo attribute of the YassTable object
-     *
-     * @return Description of the Return Value
-     */
     public YassUndoElement addUndo() {
-        if (preventUndo) {
+        if (preventUndo)
             return null;
-        }
 
         if (undoPos == MAX_UNDO - 1) {
             undos.remove(0);
@@ -2231,50 +1654,26 @@ public class YassTable extends JTable {
             undos.remove(n - 1);
             n--;
         }
-        YassUndoElement ue = null;
+        YassUndoElement ue;
         if (sheet != null) {
-            ue = new YassUndoElement(c, getSelectedRows(),
-                    sheet.getViewPosition(), sheet.getBeatSize(), bpm, gap, start, end, vgap, isRelative);
+            ue = new YassUndoElement(c, getSelectedRows(), sheet.getViewPosition(), sheet.getBeatSize(), bpm, gap, start, end, vgap, isRelative, saved, duetTrack, duetTrackName, duetTrackCount, duetSingerNames);
         } else {
-            ue = new YassUndoElement(c, getSelectedRows(), new Point(), 0, bpm, gap, start, end, vgap, isRelative);
+            ue = new YassUndoElement(c, getSelectedRows(), new Point(), 0, bpm, gap, start, end, vgap, isRelative, saved, duetTrack, duetTrackName, duetTrackCount, duetSingerNames);
         }
         undos.addElement(ue);
-        // System.out.println("add " + ue.sheetViewPosition);
 
         redoMax = 0;
-        if (actions != null && undoPos > 0) {
-            actions.getUndoAction().setEnabled(true);
-        }
-        if (actions != null) {
-            actions.getRedoAction().setEnabled(false);
-        }
+        if (actions != null) actions.updateActions();
         return ue;
     }
 
-    /**
-     * Description of the Method
-     */
-    public void updateUndo() {
-        if (preventUndo) {
-            return;
-        }
-
-        YassUndoElement ue = lastUndo();
-        if (ue == null) {
-            return;
-        }
-
-        if (sheet != null) {
-            ue.set(getSelectedRows(), sheet.getViewPosition(),
-                    sheet.getBeatSize(), bpm, gap, start, end, vgap, isRelative);
-        } else {
-            ue.set(getSelectedRows(), new Point(), 0, bpm, gap, start, end, vgap, isRelative);
-        }
+    public boolean canUndo() {
+        return undoPos > 0;
+    }
+    public boolean canRedo() {
+        return redoMax > 0;
     }
 
-    /**
-     * Description of the Method
-     */
     public void removeLastUndo() {
         if (undoPos < 1) {
             return;
@@ -2283,43 +1682,10 @@ public class YassTable extends JTable {
         undoPos--;
     }
 
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
     public YassUndoElement currentUndo() {
         return undos.elementAt(undoPos);
     }
 
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-    public YassUndoElement lastUndo() {
-        if (undoPos < 1) {
-            return null;
-        }
-        return undos.elementAt(undoPos - 1);
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
-    public YassUndoElement nextUndo() {
-        int n = undos.size();
-        if (undoPos + 1 >= n) {
-            return null;
-        }
-        return undos.elementAt(undoPos + 1);
-    }
-
-    /**
-     * Description of the Method
-     */
     public void redoRows() {
         if (redoMax < 1) {
             return;
@@ -2343,6 +1709,11 @@ public class YassTable extends JTable {
         end = undoElem.end;
         vgap = undoElem.vgap;
         isRelative = undoElem.isRelative;
+        saved = undoElem.isSaved;
+        duetTrack = undoElem.duetTrack;
+        duetTrackCount = undoElem.duetTrackCount;
+        duetTrackName = undoElem.duetTrackName;
+        duetSingerNames = Arrays.copyOf(undoElem.duetSingerNames, undoElem.duetSingerNames.length);
         tm.setData(c);
         tm.fireTableDataChanged();
         preventUndo = oldUndo;
@@ -2357,9 +1728,8 @@ public class YassTable extends JTable {
             sel.addSelectionInterval(k, k);
         }
         sel.setValueIsAdjusting(false);
-        // scrollRectToVisible(rr);
-        // zoomPage();
 
+        if (actions != null) actions.updateActions();
         if (sheet != null) {
             sheet.init();
             sheet.update();
@@ -2367,38 +1737,17 @@ public class YassTable extends JTable {
             sheet.setViewPosition(undoElem.sheetViewPosition);
             sheet.repaint();
         }
-        // System.out.println("redo " + undoElem.sheetViewPosition);
-
-        if (actions != null && redoMax == 0) {
-            actions.getRedoAction().setEnabled(false);
-        }
-        actions.getUndoAction().setEnabled(true);
     }
 
-    /**
-     * Description of the Method
-     */
     public void undoRows() {
-        if (undoPos <= 0) {
-            return;
-        }
         int n = undos.size();
+        if (n < 1 || undoPos > n-1 || undoPos <= 0)
+            return;
         undoPos--;
         redoMax++;
-        actions.getRedoAction().setEnabled(true);
-        if (undoPos == 0) {
-            actions.getUndoAction().setEnabled(false);
-        }
-        if (undoPos >= n) {
-            return;
-        }
 
-        if (n < 1) {
-            return;
-        }
         YassUndoElement undoElem = undos.elementAt(undoPos);
-        YassUndoElement nextUndoElem = undos
-                .elementAt(undoPos + 1);
+        YassUndoElement nextUndoElem = undos.elementAt(undoPos + 1);
 
         Vector<YassRow> c = (Vector<YassRow>) undoElem.data.clone();
         n = c.size();
@@ -2414,6 +1763,11 @@ public class YassTable extends JTable {
         end = undoElem.end;
         vgap = undoElem.vgap;
         isRelative = undoElem.isRelative;
+        saved = undoElem.isSaved;
+        duetTrack = undoElem.duetTrack;
+        duetTrackCount = undoElem.duetTrackCount;
+        duetTrackName = undoElem.duetTrackName;
+        duetSingerNames = Arrays.copyOf(undoElem.duetSingerNames, undoElem.duetSingerNames.length);
         tm.setData(c);
         tm.fireTableDataChanged();
         preventUndo = oldUndo;
@@ -2428,9 +1782,8 @@ public class YassTable extends JTable {
             sel.addSelectionInterval(k, k);
         }
         sel.setValueIsAdjusting(false);
-        // scrollRectToVisible(rr);
-        // zoomPage();
 
+        if (actions != null) actions.updateActions();
         if (sheet != null) {
             sheet.init();
             sheet.update();
@@ -2438,15 +1791,8 @@ public class YassTable extends JTable {
             sheet.setViewPosition(nextUndoElem.sheetViewPosition);
             sheet.repaint();
         }
-        // System.out.println("undo " + undoElem.sheetViewPosition);
     }
 
-    /**
-     * Adds a feature to the Row attribute of the YassTable object
-     *
-     * @param s The feature to be added to the Row attribute
-     * @return Description of the Return Value
-     */
     public synchronized boolean addRow(String s) {
         // trim empty lines
         if (s == null || s.trim().length() < 1 || s.trim().equals("#")) {
@@ -2473,6 +1819,7 @@ public class YassTable extends JTable {
             int i = s.indexOf(':');
             if (i >= 0 && i + 1 < s.length()) {
                 String tag = s.substring(1, i + 1);
+                String ss = s;
                 s = s.substring(i + 1).trim();
                 if (tag.equals("MP3:")) {
                     mp3 = s;
@@ -2489,7 +1836,20 @@ public class YassTable extends JTable {
                     vgap = Double.parseDouble(s.replace(',', '.'));
                 } else if (tag.equals("RELATIVE:")) {
                     isRelative = s.toLowerCase().equals("yes") || s.toLowerCase().equals("true");
+                } else if (tag.startsWith("DUETSINGERP")) {
+                    try {
+                        int p = Integer.parseInt("" + tag.charAt(11)) - 1; // P1=[0], P2=[1], ...
+                        if (duetSingerNames[p] != null) { // duplicate
+                            tm.addRow("#", tag, s, "", "", YassRow.INVALID_LINE);
+                            return true;
+                        }
+                        duetSingerNames[p] = s;
+                    } catch (Exception e) {
+                        tm.addRow("#", tag, s, "", "", YassRow.INVALID_LINE);
+                        return true;
+                    }
                 }
+                tm.addRow("#", tag, s, "", "");
                 return true;
             }
             // non-tag comment
@@ -2536,7 +1896,7 @@ public class YassTable extends JTable {
                 tm.addRow("P", pnum, "", "", "", ""); // add space (not stored, see YassRow.toString)
                 if (pn > 0) {
                     if (pn == 3) pn = 0; // P0 = P3 = both
-                    multiplayer = Math.max(multiplayer, pn);
+                    maxP = Math.max(maxP, pn);
                 }
                 return true;
             } catch (Exception e) {
@@ -2628,24 +1988,13 @@ public class YassTable extends JTable {
         return true;
     }
 
-    /**
-     * Gets the rowAt attribute of the YassTable object
-     *
-     * @param row Description of the Parameter
-     * @return The rowAt value
-     */
     public YassRow getRowAt(int row) {
         return tm.getRowAt(row);
     }
 
-    /**
-     * Description of the Method
-     *
-     * @param b Description of the Parameter
-     */
     public void shiftBeat(int b) {
         int row;
-        int rows[] = getSelectedRows();
+        int[] rows = getSelectedRows();
         if (rows == null || rows.length < 1) {
             return;
         }
@@ -2694,18 +2043,12 @@ public class YassTable extends JTable {
         }
         updatePlayerPosition();
 
-        addUndo();
         preventLyricsUpdate(true);
         tm.fireTableRowsUpdated(getSelectionModel().getMinSelectionIndex(),
                 getSelectionModel().getMaxSelectionIndex());
         preventLyricsUpdate(false);
     }
 
-    /**
-     * Description of the Method
-     *
-     * @param b Description of the Parameter
-     */
     public void shiftRemainder(int b) {
         int row = getSelectionModel().getMinSelectionIndex();
         if (row < 0 && sheet != null) {
@@ -2742,17 +2085,11 @@ public class YassTable extends JTable {
         }
         updatePlayerPosition();
 
-        addUndo();
         preventLyricsUpdate(true);
         tm.fireTableRowsUpdated(row, n);
         preventLyricsUpdate(false);
     }
 
-    /**
-     * Description of the Method
-     *
-     * @param b Description of the Parameter
-     */
     public void shiftLine(int b) {
         int row = getSelectionModel().getMinSelectionIndex();
         if (row < 0 && sheet != null) {
@@ -2794,7 +2131,7 @@ public class YassTable extends JTable {
         }
 
         if (rpb != null && pb > 0 && pb < n - 1) {
-            int comm[] = new int[2];
+            int[] comm = new int[2];
             YassRow prev = getRowAt(pb - 1);
             YassRow next = getRowAt(pb + 1);
             if (prev.isNote() && next.isNote()) {
@@ -2825,15 +2162,11 @@ public class YassTable extends JTable {
         }
         updatePlayerPosition();
 
-        addUndo();
         preventLyricsUpdate(true);
         tm.fireTableRowsUpdated(row, n);
         preventLyricsUpdate(false);
     }
 
-    /**
-     * Description of the Method
-     */
     public void selectLine() {
         int row = getSelectionModel().getMinSelectionIndex();
         if (row < 0 && sheet != null) {
@@ -2869,7 +2202,6 @@ public class YassTable extends JTable {
         }
 
         int j = row;
-        ;
         while (j < n) {
             r = getRowAt(j);
             if (r.isPageBreak()) {
@@ -2882,9 +2214,6 @@ public class YassTable extends JTable {
         updatePlayerPosition();
     }
 
-    /**
-     * Description of the Method
-     */
     public void selectAll() {
         int n = getRowCount();
         int i = 0;
@@ -2919,16 +2248,8 @@ public class YassTable extends JTable {
         if (sheet != null) {
             sheet.repaint();
         }
-        preventLyricsUpdate(true);
-        tm.fireTableRowsUpdated(getSelectionModel().getMinSelectionIndex(),
-                getSelectionModel().getMaxSelectionIndex());
-        preventLyricsUpdate(false);
-        return;
     }
 
-    /**
-     * Description of the Method
-     */
     public void viewAll() {
         int n = getRowCount();
         int i = 0;
@@ -2961,14 +2282,9 @@ public class YassTable extends JTable {
         }
     }
 
-    /**
-     * Description of the Method
-     *
-     * @param h Description of the Parameter
-     */
     public void shiftHeight(int h) {
         int row;
-        int rows[] = getSelectedRows();
+        int[] rows = getSelectedRows();
         if (rows == null || rows.length < 1) {
             return;
         }
@@ -2983,8 +2299,6 @@ public class YassTable extends JTable {
                 r.setHeight(r.getHeightInt() + h);
             }
         }
-        addUndo();
-
         if (sheet != null) {
             sheet.init();
             sheet.update();
@@ -2996,15 +2310,10 @@ public class YassTable extends JTable {
         preventLyricsUpdate(false);
     }
 
-    /**
-     * Description of the Method
-     *
-     * @param d Description of the Parameter
-     */
     public void shiftLeftEndian(int d) {
         int row = -1;
         int row2 = -1;
-        int rows[] = getSelectedRows();
+        int[] rows = getSelectedRows();
         if (rows == null || rows.length < 1) {
             return;
         }
@@ -3034,7 +2343,6 @@ public class YassTable extends JTable {
                 if (dur < 1) {
                     beat -= 1 - dur;
                     dur = 1;
-                    d = r.getLengthInt() - 1;
                 }
                 if (r2 != null) {
                     // prevent dragging beyond left note
@@ -3059,7 +2367,6 @@ public class YassTable extends JTable {
             }
             updatePlayerPosition();
 
-            addUndo();
             preventLyricsUpdate(true);
             tm.fireTableRowsUpdated(getSelectionModel().getMinSelectionIndex(),
                     getSelectionModel().getMaxSelectionIndex());
@@ -3134,21 +2441,15 @@ public class YassTable extends JTable {
         }
         updatePlayerPosition();
 
-        addUndo();
         preventLyricsUpdate(true);
         tm.fireTableRowsUpdated(getSelectionModel().getMinSelectionIndex(),
                 getSelectionModel().getMaxSelectionIndex());
         preventLyricsUpdate(false);
     }
 
-    /**
-     * Description of the Method
-     *
-     * @param d Description of the Parameter
-     */
     public void shiftRightEndian(int d) {
         int row = -1;
-        int rows[] = getSelectedRows();
+        int[] rows = getSelectedRows();
         if (rows == null || rows.length < 1) {
             return;
         }
@@ -3200,7 +2501,6 @@ public class YassTable extends JTable {
             }
             updatePlayerPosition();
 
-            addUndo();
             preventLyricsUpdate(true);
             tm.fireTableRowsUpdated(getSelectionModel().getMinSelectionIndex(),
                     getSelectionModel().getMaxSelectionIndex());
@@ -3239,21 +2539,15 @@ public class YassTable extends JTable {
             zoomPage();
         }
 
-        addUndo();
         preventLyricsUpdate(true);
         tm.fireTableRowsUpdated(getSelectionModel().getMinSelectionIndex(),
                 getSelectionModel().getMaxSelectionIndex());
         preventLyricsUpdate(false);
     }
 
-    /**
-     * Sets the type attribute of the YassTable object
-     *
-     * @param s The new type value
-     */
     public void setType(String s) {
         int row;
-        int rows[] = getSelectedRows();
+        int[] rows = getSelectedRows();
         if (rows == null || rows.length < 1) {
             return;
         }
@@ -3278,17 +2572,10 @@ public class YassTable extends JTable {
                 }
             }
         }
-
-        addUndo();
         tm.fireTableRowsUpdated(getSelectionModel().getMinSelectionIndex(),
                 getSelectionModel().getMaxSelectionIndex());
     }
 
-    /**
-     * Description of the Method
-     *
-     * @param n Description of the Parameter
-     */
     public void gotoPageNumber(int n) {
         int pn = 1;
         int i = 0;
@@ -3316,11 +2603,6 @@ public class YassTable extends JTable {
         zoomPage();
     }
 
-    /**
-     * Gets the pageNumber attribute of the YassTable object
-     *
-     * @return The pageNumber value
-     */
     public int getPageNumber() {
         int row = getSelectionModel().getMinSelectionIndex();
         if (row < 0) {
@@ -3329,20 +2611,10 @@ public class YassTable extends JTable {
         return getPageNumber(row);
     }
 
-    /**
-     * Gets the rows attribute of the YassTable object
-     *
-     * @return The rows value
-     */
     public Enumeration<YassRow> getRows() {
         return tm.getData().elements();
     }
 
-    /**
-     * Gets the firstVisiblePageNumber attribute of the YassTable object
-     *
-     * @return The firstVisiblePageNumber value
-     */
     public int getFirstVisiblePageNumber() {
         if (sheet == null) {
             return -1;
@@ -3354,12 +2626,6 @@ public class YassTable extends JTable {
         return getPageNumber(row);
     }
 
-    /**
-     * Gets the pageNumber attribute of the YassTable object
-     *
-     * @param row Description of the Parameter
-     * @return The pageNumber value
-     */
     public int getPageNumber(int row) {
         if (row < 0)
             return 0;
@@ -3387,11 +2653,6 @@ public class YassTable extends JTable {
         return -1;
     }
 
-    /**
-     * Gets the pageCount attribute of the YassTable object
-     *
-     * @return The pageCount value
-     */
     public int getPageCount() {
         int pn = 1;
         Enumeration<?> en = tm.getData().elements();
@@ -3404,19 +2665,12 @@ public class YassTable extends JTable {
         return pn;
     }
 
-    /**
-     * Gets the pages attribute of the YassTable object
-     *
-     * @return The pages value
-     */
     public Vector<YassPage> getPages() {
         Vector<YassPage> pages = new Vector<>();
         YassPage p = null;
 
         boolean first = true;
-        for (Enumeration<?> en = tm.getData().elements(); en.hasMoreElements(); ) {
-            YassRow r = (YassRow) en.nextElement();
-
+        for (YassRow r: tm.getData()) {
             if (r.isNote()) {
                 if (first) {
                     p = new YassPage(this);
@@ -3433,29 +2687,14 @@ public class YassTable extends JTable {
         return pages;
     }
 
-    /**
-     * Gets the multiSize attribute of the YassTable object
-     *
-     * @return The multiSize value
-     */
     public int getMultiSize() {
         return multiSize;
     }
 
-    /**
-     * Sets the multiSize attribute of the YassTable object
-     *
-     * @param i The new multiSize value
-     */
     public void setMultiSize(int i) {
         multiSize = i;
     }
 
-    /**
-     * Adds a feature to the MultiSize attribute of the YassTable object
-     *
-     * @param i The feature to be added to the MultiSize attribute
-     */
     public void addMultiSize(int i) {
         multiSize += i;
         if (multiSize < 1) {
@@ -3468,27 +2707,14 @@ public class YassTable extends JTable {
         }
     }
 
-    /**
-     * Gets the preventZoom attribute of the YassTable object
-     *
-     * @return The preventZoom value
-     */
     public boolean getPreventZoom() {
         return preventZoom;
     }
 
-    /**
-     * Sets the preventZoom attribute of the YassTable object
-     *
-     * @param onoff The new preventZoom value
-     */
     public void setPreventZoom(boolean onoff) {
         preventZoom = onoff;
     }
 
-    /**
-     * Description of the Method
-     */
     public void zoomPage() {
         if (preventZoom) {
             return;
@@ -3516,7 +2742,9 @@ public class YassTable extends JTable {
         }
 
         int n = getRowCount();
-        int ij[] = null;
+        if (i==n-1) // only end selected => select row before
+            i--;
+        int[] ij = null;
         if (zoomMode == ZOOM_ONE) {
             ij = enlargeToPages(i, j);
         }
@@ -3534,7 +2762,7 @@ public class YassTable extends JTable {
 
             boolean addEnd = false;
 
-            while (k > 1 && ij != null) {
+            while (k > 1) {
                 ij[1] = enlargeToPageBreak(Math.min(ij[1] + 1, n - 1));
                 boolean endReached = getRowAt(ij[1]).isEnd();
                 if (endReached && !addEnd) {
@@ -3570,57 +2798,41 @@ public class YassTable extends JTable {
     }
 
     /**
-     * Description of the Method
-     *
-     * @param i Description of the Parameter
-     * @param j Description of the Parameter
-     * @return Description of the Return Value
+     * Enlarge current span to full pages.
+     * @param i span start
+     * @param j span end
+     * @return [s,e] where
+     *  s = note before i that starts a page
+     *  e = note after j that ends a page
      */
     public int[] enlargeToPages(int i, int j) {
-        if (i < 0) {
+        if (i < 0)
             return null;
-        }
-
         int n = getRowCount();
+        if (i >= n)
+            return null;
         YassRow r = getRowAt(i);
-
-        if (r.isEnd()) {
+        if (r.isEnd())
             return new int[]{i, i};
-        }
-
-        while (!(r.isNote()) && i > 0) {
+        while (!(r.isNote()) && i > 0)
             r = getRowAt(--i);
-        }
         // move back until i-->note
         boolean inHeader = !r.isNote();
         YassRow r2 = getRowAt(j);
-        while (!(r2.isNote()) && j < n - 1) {
+        while (!(r2.isNote()) && j < n - 1)
             r2 = getRowAt(++j);
-        }
         // // move forward until j-->note
-        if (inHeader) {
+        if (inHeader)
             return new int[]{i, j - 1};
-        }
-
         r = getRowAt(i);
-        while (r.isNote() && i > 0) {
+        while (r.isNote() && i > 0)
             r = getRowAt(--i);
-        }
-
         r2 = getRowAt(j);
-        while (r2.isNote() && j < n - 1) {
+        while (r2.isNote() && j < n - 1)
             r2 = getRowAt(++j);
-        }
-
         return new int[]{i + 1, j - 1};
     }
 
-    /**
-     * Description of the Method
-     *
-     * @param j Description of the Parameter
-     * @return Description of the Return Value
-     */
     public int enlargeToPageBreak(int j) {
         int n = getRowCount();
         YassRow r2 = getRowAt(j);
@@ -3631,9 +2843,6 @@ public class YassTable extends JTable {
         return j;
     }
 
-    /**
-     * Description of the Method
-     */
     public void home() {
         int row = getSelectionModel().getMinSelectionIndex();
         if (row < 0 && sheet != null) {
@@ -3663,11 +2872,6 @@ public class YassTable extends JTable {
         updatePlayerPosition();
     }
 
-    /**
-     * Description of the Method
-     *
-     * @param k Description of the Parameter
-     */
     public void note(int k) {
         int notes = 0;
         int n = getRowCount();
@@ -3694,9 +2898,6 @@ public class YassTable extends JTable {
         updatePlayerPosition();
     }
 
-    /**
-     * Description of the Method
-     */
     public void end() {
         int row = getSelectionModel().getMaxSelectionIndex();
         int n = getRowCount();
@@ -3724,11 +2925,6 @@ public class YassTable extends JTable {
         updatePlayerPosition();
     }
 
-    /**
-     * Gets the firstNote attribute of the YassTable object
-     *
-     * @return The firstNote value
-     */
     public YassRow getFirstNote() {
         int n = getRowCount();
         if (n < 0) {
@@ -3746,9 +2942,6 @@ public class YassTable extends JTable {
         return r;
     }
 
-    /**
-     * Description of the Method
-     */
     public void firstNote() {
         int n = getRowCount();
         if (n <= 0) {
@@ -3772,9 +2965,6 @@ public class YassTable extends JTable {
         zoomPage();
     }
 
-    /**
-     * Description of the Method
-     */
     public void lastNote() {
         int n = getRowCount();
         if (n < 0) {
@@ -3904,20 +3094,12 @@ public class YassTable extends JTable {
         return rMin;
     }
 
-    /**
-     * Description of the Method
-     */
     public void prevBeat() {
         prevBeat(false);
     }
 
-    /**
-     * Description of the Method
-     *
-     * @param add Description of the Parameter
-     */
     public void prevBeat(boolean add) {
-        int rows[] = getSelectedRows();
+        int[] rows = getSelectedRows();
         int i = -1;
         int n = getRowCount();
         if (rows == null || rows.length < 1) {
@@ -3965,20 +3147,12 @@ public class YassTable extends JTable {
         }
     }
 
-    /**
-     * Description of the Method
-     */
     public void nextBeat() {
         nextBeat(false);
     }
 
-    /**
-     * Description of the Method
-     *
-     * @param add Description of the Parameter
-     */
     public void nextBeat(boolean add) {
-        int rows[] = getSelectedRows();
+        int[] rows = getSelectedRows();
         int i = -1;
         int n = getRowCount();
         if (n < 1) {
@@ -4031,11 +3205,6 @@ public class YassTable extends JTable {
         }
     }
 
-    /**
-     * Description of the Method
-     *
-     * @return Description of the Return Value
-     */
     public int countSelectedPages() {
         int i = getSelectionModel().getMinSelectionIndex();
         int j = getSelectionModel().getMaxSelectionIndex();
@@ -4052,9 +3221,6 @@ public class YassTable extends JTable {
         return span;
     }
 
-    /**
-     * Description of the Method
-     */
     public void adjustMultiSize() {
         int s = getSelectionModel().getMinSelectionIndex();
         int t = getSelectionModel().getMaxSelectionIndex();
@@ -4080,23 +3246,14 @@ public class YassTable extends JTable {
         zoomPage();
     }
 
-    /**
-     * Description of the Method
-     */
     public void selectNextBeat() {
         nextBeat(true);
     }
 
-    /**
-     * Description of the Method
-     */
     public void selectPrevBeat() {
         prevBeat(true);
     }
 
-    /**
-     * Description of the Method
-     */
     public void gotoGap() {
         YassRow r = tm.getCommentRow("GAP:");
         if (r == null) {
@@ -4110,9 +3267,6 @@ public class YassTable extends JTable {
         updatePlayerPosition();
     }
 
-    /**
-     * Description of the Method
-     */
     public void gotoStart() {
         YassRow r = tm.getCommentRow("START:");
         if (r == null) {
@@ -4126,9 +3280,6 @@ public class YassTable extends JTable {
         updatePlayerPosition();
     }
 
-    /**
-     * Description of the Method
-     */
     public void gotoEnd() {
         YassRow r = tm.getCommentRow("END:");
         if (r == null) {
@@ -4142,12 +3293,6 @@ public class YassTable extends JTable {
         updatePlayerPosition();
     }
 
-    /**
-     * Gets the page attribute of the YassTable object
-     *
-     * @param b Description of the Parameter
-     * @return The page value
-     */
     public int getPage(int b) {
         int pn = 1;
         int i = 0;
@@ -4165,11 +3310,6 @@ public class YassTable extends JTable {
         return -1;
     }
 
-    /**
-     * Description of the Method
-     *
-     * @param b Description of the Parameter
-     */
     public void gotoPage(int b) {
         int n = getRowCount();
         if (n < 1) {
@@ -4177,7 +3317,7 @@ public class YassTable extends JTable {
         }
 
         int row = 0;
-        int rows[] = getSelectedRows();
+        int[] rows = getSelectedRows();
         if (rows == null || rows.length < 1) {
             row = sheet != null ? sheet.nextElement() : 0;
             if (row < 0) {
@@ -4214,7 +3354,9 @@ public class YassTable extends JTable {
             while ((!r.isNote()) && row < n - 1) {
                 r = getRowAt(++row);
             }
-            // if (row==n-1) --> select END
+            if (row==n-1) { // select END --> no
+                return;
+            }
         }
 
         setRowSelectionInterval(row, row);
@@ -4228,116 +3370,6 @@ public class YassTable extends JTable {
         }
     }
 
-    /**
-     * Description of the Method
-     *
-     * @param b Description of the Parameter
-     */
-    public void gotoPageBreak(int b) {
-        int row = 0;
-        int rows[] = getSelectedRows();
-        if (rows == null || rows.length < 1) {
-            row = sheet != null ? sheet.nextElement() : 0;
-            if (row < 0) {
-                row = 0;
-            }
-        } else {
-            if (b < 0) {
-                row = rows[0];
-            } else {
-                row = rows[rows.length - 1];
-            }
-        }
-
-        int n = getRowCount();
-        if (b < 0 && row > 1) {
-            row -= 2;
-            YassRow r = getRowAt(row);
-            while (!r.isPageBreak() && row > 0) {
-                r = getRowAt(--row);
-            }
-            if (row == 0) {
-                return;
-            }
-        } else if (b > 0 && row < n - 1) {
-            YassRow r = getRowAt(++row);
-            while (!r.isPageBreak() && row < n - 1) {
-                r = getRowAt(++row);
-            }
-            if (row == n - 1) {
-                return;
-            }
-        }
-        if (row < n - 1) {
-            setRowSelectionInterval(row + 1, row + 1);
-        }
-
-        int ij[] = enlargeToPages(row, row);
-        if (ij == null) {
-            return;
-        }
-        Rectangle rr = getCellRect(ij[0], 0, true);
-        rr.add(getCellRect(ij[1], 4, true));
-        scrollRectToVisible(rr);
-
-        if (sheet != null) {
-            sheet.setZoom(ij[0], ij[1], true);
-            sheet.repaint();
-        }
-    }
-
-    /**
-     * Description of the Method
-     *
-     * @param force Description of the Parameter
-     */
-    public void zoomSelection(boolean force) {
-        if (sheet == null) {
-            return;
-        }
-
-        int i = getSelectionModel().getMinSelectionIndex();
-        int j = getSelectionModel().getMaxSelectionIndex();
-        if (i < 0) {
-            return;
-        }
-        sheet.setZoom(i, j, force);
-        sheet.repaint();
-    }
-
-    /**
-     * Description of the Method
-     */
-    public void zoomAll() {
-        if (sheet != null) {
-            sheet.setZoom(0, getRowCount() - 1, true);
-        }
-    }
-
-    /**
-     * Description of the Method
-     */
-    public void zoom() {
-        if (sheet == null) {
-            return;
-        }
-
-        sheet.enablePan(false);
-        if (zoomMode == ZOOM_TIME) {
-            zoomPage();
-        } else if (zoomMode == ZOOM_ONE) {
-            sheet.enablePan(true);
-            zoomPage();
-        } else if (zoomMode == ZOOM_MULTI) {
-            zoomPage();
-        } else if (zoomMode == ZOOM_ALL) {
-            zoomAll();
-        }
-    }
-
-    /**
-     * Description of the Method
-     */
     public void multiply() {
         boolean oldUndo = preventUndo;
         preventUndo = true;
@@ -4365,8 +3397,6 @@ public class YassTable extends JTable {
         }
         setBPM(getBPM() * 2);
         preventUndo = oldUndo;
-        addUndo();
-
         tm.fireTableDataChanged();
         if (sel >= 0) {
             setRowSelectionInterval(sel, sel);
@@ -4374,9 +3404,6 @@ public class YassTable extends JTable {
         }
     }
 
-    /**
-     * Description of the Method
-     */
     public void divide() {
         int sel = getSelectionModel().getMinSelectionIndex();
         if (sel < 0 && sheet != null) {
@@ -4406,8 +3433,6 @@ public class YassTable extends JTable {
         }
         setBPM(getBPM() / 2.0);
         preventUndo = oldUndo;
-        addUndo();
-
         tm.fireTableDataChanged();
         if (sel >= 0) {
             setRowSelectionInterval(sel, sel);
@@ -4415,9 +3440,6 @@ public class YassTable extends JTable {
         }
     }
 
-    /**
-     * Description of the Method
-     */
     public void pasteRows() {
         int startRow = getSelectionModel().getMinSelectionIndex();
         if (startRow < 0) {
@@ -4460,9 +3482,8 @@ public class YassTable extends JTable {
                     r2.setHeight(height);
                 }
             }
-            addUndo();
             tm.fireTableRowsUpdated(startRow, Math.min(startRow + i, n - 1));
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -4556,16 +3577,12 @@ public class YassTable extends JTable {
         }
 
         tm.insertRowAt(":", beat + "", length + "", height + "", "~", row + 1);
-        addUndo();
         tm.fireTableRowsInserted(row + 1, row + 1);
         setRowSelectionInterval(row + 1, row + 1);
         updatePlayerPosition();
         zoomPage();
     }
 
-    /**
-     * Description of the Method
-     */
     public void togglePageBreak() {
         int row = getSelectionModel().getMinSelectionIndex() - 1;
         if (row < 0) {
@@ -4588,29 +3605,15 @@ public class YassTable extends JTable {
         }
     }
 
-    /**
-     * Description of the Method
-     *
-     * @param before Description of the Parameter
-     */
     public void insertPageBreak(boolean before) {
-        int row = before ? getSelectionModel().getMinSelectionIndex() - 1
+        int row = before
+                ? getSelectionModel().getMinSelectionIndex() - 1
                 : getSelectionModel().getMaxSelectionIndex();
-        if (row < 0) {
+        if (row < 0)
             return;
-        }
-        if (row == 0) {
-            before = false;
-        }
-
         insertPageBreakAt(row);
     }
 
-    /**
-     * Description of the Method
-     *
-     * @param row Description of the Parameter
-     */
     public void insertPageBreakAt(int row) {
         YassRow r = getRowAt(row);
 
@@ -4643,7 +3646,7 @@ public class YassTable extends JTable {
 
         String beat = "" + (r.getBeatInt() + r.getLengthInt());
 
-        int ij[] = null;
+        int[] ij = null;
         if (row > 0 && next != null) {
             if (r.isNote() && next.isNote()) {
                 ij = new int[2];
@@ -4658,8 +3661,6 @@ public class YassTable extends JTable {
         } else {
             tm.insertRowAt("-", beat, "", "", "", row + 1);
         }
-
-        addUndo();
         tm.fireTableRowsInserted(row + 1, row + 1);
     }
 
@@ -4669,14 +3670,11 @@ public class YassTable extends JTable {
      * @param before Description of the Parameter
      */
     public void removePageBreak(boolean before) {
-        int row = before ? getSelectionModel().getMinSelectionIndex() - 1
+        int row = before
+                ? getSelectionModel().getMinSelectionIndex() - 1
                 : getSelectionModel().getMaxSelectionIndex() + 1;
-        if (row < 0) {
+        if (row < 0)
             return;
-        }
-        if (row == 0) {
-            before = false;
-        }
 
         int n = getRowCount();
         if (row >= n - 1) {
@@ -4701,9 +3699,7 @@ public class YassTable extends JTable {
                 next.setText(YassRow.SPACE + txt);
             }
         }
-
         tm.getData().removeElementAt(row);
-        addUndo();
         tm.fireTableDataChanged();
     }
 
@@ -4772,11 +3768,8 @@ public class YassTable extends JTable {
                         i++;
                     }
                 }
-                addUndo();
-                tm.fireTableRowsInserted(before ? startRow : startRow + 1, startRow
-                        + i - 1);
-            } catch (Exception ex) {
-            }
+                tm.fireTableRowsInserted(before ? startRow : startRow + 1, startRow + i - 1);
+            } catch (Exception ignored) {}
         }
         return num;
     }
@@ -4805,16 +3798,14 @@ public class YassTable extends JTable {
         } catch (Exception e) {
             return 0;
         }
-        ;
-
         return insertRowsAt(trstring, startRow, before);
     }
 
     public int insertNotesHere() {
         if (sheet != null) {
             int pos = sheet.getPlayerPosition();
-            int beat = sheet.toBeat(pos);
-            int startRow = getIndexOfNoteBeforeBeat(beat);
+            int beat = msToBeat(pos);
+            //int startRow = getIndexOfNoteBeforeBeat(beat);
 
             String trstring = null;
             try {
@@ -4844,7 +3835,7 @@ public class YassTable extends JTable {
         int sel = -1;
         Arrays.sort(rows);
         int n = getRowCount();
-        int end = rows.length > 1 ? rows.length - 2 : rows.length - 1;
+        int end = rows.length > 1 ? rows.length - 2 : 0;
         for (int i = end; i >= 0; i--) {
             int row = rows[i];
 
@@ -4902,8 +3893,6 @@ public class YassTable extends JTable {
                 sel = row;
             }
         }
-        addUndo();
-
         tm.fireTableDataChanged();
         if (sel >= 0) {
             setRowSelectionInterval(sel, sel);
@@ -4938,7 +3927,7 @@ public class YassTable extends JTable {
      */
     public void removeRows() {
         int n = getRowCount();
-        int rows[] = getSelectedRows();
+        int[] rows = getSelectedRows();
         if (rows == null || rows.length < 1) {
             return;
         }
@@ -5009,8 +3998,6 @@ public class YassTable extends JTable {
                 sel = row - 1;
             }
         }
-        addUndo();
-
         tm.fireTableDataChanged();
         if (sel >= 0) {
             setRowSelectionInterval(sel, sel);
@@ -5022,7 +4009,7 @@ public class YassTable extends JTable {
      * Description of the Method
      */
     public boolean removeRowsWithLyrics() {
-        int rows[] = getSelectedRows();
+        int[] rows = getSelectedRows();
         if (rows == null || rows.length < 1) {
             return false;
         }
@@ -5043,7 +4030,6 @@ public class YassTable extends JTable {
         else if (prev != null && (! prev.isNote()) && next != null && next.isPageBreak())
             tm.removeRowAt(rows[0]);
 
-        addUndo();
         tm.fireTableDataChanged();
         if (next != null)
             setRowSelectionInterval(rows[0], rows[0]);
@@ -5118,7 +4104,7 @@ public class YassTable extends JTable {
                 txt = prev.getText();
                 if (i == row) {
                     if (init != null) {
-                        char c[] = init.toCharArray();
+                        char[] c = init.toCharArray();
                         int k = c.length - 1;
                         while (k > 0 && c[k] == YassRow.SPACE) {
                             k--;
@@ -5201,8 +4187,6 @@ public class YassTable extends JTable {
                 r = prev;
             }
         }
-        addUndo();
-
         tm.fireTableDataChanged();
         setRowSelectionInterval(row, row);
         updatePlayerPosition();
@@ -5258,7 +4242,7 @@ public class YassTable extends JTable {
             txt = next.getText();
 
             if (i == lastIndex) {
-                char c[] = txt.toCharArray();
+                char[] c = txt.toCharArray();
                 int k = 0;
                 while (k < c.length && c[k] == YassRow.SPACE) {
                     k++;
@@ -5323,8 +4307,6 @@ public class YassTable extends JTable {
                 r = next;
             }
         }
-        addUndo();
-
         tm.fireTableDataChanged();
         setRowSelectionInterval(row, row);
         updatePlayerPosition();
@@ -5347,7 +4329,7 @@ public class YassTable extends JTable {
      */
     public String getSelectedRowsAsString() {
         StringBuffer sbf = new StringBuffer();
-        int rows[] = getSelectedRows();
+        int[] rows = getSelectedRows();
         if (rows == null || rows.length < 1) {
             return "";
         }
@@ -5424,7 +4406,7 @@ public class YassTable extends JTable {
         r2.setBeat(r.getBeatInt() + w1);
         r2.setLength(w2);
         String txt = r.getText();
-        char c[] = txt.toCharArray();
+        char[] c = txt.toCharArray();
         int i = c.length - 1;
         while (i > 0 && c[i] == YassRow.SPACE) {
             i--;
@@ -5445,8 +4427,6 @@ public class YassTable extends JTable {
         }
 
         tm.getData().insertElementAt(r2, row + 1);
-        addUndo();
-
         tm.fireTableDataChanged();
         setRowSelectionInterval(row, row + 1);
         updatePlayerPosition();
@@ -5488,7 +4468,6 @@ public class YassTable extends JTable {
         r.setText(r.getText() + txt);
 
         tm.getData().removeElementAt(row);
-        addUndo();
         tm.fireTableDataChanged();
     }
 
@@ -5522,7 +4501,6 @@ public class YassTable extends JTable {
         r.setText(r.getText() + txt);
 
         tm.getData().removeElementAt(row + 1);
-        addUndo();
         tm.fireTableDataChanged();
         setRowSelectionInterval(row, row);
     }
@@ -5552,8 +4530,7 @@ public class YassTable extends JTable {
                             YassRow r2 = getRowAt(i - 1);
                             if ((r2.isNote())) {
                                 String txt2 = r2.getText();
-                                if (txt2.length() == 0
-                                        || !txt2.endsWith(YassRow.SPACE + "")) {
+                                if (!txt2.endsWith(YassRow.SPACE + "")) {
                                     txt = "-" + txt;
                                 } else {
                                     txt = YassRow.SPACE + txt;
@@ -5755,7 +4732,6 @@ public class YassTable extends JTable {
         int mismatch = syllables - notes;
 
         // spread syllables
-        txt = "";
         int k = 0;
         boolean changed = false;
         Vector<?> data = tm.getData();
@@ -5816,7 +4792,7 @@ public class YassTable extends JTable {
      * @param includePageBreaks Description of the Parameter
      * @return The selection value
      */
-    public long[][] getSelection(int i, int j, long inout[], long clicks[][],
+    public long[][] getSelection(int i, int j, long[] inout, long[][] clicks,
                                  boolean includePageBreaks) {
         int n = getRowCount();
         boolean all = i < 0 && j < 0;
@@ -5890,25 +4866,327 @@ public class YassTable extends JTable {
         return clicks;
     }
 
-    // get player names
-    public String[] getPlayerNames() {
-        int multi = getMultiplayer();
-        if (multi < 2)
+    /**
+     * Get singer name from DUETSINGERP[i+1].
+     * @return null if < 2 players or if not set
+     */
+    public String getDuetSingerName(int i) {
+        int n = getPlayerCount();
+        if (n < 2 || i >= n || i < 0)
             return null;
-        String versions = "";
-        for (int i = 1; i <= multi; i++) {
-            if (versions != "") versions += "; ";
-            YassRow pr = tm.getCommentRow("DUETSINGERP" + i + ":");
-            if (pr != null) {
-                versions += pr.getComment();
-                // found = true;
-            } else {
-                versions += "P" + i;
+        return duetSingerNames[i];
+    }
+
+    /**
+     * Set singer name for DUETSINGERP[i+1]. Inserts row if missing, just before row #BPM.
+     * @return false if < 2 players or if index invalid
+     */
+    public boolean setDuetSingerName(int i, String name) {
+        int n = getPlayerCount();
+        if (n < 2 || i >= n || i < 0)
+            return false;
+        duetSingerNames[i] = name;
+
+        YassRow r = tm.getCommentRow("DUETSINGERP"+(i+1)+":");
+        if (r == null) {
+            r = new YassRow("#", "DUETSINGERP"+(i+1)+":", name, "", "");
+            YassRow bpm = tm.getCommentRow("BPM:");
+            int k = bpm != null ? tm.getData().indexOf(bpm) : 0;
+            tm.getData().insertElementAt(r, k);
+            tm.fireTableDataChanged();
+        } else {
+            String old = r.getComment();
+            if (!name.equals(old)) {
+                r.setComment(name);
+                int k = tm.getData().indexOf(r);
+                tm.fireTableRowsUpdated(k, k);
             }
         }
-        versions = versions.trim();
-        String version[] = versions.split("; ");
-        return version;
+        return true;
+    }
+
+    /**
+     * Gets singer names as "P1/P2/...", with "-" for unnamed singers, e.g. "-/-".
+     * @return never null
+     */
+    public String getDuetSingerNamesAsString() {
+        int n = getPlayerCount();
+        if (n < 2)
+            return "";
+        StringBuffer sb = new StringBuffer();
+        for (int i=0; i<n; i++) {
+            if (sb.length() > 0)
+                sb.append('/');
+            String name = duetSingerNames[i];
+            sb.append(name != null ? name : "-");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Splits duet into tracks.
+     *
+     * @return null if < 2 players
+     */
+    public Vector<YassTable> splitTable() {
+        int trackCount = getPlayerCount();
+        if (trackCount < 2)
+            return null;
+        Vector<YassTable> trackTables;
+        try {
+            // create tables
+            trackTables = new Vector<>(trackCount);
+            for (int i = 0; i < trackCount; i++) {
+                YassTable t = new YassTable();
+                t.init(prop);
+                t.setDuetTrack(i + 1, getDuetSingerName(i));
+                t.setDuetTrackCount(trackCount);
+                trackTables.addElement(t);
+            }
+
+            // copy header
+            for (YassTable t : trackTables) {
+                Vector<YassRow> trackData = t.getModelData();
+                for (YassRow r : getModelData()) {
+                    if (!r.isComment()) // stop after header
+                        break;
+                    if (r.getCommentTag().startsWith("DUETSINGERP")) // remove track name
+                        continue;
+                    trackData.addElement(new YassRow(r));
+                }
+                t.setDir(getDir());
+                t.setFilename(getFilename());
+                t.setBPM(getBPM());
+                t.setGap(getGap());
+            }
+
+            // extract player notes
+            Vector<YassRow>[] tracksData = new Vector[trackTables.size()];
+            for (int i = 0; i < tracksData.length; i++)
+                tracksData[i] = trackTables.elementAt(i).getModelData();
+            int p = 0;
+            for (YassRow r : getModelData()) {
+                if (r.isComment())
+                    continue;
+                if (r.isP()) {
+                    try {
+                        p = r.getBeatInt();
+                    } catch (Exception e) {
+                        p = 0;
+                    }
+                    continue;
+                }
+                if (r.isNote() && p == 0) { // add to all players
+                    for (int i = 0; i < trackTables.size(); i++)
+                        tracksData[i].addElement(new YassRow(r));
+                }
+                if (r.isNote() && p > 0) { // add to all player in bitmask
+                    for (int k: YassUtils.getBitMask(p))
+                        tracksData[k].addElement(new YassRow(r));
+                } else if (r.isPageBreak()) {
+                    for (Vector<YassRow> trackData : tracksData) {
+                        int lastIndex = trackData.size() - 1;
+                        YassRow lastRow = lastIndex >= 0 ? trackData.elementAt(lastIndex) : null;
+                        if (lastRow != null && lastRow.isNote()) // skip other-player page breaks
+                            trackData.addElement(new YassRow(r));
+                    }
+                } else if (r.isEnd()) {
+                    for (Vector<YassRow> trackData : tracksData) {
+                        // skip other-player page breaks
+                        int lastIndex = trackData.size() - 1;
+                        YassRow last = trackData.elementAt(lastIndex);
+                        while (last.isPageBreak()) {
+                            trackData.removeElementAt(lastIndex--);
+                            if (lastIndex == 0)
+                                break;
+                            last = trackData.elementAt(lastIndex);
+                        }
+                        trackData.addElement(new YassRow(r));
+                    }
+                }
+            }
+
+            // move first beat to zero
+            for (YassTable t : trackTables) {
+                boolean first = true;
+                int minBeat = 0;
+                for (YassRow r : t.getModelData()) {
+                    if (r.isNote() && first) {
+                        minBeat = r.getBeatInt();
+                        first = false;
+                    }
+                    if (r.isNote()) {
+                        r.setBeat(r.getBeatInt() - minBeat);
+                    } else if (r.isPageBreak()) {
+                        r.setBeat(r.getBeatInt() - minBeat);
+                        if (r.hasSecondBeat())
+                            r.setSecondBeat(r.getSecondBeatInt() - minBeat);
+                    }
+                }
+                t.setGap(getGap() + minBeat / 4 * (60 * 1000 / t.getBPM()));
+            }
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return trackTables;
+    }
+
+    public static YassTable mergeTables(Vector<YassTable> tables, YassProperties prop) {
+        if (tables == null || tables.size() < 2)
+            return null;
+
+        // always true; "P 3" is deprecated (and buggy)
+        // String pd = prop.getProperty("duet-sequential");
+        //boolean duetSequential = pd != null && pd.equals("true");
+        boolean duetSequential = true;
+
+        // copy
+        Vector<YassTable> tables2 = new Vector<>();
+        for (YassTable t: tables) {
+            YassTable t2 = new YassTable();
+            t2.loadTable(t, true);
+            tables2.add(t2);
+        }
+        // remove gap in all tables
+        for (YassTable t: tables2) {
+            int beatGap = (int) (t.getGapInBeats() + 0.5);
+            for (YassRow r: t.getModelData()) {
+                if (r.isNote())
+                    r.setBeat(r.getBeatInt() + beatGap);
+                else if (r.isPageBreak()) {
+                    r.setBeat(r.getBeatInt() + beatGap);
+                    if (r.hasSecondBeat())
+                        r.setSecondBeat(r.getSecondBeatInt() + beatGap);
+                }
+            }
+        }
+
+        // get first note
+        int minBeat = Integer.MAX_VALUE;
+        YassTable minTable = null;
+        for (YassTable t: tables2) {
+            YassRow r = t.getFirstNote();
+            int b = r.getBeatInt();
+            if (minBeat > b) {
+                minBeat = b;
+                minTable = t;
+            }
+        }
+        if (minTable == null)
+            return null;
+
+        // @todo does not work with different bpm
+
+        // move first beat to zero
+        for (YassTable t: tables2) {
+            for (YassRow r: t.getModelData()) {
+                if (r.isNote())
+                    r.setBeat(r.getBeatInt() - minBeat);
+                if (r.isPageBreak()) {
+                    r.setBeat(r.getBeatInt() - minBeat);
+                    if (r.hasSecondBeat())
+                        r.setSecondBeat(r.getSecondBeatInt() - minBeat);
+                }
+            }
+        }
+
+        // copy header
+        YassTable res = new YassTable();
+        res.init(prop);
+        res.setDir(minTable.getDir());
+        Vector<YassRow> resData = res.getModelData();
+        for (YassRow r: minTable.getModelData()) {
+            if (!r.isComment())
+                break;
+            resData.addElement(new YassRow(r));
+        }
+        int i = 1;
+        for (YassTable t: tables2) {
+            String name = t.getDuetTrackName();
+            if (name != null && name.trim().length() > 0)
+                resData.addElement(new YassRow("#", "DUETSINGERP" + i + ":", name, "", ""));
+            i++;
+        }
+
+        try {
+            if (duetSequential) { // notes sorted by player
+                i = 1;
+                for (YassTable t: tables2) {
+                    resData.addElement(new YassRow("P", i + "", "", "", ""));
+                    for (YassRow r: t.getModelData()) {
+                        if (r.isNoteOrPageBreak())
+                            resData.addElement(r);
+                    }
+                    i<<=1;
+                }
+            } else { // all notes sorted by beats, page-by-page
+
+                // extract pages & sort in order of appearance
+                Vector<YassPage> allPages = new Vector<>(tables2.size());
+                i = 1;
+                for (YassTable t: tables2) {
+                    Vector<YassPage> pages = t.getPages();
+                    for (YassPage p: pages)
+                        p.setPlayer(i);
+                    allPages.addAll(pages);
+                    i <<= 1;
+                }
+                Collections.sort(allPages);
+
+                Vector<YassPage> usedPages = new Vector<>(allPages.size());
+                for (YassPage p: allPages) {
+                    // get intersecting page
+                    Vector<YassPage> intersecting = new Vector<>();
+                    for (YassPage p2: allPages) {
+                        if (p != p2 && p.getTable() != p2.getTable() && p.intersects(p2))
+                            intersecting.addElement(p);
+                    }
+
+                    // combine pages, if equal
+                    int bitMask = 1 << p.getPlayer();
+                    for (YassPage p2: intersecting) {
+                        if (p.getTable() != p2.getTable() && p.matches(p2))
+                            bitMask |= 1 << p2.getPlayer();
+                    }
+                    // add current page
+                    resData.addElement(new YassRow("P", bitMask + "", "", "", ""));
+                    YassRow pageBreak = null; // keep last page break, drop all others
+                    for (YassRow r: p.getRows()) {
+                        if (r.isNote())
+                            resData.addElement(new YassRow(r));
+                        if (r.isPageBreak())
+                            pageBreak = r;
+                    }
+                    usedPages.add(p);
+
+                    // add intersecting pages, if not equal (otherwise they are contained in bitmask)
+                    for (YassPage p2: intersecting) {
+                        int k = tables2.indexOf(p.getTable()) + 1;
+                        if ((bitMask & 1 << k) == 0) {
+                            resData.addElement(new YassRow("P", bitMask + "", "", "", ""));
+                            for (YassRow r : p2.getRows()) {
+                                if (r.isNote())
+                                    resData.addElement(new YassRow(r));
+                                if (pageBreak == null && r.isPageBreak())
+                                    pageBreak = r;
+                            }
+                        }
+                        usedPages.add(p2);
+                    }
+
+                    // add page break, if not last page
+                    if (pageBreak != null && usedPages.size() < allPages.size())
+                        resData.addElement(new YassRow(pageBreak));
+                }
+            }
+            resData.addElement(new YassRow("E", "", "", "", ""));
+            return res;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -6010,8 +5288,7 @@ public class YassTable extends JTable {
             ratings[i] = I18.get("session_rating_" + i);
         }
 
-        YassSession session = new YassSession(getArtist(), getTitle(),
-                tracksArray, startMillis, endMillis, ratings);
+        YassSession session = new YassSession(getArtist(), getTitle(), tracksArray, startMillis, endMillis, ratings);
         int noteScore = Integer.parseInt(prop.getProperty("max-points"));
         int goldenScore = Integer.parseInt(prop.getProperty("max-golden"));
         int lineScore = Integer.parseInt(prop.getProperty("max-linebonus"));
@@ -6019,30 +5296,15 @@ public class YassTable extends JTable {
         return session;
     }
 
-    /**
-     * Description of the Method
-     */
     public void sortRows() {
-        java.util.Collections.sort(tm.getData());
+        Collections.sort(tm.getData());
     }
 
-    /**
-     * Gets the scrollableTracksViewportHeight attribute of the YassTable object
-     *
-     * @return The scrollableTracksViewportHeight value
-     */
     public boolean getScrollableTracksViewportHeight() {
         return getPreferredSize().height <= getParent().getHeight();
     }
 
     // "equals" is used by dnd & awt, can't overwrite it here
-
-    /**
-     * Description of the Method
-     *
-     * @param t Description of the Parameter
-     * @return Description of the Return Value
-     */
     public boolean equalsData(YassTable t) {
         return tm.equalsData(t.tm);
     }
@@ -6136,8 +5398,6 @@ public class YassTable extends JTable {
             targetRow.setHeight(sourceRow.getHeight());
         }
 
-        addUndo();
-
         tm.fireTableDataChanged();
         setRowSelectionInterval(rows[0], rows[0] + 1);
         zoomPage();
@@ -6147,39 +5407,75 @@ public class YassTable extends JTable {
     public double beatToMs(int beat) {
         return 1000 * 60 * beat / (4 * bpm) + gap;
     }
+
+    /**
+     * Converts milliseconds to beats (rounded down).
+     */
     public int msToBeat(double ms) {
         return (int) ((ms - gap) * 4 * bpm / (60 * 1000));
     }
 
+    public double msToBeatExact(double ms) {
+        return ((ms - gap) * 4 * bpm / (double)(60 * 1000));
+    }
+    public double getGapInBeats()
+    {
+        return gap * 4 * bpm / (60 * 1000);
+    }
+
+    public Vector<YassRow> getModelData() {
+        return ((YassTableModel) getModel()).getData();
+    }
+
     /**
-     * Description of the Class
-     *
-     * @author Saruta
+     * Set track number and name from corresponding duet file (see YassTable.splitTable)
      */
-    public class YassTableCellEditor extends AbstractCellEditor implements
+    public void setDuetTrack(int duetTrack, String singerName) {
+        this.duetTrack = duetTrack;
+        this.duetTrackName = singerName;
+    }
+
+    /**
+     * Get track number in corresponding duet file (see YassTable.splitTable)
+     * @return -1 if not set
+     */
+    public int getDuetTrack() {
+        return duetTrack;
+    }
+
+    /**
+     * Get track name from corresponding duet file (see YassTable.splitTable)
+     * @return null if not set
+     */
+    public String getDuetTrackName() {
+        return duetTrackName;
+    }
+
+    /**
+     * Set total number of tracks from corresponding duet file (see YassTable.splitTable)
+     */
+    public void setDuetTrackCount(int duetTrackCount) {
+        this.duetTrackCount = duetTrackCount;
+    }
+
+    /**
+     * Get total number of tracks in corresponding duet file (see YassTable.splitTable)
+     * @return -1 if not set
+     */
+     public int getDuetTrackCount() {
+        return duetTrackCount;
+    }
+
+    public static class YassTableCellEditor extends AbstractCellEditor implements
             TableCellEditor {
-        private static final long serialVersionUID = -5422573906886420055L;
         Dimension d = new Dimension(100, 100);
         JComboBox<?> ed = new JComboBox<Object>(new String[]{":", "*", "F", "R", "G"}) {
-            private static final long serialVersionUID = 1L;
-
             public Dimension getPopupSize() {
                 return d;
             }
         };
         JLabel c = new JLabel("");
 
-        /**
-         * Gets the tableCellEditorComponent attribute of the
-         * YassTableCellEditor object
-         *
-         * @param table      Description of the Parameter
-         * @param value      Description of the Parameter
-         * @param isSelected Description of the Parameter
-         * @param rowIndex   Description of the Parameter
-         * @param vColIndex  Description of the Parameter
-         * @return The tableCellEditorComponent value
-         */
         public Component getTableCellEditorComponent(JTable table,
                                                      Object value, boolean isSelected, int rowIndex, int vColIndex) {
             String v = (String) value;
@@ -6198,11 +5494,6 @@ public class YassTable extends JTable {
             return ed;
         }
 
-        /**
-         * Gets the cellEditorValue attribute of the YassTableCellEditor object
-         *
-         * @return The cellEditorValue value
-         */
         public Object getCellEditorValue() {
             return ed.getSelectedItem();
         }

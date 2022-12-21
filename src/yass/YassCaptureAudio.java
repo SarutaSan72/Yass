@@ -323,7 +323,7 @@ public class YassCaptureAudio {
         f.getContentPane().add("Center", monitor);
 
         I18.setLanguage(null);
-        f.setTitle(I18.get("mlib_mic"));
+        f.setTitle(I18.get("lib_mic"));
         f.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         f.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {

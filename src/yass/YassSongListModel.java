@@ -29,7 +29,6 @@ import java.util.Vector;
  * @author Saruta
  */
 public class YassSongListModel extends AbstractTableModel {
-    private static final long serialVersionUID = -6698188627565918936L;
     // private static String[] columnNames = {"", "Directory", "Folder", "Filename", "Cover", "Background", "Video", "Artist", "Title", "Edition", "Genre", "Language"};
     private static String[] columnNames = {"", I18.get("songlist_col_1"), I18.get("songlist_col_2"), I18.get("songlist_col_3"), I18.get("songlist_col_4"), I18.get("songlist_col_5"), I18.get("songlist_col_6"), I18.get("songlist_col_7"), I18.get("songlist_col_8"), I18.get("songlist_col_9"), I18.get("songlist_col_10"), I18.get("songlist_col_11"), I18.get("songlist_col_12")};
     private Vector<YassSong> data = new Vector<>();
@@ -121,7 +120,7 @@ public class YassSongListModel extends AbstractTableModel {
                 case 3:
                     return r.getTitle();
                 case 4:
-                    return r.getVersion();
+                    return r.getDuetSingerNames();
                 case 5:
                     return r.getGenre();
                 case 6:
@@ -216,7 +215,7 @@ public class YassSongListModel extends AbstractTableModel {
                     break;
                 }
                 case 4: {
-                    r.setVersion((String) value);
+                    r.setDuetSingerNames((String) value);
                     break;
                 }
                 case 5: {

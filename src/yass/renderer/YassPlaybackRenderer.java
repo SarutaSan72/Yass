@@ -19,7 +19,6 @@
 package yass.renderer;
 
 import yass.YassProperties;
-import yass.screen.YassTheme;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
@@ -32,31 +31,11 @@ import java.awt.image.BufferedImage;
 public interface YassPlaybackRenderer {
 
     /**
-     * Description of the Field
-     */
-    public final static int FOUR_TO_THREE = 0;
-    /**
-     * Description of the Field
-     */
-    public final static int SIXTEEN_TO_NINE = 1;
-
-
-    /**
-     * Gets the iD attribute of the YassPlaybackRenderer object
-     *
-     * @return The iD value
-     */
-    public String getID();
-
-
-    /**
      * Description of the Method
      *
      * @param s    Description of the Parameter
-     * @param prop Description of the Parameter
-     * @param t    Description of the Parameter
      */
-    public void init(YassSession s, YassTheme t, YassProperties prop);
+    void init(YassSession s);
 
 
     /**
@@ -64,23 +43,14 @@ public interface YassPlaybackRenderer {
      *
      * @return The session value
      */
-    public YassSession getSession();
-
-
-    /**
-     * Sets the ratio attribute of the YassPlaybackRenderer object
-     *
-     * @param ratio The new ratio value
-     */
-    public void setRatio(int ratio);
-
+    YassSession getSession();
 
     /**
      * Sets the pause attribute of the YassPlaybackRenderer object
      *
      * @param onoff The new pause value
      */
-    public void setPause(boolean onoff);
+    void setPause(boolean onoff);
 
 
     /**
@@ -88,7 +58,7 @@ public interface YassPlaybackRenderer {
      *
      * @param msg The new message value
      */
-    public void setMessage(String msg);
+    void setMessage(String msg);
 
 
     /**
@@ -96,7 +66,7 @@ public interface YassPlaybackRenderer {
      *
      * @param msg The new errorMessage value
      */
-    public void setErrorMessage(String msg);
+    void setErrorMessage(String msg);
 
 
     /**
@@ -106,19 +76,19 @@ public interface YassPlaybackRenderer {
      * @param endMillis     Description of the Parameter
      * @return Description of the Return Value
      */
-    public boolean preparePlayback(long currentMillis, long endMillis);
+    boolean preparePlayback(long currentMillis, long endMillis);
 
 
     /**
      * Description of the Method
      */
-    public void init();
+    void init();
 
 
     /**
      * Description of the Method
      */
-    public void startPlayback();
+    void startPlayback();
 
 
     /**
@@ -126,34 +96,34 @@ public interface YassPlaybackRenderer {
      *
      * @param currentMillis Description of the Parameter
      */
-    public void updatePlayback(long currentMillis);
+    void updatePlayback(long currentMillis);
 
 
     /**
      * Description of the Method
      */
-    public void finishPlayback();
+    void finishPlayback();
 
     /**
      * Gets the playbackInterrupted attribute of the PlaybackRenderer object
      *
      * @return The playbackInterrupted value
      */
-    public boolean isPlaybackInterrupted();
+    boolean isPlaybackInterrupted();
 
     /**
      * Sets the playbackInterrupted attribute of the PlaybackRenderer object
      *
      * @param onoff The new playbackInterrupted value
      */
-    public void setPlaybackInterrupted(boolean onoff);
+    void setPlaybackInterrupted(boolean onoff);
 
     /**
      * Description of the Method
      *
      * @return Description of the Return Value
      */
-    public boolean showVideo();
+    boolean showVideo();
 
 
     /**
@@ -161,7 +131,7 @@ public interface YassPlaybackRenderer {
      *
      * @return Description of the Return Value
      */
-    public boolean showBackground();
+    boolean showBackground();
 
 
     /**
@@ -169,7 +139,7 @@ public interface YassPlaybackRenderer {
      *
      * @param videoFrame The new videoFrame value
      */
-    public void setVideoFrame(BufferedImage videoFrame);
+    void setVideoFrame(BufferedImage videoFrame);
 
 
     /**
@@ -177,7 +147,7 @@ public interface YassPlaybackRenderer {
      *
      * @param i The new backgroundImage value
      */
-    public void setBackgroundImage(BufferedImage i);
+    void setBackgroundImage(BufferedImage i);
 
 
     /**
@@ -185,6 +155,6 @@ public interface YassPlaybackRenderer {
      *
      * @return The component value
      */
-    public JComponent getComponent();
+    JComponent getComponent();
 }
 

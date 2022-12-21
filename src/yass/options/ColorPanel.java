@@ -55,24 +55,6 @@ public class ColorPanel extends OptionsPanel {
 
         addSeparator(I18.get("options_design_feedback"));
         addBoolean("", "use-sample", I18.get("options_design_sampled_clicks"));
-
-        //addSeparator(I18.get("options_design_tools"));
-        //addBoolean("", "expert", I18.get("options_design_tools_expert"));
-        //addBoolean("", "floatable", I18.get("options_design_tools_floatable"));
-        //addComment(I18.get("options_design_tools_comment"));
-
-        /*
-         *  addColor("Standard:", "color-0");
-         *  addColor("Version 1:", "color-1");
-         *  addColor("Version 2:", "color-2");
-         *  addColor("Version 3:", "color-3");
-         *  addColor("Version 4:", "color-4");
-         *  addColor("Version 5:", "color-5");
-         *  addColor("Version 6:", "color-6");
-         *  addColor("Version 7:", "color-7");
-         *  addColor("Version 8:", "color-8");
-         *  addColor("Version 9:", "color-9");
-         */
     }
 
 }
