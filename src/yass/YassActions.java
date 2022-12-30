@@ -1593,6 +1593,8 @@ public class YassActions implements DropTargetListener {
     };
     private final Action saveTrack = new AbstractAction(I18.get("edit_save_track")) {
         public void actionPerformed(ActionEvent e) {
+            if (lyrics.isEditable() || songList.isEditing() || isFilterEditing())
+                return;
             if (table.getDuetTrackCount() > 0) {
                 if (JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(tab,
                         MessageFormat.format(I18.get("edit_save_duet_msg"), table.getDuetTrackCount()),
