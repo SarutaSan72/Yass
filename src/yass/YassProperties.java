@@ -288,8 +288,10 @@ public class YassProperties extends Properties {
         p.put("mouseover", "false");
         p.put("sketching", "false");
         p.put("sketching-playback", "false");
+        p.put("show-note-heightnum", "false");
         p.put("show-note-height", "true");
         p.put("show-note-length", "true");
+        p.put("show-note-beat", "false");
         p.put("show-note-scale", "false");
         p.put("auto-trim", "false");
         p.put("playback-buttons", "true");

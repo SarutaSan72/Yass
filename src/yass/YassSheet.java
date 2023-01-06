@@ -285,8 +285,12 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
     private long inSnapshot = -1, outSnapshot = -1;
     private final Cursor cutCursor;
     private boolean showNoteLength = false;
+    private boolean showNoteBeat = false;
+
     private boolean showNoteScale = false;
     private boolean showNoteHeight = true;
+
+    private boolean showNoteHeightNum = false;
     private Rectangle clip = new Rectangle();
     private boolean refreshing = false;
     private String equalsDigits = "";
@@ -2241,8 +2245,16 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
         showNoteScale = onoff;
     }
 
+    public void setNoteBeatVisible(boolean onoff) {
+        showNoteBeat = onoff;
+    }
+
     public void setNoteHeightVisible(boolean onoff) {
         showNoteHeight = onoff;
+    }
+
+    public void setNoteHeightNumVisible(boolean onoff) {
+        showNoteHeightNum = onoff;
     }
 
     public boolean isVisible(int i) {
@@ -3766,6 +3778,24 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
                     if (onoff && r.width > 2.4) {
                         g2.fill(r);
 
+                        if (showNoteBeat) {
+                            int beat = (int)(r.getX() / wSize + 0.5);
+                            String beatstr = "" + beat;
+                            int yoff = 4;
+
+                            Font oldFont = g2.getFont();
+                            g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
+                            g2.setFont(big[16]);
+                            FontMetrics metrics = g2.getFontMetrics();
+                            int strw = metrics.stringWidth(beatstr);
+                            int midx = (int) (r.x + r.width / 2);
+                            int hx = (int) (r.x + 3);
+                            int hy = (int) (r.y - yoff);
+                            if (hx + strw > midx - 2)
+                                hx = midx - strw;
+                            g2.drawString(beatstr, hx, hy);
+                            g2.setFont(oldFont);
+                        }
                         if (showNoteLength) {
                             int len = (int) ((r.width + 2) / wSize + 0.5);
                             String lenstr = "" + len;
@@ -3788,9 +3818,16 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
                             g2.setFont(oldFont);
 
                         }
-                        if (showNoteHeight) {
+                        if (showNoteHeight || showNoteHeightNum) {
                             int pitch = table.getRowAt(i).getHeightInt();
-                            String hstr = "" + getNoteName(pitch + 60);
+                            String hstr = "";
+                            if (showNoteHeightNum)
+                                hstr += pitch+"";
+                            if (showNoteHeight) {
+                                if (hstr.length() > 0)
+                                    hstr += " ";
+                                hstr += getNoteName(pitch + 60);
+                            }
                             int scale = pitch / 12 + 4;
                             if (showNoteScale || paintHeights) hstr += ""+scale;
 

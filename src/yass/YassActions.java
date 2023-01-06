@@ -4855,6 +4855,10 @@ public class YassActions implements DropTargetListener {
         boolean showLength = s != null && s.equals("true");
         sheet.setNoteLengthVisible(showLength);
 
+        s = prop.getProperty("show-note-beat");
+        boolean showBeat = s != null && s.equals("true");
+        sheet.setNoteBeatVisible(showBeat);
+
         s = prop.getProperty("show-note-scale");
         boolean showScale = s != null && s.equals("true");
         sheet.setNoteScaleVisible(showScale);
@@ -4862,6 +4866,10 @@ public class YassActions implements DropTargetListener {
         s = prop.getProperty("show-note-height");
         boolean showHeight = s != null && s.equals("true");
         sheet.setNoteHeightVisible(showHeight);
+
+        s = prop.getProperty("show-note-heightnum");
+        boolean showHeightNum = s != null && s.equals("true");
+        sheet.setNoteHeightNumVisible(showHeightNum);
 
         s = prop.getProperty("playback-buttons");
         boolean showPlayerButtons = s != null && s.equals("true");
