@@ -1601,10 +1601,18 @@ public class YassActions implements DropTargetListener {
         public void actionPerformed(ActionEvent e) {
             String filename = askFilename(I18.get("lib_edit_file_msg"), FileDialog.SAVE);
             if (filename != null) {
-                YassTable mt = YassTable.mergeTables(openTables, prop);
-                if (!mt.storeFile(filename)) // todo warn
-                    return;
-                openFiles(filename, false);
+                try {
+                    YassTable mt = YassTable.mergeTables(openTables, prop);
+                    if (!mt.storeFile(filename)) // todo warn
+                        return;
+                    openFiles(filename, false);
+                }
+                catch (IllegalArgumentException ex) {
+                    if (ex.getMessage() == "BPM")
+                        JOptionPane.showMessageDialog(getTab(), "<html>Cannot merge tracks with different BPM values.", "Error", JOptionPane.ERROR_MESSAGE);
+                    if (ex.getMessage() == "GAP")
+                        JOptionPane.showMessageDialog(getTab(), "<html>Cannot merge tracks with different GAP values.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
     };

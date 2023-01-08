@@ -5048,6 +5048,20 @@ public class YassTable extends JTable {
         YassTable masterTable = tables2.firstElement();
         if (masterTable == null)
             return null;
+
+        // assure all tables share same gap/bpm/start/end
+        boolean sameGap = true, sameBPM = true;
+        for (YassTable t: tables) {
+            if (t.getGap() != masterTable.getGap())
+                sameGap = false;
+            if (t.getBPM() != masterTable.getBPM())
+                sameBPM = false;
+        }
+        if (! sameBPM) // todo: ?
+            throw new IllegalArgumentException("BPM");
+        if (! sameGap) // todo: support different gaps: keep master's gap, adjust others.
+            throw new IllegalArgumentException("GAP");
+
         // copy header from table with first beat
         YassTable res = new YassTable();
         res.init(prop);
