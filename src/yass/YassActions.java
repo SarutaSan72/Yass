@@ -5685,20 +5685,22 @@ public class YassActions implements DropTargetListener {
     }
 
     public void setGap(int ms) {
-        table.setGap(ms);
-        ((YassTableModel) table.getModel()).getCommentRow("GAP:");
-        sheet.setPlayerPosition(sheet.toTimeline(table.getGap()));
-        updateGap();
+        for (YassTable t: openTables){
+            t.setGap(ms);
+            sheet.setPlayerPosition(sheet.toTimeline(t.getGap()));
+            updateGap();
+        }
     }
 
     private void updateGap() {
-        int gap = (int) table.getGap();
+        YassTable masterTable = openTables.firstElement();
+        int gap = (int) masterTable.getGap();
         if (gapSpinner != null) {
             gapSpinner.setTime(gap);
             int dur = (int) (mp3.getDuration() / 1000);
             gapSpinner.setDuration(dur);
         }
-        double bpm = table.getBPM();
+        double bpm = masterTable.getBPM();
         if (bpmField != null) {
             bpmField.setText(bpm + "");
         }
