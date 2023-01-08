@@ -377,8 +377,8 @@ public class YassSheetInfo extends JPanel {
         boolean same = false;
         for (YassRow r: table.getModelData()) {
             if (r.isNote()) {
-                rx = (r.getBeatInt()-minBeat)/rangeBeat * w;
-                rx2 =((r.getBeatInt() + r.getLengthInt())-minBeat)/rangeBeat * w;
+                rx = (r.getBeatInt() - minBeat)/rangeBeat * w;
+                rx2 =(r.getBeatInt() + r.getLengthInt() - minBeat)/rangeBeat * w;
                 ry = (int) ((h - hBar - 4) * (r.getHeightInt() - minHeight) / (double) rangeHeight + 3);
                 rw = rx2 - rx;
                 if (firstNoteOnPage) {
