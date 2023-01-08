@@ -409,7 +409,6 @@ public class YassMain extends JApplet {
                         JViewport v = (JViewport) e.getSource();
                         Point p = v.getViewPosition();
                         Dimension r = v.getExtentSize();
-                        double minMs = sheet.getMinVisibleMs();
 
                         // LYRICS POSITION
                         String layout = prop.getProperty("editor-layout");

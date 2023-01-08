@@ -5005,7 +5005,7 @@ public class YassTable extends JTable {
                     }
                 }
             }
-
+/*
             // move first beat to zero
             for (YassTable t : trackTables) {
                 boolean first = true;
@@ -5025,6 +5025,7 @@ public class YassTable extends JTable {
                 }
                 t.setGap(getGap() + minBeat / 4 * (60 * 1000 / t.getBPM()));
             }
+*/
         }
         catch(Exception e) {
             e.printStackTrace();
@@ -5036,68 +5037,23 @@ public class YassTable extends JTable {
     public static YassTable mergeTables(Vector<YassTable> tables, YassProperties prop) {
         if (tables == null || tables.size() < 2)
             return null;
-
-        // always true; "P 3" is deprecated (and buggy)
-        // String pd = prop.getProperty("duet-sequential");
-        //boolean duetSequential = pd != null && pd.equals("true");
-        boolean duetSequential = true;
-
-        // copy
+        // copy all tables
         Vector<YassTable> tables2 = new Vector<>();
         for (YassTable t: tables) {
             YassTable t2 = new YassTable();
             t2.loadTable(t, true);
             tables2.add(t2);
         }
-        // remove gap in all tables
-        for (YassTable t: tables2) {
-            int beatGap = (int) (t.getGapInBeats() + 0.5);
-            for (YassRow r: t.getModelData()) {
-                if (r.isNote())
-                    r.setBeat(r.getBeatInt() + beatGap);
-                else if (r.isPageBreak()) {
-                    r.setBeat(r.getBeatInt() + beatGap);
-                    if (r.hasSecondBeat())
-                        r.setSecondBeat(r.getSecondBeatInt() + beatGap);
-                }
-            }
-        }
-
-        // get first note
-        int minBeat = Integer.MAX_VALUE;
-        YassTable minTable = null;
-        for (YassTable t: tables2) {
-            YassRow r = t.getFirstNote();
-            int b = r.getBeatInt();
-            if (minBeat > b) {
-                minBeat = b;
-                minTable = t;
-            }
-        }
-        if (minTable == null)
+        // first table is master
+        YassTable masterTable = tables2.firstElement();
+        if (masterTable == null)
             return null;
-
-        // @todo does not work with different bpm
-
-        // move first beat to zero
-        for (YassTable t: tables2) {
-            for (YassRow r: t.getModelData()) {
-                if (r.isNote())
-                    r.setBeat(r.getBeatInt() - minBeat);
-                if (r.isPageBreak()) {
-                    r.setBeat(r.getBeatInt() - minBeat);
-                    if (r.hasSecondBeat())
-                        r.setSecondBeat(r.getSecondBeatInt() - minBeat);
-                }
-            }
-        }
-
-        // copy header
+        // copy header from table with first beat
         YassTable res = new YassTable();
         res.init(prop);
-        res.setDir(minTable.getDir());
+        res.setDir(masterTable.getDir());
         Vector<YassRow> resData = res.getModelData();
-        for (YassRow r: minTable.getModelData()) {
+        for (YassRow r: masterTable.getModelData()) {
             if (!r.isComment())
                 break;
             resData.addElement(new YassRow(r));
@@ -5111,75 +5067,15 @@ public class YassTable extends JTable {
         }
 
         try {
-            if (duetSequential) { // notes sorted by player
-                i = 1;
-                for (YassTable t: tables2) {
-                    resData.addElement(new YassRow("P", i + "", "", "", ""));
-                    for (YassRow r: t.getModelData()) {
-                        if (r.isNoteOrPageBreak())
-                            resData.addElement(r);
-                    }
-                    i<<=1;
+            // notes sorted by player
+            i = 1;
+            for (YassTable t: tables2) {
+                resData.addElement(new YassRow("P", i + "", "", "", ""));
+                for (YassRow r: t.getModelData()) {
+                    if (r.isNoteOrPageBreak())
+                        resData.addElement(r);
                 }
-            } else { // all notes sorted by beats, page-by-page
-
-                // extract pages & sort in order of appearance
-                Vector<YassPage> allPages = new Vector<>(tables2.size());
-                i = 1;
-                for (YassTable t: tables2) {
-                    Vector<YassPage> pages = t.getPages();
-                    for (YassPage p: pages)
-                        p.setPlayer(i);
-                    allPages.addAll(pages);
-                    i <<= 1;
-                }
-                Collections.sort(allPages);
-
-                Vector<YassPage> usedPages = new Vector<>(allPages.size());
-                for (YassPage p: allPages) {
-                    // get intersecting page
-                    Vector<YassPage> intersecting = new Vector<>();
-                    for (YassPage p2: allPages) {
-                        if (p != p2 && p.getTable() != p2.getTable() && p.intersects(p2))
-                            intersecting.addElement(p);
-                    }
-
-                    // combine pages, if equal
-                    int bitMask = 1 << p.getPlayer();
-                    for (YassPage p2: intersecting) {
-                        if (p.getTable() != p2.getTable() && p.matches(p2))
-                            bitMask |= 1 << p2.getPlayer();
-                    }
-                    // add current page
-                    resData.addElement(new YassRow("P", bitMask + "", "", "", ""));
-                    YassRow pageBreak = null; // keep last page break, drop all others
-                    for (YassRow r: p.getRows()) {
-                        if (r.isNote())
-                            resData.addElement(new YassRow(r));
-                        if (r.isPageBreak())
-                            pageBreak = r;
-                    }
-                    usedPages.add(p);
-
-                    // add intersecting pages, if not equal (otherwise they are contained in bitmask)
-                    for (YassPage p2: intersecting) {
-                        int k = tables2.indexOf(p.getTable()) + 1;
-                        if ((bitMask & 1 << k) == 0) {
-                            resData.addElement(new YassRow("P", bitMask + "", "", "", ""));
-                            for (YassRow r : p2.getRows()) {
-                                if (r.isNote())
-                                    resData.addElement(new YassRow(r));
-                                if (pageBreak == null && r.isPageBreak())
-                                    pageBreak = r;
-                            }
-                        }
-                        usedPages.add(p2);
-                    }
-
-                    // add page break, if not last page
-                    if (pageBreak != null && usedPages.size() < allPages.size())
-                        resData.addElement(new YassRow(pageBreak));
-                }
+                i<<=1;
             }
             resData.addElement(new YassRow("E", "", "", "", ""));
             return res;

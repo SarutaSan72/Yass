@@ -3779,7 +3779,7 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
                         g2.fill(r);
 
                         if (showNoteBeat) {
-                            int beat = (int)(r.getX() / wSize + 0.5);
+                            int beat = (int)(r.getX() / wSize + 0.5 - table.getGapInBeats());
                             String beatstr = "" + beat;
                             int yoff = 4;
 
@@ -4885,14 +4885,13 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
         int minBeat = 10000;
         int maxBeat = 0;
         for (YassTable t: tables) {
-            int gapBeat = (int)(t.getGapInBeats() + 0.5);
             for (YassRow r: t.getModelData()) {
                 if (r.isNote()) {
                     int height = r.getHeightInt();
                     minH = Math.min(minH, height);
                     maxH = Math.max(maxH, height);
-                    minBeat = Math.min(minBeat, gapBeat + r.getBeatInt());
-                    maxBeat = Math.max(maxBeat, gapBeat + r.getBeatInt() + r.getLengthInt());
+                    minBeat = Math.min(minBeat, r.getBeatInt());
+                    maxBeat = Math.max(maxBeat, r.getBeatInt() + r.getLengthInt());
                 }
             }
         }
@@ -5194,26 +5193,15 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
     }
 
     public double getMinVisibleMs() {
-        int x = clip.x + LEFT_BORDER;
+        int x = clip.x;
         if (paintHeights) {
             x += heightBoxWidth;
         }
-        return fromTimeline(x);
+        return fromTimelineExact(x);
     }
     public double getMaxVisibleMs() {
-        int x = clip.x + clip.width;
-        return fromTimeline(x);
-    }
-    public double getMinVisibleMs(int track) {
-        int x = clip.x + LEFT_BORDER;
-        if (paintHeights) {
-            x += heightBoxWidth;
-        }
-        return fromTimeline(track, x);
-    }
-    public double getMaxVisibleMs(int track) {
-        int x = clip.x + clip.width;
-        return fromTimeline(track, x);
+        int x = clip.x + clip.width - 1 - RIGHT_BORDER;
+        return fromTimelineExact(x);
     }
 
     public boolean isVisibleMs(double ms) {
