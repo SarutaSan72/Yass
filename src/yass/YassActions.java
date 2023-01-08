@@ -802,18 +802,18 @@ public class YassActions implements DropTargetListener {
     };
     private final Action multiply = new AbstractAction(I18.get("edit_bpm_double")) {
         public void actionPerformed(ActionEvent e) {
-            table.multiply();
-            if (bpmField != null) {
+            for (YassTable t: getOpenTables(table))
+                t.multiply();
+            if (bpmField != null)
                 bpmField.setText(table.getBPM() + "");
-            }
         }
     };
     private final Action divide = new AbstractAction(I18.get("edit_bpm_half")) {
         public void actionPerformed(ActionEvent e) {
-            table.divide();
-            if (bpmField != null) {
+            for (YassTable t: getOpenTables(table))
+                t.divide();
+            if (bpmField != null)
                 bpmField.setText(table.getBPM() + "");
-            }
         }
     };
     private final Action showLyricsStart = new AbstractAction(I18.get("edit_gap")) {
@@ -865,7 +865,8 @@ public class YassActions implements DropTargetListener {
                 } catch (Exception ex) {
                     bpmField.setText(bpm1 + "");
                 }
-                table.setBPM(bpm1);
+                for (YassTable t: getOpenTables(table))
+                    t.setBPM(bpm1);
             });
             panel.add(bpmField);
 
@@ -928,8 +929,6 @@ public class YassActions implements DropTargetListener {
 
             fh.add("Center", createVideoToolbar());
             fh.pack();
-            // fh.setIconImage(new
-            // ImageIcon(YassActions.this.getClass().getResource("/yass/yass-icon-16.png")).getImage());
             fh.setVisible(true);
 
             long time = sheet.fromTimeline(sheet.getPlayerPosition());
@@ -962,8 +961,6 @@ public class YassActions implements DropTargetListener {
                 int w = 240;
                 int h = 400;
                 fh.setSize(w, h);
-                // fh.setIconImage(new
-                // ImageIcon(YassActions.this.getClass().getResource("/yass/yass-icon-16.png")).getImage());
                 fh.setVisible(true);
             }
         }
@@ -1032,24 +1029,16 @@ public class YassActions implements DropTargetListener {
     private final Action showHelp = new AbstractAction(I18.get("lib_help_offline")) {
         public void actionPerformed(ActionEvent e) {
             helpPane = new JTextPane();
-            HTMLDocument doc = (HTMLDocument) helpPane
-                    .getEditorKitForContentType("text/html")
-                    .createDefaultDocument();
+            HTMLDocument doc = (HTMLDocument) helpPane.getEditorKitForContentType("text/html").createDefaultDocument();
             doc.setAsynchronousLoadPriority(-1);
             helpPane.setDocument(doc);
             URL url = I18.getResource("help.html");
-            try {
-                helpPane.setPage(url);
-            } catch (Exception ignored) {
-            }
+            try { helpPane.setPage(url); } catch (Exception ignored) { }
 
             helpPane.addHyperlinkListener(event -> {
                 if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                     URL url1 = I18.getResource(event.getDescription());
-                    try {
-                        helpPane.setPage(url1);
-                    } catch (IOException ignored) {
-                    }
+                    try { helpPane.setPage(url1); } catch (IOException ignored) {}
                 }
             });
             helpPane.addKeyListener(new KeyAdapter() {
@@ -1059,10 +1048,7 @@ public class YassActions implements DropTargetListener {
                     }
                     if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
                         URL url = I18.getResource("help5.html");
-                        try {
-                            helpPane.setPage(url);
-                        } catch (Exception ignored) {}
-
+                        try { helpPane.setPage(url); } catch (Exception ignored) {}
                     }
                 }
             });
@@ -5656,17 +5642,16 @@ public class YassActions implements DropTargetListener {
     }
 
     public void setStart(int ms) {
-        table.setStart(ms);
-
+        for (YassTable t: getOpenTables(table))
+            t.setStart(ms);
         updateStartEnd();
     }
 
     public void setEnd(int ms) {
-        if (ms == (int) (mp3.getDuration() / 1000)) {
+        if (ms == (int) (mp3.getDuration() / 1000))
             ms = -1;
-        }
-
-        table.setEnd(ms);
+        for (YassTable t: getOpenTables(table))
+            t.setEnd(ms);
         updateStartEnd();
     }
 
@@ -5685,29 +5670,28 @@ public class YassActions implements DropTargetListener {
     }
 
     public void setGap(int ms) {
-        for (YassTable t: openTables){
+        for (YassTable t: getOpenTables(table))
             t.setGap(ms);
-            sheet.setPlayerPosition(sheet.toTimeline(t.getGap()));
-            updateGap();
-        }
+        sheet.setPlayerPosition(sheet.toTimeline(table.getGap()));
+        updateGap();
     }
 
     private void updateGap() {
-        YassTable masterTable = openTables.firstElement();
-        int gap = (int) masterTable.getGap();
+        int gap = (int) table.getGap();
         if (gapSpinner != null) {
             gapSpinner.setTime(gap);
             int dur = (int) (mp3.getDuration() / 1000);
             gapSpinner.setDuration(dur);
         }
-        double bpm = masterTable.getBPM();
+        double bpm = table.getBPM();
         if (bpmField != null) {
             bpmField.setText(bpm + "");
         }
     }
 
     public void setVideoGap(int ms) {
-        table.setVideoGap(ms / 1000.0);
+        for (YassTable t: getOpenTables(table))
+            t.setVideoGap(ms / 1000.0);
         updateVideoGap();
     }
 
@@ -5724,10 +5708,8 @@ public class YassActions implements DropTargetListener {
             int dur = (int) (mp3.getDuration() / 1000);
             vgapSpinner.setDuration(dur);
         }
-
-        if (video != null && sheet.showVideo()) {
+        if (video != null && sheet.showVideo())
             video.setVideoGap(ms);
-        }
     }
 
     private void playSelection(int mode) {
@@ -6628,6 +6610,11 @@ public class YassActions implements DropTargetListener {
         return true;
     }
 
+    /**
+     * Get all open tables belonging to the given table's filename
+     * @param table
+     * @return
+     */
     private Vector<YassTable> getOpenTables(YassTable table) {
         Vector<YassTable> tables = new Vector<>();
         for (YassTable open : openTables) {

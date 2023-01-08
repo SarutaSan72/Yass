@@ -5200,7 +5200,7 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
         return fromTimelineExact(x);
     }
     public double getMaxVisibleMs() {
-        int x = clip.x + clip.width - 1 - RIGHT_BORDER;
+        int x = clip.x + clip.width - 1;
         return fromTimelineExact(x);
     }
 
