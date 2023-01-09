@@ -3828,11 +3828,12 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
                                     hstr += " ";
                                 hstr += getNoteName(pitch + 60);
                             }
-                            int scale = pitch / 12 + 4;
-                            if (showNoteScale || paintHeights) hstr += ""+scale;
+                            if (showNoteScale || paintHeights) {
+                                int scale = pitch >= 0 ? (pitch / 12 + 4) : (3 + (pitch+1) / 12); // negative pitch requires special handling
+                                hstr += ""+scale;
+                            }
 
                             int yoff = 4;
-
                             int midx = (int) (r.x + r.width / 2);
                             Font oldFont = g2.getFont();
                             g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
