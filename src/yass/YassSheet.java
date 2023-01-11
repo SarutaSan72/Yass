@@ -4883,27 +4883,26 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
     public int[] getHeightRange() {
         int minH = 128;
         int maxH = -128;
-        int minBeat = 10000;
-        int maxBeat = 0;
+        int minB = 100000;
+        int maxB = 0;
         for (YassTable t: tables) {
             for (YassRow r: t.getModelData()) {
                 if (r.isNote()) {
                     int height = r.getHeightInt();
                     minH = Math.min(minH, height);
                     maxH = Math.max(maxH, height);
-                    minBeat = Math.min(minBeat, r.getBeatInt());
-                    maxBeat = Math.max(maxBeat, r.getBeatInt() + r.getLengthInt());
+                    minB = Math.min(minB, r.getBeatInt());
+                    maxB = Math.max(maxB, r.getBeatInt() + r.getLengthInt());
                 }
             }
         }
         if (minH == 128)
             minH = 0;
-        int maxHeight = maxH + 3;
-        int minHeight = minH - 1;
-        if (maxHeight - minHeight < 19) {
-            maxHeight = minHeight + 19;
-        }
-        return new int[]{minHeight, maxHeight, minBeat, maxBeat};
+        maxH = maxH + 3;
+        minH = minH - 1;
+        if (maxH - minH < 19)
+            maxH = minH + 19;
+        return new int[]{minH, maxH, minB, maxB};
     }
 
     /**
@@ -4964,6 +4963,13 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
             beatgap = gap * 4 / (60 * 1000 / bpm);
         }
         outgap = 0;
+
+        // beat/height range
+        int minH = 128;
+        int maxH = -128;
+        int minB = 100000;
+        int maxB = 0;
+
         Enumeration<YassTable> et = tables.elements();
         for (Enumeration<Vector<YassRectangle>> e = rects.elements(); e.hasMoreElements() && et.hasMoreElements(); ) {
             Vector<YassRectangle> r = e.nextElement();
@@ -4995,8 +5001,31 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
                     // should better add PAGE_BREAK type
                     rr.removeType(YassRectangle.DEFAULT);
                 }
+                // beat/height range
+                if (row.isNote()) {
+                    int height = row.getHeightInt();
+                    minH = Math.min(minH, height);
+                    maxH = Math.max(maxH, height);
+                    minB = Math.min(minB, row.getBeatInt());
+                    maxB = Math.max(maxB, row.getBeatInt() + row.getLengthInt());
+                }
             }
         }
+
+        // beat/height range
+        if (minH == 128)
+            minH = 0;
+        maxH = maxH + 3;
+        minH = minH - 1;
+        if (maxH - minH < 19)
+            maxH = minH + 19;
+        boolean changed = false;
+        if (minHeight != minH) { minHeight = minH; changed = true; }
+        if (maxHeight != maxH) { maxHeight = maxH; changed = true; }
+        if (minBeat   != minB) { minBeat   = minB; changed = true; }
+        if (maxBeat   != maxB) { maxBeat   = maxB; changed = true; }
+        if (changed)
+            fireRangeChanged(minHeight, maxHeight, minBeat, maxBeat);
     }
 
     public void setHNoteEnabled(boolean b) {
