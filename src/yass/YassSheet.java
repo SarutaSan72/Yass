@@ -3647,44 +3647,36 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
         Paint oldPaint = g2.getPaint();
         Stroke oldStroke = g2.getStroke();
 
-        for (Enumeration<?> e = rect.elements(); e.hasMoreElements()
-                || next != null; i++) {
+        for (Enumeration<?> e = rect.elements(); e.hasMoreElements() || next != null; i++) {
             prev = r;
             if (next != null) {
                 r = next;
-                next = e.hasMoreElements() ? (YassRectangle) e.nextElement()
-                        : null;
+                next = e.hasMoreElements() ? (YassRectangle) e.nextElement() : null;
             } else {
                 r = (YassRectangle) e.nextElement();
             }
             if (next == null) {
-                next = e.hasMoreElements() ? (YassRectangle) e.nextElement()
-                        : null;
+                next = e.hasMoreElements() ? (YassRectangle) e.nextElement() : null;
             }
             if (r.isPageBreak()) {
                 pn = r.getPageNumber();
             }
 
             Color borderCol = col;
-
             if (r.x < clip.x + clip.width && r.x + r.width > clip.x) {
-                if (!r.isPageBreak()) {
+                if (!r.isPageBreak())
                     hhPageMin = r.getPageMin();
-                }
-
                 boolean isSelected = table != null && table.isRowSelected(i);
-
                 if (onoff) {
                     if (!r.isPageBreak() && table.getMultiSize() > 1) {
                         Color bg = pn % 2 == 1
                                 ? (darkMode ? hiGrayDarkMode : hiGray)
                                 : (darkMode ? hiGray2DarkMode : hiGray2);
-                        int w = (next == null || next.isPageBreak() || next
-                                .hasType(YassRectangle.END)) ? (int) r.width
+                        int w = (next == null || next.isPageBreak() || next.hasType(YassRectangle.END))
+                                ? (int) r.width
                                 : (int) (next.x - r.x + 1);
                         g2.setColor(bg);
-                        g2.fillRect((int) r.x, clip.height - BOTTOM_BORDER, w,
-                                16);
+                        g2.fillRect((int) r.x, clip.height - BOTTOM_BORDER, w,16);
                     }
                     Color shadeCol = table.isRowSelected(i) ? colorSet[YassSheet.COLOR_ACTIVE]
                             : colorSet[YassSheet.COLOR_SHADE];
@@ -3701,25 +3693,19 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
                         hiliteFill = colorSet[YassSheet.COLOR_ERROR];
                     }
                     if (noshade) {
-                        g2.setPaint(table.isRowSelected(i) ? colorSet[YassSheet.COLOR_ACTIVE]
-                                : hiliteFill);
+                        g2.setPaint(table.isRowSelected(i) ? colorSet[YassSheet.COLOR_ACTIVE] : hiliteFill);
                     } else {
-                        g2.setPaint(new GradientPaint((float) r.x,
-                                (float) r.y + 2, hiliteFill, (float) (r.x),
-                                (float) (r.y + r.height), shadeCol));
+                        g2.setPaint(new GradientPaint(
+                                (float) r.x, (float) (r.y + 2), hiliteFill,
+                                (float) r.x, (float) (r.y + r.height), shadeCol));
                     }
                 }
 
                 if (r.isPageBreak()) {
                     Line2D.Double dashLine = new Line2D.Double(0, 0, 0, 0);
                     float[] dash1 = {8f, 2f};
-
                     float dashWidth = .5f;
-
-                    BasicStroke dashed = new BasicStroke(dashWidth,
-                            BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
-                            10.0f, dash1, 0.0f);
-
+                    BasicStroke dashed = new BasicStroke(dashWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,10.0f, dash1, 0.0f);
                     g2.setStroke(dashed);
                     if (r.isType(YassRectangle.WRONG)) {
                         g2.setColor(colorSet[YassSheet.COLOR_WARNING]);
@@ -3777,79 +3763,77 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
                     if (onoff && r.width > 2.4) {
                         g2.fill(r);
 
-                        if (showNoteBeat) {
-                            int beat = timelineToBeat((int)(r.x-2));
-                            String beatstr = "" + beat;
-                            int yoff = 4;
+                        if (wSize > 8) {
+                            if (showNoteBeat) {
+                                int beat = timelineToBeat((int)(r.x-2));
+                                String beatstr = "" + beat;
+                                int yoff = 4;
 
-                            Font oldFont = g2.getFont();
-                            g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
-                            g2.setFont(big[16]);
-                            FontMetrics metrics = g2.getFontMetrics();
-                            int strw = metrics.stringWidth(beatstr);
-                            int midx = (int) (r.x + r.width / 2);
-                            int hx = (int) (r.x + 3);
-                            int hy = (int) (r.y - yoff);
-                            if (hx + strw > midx - 2)
-                                hx = midx - strw;
-                            g2.drawString(beatstr, hx, hy);
-                            g2.setFont(oldFont);
-                        }
-                        if (showNoteLength) {
-                            int len = (int) ((r.width + 2) / wSize + 0.5);
-                            String lenstr = "" + len;
-                            int yoff = 4;
-
-                            int midx = (int) (r.x + r.width / 2);
-                            Font oldFont = g2.getFont();
-                            g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
-                            g2.setFont(big[16]);
-                            FontMetrics metrics = g2.getFontMetrics();
-                            int strw = metrics.stringWidth(lenstr);
-                            int lenx = (int) (r.x + r.width - 2 - strw);
-                            int leny = (int) (r.y + r.height - yoff + 16);
-                            if (lenx < midx + 2)
-                                lenx = midx;
-                            if (r.width < 24) {
-                                lenx = (int) (midx - strw / 2 + 0.5);
+                                Font oldFont = g2.getFont();
+                                g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
+                                g2.setFont(big[15]);
+                                FontMetrics metrics = g2.getFontMetrics();
+                                int strw = metrics.stringWidth(beatstr);
+                                int midx = (int) (r.x + r.width / 2);
+                                int hx = (int) (r.x + 3);
+                                int hy = (int) (r.y - yoff);
+                                if (hx + strw > midx - 4)
+                                    hx = midx - strw - 2;
+                                g2.drawString(beatstr, hx, hy);
+                                g2.setFont(oldFont);
                             }
-                            g2.drawString(lenstr, lenx, leny);
-                            g2.setFont(oldFont);
+                            if (showNoteLength) {
+                                int len = (int) ((r.width + 2) / wSize + 0.5);
+                                String lenstr = "" + len;
+                                int yoff = 4;
 
-                        }
-                        if (showNoteHeight || showNoteHeightNum) {
-                            int pitch = table.getRowAt(i).getHeightInt();
-                            String hstr = "";
-                            if (showNoteHeightNum)
-                                hstr += pitch+"";
-                            if (showNoteHeight) {
-                                if (hstr.length() > 0)
-                                    hstr += " ";
-                                hstr += getNoteName(pitch + 60);
-                            }
-                            if (showNoteScale || paintHeights) {
-                                int scale = pitch >= 0 ? (pitch / 12 + 4) : (3 + (pitch+1) / 12); // negative pitch requires special handling
-                                hstr += ""+scale;
-                            }
+                                int midx = (int) (r.x + r.width / 2);
+                                Font oldFont = g2.getFont();
+                                g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
+                                g2.setFont(big[16]);
+                                FontMetrics metrics = g2.getFontMetrics();
+                                int strw = metrics.stringWidth(lenstr);
+                                int lenx = (int) (r.x + r.width - 2 - strw);
+                                int leny = (int) (r.y + r.height - yoff + 16);
+                                if (lenx < midx + 2)
+                                    lenx = midx;
+                                if (r.width < 24) {
+                                    lenx = (int) (midx - strw / 2 + 0.5);
+                                }
+                                g2.drawString(lenstr, lenx, leny);
+                                g2.setFont(oldFont);
 
-                            int yoff = 4;
-                            int midx = (int) (r.x + r.width / 2);
-                            Font oldFont = g2.getFont();
-                            g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
-                            g2.setFont(big[16]);
-                            FontMetrics metrics = g2.getFontMetrics();
-                            int strw = metrics.stringWidth(hstr);
-                            int hx = (int) (r.x + 3);
-                            int hy = (int) (r.y + r.height - yoff + 16);
-                            if (hx + strw > midx - 2)
-                                hx = midx - strw;
-                            if (r.width < 24) {
-                                hx = (int) (midx - strw / 2 + 0.5);
-                                if (showNoteLength) hy += 10;
                             }
-                            g2.drawString(hstr, hx, hy);
-                            g2.setFont(oldFont);
-
+                            if (showNoteHeight || showNoteHeightNum) {
+                                int pitch = table.getRowAt(i).getHeightInt();
+                                String hstr = "";
+                                if (showNoteHeightNum)
+                                    hstr = pitch + "";
+                                else if (showNoteHeight) {
+                                    hstr = getNoteName(pitch + 60);
+                                    if (showNoteScale || paintHeights) {
+                                        int scale = pitch >= 0 ? (pitch / 12 + 4) : (3 + (pitch + 1) / 12); // negative pitch requires special handling
+                                        hstr += "" + scale;
+                                    }
+                                }
+                                int yoff = 4;
+                                int midx = (int) (r.x + r.width / 2);
+                                Font oldFont = g2.getFont();
+                                g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
+                                g2.setFont(big[16]);
+                                FontMetrics metrics = g2.getFontMetrics();
+                                int strw = metrics.stringWidth(hstr);
+                                int hx = (int) (r.x + 3);
+                                int hy = (int) (r.y + r.height - yoff + 16);
+                                if (hx + strw > midx - 2)
+                                    hx = midx - strw;
+                                if (r.width < 24) {
+                                    hx = (int) (midx - strw / 2 + 0.5);
+                                    if (showNoteLength) hy += 10;
+                                }
+                                g2.drawString(hstr, hx, hy);
+                                g2.setFont(oldFont);
+                            }
                         }
                     }
 
