@@ -269,6 +269,7 @@ public class YassSheetInfo extends JPanel {
         boolean isActive = track == activeTrack;
 
         double bpm = table.getBPM();
+        double gap = table.getGap();
 
         Color[] colorSet = sheet.getColors();
 
@@ -411,9 +412,9 @@ public class YassSheetInfo extends JPanel {
                 }
                 g3.draw(new Line2D.Double(x + rx, y + h - hBar - ry, x + rx + rw, y + h - hBar - ry));
                 if (rPrev != null && rPrev.isNote()) {
-                    int gap = r.getBeatInt() - (rPrev.getBeatInt() + rPrev.getLengthInt());
-                    double gapMs = gap * 60 / (4 * bpm) * 1000;
-                    if (gapMs < 300) {
+                    int gapNotes = r.getBeatInt() - (rPrev.getBeatInt() + rPrev.getLengthInt());
+                    double gapNotesMs = gapNotes * 60 / (4 * bpm) * 1000;
+                    if (gapNotesMs < 300) {
                         g3.setColor(sheet.darkMode ? sheet.hiGrayDarkMode : sheet.hiGray);
                         g3.setStroke(minLineStroke);
                         g3.draw(new Line2D.Double(x + rxPrev + rwPrev, y + h - hBar - ryPrev, x + rx, y + h - hBar - ry));
@@ -468,14 +469,16 @@ public class YassSheetInfo extends JPanel {
         if (trackNameWidth > 0) {
             String name = table.getDuetTrackName();
             int duetTrack = table.getDuetTrack();
-            if (name != null) {
+            if (duetTrack >= 0) {
+                if (name == null || name.length() < 1)
+                    name = "?";
                 int sw = g2.getFontMetrics().stringWidth(name);
-                if (sw > trackNameWidth && name.length() > 10)
+                if (sw > trackNameWidth && name.length() > 12)
                     name = name.substring(0, 10) + "...";
                 g2.setColor(sheet.darkMode ? sheet.hiGrayDarkMode : sheet.hiGray);
-                g2.drawString(duetTrack + ": " + name, x+22, y);
-                g2.drawOval(x,y-msgBar+4,msgBar-5,msgBar-5);
-                g2.drawOval(x+6,y-msgBar+4,msgBar-5,msgBar-5);
+                g2.drawString(duetTrack + ": " + name, x + 22, y);
+                g2.drawOval(x, y - msgBar + 4, msgBar - 5, msgBar - 5);
+                g2.drawOval(x + 6, y - msgBar + 4, msgBar - 5, msgBar - 5);
             }
         }
 
@@ -598,6 +601,12 @@ public class YassSheetInfo extends JPanel {
         String bpmString;
         if (bpm == (long) bpm) bpmString = String.format("%d", (int) bpm);
         else bpmString = String.format("%s", bpm);
+
+        String gapString = String.format("%.3f", (int) (gap+0.5)/1000.0); // show rounded (resolution < 1ms makes no sense)
+
+        if (s2 != null && s2.length() > 0)
+            s2 += " · ";
+        s2 += gapString + "s";
         s2 += " · " + bpmString + " bpm";
         s2 += " · " + dString;
 

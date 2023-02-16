@@ -1608,8 +1608,6 @@ public class YassActions implements DropTargetListener {
             else if (! sameGap) {
                 bContinue = JOptionPane.OK_OPTION == JOptionPane.showConfirmDialog(tab, I18.get("edit_merge_gap_text"), I18.get("edit_merge_gap_title"), JOptionPane.OK_CANCEL_OPTION);
             }
-            // todo: confirm that all beats will be recalculated (sameGap && sameBPM)
-
             if (bContinue) {
                 String filename = askFilename(I18.get("lib_edit_file_msg"), FileDialog.SAVE);
                 if (filename != null) {
@@ -6510,7 +6508,7 @@ public class YassActions implements DropTargetListener {
             YassTable mt = YassTable.mergeTables(tracks, prop);
             if (!mt.storeFile(filename)) // todo warn
                 return;
-            openFiles(filename, true);
+            openFiles(filename, false);
         }
     }
 
