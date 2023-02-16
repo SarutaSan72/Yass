@@ -42,7 +42,7 @@ public class YassActions implements DropTargetListener {
 
     private final YassSheet sheet;
     public final static String VERSION = "2.4.2";
-    public final static String DATE = "01/2023";
+    public final static String DATE = "02/2023";
 
     static int VIEW_LIBRARY = 1;
     static int VIEW_EDIT = 2;
@@ -1599,19 +1599,22 @@ public class YassActions implements DropTargetListener {
     };
     private final Action mergeTracks = new AbstractAction(I18.get("edit_tracks_merge")) {
         public void actionPerformed(ActionEvent e) {
-            String filename = askFilename(I18.get("lib_edit_file_msg"), FileDialog.SAVE);
-            if (filename != null) {
-                try {
+            boolean bContinue = true;
+            boolean sameGap = YassTable.sameGap(openTables);
+            boolean sameBPM = YassTable.sameBPM(openTables);
+            if (! sameBPM) {
+                bContinue = JOptionPane.OK_OPTION == JOptionPane.showConfirmDialog(tab, I18.get("edit_merge_bpm_text"), I18.get("edit_merge_bpm_title"), JOptionPane.OK_CANCEL_OPTION);
+            }
+            else if (! sameGap) {
+                bContinue = JOptionPane.OK_OPTION == JOptionPane.showConfirmDialog(tab, I18.get("edit_merge_gap_text"), I18.get("edit_merge_gap_title"), JOptionPane.OK_CANCEL_OPTION);
+            }
+            if (bContinue) {
+                String filename = askFilename(I18.get("lib_edit_file_msg"), FileDialog.SAVE);
+                if (filename != null) {
                     YassTable mt = YassTable.mergeTables(openTables, prop);
                     if (!mt.storeFile(filename)) // todo warn
                         return;
                     openFiles(filename, false);
-                }
-                catch (IllegalArgumentException ex) {
-                    if (ex.getMessage() == "BPM")
-                        JOptionPane.showMessageDialog(getTab(), "<html>Cannot merge tracks with different BPM values.", "Error", JOptionPane.ERROR_MESSAGE);
-                    if (ex.getMessage() == "GAP")
-                        JOptionPane.showMessageDialog(getTab(), "<html>Cannot merge tracks with different GAP values.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
@@ -1776,6 +1779,11 @@ public class YassActions implements DropTargetListener {
     private final Action openFolder = new AbstractAction(I18.get("edit_tracks_open_folder")) {
         public void actionPerformed(ActionEvent e) {
             openFolder();
+        }
+    };
+    private final Action openFolderFromLibrary = new AbstractAction(I18.get("edit_tracks_open_folder")) {
+        public void actionPerformed(ActionEvent e) {
+            openFolderFromLibrary();
         }
     };
     private final Action closeTrack = new AbstractAction(I18.get("edit_tracks_close")) {
@@ -3585,6 +3593,7 @@ public class YassActions implements DropTargetListener {
         menuBar.add(menu);
         menu.add(openSongFromLibrary);
         menu.add(openFileFromLibrary);
+        menu.add(openFolderFromLibrary);
         menu.add(editRecent);
         menu.addSeparator();
         menu.add(newFile);
@@ -6505,7 +6514,7 @@ public class YassActions implements DropTargetListener {
             YassTable mt = YassTable.mergeTables(tracks, prop);
             if (!mt.storeFile(filename)) // todo warn
                 return;
-            openFiles(filename, true);
+            openFiles(filename, false);
         }
     }
 
@@ -6531,6 +6540,12 @@ public class YassActions implements DropTargetListener {
     private void openFolder() {
         if (cancelOpen())
             return;
+        String folderName = askFolderName();
+        if (folderName != null)
+            openFiles(folderName, false);
+    }
+
+    private void openFolderFromLibrary() {
         String folderName = askFolderName();
         if (folderName != null)
             openFiles(folderName, false);
@@ -6926,9 +6941,13 @@ public class YassActions implements DropTargetListener {
         am.put("openFile", openFile);
         openFile.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
 
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK), "openFolder");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK | InputEvent.ALT_MASK), "openFolder");
         am.put("openFolder", openFolder);
-        openFolder.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+        openFolder.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK | InputEvent.ALT_MASK));
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK | InputEvent.ALT_MASK), "openFolder");
+        am.put("openFolder", openFolder);
+        openFolderFromLibrary.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK | InputEvent.ALT_MASK));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK), "gotoLibrary");
         am.put("gotoLibrary", gotoLibrary);
