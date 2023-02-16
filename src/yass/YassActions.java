@@ -42,7 +42,7 @@ public class YassActions implements DropTargetListener {
 
     private final YassSheet sheet;
     public final static String VERSION = "2.4.2";
-    public final static String DATE = "01/2023";
+    public final static String DATE = "02/2023";
 
     static int VIEW_LIBRARY = 1;
     static int VIEW_EDIT = 2;
@@ -1599,19 +1599,24 @@ public class YassActions implements DropTargetListener {
     };
     private final Action mergeTracks = new AbstractAction(I18.get("edit_tracks_merge")) {
         public void actionPerformed(ActionEvent e) {
-            String filename = askFilename(I18.get("lib_edit_file_msg"), FileDialog.SAVE);
-            if (filename != null) {
-                try {
+            boolean bContinue = true;
+            boolean sameGap = YassTable.sameGap(openTables);
+            boolean sameBPM = YassTable.sameBPM(openTables);
+            if (! sameBPM) {
+                bContinue = JOptionPane.OK_OPTION == JOptionPane.showConfirmDialog(tab, I18.get("edit_merge_bpm_text"), I18.get("edit_merge_bpm_title"), JOptionPane.OK_CANCEL_OPTION);
+            }
+            else if (! sameGap) {
+                bContinue = JOptionPane.OK_OPTION == JOptionPane.showConfirmDialog(tab, I18.get("edit_merge_gap_text"), I18.get("edit_merge_gap_title"), JOptionPane.OK_CANCEL_OPTION);
+            }
+            // todo: confirm that all beats will be recalculated (sameGap && sameBPM)
+
+            if (bContinue) {
+                String filename = askFilename(I18.get("lib_edit_file_msg"), FileDialog.SAVE);
+                if (filename != null) {
                     YassTable mt = YassTable.mergeTables(openTables, prop);
                     if (!mt.storeFile(filename)) // todo warn
                         return;
                     openFiles(filename, false);
-                }
-                catch (IllegalArgumentException ex) {
-                    if (ex.getMessage() == "BPM")
-                        JOptionPane.showMessageDialog(getTab(), "<html>Cannot merge tracks with different BPM values.", "Error", JOptionPane.ERROR_MESSAGE);
-                    if (ex.getMessage() == "GAP")
-                        JOptionPane.showMessageDialog(getTab(), "<html>Cannot merge tracks with different GAP values.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
