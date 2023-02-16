@@ -1251,6 +1251,9 @@ public class YassTable extends JTable {
         return true;
     }
 
+    static int ns=0, utf=0, win=0;
+    static boolean debugEncoding = false;
+
     public synchronized boolean loadFile(String filename) {
         File f = new File(filename);
         if (!f.exists())
@@ -1268,7 +1271,17 @@ public class YassTable extends JTable {
         // saruta, Jan 2019: better UTF-8 detection method
         // String detectedEncoding = detectUTF8(new File(filename)) ? "UTF-8" : null;
         String detectedEncoding = detectEncoding(new File(filename));
-
+        if (debugEncoding) {
+            if (detectedEncoding == null)
+                ns++;
+            else if (detectedEncoding != null && detectedEncoding == Constants.CHARSET_UTF_8)
+                utf++;
+            else if (detectedEncoding != null && detectedEncoding == Constants.CHARSET_WINDOWS_1252)
+                win++;
+            else
+                System.out.println("enc = " + detectedEncoding);
+            System.out.println("ns=" + ns + " utf=" + utf + " win="+win);
+        }
         isRelative = false;
         // saruta, Jan 2019: better UTF-8 detection method
         // encoding = null;
@@ -5005,7 +5018,7 @@ public class YassTable extends JTable {
                     }
                 }
             }
-
+/*
             // move first beat to zero
             for (YassTable t : trackTables) {
                 boolean first = true;
@@ -5025,6 +5038,7 @@ public class YassTable extends JTable {
                 }
                 t.setGap(getGap() + minBeat / 4 * (60 * 1000 / t.getBPM()));
             }
+*/
         }
         catch(Exception e) {
             e.printStackTrace();
@@ -5033,71 +5047,86 @@ public class YassTable extends JTable {
         return trackTables;
     }
 
+    // assure all tables share same gap/bpm/start/end
+    public static boolean sameGap(Vector<YassTable> tables) {
+        if (tables != null && tables.size() >= 2) {
+            YassTable masterTable = tables.firstElement();
+            for (YassTable t : tables) {
+                if (t.getGap() != masterTable.getGap())
+                    return false;
+            }
+        }
+        return true;
+    }
+    public static boolean sameBPM(Vector<YassTable> tables) {
+        if (tables != null && tables.size() >= 2) {
+            YassTable masterTable = tables.firstElement();
+            for (YassTable t : tables) {
+                if (t.getBPM() != masterTable.getBPM())
+                    return false;
+            }
+        }
+        return true;
+    }
     public static YassTable mergeTables(Vector<YassTable> tables, YassProperties prop) {
         if (tables == null || tables.size() < 2)
             return null;
-
-        // always true; "P 3" is deprecated (and buggy)
-        // String pd = prop.getProperty("duet-sequential");
-        //boolean duetSequential = pd != null && pd.equals("true");
-        boolean duetSequential = true;
-
-        // copy
+        // copy all tables
         Vector<YassTable> tables2 = new Vector<>();
         for (YassTable t: tables) {
             YassTable t2 = new YassTable();
             t2.loadTable(t, true);
             tables2.add(t2);
         }
-        // remove gap in all tables
-        for (YassTable t: tables2) {
-            int beatGap = (int) (t.getGapInBeats() + 0.5);
-            for (YassRow r: t.getModelData()) {
-                if (r.isNote())
-                    r.setBeat(r.getBeatInt() + beatGap);
-                else if (r.isPageBreak()) {
-                    r.setBeat(r.getBeatInt() + beatGap);
-                    if (r.hasSecondBeat())
-                        r.setSecondBeat(r.getSecondBeatInt() + beatGap);
+
+        // assure all tables share same gap/bpm/start/end
+        if (! YassTable.sameBPM(tables))
+            throw new IllegalArgumentException("BPM");
+        if (! YassTable.sameGap(tables))
+        {
+            // new gap = minimum of all first notes (in ms)
+            double gapMs = Double.MAX_VALUE;
+            for (YassTable t: tables) {
+                YassRow r = t.getFirstNote();
+                int b = r.getBeatInt();
+                double ms = t.beatToMs(b);
+                if (gapMs > ms)
+                    gapMs = ms;
+            }
+            // set same gap on all tracks, recalculate beats
+            for (YassTable t: tables2) {
+                double bpm = t.getBPM();
+                int rounded = 0;
+                // recalculate beats
+                for (YassRow r: t.getModelData()) {
+                    if (r.isNoteOrPageBreak()) {
+                        int rb = r.getBeatInt();
+                        double ms = t.beatToMs(rb);
+                        double rbNew = YassTable.msToBeatExact(ms, gapMs, bpm);
+                        if (rbNew != (int)rbNew)
+                            rounded++;
+                        r.setBeat((int)(rbNew+0.5)); // round to nearest
+                        if (r.isPageBreak() && r.hasSecondBeat()) {
+                            rb = r.getSecondBeatInt();
+                            ms = t.beatToMs(rb);
+                            rbNew = YassTable.msToBeatExact(ms, gapMs, bpm);
+                            r.setSecondBeat((int)(rbNew+0.5)); // round to nearest
+                        }
+                    }
                 }
+                t.setGap(gapMs); // same gap on all tracks
+                if (rounded > 0)
+                    System.out.println("Rounded " + rounded + " times in track " + t.getDirFilename());
             }
         }
 
-        // get first note
-        int minBeat = Integer.MAX_VALUE;
-        YassTable minTable = null;
-        for (YassTable t: tables2) {
-            YassRow r = t.getFirstNote();
-            int b = r.getBeatInt();
-            if (minBeat > b) {
-                minBeat = b;
-                minTable = t;
-            }
-        }
-        if (minTable == null)
-            return null;
-
-        // @todo does not work with different bpm
-
-        // move first beat to zero
-        for (YassTable t: tables2) {
-            for (YassRow r: t.getModelData()) {
-                if (r.isNote())
-                    r.setBeat(r.getBeatInt() - minBeat);
-                if (r.isPageBreak()) {
-                    r.setBeat(r.getBeatInt() - minBeat);
-                    if (r.hasSecondBeat())
-                        r.setSecondBeat(r.getSecondBeatInt() - minBeat);
-                }
-            }
-        }
-
-        // copy header
+        // copy header from first table
+        YassTable masterTable = tables2.firstElement();
         YassTable res = new YassTable();
         res.init(prop);
-        res.setDir(minTable.getDir());
+        res.setDir(masterTable.getDir());
         Vector<YassRow> resData = res.getModelData();
-        for (YassRow r: minTable.getModelData()) {
+        for (YassRow r: masterTable.getModelData()) {
             if (!r.isComment())
                 break;
             resData.addElement(new YassRow(r));
@@ -5111,75 +5140,15 @@ public class YassTable extends JTable {
         }
 
         try {
-            if (duetSequential) { // notes sorted by player
-                i = 1;
-                for (YassTable t: tables2) {
-                    resData.addElement(new YassRow("P", i + "", "", "", ""));
-                    for (YassRow r: t.getModelData()) {
-                        if (r.isNoteOrPageBreak())
-                            resData.addElement(r);
-                    }
-                    i<<=1;
+            // notes sorted by player
+            i = 1;
+            for (YassTable t: tables2) {
+                resData.addElement(new YassRow("P", i + "", "", "", ""));
+                for (YassRow r: t.getModelData()) {
+                    if (r.isNoteOrPageBreak())
+                        resData.addElement(r);
                 }
-            } else { // all notes sorted by beats, page-by-page
-
-                // extract pages & sort in order of appearance
-                Vector<YassPage> allPages = new Vector<>(tables2.size());
-                i = 1;
-                for (YassTable t: tables2) {
-                    Vector<YassPage> pages = t.getPages();
-                    for (YassPage p: pages)
-                        p.setPlayer(i);
-                    allPages.addAll(pages);
-                    i <<= 1;
-                }
-                Collections.sort(allPages);
-
-                Vector<YassPage> usedPages = new Vector<>(allPages.size());
-                for (YassPage p: allPages) {
-                    // get intersecting page
-                    Vector<YassPage> intersecting = new Vector<>();
-                    for (YassPage p2: allPages) {
-                        if (p != p2 && p.getTable() != p2.getTable() && p.intersects(p2))
-                            intersecting.addElement(p);
-                    }
-
-                    // combine pages, if equal
-                    int bitMask = 1 << p.getPlayer();
-                    for (YassPage p2: intersecting) {
-                        if (p.getTable() != p2.getTable() && p.matches(p2))
-                            bitMask |= 1 << p2.getPlayer();
-                    }
-                    // add current page
-                    resData.addElement(new YassRow("P", bitMask + "", "", "", ""));
-                    YassRow pageBreak = null; // keep last page break, drop all others
-                    for (YassRow r: p.getRows()) {
-                        if (r.isNote())
-                            resData.addElement(new YassRow(r));
-                        if (r.isPageBreak())
-                            pageBreak = r;
-                    }
-                    usedPages.add(p);
-
-                    // add intersecting pages, if not equal (otherwise they are contained in bitmask)
-                    for (YassPage p2: intersecting) {
-                        int k = tables2.indexOf(p.getTable()) + 1;
-                        if ((bitMask & 1 << k) == 0) {
-                            resData.addElement(new YassRow("P", bitMask + "", "", "", ""));
-                            for (YassRow r : p2.getRows()) {
-                                if (r.isNote())
-                                    resData.addElement(new YassRow(r));
-                                if (pageBreak == null && r.isPageBreak())
-                                    pageBreak = r;
-                            }
-                        }
-                        usedPages.add(p2);
-                    }
-
-                    // add page break, if not last page
-                    if (pageBreak != null && usedPages.size() < allPages.size())
-                        resData.addElement(new YassRow(pageBreak));
-                }
+                i<<=1;
             }
             resData.addElement(new YassRow("E", "", "", "", ""));
             return res;
@@ -5187,6 +5156,47 @@ public class YassTable extends JTable {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Sets new gap (in millis) by the given beat, rounded to two millis.
+     * Afterwards the note at the given beat will have beat 0.
+     * @param beat
+     */
+    public void setGapByBeat(int beat) {
+        double gap = getGap();
+        double bpm = getBPM();
+
+        // calculate gap from beat
+        double ms = beat * (60 * 1000) / (4 * bpm);
+        gap = gap + ms;
+        gap = ((int) (gap * 100)) / 100.0;
+        setGap(gap);
+
+        // correct beats
+        YassRow r;
+        int n = getRowCount();
+        for (int j = 0; j < n; j++) {
+            r = getRowAt(j);
+            if (r.isNoteOrPageBreak()) {
+                int rb = r.getBeatInt();
+                rb = rb - beat;
+                r.setBeat(rb);
+                if (r.isPageBreak() && r.hasSecondBeat()) {
+                    rb = r.getSecondBeatInt();
+                    rb = rb - beat;
+                    r.setSecondBeat(rb);
+                }
+            }
+        }
+
+        // correct medley start/end, too
+        int b = getMedleyStartBeat();
+        if (b >= 0)
+            setMedleyStartBeat(b - beat);
+        b = getMedleyEndBeat();
+        if (b >= 0)
+            setMedleyEndBeat(b - beat);
     }
 
     /**
@@ -5418,6 +5428,11 @@ public class YassTable extends JTable {
     public double msToBeatExact(double ms) {
         return ((ms - gap) * 4 * bpm / (double)(60 * 1000));
     }
+
+    public static double msToBeatExact(double ms, double gap, double bpm) {
+        return ((ms - gap) * 4 * bpm / (double)(60 * 1000));
+    }
+
     public double getGapInBeats()
     {
         return gap * 4 * bpm / (60 * 1000);

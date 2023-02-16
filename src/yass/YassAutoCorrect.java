@@ -1254,33 +1254,8 @@ public class YassAutoCorrect {
                 return true;
             }
             if (currentMessage.equals(YassRow.NONZERO_FIRST_BEAT)) {
-                double gap = table.getGap();
-                double bpm = table.getBPM();
                 int beat = r.getBeatInt();
-
-                double ms = beat * (60 * 1000) / (4 * bpm);
-
-                gap = gap + ms;
-                gap = ((int) (gap * 100)) / 100.0;
-                table.setGap(gap);
-
-                YassRow r3;
-                n = table.getRowCount();
-                for (int j = 0; j < n; j++) {
-                    r3 = table.getRowAt(j);
-                    if (r3.isNote()) {
-                        int beat3 = r3.getBeatInt();
-                        beat3 = beat3 - beat;
-                        r3.setBeat(beat3);
-                    }
-                }
-
-                // correct medley start/end, too
-                int b = table.getMedleyStartBeat();
-                table.setMedleyStartBeat(b - beat);
-                b = table.getMedleyEndBeat();
-                table.setMedleyEndBeat(b - beat);
-
+                table.setGapByBeat(beat);
                 return true;
             }
             switch (currentMessage) {

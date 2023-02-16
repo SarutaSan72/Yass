@@ -245,7 +245,7 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
     private final int
             LEFT_BORDER = 36,
             RIGHT_BORDER = 36,
-            TOP_BORDER = 20,
+            TOP_BORDER = 30,
             PLAY_PAGE_X = -76,
             PLAY_PAGE_W = 36,
             PLAY_BEFORE_X = -36,
@@ -263,6 +263,7 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
     private int[] sketchDirs = null;
     private boolean sketchStarted = false;
     private final Font smallFont = new Font("SansSerif", Font.PLAIN, 10);
+    private final Font smallFontBold = new Font("SansSerif", Font.BOLD, 10);
     private int minHeight = 0, maxHeight = 18;
     private int minBeat = 0, maxBeat = 1000;
     private int hit = -1, hilite = -1, hiliteHeight = 1000, hhPageMin = 0;
@@ -285,8 +286,12 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
     private long inSnapshot = -1, outSnapshot = -1;
     private final Cursor cutCursor;
     private boolean showNoteLength = false;
+    private boolean showNoteBeat = false;
+
     private boolean showNoteScale = false;
     private boolean showNoteHeight = true;
+
+    private boolean showNoteHeightNum = false;
     private Rectangle clip = new Rectangle();
     private boolean refreshing = false;
     private String equalsDigits = "";
@@ -1306,7 +1311,7 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
                             newx = (int) p.getX();
                         }
 
-                        int newy = (int) p.getY() + 20;
+                        int newy = (int) p.getY() + 50;
                         if (p2.x != newx || p2.y != newy) {
                             lyrics.setLocation(newx, newy);
                             revalidate();
@@ -2241,8 +2246,16 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
         showNoteScale = onoff;
     }
 
+    public void setNoteBeatVisible(boolean onoff) {
+        showNoteBeat = onoff;
+    }
+
     public void setNoteHeightVisible(boolean onoff) {
         showNoteHeight = onoff;
+    }
+
+    public void setNoteHeightNumVisible(boolean onoff) {
+        showNoteHeightNum = onoff;
     }
 
     public boolean isVisible(int i) {
@@ -3110,12 +3123,14 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
      * @param g2 Description of the Parameter
      */
     public void paintBeats(Graphics2D g2) {
-        int off = 2;
+        int off = 0;
         if (paintHeights) {
             off += heightBoxWidth;
         }
         g2.setColor(darkMode ? hiGray2DarkMode : hiGray2);
         g2.fillRect((int) (beatgap * wSize + off), 0, dim.width, TOP_BORDER);
+        g2.setFont(smallFont);
+        FontMetrics metrics = g2.getFontMetrics();
 
         int multiplier = 1;
         double wwSize = wSize;
@@ -3123,49 +3138,38 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
             wwSize *= 4.0;
             multiplier *= 4;
         }
-
-        g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
-        g2.setFont(smallFont);
-        FontMetrics metrics = g2.getFontMetrics();
         String str;
-        int strw;
-        int ms;
-        Line2D.Double timeLine = new Line2D.Double(0, 0, 0, 8);
+        long ms;
+        Line2D.Double line = new Line2D.Double(0, 20, 0, 28);
         double leftx = clip.x;
         double rightx = clip.x + clip.width;
-
+        g2.setColor(darkMode ? hiGrayDarkMode : hiGray);
         g2.setStroke(thinStroke);
-        int i = 0;
-        int j;
-        double lastx_ms = -1000;
+        int i = 0, j, strw;
         while (true) {
-            timeLine.x1 = timeLine.x2 = (beatgap + i) * wSize + off;
-            if (timeLine.x1 < leftx) {
+            line.x1 = line.x2 = (beatgap + i) * wSize + off;
+            if (line.x1 < leftx) {
                 i++;
                 continue;
             }
-            if (timeLine.x1 > rightx) {
+            if (line.x1 > rightx) {
                 break;
             }
             j = i / multiplier;
             if (multiplier == 1 || i % multiplier == 0) {
-                if (j % 4 != 0) {
-                    g2.draw(timeLine);
-                }
-
-                str = i + "";
-                strw = metrics.stringWidth(str);
+                g2.setStroke(j % 4 == 0 ? stdStroke : thinStroke);
+                g2.setColor(j % 4 == 0 ? (darkMode ? dkGrayDarkMode : dkGray) : (darkMode ? hiGrayDarkMode : hiGray));
+                g2.draw(line);
                 if (j % 4 == 0) {
-                    g2.drawString(str + "", (float) (timeLine.x1 - strw / 2),
-                            8f);
-                }
+                    g2.setColor(darkMode ? hiGrayDarkMode : hiGray);
+                    str = i + "";
+                    strw = metrics.stringWidth(str);
+                    g2.drawString(str, (float) (line.x1 - strw / 2), 8f);
 
-                if (timeLine.x1 - lastx_ms > 100) {
-                    ms = (int) (1000 * 60 * i / (4 * bpm) + gap);
+                    ms = (long) table.beatToMs(i);
                     str = YassUtils.commaTime(ms) + "s";
                     strw = metrics.stringWidth(str);
-                    g2.drawString(str, (float) (timeLine.x1 - strw / 2), 18f);
-                    lastx_ms = timeLine.x1;
+                    g2.drawString(str, (float) (line.x1 - strw / 2), 18f);
                 }
             }
             i++;
@@ -3246,8 +3250,7 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
             if (multiplier > 1) {
                 bstr = bstr + "/" + multiplier;
             }
-            g2.drawString(bstr, (float) (line.x1 + line.x2) / 2f,
-                    (float) (line.y2 - 2));
+            g2.drawString(bstr, (float) (line.x1 + line.x2) / 2f, (float) (line.y2 - 2));
             line.x1 = line.x2;
             line.y1 -= 2;
             line.y2 += 2;
@@ -3500,8 +3503,7 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
             if (outSelect < 0) {
                 outSelect = inSelect;
             }
-            g2.setColor(hiliteCue == SNAPSHOT ? inoutSnapshotBarColor
-                    : inoutBarColor);
+            g2.setColor(hiliteCue == SNAPSHOT ? inoutSnapshotBarColor : inoutBarColor);
             g2.setFont(smallFont);
             int inf = toTimeline(inSelect);
             int outf = toTimeline(outSelect);
@@ -3509,8 +3511,7 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
             int xw = Math.abs(outf - inf);
             if (xw > 0) {
                 g2.fillRect(x, 0, xw, 10);
-                long d = paintHeights ? fromTimeline(xw + heightBoxWidth)
-                        : fromTimeline(xw);
+                long d = paintHeights ? fromTimeline(xw + heightBoxWidth) : fromTimeline(xw);
                 String s = YassUtils.commaTime(d) + "s";
                 int sw = g2.getFontMetrics().stringWidth(s);
 
@@ -3537,17 +3538,6 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
         int left = paintHeights ? heightBoxWidth : 0;
         if (playerPos < left) {
             return;
-        }
-
-        if (!isPlaying && !live) {
-            long d = fromTimeline(playerPos);
-            String s = YassUtils.commaTime(d) + "s";
-            g2.setFont(smallFont);
-            int sw = g2.getFontMetrics().stringWidth(s);
-            g2.setColor(darkMode ? hiGray2DarkMode : hiGray2);
-            g2.fillRect(playerPos - clip.x - sw / 2 - 5, 11, sw + 10, 9);
-            g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
-            g2.drawString(s, playerPos - clip.x - sw / 2, 18);
         }
 
         int y = TOP_LINE - 10;
@@ -3636,44 +3626,36 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
         Paint oldPaint = g2.getPaint();
         Stroke oldStroke = g2.getStroke();
 
-        for (Enumeration<?> e = rect.elements(); e.hasMoreElements()
-                || next != null; i++) {
+        for (Enumeration<?> e = rect.elements(); e.hasMoreElements() || next != null; i++) {
             prev = r;
             if (next != null) {
                 r = next;
-                next = e.hasMoreElements() ? (YassRectangle) e.nextElement()
-                        : null;
+                next = e.hasMoreElements() ? (YassRectangle) e.nextElement() : null;
             } else {
                 r = (YassRectangle) e.nextElement();
             }
             if (next == null) {
-                next = e.hasMoreElements() ? (YassRectangle) e.nextElement()
-                        : null;
+                next = e.hasMoreElements() ? (YassRectangle) e.nextElement() : null;
             }
             if (r.isPageBreak()) {
                 pn = r.getPageNumber();
             }
 
             Color borderCol = col;
-
             if (r.x < clip.x + clip.width && r.x + r.width > clip.x) {
-                if (!r.isPageBreak()) {
+                if (!r.isPageBreak())
                     hhPageMin = r.getPageMin();
-                }
-
                 boolean isSelected = table != null && table.isRowSelected(i);
-
                 if (onoff) {
                     if (!r.isPageBreak() && table.getMultiSize() > 1) {
                         Color bg = pn % 2 == 1
                                 ? (darkMode ? hiGrayDarkMode : hiGray)
                                 : (darkMode ? hiGray2DarkMode : hiGray2);
-                        int w = (next == null || next.isPageBreak() || next
-                                .hasType(YassRectangle.END)) ? (int) r.width
+                        int w = (next == null || next.isPageBreak() || next.hasType(YassRectangle.END))
+                                ? (int) r.width
                                 : (int) (next.x - r.x + 1);
                         g2.setColor(bg);
-                        g2.fillRect((int) r.x, clip.height - BOTTOM_BORDER, w,
-                                16);
+                        g2.fillRect((int) r.x, clip.height - BOTTOM_BORDER, w,16);
                     }
                     Color shadeCol = table.isRowSelected(i) ? colorSet[YassSheet.COLOR_ACTIVE]
                             : colorSet[YassSheet.COLOR_SHADE];
@@ -3690,25 +3672,19 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
                         hiliteFill = colorSet[YassSheet.COLOR_ERROR];
                     }
                     if (noshade) {
-                        g2.setPaint(table.isRowSelected(i) ? colorSet[YassSheet.COLOR_ACTIVE]
-                                : hiliteFill);
+                        g2.setPaint(table.isRowSelected(i) ? colorSet[YassSheet.COLOR_ACTIVE] : hiliteFill);
                     } else {
-                        g2.setPaint(new GradientPaint((float) r.x,
-                                (float) r.y + 2, hiliteFill, (float) (r.x),
-                                (float) (r.y + r.height), shadeCol));
+                        g2.setPaint(new GradientPaint(
+                                (float) r.x, (float) (r.y + 2), hiliteFill,
+                                (float) r.x, (float) (r.y + r.height), shadeCol));
                     }
                 }
 
                 if (r.isPageBreak()) {
                     Line2D.Double dashLine = new Line2D.Double(0, 0, 0, 0);
                     float[] dash1 = {8f, 2f};
-
                     float dashWidth = .5f;
-
-                    BasicStroke dashed = new BasicStroke(dashWidth,
-                            BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
-                            10.0f, dash1, 0.0f);
-
+                    BasicStroke dashed = new BasicStroke(dashWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,10.0f, dash1, 0.0f);
                     g2.setStroke(dashed);
                     if (r.isType(YassRectangle.WRONG)) {
                         g2.setColor(colorSet[YassSheet.COLOR_WARNING]);
@@ -3766,53 +3742,101 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
                     if (onoff && r.width > 2.4) {
                         g2.fill(r);
 
-                        if (showNoteLength) {
-                            int len = (int) ((r.width + 2) / wSize + 0.5);
-                            String lenstr = "" + len;
-                            int yoff = 4;
+                        if (wSize > 8) {
+                            YassRow row = table.getRowAt(i);
+                            if (table.isRowSelected(i))
+                            {
+                                if (!isPlaying && !live) {
+                                    g2.setFont(smallFont);
+                                    g2.setColor(darkMode ? blackDarkMode : black);
+                                    FontMetrics fm = g2.getFontMetrics();
 
-                            int midx = (int) (r.x + r.width / 2);
-                            Font oldFont = g2.getFont();
-                            g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
-                            g2.setFont(big[16]);
-                            FontMetrics metrics = g2.getFontMetrics();
-                            int strw = metrics.stringWidth(lenstr);
-                            int lenx = (int) (r.x + r.width - 2 - strw);
-                            int leny = (int) (r.y + r.height - yoff + 16);
-                            if (lenx < midx + 2)
-                                lenx = midx;
-                            if (r.width < 24) {
-                                lenx = (int) (midx - strw / 2 + 0.5);
+                                    int beat = row.getBeatInt();
+                                    int x = beatToTimeline(beat);
+                                    String s = beat+"";
+                                    int sw = fm.stringWidth(s);
+                                    g2.setColor(darkMode ? hiGray2DarkMode : hiGray2);
+                                    g2.fillRect(x - sw / 2, 0, sw, 10);
+                                    g2.setColor(darkMode ? blackDarkMode : black);
+                                    g2.drawString(s, x - sw / 2, 8f);
+
+                                    long ms = (long)table.beatToMs(beat);
+                                    s = YassUtils.commaTime(ms) + "s";
+                                    sw = fm.stringWidth(s);
+                                    g2.setColor(darkMode ? hiGray2DarkMode : hiGray2);
+                                    g2.fillRect(x - sw / 2, 10, sw, 10);
+                                    g2.setColor(darkMode ? blackDarkMode : black);
+                                    g2.drawString(s, x - sw / 2, 18);
+                                }
                             }
-                            g2.drawString(lenstr, lenx, leny);
-                            g2.setFont(oldFont);
+                            if (showNoteBeat) {
+                                String beatstr = row.getBeat();
+                                int yoff = 4;
 
-                        }
-                        if (showNoteHeight) {
-                            int pitch = table.getRowAt(i).getHeightInt();
-                            String hstr = "" + getNoteName(pitch + 60);
-                            int scale = pitch / 12 + 4;
-                            if (showNoteScale || paintHeights) hstr += ""+scale;
-
-                            int yoff = 4;
-
-                            int midx = (int) (r.x + r.width / 2);
-                            Font oldFont = g2.getFont();
-                            g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
-                            g2.setFont(big[16]);
-                            FontMetrics metrics = g2.getFontMetrics();
-                            int strw = metrics.stringWidth(hstr);
-                            int hx = (int) (r.x + 3);
-                            int hy = (int) (r.y + r.height - yoff + 16);
-                            if (hx + strw > midx - 2)
-                                hx = midx - strw;
-                            if (r.width < 24) {
-                                hx = (int) (midx - strw / 2 + 0.5);
-                                if (showNoteLength) hy += 10;
+                                Font oldFont = g2.getFont();
+                                g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
+                                g2.setFont(big[15]);
+                                FontMetrics metrics = g2.getFontMetrics();
+                                int strw = metrics.stringWidth(beatstr);
+                                int midx = (int) (r.x + r.width / 2);
+                                int hx = (int) (r.x + 3);
+                                int hy = (int) (r.y - yoff);
+                                if (hx + strw > midx - 4)
+                                    hx = midx - strw - 2;
+                                g2.drawString(beatstr, hx, hy);
+                                g2.setFont(oldFont);
                             }
-                            g2.drawString(hstr, hx, hy);
-                            g2.setFont(oldFont);
+                            if (showNoteLength) {
+                                String lenstr = row.getLength();
+                                int yoff = 4;
 
+                                int midx = (int) (r.x + r.width / 2);
+                                Font oldFont = g2.getFont();
+                                g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
+                                g2.setFont(big[16]);
+                                FontMetrics metrics = g2.getFontMetrics();
+                                int strw = metrics.stringWidth(lenstr);
+                                int lenx = (int) (r.x + r.width - 2 - strw);
+                                int leny = (int) (r.y + r.height - yoff + 16);
+                                if (lenx < midx + 2)
+                                    lenx = midx;
+                                if (r.width < 24) {
+                                    lenx = (int) (midx - strw / 2 + 0.5);
+                                }
+                                g2.drawString(lenstr, lenx, leny);
+                                g2.setFont(oldFont);
+
+                            }
+                            if (showNoteHeight || showNoteHeightNum) {
+                                int pitch = row.getHeightInt();
+                                String hstr = "";
+                                if (showNoteHeightNum)
+                                    hstr = pitch + "";
+                                else if (showNoteHeight) {
+                                    hstr = getNoteName(pitch + 60);
+                                    if (showNoteScale || paintHeights) {
+                                        int scale = pitch >= 0 ? (pitch / 12 + 4) : (3 + (pitch + 1) / 12); // negative pitch requires special handling
+                                        hstr += "" + scale;
+                                    }
+                                }
+                                int yoff = 4;
+                                int midx = (int) (r.x + r.width / 2);
+                                Font oldFont = g2.getFont();
+                                g2.setColor(darkMode ? dkGrayDarkMode : dkGray);
+                                g2.setFont(big[16]);
+                                FontMetrics metrics = g2.getFontMetrics();
+                                int strw = metrics.stringWidth(hstr);
+                                int hx = (int) (r.x + 3);
+                                int hy = (int) (r.y + r.height - yoff + 16);
+                                if (hx + strw > midx - 2)
+                                    hx = midx - strw;
+                                if (r.width < 24) {
+                                    hx = (int) (midx - strw / 2 + 0.5);
+                                    if (showNoteLength) hy += 10;
+                                }
+                                g2.drawString(hstr, hx, hy);
+                                g2.setFont(oldFont);
+                            }
                         }
                     }
 
@@ -4845,28 +4869,26 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
     public int[] getHeightRange() {
         int minH = 128;
         int maxH = -128;
-        int minBeat = 10000;
-        int maxBeat = 0;
+        int minB = 100000;
+        int maxB = 0;
         for (YassTable t: tables) {
-            int gapBeat = (int)(t.getGapInBeats() + 0.5);
             for (YassRow r: t.getModelData()) {
                 if (r.isNote()) {
                     int height = r.getHeightInt();
                     minH = Math.min(minH, height);
                     maxH = Math.max(maxH, height);
-                    minBeat = Math.min(minBeat, gapBeat + r.getBeatInt());
-                    maxBeat = Math.max(maxBeat, gapBeat + r.getBeatInt() + r.getLengthInt());
+                    minB = Math.min(minB, r.getBeatInt());
+                    maxB = Math.max(maxB, r.getBeatInt() + r.getLengthInt());
                 }
             }
         }
         if (minH == 128)
             minH = 0;
-        int maxHeight = maxH + 3;
-        int minHeight = minH - 1;
-        if (maxHeight - minHeight < 19) {
-            maxHeight = minHeight + 19;
-        }
-        return new int[]{minHeight, maxHeight, minBeat, maxBeat};
+        maxH = maxH + 3;
+        minH = minH - 1;
+        if (maxH - minH < 19)
+            maxH = minH + 19;
+        return new int[]{minH, maxH, minB, maxB};
     }
 
     /**
@@ -4927,6 +4949,13 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
             beatgap = gap * 4 / (60 * 1000 / bpm);
         }
         outgap = 0;
+
+        // beat/height range
+        int minH = 128;
+        int maxH = -128;
+        int minB = 100000;
+        int maxB = 0;
+
         Enumeration<YassTable> et = tables.elements();
         for (Enumeration<Vector<YassRectangle>> e = rects.elements(); e.hasMoreElements() && et.hasMoreElements(); ) {
             Vector<YassRectangle> r = e.nextElement();
@@ -4958,8 +4987,31 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
                     // should better add PAGE_BREAK type
                     rr.removeType(YassRectangle.DEFAULT);
                 }
+                // beat/height range
+                if (row.isNote()) {
+                    int height = row.getHeightInt();
+                    minH = Math.min(minH, height);
+                    maxH = Math.max(maxH, height);
+                    minB = Math.min(minB, row.getBeatInt());
+                    maxB = Math.max(maxB, row.getBeatInt() + row.getLengthInt());
+                }
             }
         }
+
+        // beat/height range
+        if (minH == 128)
+            minH = 0;
+        maxH = maxH + 3;
+        minH = minH - 1;
+        if (maxH - minH < 19)
+            maxH = minH + 19;
+        boolean changed = false;
+        if (minHeight != minH) { minHeight = minH; changed = true; }
+        if (maxHeight != maxH) { maxHeight = maxH; changed = true; }
+        if (minBeat   != minB) { minBeat   = minB; changed = true; }
+        if (maxBeat   != maxB) { maxBeat   = maxB; changed = true; }
+        if (changed)
+            fireRangeChanged(minHeight, maxHeight, minBeat, maxBeat);
     }
 
     public void setHNoteEnabled(boolean b) {
@@ -5050,6 +5102,12 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
         if (paintHeights)
             x += heightBoxWidth;
         return x;
+    }
+
+    public int timelineToBeat(int x) {
+        if (paintHeights)
+            x -= heightBoxWidth;
+        return (int) (x/wSize - beatgap);
     }
 
     public double getMinGapInBeats()
@@ -5157,26 +5215,15 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
     }
 
     public double getMinVisibleMs() {
-        int x = clip.x + LEFT_BORDER;
+        int x = clip.x;
         if (paintHeights) {
             x += heightBoxWidth;
         }
-        return fromTimeline(x);
+        return fromTimelineExact(x);
     }
     public double getMaxVisibleMs() {
-        int x = clip.x + clip.width;
-        return fromTimeline(x);
-    }
-    public double getMinVisibleMs(int track) {
-        int x = clip.x + LEFT_BORDER;
-        if (paintHeights) {
-            x += heightBoxWidth;
-        }
-        return fromTimeline(track, x);
-    }
-    public double getMaxVisibleMs(int track) {
-        int x = clip.x + clip.width;
-        return fromTimeline(track, x);
+        int x = clip.x + clip.width - 1;
+        return fromTimelineExact(x);
     }
 
     public boolean isVisibleMs(double ms) {
@@ -5211,12 +5258,12 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
     }
 
     public void setBeatSize(double w) {
-        wSize = w;
+        wSize = (int)w;
         update();
     }
 
     public void setZoom(double w) {
-        wSize = w;
+        wSize = (int)w;
         dim.setSize(toTimeline(duration), dim.height);
         setSize(dim);
         update();
@@ -5271,7 +5318,8 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
         double val = min == max ? d : d / (double) (max - min);
         if (force || val < wSize) {
             // adjust wSize
-            wSize = val;
+            wSize = (int)val;
+            if (wSize == 0) wSize = val;
             dim.setSize(toTimeline(duration), dim.height);
             setSize(dim);
             if (isVisible()) {

@@ -43,6 +43,8 @@ public class ColorPanel extends OptionsPanel {
         String[] names = s != null ? s.split("\\|") : null;
         addColorSet(I18.get("options_design_notes_colors"), "note-color", YassSheet.COLORSET_COUNT, names);
         addBoolean("", "shade-notes", I18.get("options_design_notes_shade"));
+        addBoolean("", "show-note-beat", I18.get("options_design_notes_beat"));
+        addBoolean("", "show-note-heightnum", I18.get("options_design_notes_heightnum"));
         addBoolean("", "show-note-height", I18.get("options_design_notes_height"));
         addBoolean("", "show-note-scale", I18.get("options_design_notes_scale"));
         addBoolean("", "show-note-length", I18.get("options_design_notes_length"));
