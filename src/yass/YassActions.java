@@ -1781,6 +1781,11 @@ public class YassActions implements DropTargetListener {
             openFolder();
         }
     };
+    private final Action openFolderFromLibrary = new AbstractAction(I18.get("edit_tracks_open_folder")) {
+        public void actionPerformed(ActionEvent e) {
+            openFolderFromLibrary();
+        }
+    };
     private final Action closeTrack = new AbstractAction(I18.get("edit_tracks_close")) {
         public void actionPerformed(ActionEvent e) {
             if (!cancelTrack())
@@ -3588,6 +3593,7 @@ public class YassActions implements DropTargetListener {
         menuBar.add(menu);
         menu.add(openSongFromLibrary);
         menu.add(openFileFromLibrary);
+        menu.add(openFolderFromLibrary);
         menu.add(editRecent);
         menu.addSeparator();
         menu.add(newFile);
@@ -6539,6 +6545,12 @@ public class YassActions implements DropTargetListener {
             openFiles(folderName, false);
     }
 
+    private void openFolderFromLibrary() {
+        String folderName = askFolderName();
+        if (folderName != null)
+            openFiles(folderName, false);
+    }
+
     private void openFile() {
         if (cancelOpen())
             return;
@@ -6929,9 +6941,13 @@ public class YassActions implements DropTargetListener {
         am.put("openFile", openFile);
         openFile.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
 
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK), "openFolder");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK | InputEvent.ALT_MASK), "openFolder");
         am.put("openFolder", openFolder);
-        openFolder.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
+        openFolder.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK | InputEvent.ALT_MASK));
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK | InputEvent.ALT_MASK), "openFolder");
+        am.put("openFolder", openFolder);
+        openFolderFromLibrary.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK | InputEvent.ALT_MASK));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK), "gotoLibrary");
         am.put("gotoLibrary", gotoLibrary);

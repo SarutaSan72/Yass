@@ -128,7 +128,8 @@ public class YassSheetInfo extends JPanel {
             public void mouseMoved(MouseEvent e) {
                 if (sheet.isPlaying())
                     return;
-                if (e.getX() > 130 && e.getX() < 330 && e.getY() < txtBar && hasErr) {
+                final int trackNameWidth = sheet.getTableCount() > 1 ? 100 : 0;
+                if (e.getX() > trackNameWidth+30 && e.getX() < trackNameWidth+230 && e.getY() < txtBar && hasErr) {
                     if (hiliteCue != SHOW_ERRORS) {
                         hiliteCue = SHOW_ERRORS;
                         repaint();
