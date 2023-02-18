@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
@@ -84,7 +85,13 @@ public class I18 {
                 e.printStackTrace();
             }
         } else {
-            bundle = ResourceBundle.getBundle("yass.resources.i18.yass", loc);
+            try {
+                bundle = ResourceBundle.getBundle("yass.resources.i18.yass", loc);
+            } catch (MissingResourceException e) {
+                // language is missing
+                System.out.println("Failed to load " + lang + ", default to english.");
+                bundle = ResourceBundle.getBundle("yass.resources.i18.yass", new Locale("en"));
+            }
         }
     }
 
