@@ -41,8 +41,8 @@ import java.util.*;
 public class YassActions implements DropTargetListener {
 
     private final YassSheet sheet;
-    public final static String VERSION = "2.4.2";
-    public final static String DATE = "02/2023";
+    public final static String VERSION = "2.4.3";
+    public final static String DATE = "03/2023";
 
     static int VIEW_LIBRARY = 1;
     static int VIEW_EDIT = 2;
