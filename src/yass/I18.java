@@ -41,8 +41,7 @@ public class I18 {
     public static ResourceBundle bundle = null;
     private static String lang = "en";
 
-    private static String userdir = System.getProperty("user.home")
-            + File.separator + ".yass" + File.separator + "i18";
+    private static String userdir = System.getProperty("user.home") + File.separator + ".yass" + File.separator + "i18";
 
     /**
      * Description of the Method
@@ -74,17 +73,30 @@ public class I18 {
         }
         lang = s;
         Locale loc = new Locale(lang);
-
         if (new File(userdir).exists()) {
             try {
                 bundle = ResourceBundle.getBundle("yass", loc,
-                        java.net.URLClassLoader
-                                .newInstance(new URL[]{new File(userdir).toURI().toURL()}));
+                        java.net.URLClassLoader.newInstance(new URL[]{new File(userdir).toURI().toURL()}));
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println("Cannot set language " + lang);
+                setDefaultLanguage();
             }
         } else {
+            try {
+                bundle = ResourceBundle.getBundle("yass.resources.i18.yass", loc);
+            } catch (Exception e) {
+                System.out.println("Cannot set language " + lang);
+                setDefaultLanguage();
+            }
+        }
+    }
+    public static void setDefaultLanguage() {
+        lang = "en";
+        Locale loc = new Locale(lang);
+        try {
             bundle = ResourceBundle.getBundle("yass.resources.i18.yass", loc);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
