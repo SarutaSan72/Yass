@@ -643,6 +643,7 @@ public class YassAutoCorrect {
         FIXED_PAGE_BREAK = fixString != null ? Integer.parseInt(fixString) : 0;
 
         YassRow r = null;
+        YassRow nextRow = null;
         try {
             YassTableModel tm = (YassTableModel) table.getModel();
             Vector<?> data = tm.getData();
@@ -673,6 +674,11 @@ public class YassAutoCorrect {
 
             for (int i = 0; i < n; i++) {
                 r = table.getRowAt(i);
+                if (i + 1 < n) {
+                    nextRow = table.getRowAt(i + 1);
+                } else {
+                    nextRow = null;
+                }
                 // @bug: shouldn't remove YassTable.addRow()-Messages (will
                 // recheck them anyway)
                 r.removeAllMessages();
@@ -915,7 +921,7 @@ public class YassAutoCorrect {
                     if (txt.contains(YassRow.SPACE + "" + YassRow.SPACE)) {
                         r.addMessage(YassRow.TOO_MUCH_SPACES);
                         table.addMessage(YassRow.TOO_MUCH_SPACES);
-                    } else if (endswithspace) {
+                    } else if (isUncommonSpacing(r, nextRow)) {
                         r.addMessage(YassRow.UNCOMMON_SPACING);
                         table.addMessage(YassRow.UNCOMMON_SPACING);
                     } else if (firstonpage || startswithspace) {
@@ -1161,6 +1167,16 @@ public class YassAutoCorrect {
         return true;
     }
 
+    private boolean isUncommonSpacing(YassRow currentRow, YassRow nextRow) {
+        if (currentRow.startsWithSpace()) {
+            return true;
+        }
+        if (!currentRow.endsWithSpace()) {
+            return (nextRow != null && nextRow.startsWithSpace()) || nextRow == null || !nextRow.isNote();
+        }
+        return false;
+    }
+
     /**
      * Description of the Method
      *
@@ -1325,15 +1341,17 @@ public class YassAutoCorrect {
                 case YassRow.UNCOMMON_SPACING:
                     if (r.isNote()) {
                         String txt = r.getText();
-                        if (txt.endsWith(YassRow.SPACE + "")) {
-                            r.setText(txt.substring(0, txt.length() - 1));
+                        if (r.startsWithSpace() || !r.endsWithSpace()) {
+                            int textStart = r.startsWithSpace() ? 1 : 0;
+                            boolean changeSpace;
                             if (i + 1 < n) {
                                 YassRow r3 = table.getRowAt(i + 1);
-                                if (r3.isNote()) {
-                                    r3.setText(YassRow.SPACE + r3.getText());
-                                }
+                                changeSpace = r3.startsWithSpace() || !r3.isNote();
+                            } else {
+                                changeSpace = true;
                             }
                             changed = true;
+                            r.setText(txt.substring(textStart) + (changeSpace ? YassRow.SPACE : ""));
                         }
                     }
                     break;
