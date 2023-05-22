@@ -4777,8 +4777,8 @@ public class YassSongList extends JTable {
                         inputStream.close();
                         return false;
                     }
-                    String s = new String(cstr).trim().toLowerCase();
-                    if (s.startsWith("title") || s.startsWith("artist") || s.startsWith("medley") || s.startsWith("mp3") || s.startsWith("author") || s.startsWith("language") || s.startsWith("genre")  || s.startsWith("year")) {
+                    String headerTag = new String(cstr).trim().toUpperCase();
+                    if (HeaderEnum.isValidHeader(headerTag)) {
                         inputStream.close();
                         return true;
                     }
@@ -6187,6 +6187,27 @@ public class YassSongList extends JTable {
                 repaint();
             });
             isFinished = true;
+        }
+    }
+
+    enum HeaderEnum {
+        TITLE,
+        ARTIST,
+        MEDLEY,
+        MP3,
+        AUTHOR,
+        LANGUAGE,
+        GENRE,
+        YEAR,
+        ENCODING;
+
+        static boolean isValidHeader(String header) {
+            for (HeaderEnum headerEnum : HeaderEnum.values()) {
+                if (headerEnum.toString().equals(header)) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
