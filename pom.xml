@@ -25,7 +25,13 @@
     <groupId>yass</groupId>
     <artifactId>Yass</artifactId>
     <version>1.0-SNAPSHOT</version>
-
+    <repositories>
+        <repository>
+            <id>cogcomp-repo</id>
+            <name>Cogcomp Repository</name>
+            <url>https://cogcomp.seas.upenn.edu/m2repo/</url>
+        </repository>
+    </repositories>
     <dependencies>
         <dependency>
             <groupId>com.danielreese</groupId>
@@ -35,12 +41,40 @@
             <systemPath>${project.basedir}/lib/nsisant-1.3.jar</systemPath>
         </dependency>
         <dependency>
+            <groupId>javazoom.jl</groupId>
+            <artifactId>JLayer</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/jlayer.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>net.davidashen.text</groupId>
+            <artifactId>Hyphenator</artifactId>
+            <version>1.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/texhyphj.jar</systemPath>
+        </dependency>
+        <dependency>
             <groupId>fobs4jmf</groupId>
             <artifactId>fobs4jmf</artifactId>
             <version>0.4.2</version>
             <scope>system</scope>
             <type>dll</type>
             <systemPath>${project.basedir}/lib/fobs4jmf.dll</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>fobs4jmf</groupId>
+            <artifactId>fobs4jmf</artifactId>
+            <version>0.4.2</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/fobs4jmf.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>jmf</groupId>
+            <artifactId>jmf</artifactId>
+            <version>0.4.2</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/jmf.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>jinput-dx8</groupId>
@@ -58,6 +92,14 @@
             <type>dll</type>
             <systemPath>${project.basedir}/lib/jinput-raw.dll</systemPath>
         </dependency>
+        <dependency>
+            <groupId>com.swabunga</groupId>
+            <artifactId>jazzy</artifactId>
+            <version>1.0.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/jazzy.jar</systemPath>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.apache.derby/derby -->
         <dependency>
             <groupId>org.apache.derby</groupId>
@@ -83,13 +125,29 @@
             <artifactId>jmf</artifactId>
             <version>2.1.1e</version>
         </dependency>
-
+        <!-- https://mvnrepository.com/artifact/com.lowagie/itext -->
         <dependency>
-            <groupId>ant-contrib</groupId>
-            <artifactId>ant-contrib</artifactId>
-            <version>1.0b3</version>
+            <groupId>com.lowagie</groupId>
+            <artifactId>itext</artifactId>
+            <version>2.1.7</version>
         </dependency>
-
+        <!-- https://mvnrepository.com/artifact/com.github.albfernandez/juniversalchardet -->
+        <dependency>
+            <groupId>com.github.albfernandez</groupId>
+            <artifactId>juniversalchardet</artifactId>
+            <version>2.4.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.jcraft/jorbis -->
+        <dependency>
+            <groupId>org.jcraft</groupId>
+            <artifactId>jorbis</artifactId>
+            <version>0.0.17</version>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.soundlibs</groupId>
+            <artifactId>tritonus-share</artifactId>
+            <version>0.3.7.4</version>
+        </dependency>
     </dependencies>
 
     <properties>
@@ -99,28 +157,10 @@
     </properties>
 
     <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
-                <configuration>
-                    <outputDirectory>/my/path</outputDirectory>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>resourcelib</classifier>
-                            <includes>
-                                <include>**/resources/*</include>
-                            </includes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
+        <resources>
+            <resource>
+                <directory>resources</directory>
+            </resource>
+        </resources>
     </build>
 </project>
