@@ -586,20 +586,4 @@ public class YassRow implements Cloneable, Comparable<Object> {
             return false;
         return true;
     }
-
-    public boolean startsWithSpace() {
-        return isNote() && getText().startsWith(YassRow.SPACE + "");
-    }
-
-    public boolean endsWithSpace() {
-        return isNote() && getText().endsWith(YassRow.SPACE + "");
-    }
-
-    public String getTrimmedText() {
-        if (getText() == null) {
-            return "";
-        }
-        String tempText = getText().replace(YassRow.SPACE, ' ');
-        return tempText.trim();
-    }
 }

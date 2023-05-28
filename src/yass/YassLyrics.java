@@ -612,7 +612,13 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 					lyricsArea.getCaret().setDot(dot);
 
 					int pos = dot;
-					pos = determineDotPositionInWord(txt, dot);
+					while (pos > 0 && c != ' ' && c != '-' && c != '\n') {
+						c = txt.charAt(--pos);
+					}
+					if (c == '-' || c == '\n') {
+						pos++;
+					}
+					pos = dot - pos;
 
 					finishEditing();
 					preventFireUpdate = false;
@@ -855,33 +861,6 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 		// sp.setPreferredSize(new Dimension(600,400));
 
         setOpaque(false);
-	}
-
-	/**
-	 * Determines the character position of a SPACE or MINUS that was just set.
-	 *
-	 * @param txt All lyrics with lines divided by line breaks
-	 * @param dot Overall caret position of a newly added SPACE or MINUS
-	 * @return int The position within the word in which a SPACE or MINUS was added
-	 */
-	private int determineDotPositionInWord(String txt, int dot) {
-		String[] rows = txt.split("\n");
-		int tempLength = 0;
-		String actualRow = "";
-		for (String row : rows) {
-			if (dot > tempLength && dot < tempLength + row.length()) {
-				actualRow = txt.substring(tempLength, dot);
-				break;
-			}
-			tempLength += row.length() + 1;
-		}
-		int lastSpace = actualRow.lastIndexOf(' ');
-		int lastMinus = actualRow.lastIndexOf('-');
-		int offset = 0;
-		if (lastMinus >= 0 || lastSpace >= 0) {
-			offset = Math.max(lastSpace, lastMinus) + 1;
-		}
-		return actualRow.length() - offset;
 	}
 
 	/**
@@ -1456,8 +1435,15 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 		while (st.hasMoreTokens()) {
 			String line = st.nextToken();
 			StringTokenizer st2 = new StringTokenizer(line, " ");
+			boolean first = true;
 			while (st2.hasMoreTokens()) {
-				String word = st2.nextToken() + YassRow.SPACE;
+				String word = st2.nextToken();
+				if (first) {
+					first = false;
+				} else {
+					word = YassRow.SPACE + word;
+				}
+
 				StringTokenizer st3 = new StringTokenizer(word, "-", true);
 				boolean last;
 				boolean delim = false;

@@ -280,7 +280,7 @@ public class YassProperties extends Properties {
         p.put("user-dicts", userDir + File.separator + yassDir);
 
         p.put("utf8-without-bom", "true");
-        p.put("utf8-always", "false");
+        p.put("utf8-always", "true");
         //p.put("duet-sequential", "true");
 
         p.put("floatable", "false");
