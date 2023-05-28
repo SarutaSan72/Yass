@@ -1,16 +1,15 @@
-# Yass Karaoke Editor
-Yass is a graphical editor for finetuning Ultrastar karaoke songs. You can drag & drop notes, spread syllables, and find errors. Further you can filter your song library, mass-tag or batch-correct them, or search for lyrics.
+# Yass Reloaded Karaoke Editor
+Yass Reloaded is a graphical editor for finetuning Ultrastar karaoke songs. 
+You can drag & drop notes, spread syllables, and find errors. Further you can filter your song library, mass-tag or batch-correct them, or search for lyrics.
 
-I develop it since 2009, just for leisure. Don't expect anything.
+Yass Reloaded is a fork from Yass 2.4.3 that Saruta has been developing since 2009. Due to time constraints on his behalf and "creative differences" with the other contributors, I decided to go rogue with my fork.
 
-Contact me if you want to contribute to this project.
 
-Have fun! :musical_note:
-Saruta <mail@yass-along.com>
 
 # Downloads
 
-Executables can be found at [http://yass-along.com](http://yass-along.com)
+Executables for the original version can be found at [http://yass-along.com](http://yass-along.com)
+Stay tuned for binaries of the Reloaded version.
 
 # Developers
 
@@ -34,7 +33,7 @@ Speed measure 'Inverse Duration' based on Marcel Taeumel's approach (http://uman
 
 # License
 
-Copyright (C) 2009-2022 Saruta
+Copyright (C) 2009-2022 Saruta, 2023 DoubleDee 
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
