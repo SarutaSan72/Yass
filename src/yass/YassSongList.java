@@ -4718,7 +4718,7 @@ public class YassSongList extends JTable {
                         actions.setProgress(I18.get("lib_msg_search"), d.getPath());
                     }
                 }
-                yield();
+                Thread.yield();
             }
             return false;
         }

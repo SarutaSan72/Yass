@@ -50,7 +50,7 @@ public class YassActions implements DropTargetListener {
     private final Vector<YassTable> openTables = new Vector<>();
     private JPanel main = null;
     private JComponent libComponent = null, songComponent = null, songInfoComponent = null, playlistComponent = null, editComponent = null, trackComponent = null;
-    private JApplet menuHolder = null;
+    private JFrame menuHolder = null;
     private Rectangle songBounds = null;
     private final JProgressBar progressBar;
     private JComponent tab = null;
@@ -4809,7 +4809,7 @@ public class YassActions implements DropTargetListener {
         isLibraryPlaying = false;
     }
 
-    public void setPanels(JApplet f, JPanel main, JComponent libComponent, JComponent songInfoComponent, JComponent songComponent, JComponent playlistComponent, JComponent editComponent, JComponent trackComponent) {
+    public void setPanels(JFrame f, JPanel main, JComponent libComponent, JComponent songInfoComponent, JComponent songComponent, JComponent playlistComponent, JComponent editComponent, JComponent trackComponent) {
         this.menuHolder = f;
         this.main = main;
         this.libComponent = libComponent;

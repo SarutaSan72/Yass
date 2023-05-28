@@ -37,7 +37,7 @@ import java.util.Vector;
  *
  * @author Saruta
  */
-public class YassMain extends JApplet {
+public class YassMain extends JFrame {
     public static boolean PRE_LOAD_FOBS = false;
     private static boolean convert = false;
     private static boolean edit = false;
@@ -76,11 +76,8 @@ public class YassMain extends JApplet {
             y.initConvert();
 
             y.onShow();
-            y.setDefaultSize(y.getDefaultSize());
 
             System.out.println("Starting...");
-            y.start();
-            System.out.println("Loading...");
             y.load();
 
             y.initFrame();
@@ -108,7 +105,7 @@ public class YassMain extends JApplet {
     }
 
     private void initFrame() {
-        final JFrame frame = new JFrame(I18.get("yass_title"));
+        this.setTitle(I18.get("yass_title"));
         URL icon16 = YassMain.this.getClass().getResource("/yass/resources/img/yass-icon-16.png");
         URL icon32 = YassMain.this.getClass().getResource("/yass/resources/img/yass-icon-32.png");
         URL icon48 = YassMain.this.getClass().getResource("/yass/resources/img/yass-icon-48.png");
@@ -116,9 +113,9 @@ public class YassMain extends JApplet {
         icons.add(new ImageIcon(icon48).getImage());
         icons.add(new ImageIcon(icon32).getImage());
         icons.add(new ImageIcon(icon16).getImage());
-        frame.setIconImages(icons);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        frame.addWindowListener(
+        this.setIconImages(icons);
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.addWindowListener(
                 new WindowAdapter() {
                     public void windowClosing(WindowEvent e) {
                         if (!askStop())
@@ -132,16 +129,15 @@ public class YassMain extends JApplet {
                         System.exit(0);
                     }
                 });
-        frame.add("Center", this);
-        frame.pack();
-        frame.setSize(getDefaultSize());
+        this.pack();
+        this.setSize(getDefaultSize());
 
         Point p = getDefaultLocation();
         if (p != null)
-            frame.setLocation(p);
+            this.setLocation(p);
         else
-            frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+            this.setLocationRelativeTo(null);
+        this.setVisible(true);
     }
 
     private void initConvert() {
@@ -165,7 +161,7 @@ public class YassMain extends JApplet {
         String y = prop.getProperty("frame-y");
         if (x == null || y == null)
             return null;
-        return new Point(new Integer(x), new Integer(y));
+        return new Point(Integer.parseInt(x), Integer.parseInt(y));
     }
 
     private void setDefaultLocation(Point p) {
@@ -187,7 +183,7 @@ public class YassMain extends JApplet {
         else if (Integer.parseInt(h) > dim.height)
             w = dim.height + "";
 
-        return new Dimension(new Integer(w), new Integer(h));
+        return new Dimension(Integer.parseInt(w), Integer.parseInt(h));
     }
 
     private void setDefaultSize(Dimension d) {
