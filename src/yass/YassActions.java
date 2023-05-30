@@ -2330,6 +2330,13 @@ public class YassActions implements DropTargetListener {
             if (moveArticles != newMoveArticles) {
                 needSongDirUpdate = true;
             }
+            if (oldSpacing != prop.isUncommonSpacingAfter()) {
+                for (YassTable table : openTables) {
+                    table.setPreventUndo(true);
+                    ((YassTableModel) table.getModel()).fireTableDataChanged();
+                    table.setPreventUndo(false);
+                }
+            }
 
             if (needSongDirUpdate) {
                 setLibraryLoaded(false);
@@ -2337,9 +2344,6 @@ public class YassActions implements DropTargetListener {
                 updatePlayListBox();
                 songList.clear();
                 songList.load();
-            }
-            if (oldSpacing != prop.isUncommonSpacingAfter()) {
-
             }
         }
     };

@@ -13,9 +13,9 @@
 	<!-- don't change anything below -->
 
 	<target name="compile">
-		<mkdir dir="bin"/>
-		<javac srcdir="src" destdir="bin" classpath="resources"/>
-		<copy todir="bin">
+		<mkdir dir="out"/>
+		<javac srcdir="src" destdir="out" classpath="resources"/>
+		<copy todir="out">
 		    <fileset dir="src">
 		        <exclude name="**/*.java"/>
 		    </fileset>
@@ -28,7 +28,7 @@
                 <attribute name="Main-Class" value="yass.YassMain"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
-			<fileset dir="./bin"/>
+			<fileset dir="./out"/>
 			<fileset dir="./resources"/>
         </jar>
     </target>

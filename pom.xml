@@ -139,6 +139,13 @@
             <artifactId>commons-text</artifactId>
             <version>1.10.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.googlecode.texhyphj/texhyphj -->
+        <dependency>
+            <groupId>com.googlecode.texhyphj</groupId>
+            <artifactId>texhyphj</artifactId>
+            <version>1.2</version>
+        </dependency>
+
     </dependencies>
 
     <properties>
@@ -148,10 +155,25 @@
     </properties>
 
     <build>
+        <sourceDirectory>src</sourceDirectory>
         <resources>
             <resource>
                 <directory>resources</directory>
             </resource>
         </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>yass.YassMain</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>
