@@ -40,6 +40,8 @@ public class ErrorPanel extends OptionsPanel {
         addComment(I18.get("options_errors_pages_comment"));
         addText(I18.get("options_errors_pages_fix"), "correct-uncommon-pagebreaks-fix");
         addComment(I18.get("options_errors_pages_fix_comment"));
+        addRadio(I18.get("options_errors_spacing"), "correct-uncommon-spacing", "before|after", I18.get("options_errors_uncommon_spacing_before") + "|" + I18.get("options_errors_uncommon_spacing_after"));
+        addComment(I18.get("options_errors_spacing_comment"));
     }
 }
 

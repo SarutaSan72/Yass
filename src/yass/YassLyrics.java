@@ -51,6 +51,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
@@ -241,7 +242,7 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 			protected JButton createDecreaseButton(int orientation) {
 				JButton b = createZeroButton();
 				b.setBackground(sheet.darkMode? YassSheet.hiGrayDarkMode : YassSheet.hiGray);
-				b.setForeground(sheet.darkMode? YassSheet.hiGray2DarkMode : YassSheet.hiGray2);
+				b.setForeground(sheet.darkMode? YassSheet.HI_GRAY_2_DARK_MODE : YassSheet.HI_GRAY_2);
 				return b;
 			}
 			protected JButton createIncreaseButton(int orientation) {
@@ -253,7 +254,7 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 			protected void configureScrollBarColors() {
 				this.thumbColor = sheet.darkMode? YassSheet.hiGray : YassSheet.hiGray;
 				this.thumbDarkShadowColor = sheet.darkMode? YassSheet.dkGray : YassSheet.dkGray;
-				this.trackColor = sheet.darkMode? YassSheet.hiGray2DarkMode : YassSheet.hiGray2;
+				this.trackColor = sheet.darkMode? YassSheet.HI_GRAY_2_DARK_MODE : YassSheet.HI_GRAY_2;
 			}
 		});
 		repaint();
@@ -939,8 +940,7 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 			StringTokenizer st = new StringTokenizer(lang, "()-_");
 			String language = st.nextToken();
 			String country = st.hasMoreTokens() ? st.nextToken() : "";
-			String lc = country.length() > 0 ? language + "_" + country
-					: language;
+			String lc = country.length() > 0 ? language + "_" + country : language;
 
 			// System.out.println("# remove spell check");
 			if (spellCheckerComp != null) {
@@ -958,14 +958,13 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 						File f = new File(userdir + File.separator + sc
 								+ ".dic");
 						if (f.exists()) {
-							is = new FileInputStream(f);
+							is = Files.newInputStream(f.toPath());
 						} else {
 							is = getClass().getResourceAsStream(
 									"/yass/resources/spell/" + sc + ".dic");
 						}
 						// System.out.println("/spell/"+sc+".dic");
-						SpellDictionaryHashMap dict = new SpellDictionaryHashMap(
-								new InputStreamReader(is));
+						SpellDictionaryHashMap dict = new SpellDictionaryHashMap(new InputStreamReader(is));
 						String user = prop.getProperty("user-dicts")
 								+ File.separator + "user_" + sc + ".dic";
 						File userfile = new File(user);
@@ -978,8 +977,7 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 							out.close();
 						} catch (IOException e) {
 						}
-						SpellDictionaryHashMap dict_user = new SpellDictionaryHashMap(
-								userfile);
+						SpellDictionaryHashMap dict_user = new SpellDictionaryHashMap(userfile);
 						// System.out.println("# add spell check");
 						spellCheckerComp = new JTextComponentSpellChecker(dict,
 								dict_user, I18.get("tool_spellcheck"));

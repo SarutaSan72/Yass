@@ -18,6 +18,8 @@
 
 package yass;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -26,6 +28,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Enumeration;
+import java.util.StringJoiner;
 import java.util.Vector;
 
 /**
@@ -376,7 +379,7 @@ public class YassErrors extends JPanel {
         String mess[] = r.getMessageWithDetail(i);
         sb.append(I18.get(mess[0]));
         sb.append("</font><br><font color=black>");
-        String msg = I18.get(mess[0] + "_msg");
+        String msg = I18.get(getErrorMessageKey(mess[0]));
         if (msg != null) {
             sb.append(msg);
         }
@@ -389,6 +392,18 @@ public class YassErrors extends JPanel {
         }
         sb.append("</font></html>");
         return sb.toString();
+    }
+
+    private String getErrorMessageKey(String errorKey) {
+        StringJoiner messageKey = new StringJoiner("_");
+        messageKey.add(errorKey);
+        if (YassRow.UNCOMMON_SPACING.equals(errorKey)) {
+            String spacingMode = StringUtils.defaultString(
+                    prop.getProperty("correct-uncommon-spacing"), "after");
+            messageKey.add(spacingMode);
+        }
+        messageKey.add("msg");
+        return messageKey.toString();
     }
 
     /**

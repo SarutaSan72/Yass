@@ -158,6 +158,7 @@ public class YassProperties extends Properties {
         p.put("use-fobs", "false");
 
         p.put("correct-uncommon-pagebreaks", "unknown");
+        p.put("correct-uncommon-spacing", "");
 
         p.put("articles", "EN:the |a |an :DE:der |die |das |ein |eine :FR:le |la |les |l'|un |une |des :ES:el |la |los |las:HU:a |az ");
         p.put("use-articles", "true");
@@ -489,6 +490,10 @@ public class YassProperties extends Properties {
     public boolean getBooleanProperty(String s) {
         String p = getProperty(s);
         return p != null && p.equals("true");
+    }
+
+    public boolean isUncommonSpacingAfter() {
+        return "after".equals(getProperty("correct-uncommon-spacing"));
     }
 }
 

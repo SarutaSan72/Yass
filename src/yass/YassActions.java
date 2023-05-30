@@ -41,8 +41,8 @@ import java.util.*;
 public class YassActions implements DropTargetListener {
 
     private final YassSheet sheet;
-    public final static String VERSION = "2.4.3";
-    public final static String DATE = "03/2023";
+    public final static String VERSION = "2023.5";
+    public final static String DATE = "05/2023";
 
     static int VIEW_LIBRARY = 1;
     static int VIEW_EDIT = 2;
@@ -161,7 +161,7 @@ public class YassActions implements DropTargetListener {
 
     private final Action showAbout = new AbstractAction(I18.get("lib_about")) {
         public void actionPerformed(ActionEvent e) {
-            URL url = getClass().getResource("/yass/resources/img/about.gif");
+            URL url = getClass().getResource("/yass/resources/img/about.jpg");
             ImageIcon icon = url == null ? null : new ImageIcon(url);
             try {
                 JEditorPane label = new JEditorPane("text/html", I18.getCopyright(VERSION, DATE));
@@ -2245,6 +2245,7 @@ public class YassActions implements DropTargetListener {
         public void actionPerformed(ActionEvent e) {
             String oldDir = prop.getProperty("song-directory");
             String oldListDir = prop.getProperty("playlist-directory");
+            boolean oldSpacing = prop.isUncommonSpacingAfter();
             if (oldDir == null) {
                 oldDir = "";
             }
@@ -2336,6 +2337,9 @@ public class YassActions implements DropTargetListener {
                 updatePlayListBox();
                 songList.clear();
                 songList.load();
+            }
+            if (oldSpacing != prop.isUncommonSpacingAfter()) {
+
             }
         }
     };
@@ -4914,13 +4918,13 @@ public class YassActions implements DropTargetListener {
 
                     @Override
                     public void propsChanged(YassSheet source) {
-                        editMenu.setBackground(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
+                        editMenu.setBackground(sheet.darkMode ? sheet.HI_GRAY_2_DARK_MODE : sheet.HI_GRAY_2);
                         for (Component c : editMenu.getComponents()) {
                             c.setForeground(sheet.darkMode ? sheet.blackDarkMode : sheet.black);
                         }
                     }
                 });
-                editMenu.setBackground(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
+                editMenu.setBackground(sheet.darkMode ? sheet.HI_GRAY_2_DARK_MODE : sheet.HI_GRAY_2);
                 for (Component c : editMenu.getComponents()) {
                     c.setForeground(sheet.darkMode ? sheet.blackDarkMode : sheet.black);
                 }

@@ -23,7 +23,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Hashtable;
 import java.util.Vector;
 
 /**
@@ -82,7 +81,7 @@ public class YassSheetInfo extends JPanel {
             }
             @Override
             public void propsChanged(YassSheet source) {
-                setBackground(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
+                setBackground(sheet.darkMode ? sheet.HI_GRAY_2_DARK_MODE : sheet.HI_GRAY_2);
                 repaint();
             }
         });
@@ -298,7 +297,7 @@ public class YassSheetInfo extends JPanel {
             g2.fillRect(x, 0, w, txtBar);
         }
         else {
-            g2.setColor(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
+            g2.setColor(sheet.darkMode ? sheet.HI_GRAY_2_DARK_MODE : sheet.HI_GRAY_2);
             g2.fillRect(x, 0, w, txtBar);
         }
 
@@ -439,7 +438,7 @@ public class YassSheetInfo extends JPanel {
                 int sw = g3.getFontMetrics().stringWidth(s);
                 int sx = (int)(rxFirstNoteOnPage + rxPrev + rwPrev);
                 if (sw < (rxPrev + rwPrev - rxFirstNoteOnPage) || page%5==0) {
-                    g3.setColor(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
+                    g3.setColor(sheet.darkMode ? sheet.HI_GRAY_2_DARK_MODE : sheet.HI_GRAY_2);
                     g3.drawString(s, x + (sx - sw) / 2, y + h - hBar + 12);
                 }
             }
@@ -448,7 +447,7 @@ public class YassSheetInfo extends JPanel {
                 int sw = g3.getFontMetrics().stringWidth(s);
                 int sx = (int)(rxFirstNoteOnPage + rxPrev + rwPrev);
                 if (sw < (rxPrev + rwPrev - rxFirstNoteOnPage) || page%5==0) {
-                    g3.setColor(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
+                    g3.setColor(sheet.darkMode ? sheet.HI_GRAY_2_DARK_MODE : sheet.HI_GRAY_2);
                     g3.drawString(s, x + (sx - sw) / 2, y + h - hBar + 12);
                 }
             }

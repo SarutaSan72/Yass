@@ -4781,6 +4781,8 @@ public class YassSongList extends JTable {
                     if (HeaderEnum.isValidHeader(headerTag)) {
                         inputStream.close();
                         return true;
+                    } else {
+                        System.out.println("Invalid Header Tag for " + f.getName());
                     }
                     c = inputStream.read();
                 }
@@ -6203,7 +6205,7 @@ public class YassSongList extends JTable {
 
         static boolean isValidHeader(String header) {
             for (HeaderEnum headerEnum : HeaderEnum.values()) {
-                if (headerEnum.toString().equals(header)) {
+                if (header.startsWith(headerEnum.toString())) {
                     return true;
                 }
             }

@@ -21,8 +21,6 @@ package yass;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.font.FontRenderContext;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.text.MessageFormat;
@@ -43,6 +41,14 @@ public class YassAutoCorrect {
     private String coverID;
     private String backgroundID;
     private String videoID;
+
+    private Map<String, YassAutoCorrector> autoCorrectorMap;
+
+    private Map<String, YassAutoCorrector> initAutoCorrectors() {
+        Map<String, YassAutoCorrector> tempAutoCorrectors = new HashMap<>();
+        tempAutoCorrectors.put(YassRow.UNCOMMON_SPACING, new YassAutoCorrectUncommonSpacing(prop));
+        return tempAutoCorrectors;
+    }
 
     /**
      * Constructor for the YassAutoCorrect object
@@ -387,6 +393,7 @@ public class YassAutoCorrect {
      */
     public void init(YassProperties p) {
         prop = p;
+        autoCorrectorMap = initAutoCorrectors();
         YassRow.setValidTags(prop.getProperty("valid-tags"));
         YassRow.setValidLines(prop.getProperty("valid-lines"));
         loadFont();
@@ -643,6 +650,7 @@ public class YassAutoCorrect {
         FIXED_PAGE_BREAK = fixString != null ? Integer.parseInt(fixString) : 0;
 
         YassRow r = null;
+        YassRow nextRow = null;
         try {
             YassTableModel tm = (YassTableModel) table.getModel();
             Vector<?> data = tm.getData();
@@ -673,6 +681,11 @@ public class YassAutoCorrect {
 
             for (int i = 0; i < n; i++) {
                 r = table.getRowAt(i);
+                if (i + 1 < n) {
+                    nextRow = table.getRowAt(i + 1);
+                } else {
+                    nextRow = null;
+                }
                 // @bug: shouldn't remove YassTable.addRow()-Messages (will
                 // recheck them anyway)
                 r.removeAllMessages();
@@ -915,7 +928,7 @@ public class YassAutoCorrect {
                     if (txt.contains(YassRow.SPACE + "" + YassRow.SPACE)) {
                         r.addMessage(YassRow.TOO_MUCH_SPACES);
                         table.addMessage(YassRow.TOO_MUCH_SPACES);
-                    } else if (endswithspace) {
+                    } else if (isUncommonSpacing(r, nextRow)) {
                         r.addMessage(YassRow.UNCOMMON_SPACING);
                         table.addMessage(YassRow.UNCOMMON_SPACING);
                     } else if (firstonpage || startswithspace) {
@@ -1073,8 +1086,8 @@ public class YassAutoCorrect {
                                     : "correct_pause_" + ptype;
                             String details = ptype < 0 ? "" : MessageFormat
                                     .format(I18.get(key),
-                                            new Double(((int) (ms[0] * 100)) / 100.0),
-                                            new Double(((int) (ms[1] * 100)) / 100.0), FIXED_PAGE_BREAK);
+                                            ((int) (ms[0] * 100)) / 100.0,
+                                            (((int) (ms[1] * 100)) / 100.0), FIXED_PAGE_BREAK);
 
                             if (early) {
                                 if (canchange) {
@@ -1161,8 +1174,23 @@ public class YassAutoCorrect {
         return true;
     }
 
+    private boolean isUncommonSpacing(YassRow currentRow, YassRow nextRow) {
+        boolean isUncommonSpacingAfter = prop.isUncommonSpacingAfter();
+        if (isUncommonSpacingAfter) {
+            if (currentRow.startsWithSpace()) {
+                return true;
+            }
+            if (!currentRow.endsWithSpace()) {
+                return (nextRow != null && nextRow.startsWithSpace()) || nextRow == null || !nextRow.isNote();
+            }
+        } else {
+            return currentRow.endsWithSpace();
+        }
+        return false;
+    }
+
     /**
-     * Description of the Method
+     * Auto-Corrects based on the message of the found issue.
      *
      * @param table          Description of the Parameter
      * @param all            Description of the Parameter
@@ -1192,7 +1220,7 @@ public class YassAutoCorrect {
         boolean changed = false;
         YassTableModel tm = (YassTableModel) table.getModel();
         Vector<?> data = tm.getData();
-
+        YassAutoCorrector autoCorrector = autoCorrectorMap.get(currentMessage);
         for (int k = 0; k < n; k++) {
             int i = rows[k];
             YassRow r = table.getRowAt(i);
@@ -1211,7 +1239,10 @@ public class YassAutoCorrect {
             if (!found) {
                 continue;
             }
-
+            if (autoCorrector != null) {
+                changed = autoCorrector.autoCorrect(table, i, n) || changed;
+                continue;
+            }
             if (currentMessage.equals(YassRow.UNSORTED_COMMENTS)) {
                 sortComments(table);
                 return true;
@@ -1322,21 +1353,6 @@ public class YassAutoCorrect {
                         table.setVideoGap(vg);
                     }
                     return true;
-                case YassRow.UNCOMMON_SPACING:
-                    if (r.isNote()) {
-                        String txt = r.getText();
-                        if (txt.endsWith(YassRow.SPACE + "")) {
-                            r.setText(txt.substring(0, txt.length() - 1));
-                            if (i + 1 < n) {
-                                YassRow r3 = table.getRowAt(i + 1);
-                                if (r3.isNote()) {
-                                    r3.setText(YassRow.SPACE + r3.getText());
-                                }
-                            }
-                            changed = true;
-                        }
-                    }
-                    break;
                 case YassRow.INVALID_NOTE_LENGTH:
                     if (r.isNote()) {
                         r.setLength(1);

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Yass - Karaoke Editor
-  ~ Copyright (C) 2009 Saruta
+  ~ Yass Reloaded - Karaoke Editor
+  ~ Copyright (C) 2009-2023 Saruta / (C) 2023.5 DoubleDee
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>yass</groupId>
-    <artifactId>Yass</artifactId>
+    <artifactId>Yass-Reloaded</artifactId>
     <version>1.0-SNAPSHOT</version>
     <repositories>
         <repository>
@@ -53,21 +53,6 @@
             <version>1.1</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/texhyphj.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>fobs4jmf</groupId>
-            <artifactId>fobs4jmf</artifactId>
-            <version>0.4.2</version>
-            <scope>system</scope>
-            <type>dll</type>
-            <systemPath>${project.basedir}/lib/fobs4jmf.dll</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>fobs4jmf</groupId>
-            <artifactId>fobs4jmf</artifactId>
-            <version>0.4.2</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/fobs4jmf.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>jmf</groupId>
@@ -147,6 +132,12 @@
             <groupId>com.googlecode.soundlibs</groupId>
             <artifactId>tritonus-share</artifactId>
             <version>0.3.7.4</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-text -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.10.0</version>
         </dependency>
     </dependencies>
 

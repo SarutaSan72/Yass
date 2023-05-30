@@ -258,11 +258,12 @@ public class I18 {
         */
 
         StringBuilder sb = new StringBuilder();
-        sb.append("<html><body><font size=+2><u>Yass</u>&#161;</font> by Saruta<br>Version: " + version + " (" + date + ")<br>");
-        sb.append("mail@yass-along.com<br>");
-        sb.append("<a href=\"http://yass-along.com\">http://yass-along.com</a><br>");
+        sb.append("<html><body><font style=\"font-family: Arial; font-size:2em\"><u>Yass</u> Reloaded</font> by DoubleDee<br>Version: " + version + " (" + date + ")<br>");
+        sb.append("<a href=\"https://github.com/DoubleDee73/Yass\">https://github.com/DoubleDee73/Yass</a><br>");
         sb.append("<br>");
-        sb.append("Copyright (C) 2020 Saruta<br>");
+        sb.append("Copyright (C) 2023 DoubleDee<br>");
+        sb.append("<br>");
+        sb.append("Forked from <a href=\"https://yass-along.com/\">Yass 2.4.3</a> by Saruta<br>");
         sb.append("This program is free software: you can redistribute it and/or modify<br>");
         sb.append("it under the terms of the GNU General Public License as published by<br>");
         sb.append("the Free Software Foundation, either version 3 of the License, or<br>");
@@ -274,12 +275,12 @@ public class I18 {
         sb.append("GNU General Public License for more details.<br>");
         sb.append("<br>");
         sb.append("You should have received a copy of the GNU General Public License<br>");
-        sb.append("along with this program. If not, see <a href=\"http://www.gnu.org/licenses/\"><http://www.gnu.org/licenses/></a>.<br>");
+        sb.append("along with this program. If not, see <a href=\"https://www.gnu.org/licenses/\">https://www.gnu.org/licenses/</a>.<br>");
         sb.append("<br>");
         sb.append("Yass uses: ");
         sb.append("Java Look & Feel Graphics Repository, JavaZoom JLayer/MP3SPI/VorbisSPI<br>");
         sb.append("and Tritonus Sequencer, iText, Jazzy Spell Checker, TeX Hyphenator, JInput,<br>");
-        sb.append("VFFMpeg Objects (fobs), Java Media Framework (JMF), Robert Eckstein's Wizard code,<br>");
+        sb.append("Java Media Framework (JMF), Robert Eckstein's Wizard code,<br>");
         sb.append("juniversalchardet.<br>");
         sb.append("Speed measure 'Inverse Duration' based on Marcel Taeumel's approach (http://uman.sf.net).<br>");
         sb.append("Spanish translation by Pantera.<br>");

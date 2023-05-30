@@ -18,8 +18,6 @@
 
 package yass;
 
-import com.omnividea.FobsConfiguration;
-
 import javax.media.Buffer;
 import javax.media.Format;
 import javax.media.ResourceUnavailableException;
@@ -81,7 +79,7 @@ public class YassVideoRenderer implements VideoRenderer, FrameGrabbingControl {
      */
     public Format setInputFormat(Format format) {
         //System.out.println("Fobs Java2DRenderer: setInputFormat");
-        FobsConfiguration.videoFrameFormat = FobsConfiguration.RGBA;
+//        FobsConfiguration.videoFrameFormat = FobsConfiguration.RGBA;
 
         vf = (RGBFormat) format;
         width = (int) vf.getSize().getWidth();

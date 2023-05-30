@@ -38,7 +38,6 @@ import java.util.Vector;
  * @author Saruta
  */
 public class YassMain extends JFrame {
-    public static boolean PRE_LOAD_FOBS = false;
     private static boolean convert = false;
     private static boolean edit = false;
     private static String midiFile = null;
@@ -60,7 +59,6 @@ public class YassMain extends JFrame {
 
     public static void main(String[] argv) {
         checkAudio();
-        loadFobs();
         initLater(argv);
     }
 
@@ -85,13 +83,6 @@ public class YassMain extends JFrame {
         });
     }
 
-    private static void loadFobs() {
-        if (PRE_LOAD_FOBS) {
-            System.out.println("Library path: " + System.getProperty("java.library.path"));
-            System.loadLibrary("fobs4jmf");
-        }
-    }
-
     private static void checkAudio() {
         try {
             if (javax.sound.midi.MidiSystem.getSequencer() == null)
@@ -110,9 +101,9 @@ public class YassMain extends JFrame {
         URL icon32 = YassMain.this.getClass().getResource("/yass/resources/img/yass-icon-32.png");
         URL icon48 = YassMain.this.getClass().getResource("/yass/resources/img/yass-icon-48.png");
         ArrayList<Image> icons = new ArrayList<>();
-        icons.add(new ImageIcon(icon48).getImage());
-        icons.add(new ImageIcon(icon32).getImage());
-        icons.add(new ImageIcon(icon16).getImage());
+        addIconToIconList(icon48, icons);
+        addIconToIconList(icon32, icons);
+        addIconToIconList(icon16, icons);
         this.setIconImages(icons);
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.addWindowListener(
@@ -140,6 +131,13 @@ public class YassMain extends JFrame {
         this.setVisible(true);
     }
 
+    private static void addIconToIconList(URL icon, ArrayList<Image> icons) {
+        if (icon == null) {
+            return;
+        }
+        icons.add(new ImageIcon(icon).getImage());
+    }
+
     private void initConvert() {
         if (convert || midiFile != null) {
             String newSong = actions.createNewSong(midiFile, true);
@@ -165,30 +163,30 @@ public class YassMain extends JFrame {
     }
 
     private void setDefaultLocation(Point p) {
-        prop.setProperty("frame-x", p.x + "");
-        prop.setProperty("frame-y", p.y + "");
+        prop.setProperty("frame-x", Integer.toString(p.x));
+        prop.setProperty("frame-y", Integer.toString(p.y));
     }
 
     private Dimension getDefaultSize() {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         String w = prop.getProperty("frame-width");
         if (w == null)
-            w = dim.width >= 1200 ? "1200" : dim.width + "";
+            w = dim.width >= 1200 ? "1200" : Integer.toString(dim.width);
         else if (Integer.parseInt(w) > dim.width)
-            w = dim.width + "";
+            w = Integer.toString(dim.width);
 
         String h = prop.getProperty("frame-height");
         if (h == null)
-            h = dim.height >= 800 ? "800" : dim.height + "";
+            h = dim.height >= 800 ? "800" : Integer.toString(dim.height);
         else if (Integer.parseInt(h) > dim.height)
-            w = dim.height + "";
+            w = Integer.toString(dim.height);
 
         return new Dimension(Integer.parseInt(w), Integer.parseInt(h));
     }
 
     private void setDefaultSize(Dimension d) {
-        prop.setProperty("frame-width", d.width + "");
-        prop.setProperty("frame-height", d.height + "");
+        prop.setProperty("frame-width", Integer.toString(d.width));
+        prop.setProperty("frame-height", Integer.toString(d.height));
 
         actions.interruptPlay();
 
@@ -405,7 +403,6 @@ public class YassMain extends JFrame {
                         JViewport v = (JViewport) e.getSource();
                         Point p = v.getViewPosition();
                         Dimension r = v.getExtentSize();
-                        double minMs = sheet.getMinVisibleMs();
 
                         // LYRICS POSITION
                         String layout = prop.getProperty("editor-layout");
@@ -467,12 +464,11 @@ public class YassMain extends JFrame {
                 BorderFactory.createEmptyBorder(4,4,4,4));
         for (Component c: editToolbar.getComponents()) {
             if (c instanceof JButton) {
-                ButtonModel m = ((JButton) c).getModel();
                 ((JButton) c).getModel().addChangeListener(e -> {
                     ButtonModel model = (ButtonModel) e.getSource();
                     c.setBackground(model.isRollover()
-                            ? (sheet.darkMode ? sheet.blue : sheet.blue)
-                            : (sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2));
+                            ? (YassSheet.BLUE)
+                            : (sheet.darkMode ? YassSheet.HI_GRAY_2_DARK_MODE : YassSheet.HI_GRAY_2));
                     ((JButton) c).setBorder(model.isRollover() ? rolloverBorder : emptyBorder);
                 });
             }
@@ -480,8 +476,8 @@ public class YassMain extends JFrame {
                 ((JToggleButton) c).getModel().addChangeListener(e -> {
                     ButtonModel model = (ButtonModel) e.getSource();
                     c.setBackground(model.isRollover()
-                            ? (sheet.darkMode ? sheet.blue : sheet.blue)
-                            : (sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2));
+                            ? (YassSheet.BLUE)
+                            : (sheet.darkMode ? YassSheet.HI_GRAY_2_DARK_MODE : YassSheet.HI_GRAY_2));
                     ((JToggleButton) c).setBorder(model.isRollover() ? rolloverBorder : emptyBorder);
                 });
             }
@@ -494,18 +490,19 @@ public class YassMain extends JFrame {
             public void rangeChanged(YassSheet source, int minHeight, int maxHeight, int minBeat, int maxBeat) { }
             @Override
             public void propsChanged(YassSheet source) {
-                editToolbar.setBackground(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
+                editToolbar.setBackground(sheet.darkMode ? YassSheet.HI_GRAY_2_DARK_MODE : YassSheet.HI_GRAY_2);
                 editToolbar.setBorder(BorderFactory.createEmptyBorder(3,3,3,3));
                 for (Component c: editToolbar.getComponents()) {
                     if (c instanceof JButton || c instanceof JToggleButton) {
-                        c.setBackground(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
+                        c.setBackground(sheet.darkMode ? YassSheet.HI_GRAY_2_DARK_MODE : YassSheet.HI_GRAY_2);
                         ((JComponent) c).setBorder(emptyBorder);
                     }
                 }
             }
         });
-        editToolbar.setBackground(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2);
-        editToolbar.setBorder(BorderFactory.createLineBorder(sheet.darkMode ? sheet.hiGray2DarkMode : sheet.hiGray2, 3));
+        editToolbar.setBackground(sheet.darkMode ? YassSheet.HI_GRAY_2_DARK_MODE : YassSheet.HI_GRAY_2);
+        editToolbar.setBorder(BorderFactory.createLineBorder(sheet.darkMode ? YassSheet.HI_GRAY_2_DARK_MODE :
+                YassSheet.HI_GRAY_2, 3));
 
         sheetPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         sheetPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
@@ -614,7 +611,7 @@ public class YassMain extends JFrame {
                 new KeyAdapter() {
                     public void keyReleased(KeyEvent e) {
                         int c = e.getKeyCode();
-                        if (c == KeyEvent.VK_RIGHT && e.getModifiers() == 0 && playList.getList().getRowCount() > 0) {
+                        if (c == KeyEvent.VK_RIGHT && e.getModifiersEx() == 0 && playList.getList().getRowCount() > 0) {
                             playList.getList().requestFocus();
                             YassSong s = playList.getList().getFirstSelectedSong();
                             if (s == null) {
@@ -626,7 +623,7 @@ public class YassMain extends JFrame {
                             songList.repaint();
                             playList.repaint();
                         }
-                        if (c == KeyEvent.VK_LEFT && e.getModifiers() == 0) {
+                        if (c == KeyEvent.VK_LEFT && e.getModifiersEx() == 0) {
                             groups.requestFocus();
                             songList.repaint();
                             groups.repaint();
@@ -637,7 +634,7 @@ public class YassMain extends JFrame {
                 new KeyAdapter() {
                     public void keyReleased(KeyEvent e) {
                         int c = e.getKeyCode();
-                        if (c == KeyEvent.VK_LEFT && e.getModifiers() == 0) {
+                        if (c == KeyEvent.VK_LEFT && e.getModifiersEx() == 0) {
                             if (songList.getRowCount() > 0) {
                                 songList.requestFocus();
                                 YassSong s = songList.getFirstSelectedSong();
@@ -655,7 +652,7 @@ public class YassMain extends JFrame {
                                 groups.repaint();
                             }
                         }
-                        if (c == KeyEvent.VK_RIGHT && e.getModifiers() == 0) {
+                        if (c == KeyEvent.VK_RIGHT && e.getModifiersEx() == 0) {
                             actions.getPlayListBox().requestFocus();
                             playList.repaint();
                             actions.getPlayListBox().repaint();
@@ -667,7 +664,7 @@ public class YassMain extends JFrame {
                 new KeyAdapter() {
                     public void keyReleased(KeyEvent e) {
                         int c = e.getKeyCode();
-                        if (c == KeyEvent.VK_RIGHT && e.getModifiers() == 0) {
+                        if (c == KeyEvent.VK_RIGHT && e.getModifiersEx() == 0) {
                             if (songList.getRowCount() > 0) {
                                 songList.requestFocus();
                                 YassSong s = songList.getFirstSelectedSong();
@@ -690,7 +687,7 @@ public class YassMain extends JFrame {
                             songList.repaint();
                             playList.repaint();
                         }
-                        if (c == KeyEvent.VK_LEFT && e.getModifiers() == 0) {
+                        if (c == KeyEvent.VK_LEFT && e.getModifiersEx() == 0) {
                             groupsBox.requestFocus();
                         }
                     }
@@ -699,11 +696,11 @@ public class YassMain extends JFrame {
                 new KeyAdapter() {
                     public void keyReleased(KeyEvent e) {
                         int c = e.getKeyCode();
-                        if (c == KeyEvent.VK_RIGHT && e.getModifiers() == 0) {
+                        if (c == KeyEvent.VK_RIGHT && e.getModifiersEx() == 0) {
                             groups.requestFocus();
                             groups.repaint();
                         }
-                        if (c == KeyEvent.VK_LEFT && e.getModifiers() == 0) {
+                        if (c == KeyEvent.VK_LEFT && e.getModifiersEx() == 0) {
                             groups.requestFocus();
                             groups.repaint();
                         }
@@ -713,7 +710,7 @@ public class YassMain extends JFrame {
                 new KeyAdapter() {
                     public void keyReleased(KeyEvent e) {
                         int c = e.getKeyCode();
-                        if ((c == KeyEvent.VK_RIGHT || c == KeyEvent.VK_LEFT) && e.getModifiers() == 0) {
+                        if ((c == KeyEvent.VK_RIGHT || c == KeyEvent.VK_LEFT) && e.getModifiersEx() == 0) {
                             if (playList.getList().getRowCount() > 0) {
                                 playList.getList().requestFocus();
                                 YassSong s = playList.getList().getFirstSelectedSong();
