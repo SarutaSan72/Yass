@@ -18,6 +18,7 @@
 
 package yass;
 
+import org.apache.commons.lang3.StringUtils;
 import yass.stats.YassStats;
 
 import javax.sound.midi.MidiUnavailableException;
@@ -28,6 +29,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Vector;
@@ -327,7 +329,18 @@ public class YassMain extends JFrame {
             prop.setProperty("welcome", "false");
             prop.store();
         }
-
+        String spacing = prop.getProperty("correct-uncommon-spacing");
+        if (StringUtils.isEmpty(spacing)) {
+            int ok = JOptionPane.showConfirmDialog(this, "<html>"
+                            + I18.get("tool_prefs_spacing") + "</html>", I18.get("tool_prefs_spacing_title"),
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+            if (ok != JOptionPane.OK_OPTION) {
+                prop.setProperty("correct-uncommon-spacing", "before");
+            } else {
+                prop.setProperty("correct-uncommon-spacing", "after");
+            }
+            prop.store();
+        }
         if (edit) {
             if (txtFiles.size() > 0) {
                 actions.openFiles(txtFiles, false);
