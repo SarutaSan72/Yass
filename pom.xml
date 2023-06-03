@@ -24,14 +24,7 @@
 
     <groupId>yass</groupId>
     <artifactId>Yass</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <repositories>
-        <repository>
-            <id>cogcomp-repo</id>
-            <name>Cogcomp Repository</name>
-            <url>https://cogcomp.seas.upenn.edu/m2repo/</url>
-        </repository>
-    </repositories>
+    <version>2.4.3</version>
     <dependencies>
         <dependency>
             <groupId>com.danielreese</groupId>
@@ -157,10 +150,31 @@
     </properties>
 
     <build>
+        <sourceDirectory>src</sourceDirectory>
         <resources>
+            <resource>
+                <directory>src/</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
             <resource>
                 <directory>resources</directory>
             </resource>
         </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestFile>src/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                    <descriptors>
+                        <descriptor>assembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>
