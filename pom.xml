@@ -25,13 +25,6 @@
     <groupId>yass</groupId>
     <artifactId>Yass-Reloaded</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <repositories>
-        <repository>
-            <id>cogcomp-repo</id>
-            <name>Cogcomp Repository</name>
-            <url>https://cogcomp.seas.upenn.edu/m2repo/</url>
-        </repository>
-    </repositories>
     <dependencies>
         <dependency>
             <groupId>com.danielreese</groupId>
@@ -133,12 +126,6 @@
             <artifactId>tritonus-share</artifactId>
             <version>0.3.7.4</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-text -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-text</artifactId>
-            <version>1.10.0</version>
-        </dependency>
         <!-- https://mvnrepository.com/artifact/com.googlecode.texhyphj/texhyphj -->
         <dependency>
             <groupId>com.googlecode.texhyphj</groupId>
@@ -165,9 +152,12 @@
         <resources>
             <resource>
                 <directory>src/</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
             </resource>
             <resource>
-                <directory>lib</directory>
+                <directory>resources</directory>
             </resource>
         </resources>
         <plugins>
@@ -176,14 +166,11 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
                     <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>yass.YassMain</mainClass>
-                        </manifest>
+                        <manifestFile>src/META-INF/MANIFEST.MF</manifestFile>
                     </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
+                    <descriptors>
+                        <descriptor>assembly.xml</descriptor>
+                    </descriptors>
                 </configuration>
             </plugin>
         </plugins>
