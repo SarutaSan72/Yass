@@ -19,6 +19,7 @@
 package yass;
 
 import org.tritonus.share.sampled.file.TAudioFileFormat;
+import unicode.UnicodeReader;
 import yass.filter.YassFilter;
 import yass.stats.YassStats;
 
@@ -32,8 +33,13 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class YassSongList extends JTable {
     public final static int TILE = 0;
@@ -175,6 +181,7 @@ public class YassSongList extends JTable {
     private Vector<YassSong> allData = null;
     private boolean filterAll = false;
     private Hashtable<String, String> lyricsCache = null;
+    private YassFileUtils fileUtils;
     /**
      * Constructor for the YassSongList object
      *
@@ -2489,7 +2496,9 @@ public class YassSongList extends JTable {
      */
     public void load() {
         interrupt();
-
+        if (fileUtils == null) {
+            fileUtils = new YassFileUtils();
+        }
         actions.setLibraryLoaded(false);
         preventInteraction = true;
 
@@ -2523,43 +2532,47 @@ public class YassSongList extends JTable {
         }
         File plcache = new File(plcacheName);
         if (plcache.exists() && !dirChanged) {
-            try {
-                BufferedReader inputStream = new BufferedReader(new FileReader(plcache));
-                String l;
-                while (plok && (l = inputStream.readLine()) != null) {
-                    pldata.addElement(l);
-                }
-                inputStream.close();
-            } catch (Exception e) {
+            YassFile playlist = fileUtils.loadTextFile(plcacheName);
+            if (playlist == null) {
                 plok = false;
+            } else {
+                for (String plElement : playlist.getContentLines())
+                    pldata.addElement(plElement);
             }
         }
 
         boolean ok = true;
-
         String cacheName = prop.getProperty("songlist-cache");
         File cache = new File(cacheName);
         if (cache.exists() && !dirChanged) {
+            boolean forceUtf8 = prop.getBooleanProperty("utf8-always");
             dirChanged = false;
-
             sm.getData().clear();
             try {
-                BufferedReader inputStream = new BufferedReader(new FileReader(cache));
-                String l;
-                YassSong s;
-                while (ok && (l = inputStream.readLine()) != null) {
-                    s = new YassSong(l);
-                    String sorted_artist = null;
-                    if (moveArticles) {
-                        sorted_artist = getSortedArtist(s.getArtist(), s.getLanguage());
+                YassFile songListFile = fileUtils.loadTextFile(cacheName);
+                if (songListFile == null) {
+                    ok = false;
+                } else {
+                    if (!songListFile.isUtf8() && forceUtf8) {
+                        fileUtils.writeFile(songListFile.getContentLines(), Paths.get(cacheName));
                     }
-                    s.setSortedArtist(sorted_artist);
+                    YassSong s;
+                    for (String listEntry : songListFile.getContentLines()) {
+                        if (!ok) {
+                            break;
+                        }
+                        s = new YassSong(listEntry);
+                        String sorted_artist = null;
+                        if (moveArticles) {
+                            sorted_artist = getSortedArtist(s.getArtist(), s.getLanguage());
+                        }
+                        s.setSortedArtist(sorted_artist);
 
-                    s.setIcon(null);
-                    s.clearMessages();
-                    sm.addRow(s);
+                        s.setIcon(null);
+                        s.clearMessages();
+                        sm.addRow(s);
+                    }
                 }
-                inputStream.close();
             } catch (Exception e) {
                 ok = false;
             }
@@ -3518,30 +3531,10 @@ public class YassSongList extends JTable {
             p.mkdirs();
         }
 
-        PrintWriter outputStream = null;
-        FileWriter fw = null;
-        try {
-            outputStream = new PrintWriter(fw = new FileWriter(cache));
-            Vector<YassSong> data = getUnfilteredData();
-            for (Enumeration<YassSong> en = data.elements(); en.hasMoreElements(); ) {
-                YassSong s = en.nextElement();
-                outputStream.println(s.toString());
-            }
-        } catch (Exception e) {
-            System.out.println("Cache Write Error:" + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            try {
-                if (fw != null) {
-                    fw.close();
-                }
-                if (outputStream != null) {
-                    outputStream.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        Vector<YassSong> data = getUnfilteredData();
+        List<String> songcacheList = data.stream().map(song -> song.toString()).collect(Collectors.toList());
+        Path songCache = Paths.get(cache.getAbsolutePath());
+        fileUtils.writeFile(songcacheList, songCache);
 
         if (pldata != null) {
             String plcacheName = prop.getProperty("playlist-cache");
@@ -3556,28 +3549,9 @@ public class YassSongList extends JTable {
                 pp.mkdirs();
             }
 
-            outputStream = null;
-            try {
-                outputStream = new PrintWriter(fw = new FileWriter(plcache));
-                for (Enumeration<String> en = pldata.elements(); en.hasMoreElements(); ) {
-                    String s = en.nextElement();
-                    outputStream.println(s);
-                }
-            } catch (Exception e) {
-                System.out.println("Playlist Cache Write Error:" + e.getMessage());
-                e.printStackTrace();
-            } finally {
-                try {
-                    if (fw != null) {
-                        fw.close();
-                    }
-                    if (outputStream != null) {
-                        outputStream.close();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            List<String> plCacheList = pldata.stream().collect(Collectors.toList());
+            Path plCachePath = Paths.get(plcache.getAbsolutePath());
+            fileUtils.writeFile(plCacheList, plCachePath);
         } else {
             String plcacheName = prop.getProperty("playlist-cache");
             File plcache = new File(plcacheName);

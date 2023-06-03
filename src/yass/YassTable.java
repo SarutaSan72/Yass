@@ -82,12 +82,13 @@ public class YassTable extends JTable {
     private int idealGoldenBeats;
     private String goldenDiff;
 
-    private static UniversalDetector detector = null;
+    private YassFileUtils fileUtils;
     private int duetTrack = -1;
     private String duetTrackName = null;
     private int duetTrackCount = -1;
 
     public YassTable() {
+        fileUtils = new YassFileUtils();
         getTableHeader().setReorderingAllowed(false);
         createDefaultColumnsFromModel();
         ToolTipManager.sharedInstance().unregisterComponent(this);
@@ -1270,7 +1271,7 @@ public class YassTable extends JTable {
 
         // saruta, Jan 2019: better UTF-8 detection method
         // String detectedEncoding = detectUTF8(new File(filename)) ? "UTF-8" : null;
-        String detectedEncoding = detectEncoding(new File(filename));
+        String detectedEncoding = fileUtils.detectEncoding(new File(filename));
         if (debugEncoding) {
             if (detectedEncoding == null)
                 ns++;
@@ -1340,133 +1341,6 @@ public class YassTable extends JTable {
         isLoading = false;
 
         return success;
-    }
-
-    private boolean detectNonAscii(String filename) {
-        File file = new File(filename);
-        DataInputStream dis = null;
-        try {
-            byte[] fileData = new byte[(int) file.length()];
-            dis = new DataInputStream(new FileInputStream(file));
-            dis.readFully(fileData);
-            dis.close();
-            for (byte aFileData : fileData) {
-                // System.out.print((char) fileData[i]);
-                if (aFileData > 127 || aFileData < 0) {
-                    // System.out.print((int)fileData[i] + "  " + (char)fileData[i] + "  ");
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (dis != null)
-                try {
-                    dis.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-        }
-        return false;
-    }
-
-    public boolean detectLatin1(File file) {
-        Charset charset = Charset.forName("ISO-8859-1");
-        CharsetDecoder decoder = charset.newDecoder();
-        decoder.reset();
-
-        BufferedInputStream input = null;
-        try {
-            input = new BufferedInputStream(new FileInputStream(file));
-
-            byte[] buffer = new byte[512];
-            while (input.read(buffer) != -1) {
-                try {
-                    decoder.decode(ByteBuffer.wrap(buffer));
-                } catch (CharacterCodingException e) {
-                    return false;
-                }
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return false;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-            if (input != null)
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-        }
-        return true;
-    }
-
-    // saruta, Jan 2019: deprecated; replaced with detectedEncoding
-    /*public boolean detectUTF8(File file) {
-
-        Charset charset = Charset.forName("UTF-8");
-        CharsetDecoder decoder = charset.newDecoder();
-        decoder.reset();
-
-        BufferedInputStream input = null;
-        try {
-            input = new BufferedInputStream(new FileInputStream(file));
-
-            byte[] buffer = new byte[512];
-            while (input.read(buffer) != -1) {
-                try {
-                    decoder.decode(ByteBuffer.wrap(buffer));
-                } catch (CharacterCodingException e) {
-                    return false;
-                }
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return false;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-            if (input != null)
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-        }
-        return true;
-    }
-    */
-    public String detectEncoding(File file) {
-        String enc = null;
-        if (detector == null) detector = new UniversalDetector(null);
-
-        BufferedInputStream input = null;
-        try {
-            input = new BufferedInputStream(new FileInputStream(file));
-            byte[] buffer = new byte[512];
-            int nRead;
-            while ((nRead = input.read(buffer)) > 0 && !detector.isDone()) {
-                detector.handleData(buffer, 0, nRead);
-            }
-            detector.dataEnd();
-            enc = detector.getDetectedCharset();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        detector.reset(); // reuse
-        return enc;
     }
 
     public synchronized boolean setText(String s) {
