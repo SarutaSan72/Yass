@@ -19,7 +19,6 @@
 package yass;
 
 import org.tritonus.share.sampled.file.TAudioFileFormat;
-import unicode.UnicodeReader;
 import yass.filter.YassFilter;
 import yass.stats.YassStats;
 
@@ -33,12 +32,11 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class YassSongList extends JTable {
@@ -2108,15 +2106,14 @@ public class YassSongList extends JTable {
         }
         FontMetrics metrics = g.getFontMetrics();
         if (col == 0) {
-            String str = new Integer(sm.getData().size()).toString();
-            int max = metrics.stringWidth(str + "88");
-            return max;
+            String str = Integer.toString(sm.getData().size());
+            return metrics.stringWidth(str + "88");
         }
         int max = 0;
         Enumeration<YassSong> en = sm.getData().elements();
         while (en.hasMoreElements()) {
             YassSong s = en.nextElement();
-            max = Math.max(max, metrics.stringWidth(s.elementAt(col) + ""));
+            max = Math.max(max, metrics.stringWidth(s.elementAt(col)));
         }
         return max + 2;
     }

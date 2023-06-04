@@ -18,8 +18,8 @@
 
 package yass;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mozilla.universalchardet.Constants;
-import org.mozilla.universalchardet.UniversalDetector;
 import unicode.UnicodeReader;
 import yass.renderer.YassLine;
 import yass.renderer.YassNote;
@@ -37,11 +37,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
+import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class YassTable extends JTable {
     public final static int ZOOM_TIME = 0;
@@ -158,6 +156,15 @@ public class YassTable extends JTable {
         addTableModelListener();
         removeAllRows();
         preventUndo = oldUndo;
+    }
+
+    /**
+     * Constructor for YassTable for unit testing only
+     * @param yassTableModel
+     */
+    public YassTable(YassTableModel yassTableModel, YassProperties props) {
+        this.tm = yassTableModel;
+        this.prop = props;
     }
 
     private void addTableModelListener() {
@@ -2502,6 +2509,13 @@ public class YassTable extends JTable {
         return tm.getData().elements();
     }
 
+    public List<YassRow> getNoteRows() {
+        return tm.getData()
+                 .stream()
+                 .filter(YassRow::isNote)
+                 .collect(Collectors.toList());
+    }
+
     public int getFirstVisiblePageNumber() {
         if (sheet == null) {
             return -1;
@@ -3526,8 +3540,6 @@ public class YassTable extends JTable {
             String txt = next.getText();
             if (txt.startsWith(YassRow.SPACE + "")) {
                 next.setText(txt.substring(1));
-            } else {
-                r.setText(r.getText() + "-");
             }
         }
 
@@ -3934,14 +3946,14 @@ public class YassTable extends JTable {
     }
 
     /**
-     * Description of the Method
+     * Inserts a tilde at the current note and rolls the lyrics to the right.
      *
-     * @param splitCode Description of the Parameter
-     * @param pos       Description of the Parameter
+     * @param splitCode Char code (minus or space) when splitting the lyrics of a note. 0 when rolling manually
+     * @param pos       Position within a lyric when using space or minus to roll. Otherwise 0
      */
     public void rollRight(char splitCode, int pos) {
-        int n = getRowCount();
-        if (n < 1) {
+        int rowCount = getRowCount();
+        if (rowCount < 1) {
             return;
         }
         int row = getSelectionModel().getMinSelectionIndex();
@@ -3949,6 +3961,112 @@ public class YassTable extends JTable {
             return;
         }
 
+        if (skipRolling()) {
+            return;
+        }
+        if (prop.isUncommonSpacingAfter()) {
+            rollRightWithTrailingSpaces(row, rowCount, splitCode, pos);
+        } else {
+            rollRightLegacy(row, rowCount, splitCode, pos);
+        }
+        tm.fireTableDataChanged();
+        setRowSelectionInterval(row, row);
+        updatePlayerPosition();
+    }
+
+    private boolean skipRolling() {
+        if (prop.isUncommonSpacingAfter() != isSongWithTrailingSpaces()) {
+            JOptionPane.showMessageDialog(this, "<html>"
+                                                  + I18.get("edit_roll_spacing_conflict") + "</html>",
+                                          I18.get("edit_roll_failed"),
+                                          JOptionPane.INFORMATION_MESSAGE);
+            return true;
+        }
+        return false;
+    }
+
+    private void rollRightWithTrailingSpaces(int row, int rowCount, char splitCode, int pos) {
+        YassRow currentRow = getRowAt(row);
+        String txt = currentRow.getText();
+        String[] init;
+        if (pos > 0 && pos < txt.length()) {
+            // Splitting a syllable with splitCode character (' ' or  '-') and rolling the lyrics to the right after
+            // If the splitCode is '-', a connecting syllable is assumed. ' ' for a new syllable.
+            init = new String[] {txt.substring(0, pos) + (splitCode == ' ' ? ' ' : ""), txt.substring(pos)};
+        } else {
+            init = new String[] {txt};
+            trimEndSpace(row - 1); // remove trailing space of previous note
+        }
+
+        // Going backwards from the bottom up to the current row, thus we are determining the "first" row that is a note
+        int i = rowCount - 1;
+        currentRow = getRowAt(i);
+        YassRow next = currentRow;
+        while (i > 0 && !currentRow.isNote()) {
+            next = currentRow;
+            currentRow = getRowAt(--i);
+        }
+        if (i < 1) {
+            return;
+        }
+        txt = currentRow.getText().trim();
+        String lastTXT = null;
+        if (txt.length() >= 1 && !txt.startsWith("~") && !txt.startsWith("-")) {
+            lastTXT = txt;
+        }
+        String addSpace;
+        YassRow prev;
+        while (i > row) {
+            prev = getRowAt(--i);
+            boolean isAtEndOfPage = next.isPageBreak() || next.isEnd();
+            while (i > row && !prev.isNote()) {
+                prev = getRowAt(--i);
+            }
+            if (i >= row) {
+                txt = prev.getText();
+                if (i == row) {
+                    if (init.length == 2) {
+                        prev.setText(init[0]);
+                        txt = init[1];
+                    } else  {
+                        addSpace = shouldAddSpace(currentRow, prev, isAtEndOfPage);
+                        prev.setText("~" + addSpace);
+                    }
+                    setRightRollTextToCurrentRow(currentRow, txt, lastTXT, isAtEndOfPage);
+                    // Right-Roll initiated at second to last syllable. Thus, jumping out of the loop now
+                    break;
+                }
+                setRightRollTextToCurrentRow(currentRow, txt, lastTXT, isAtEndOfPage);
+                StringBuilder newTxt = new StringBuilder(txt);
+                if (lastTXT != null) {
+                    lastTXT = null;
+                }
+                next = currentRow;
+                currentRow = prev;
+            }
+        }
+    }
+
+    private String shouldAddSpace(YassRow currentRow, YassRow prev, boolean isEndOfPage) {
+        if (currentRow.endsWithSpace() && !prev.isTilde() && (!currentRow.isTilde() || isEndOfPage) ) {
+            return String.valueOf(YassRow.SPACE);
+        }
+        return StringUtils.EMPTY;
+    }
+
+    private void setRightRollTextToCurrentRow(YassRow currentRow, String txt, String lastTXT, boolean isAtEndOfPage) {
+        StringBuilder newTxt = new StringBuilder(txt);
+
+        if (lastTXT != null) {
+            newTxt.append(lastTXT);
+        }
+        if (isAtEndOfPage && !newTxt.toString().endsWith(YassRow.SPACE + "")) {
+            newTxt.append(YassRow.SPACE);
+        }
+        currentRow.setText(newTxt.toString());
+    }
+
+    private void rollRightLegacy(int row, int rowCount, char splitCode, int pos) {
         YassRow r = getRowAt(row);
         String txt = r.getText();
         String init = "~";
@@ -3961,7 +4079,7 @@ public class YassTable extends JTable {
             init = txt;
         }
 
-        int i = n - 1;
+        int i = rowCount - 1;
         r = getRowAt(i);
         while (i > 0 && !r.isNote()) {
             r = getRowAt(--i);
@@ -4001,7 +4119,7 @@ public class YassTable extends JTable {
                             k--;
                         }
                         if (k > 0) {
-                            YassRow prevnext = row < n - 1 ? getRowAt(row + 1)
+                            YassRow prevnext = row < rowCount - 1 ? getRowAt(row + 1)
                                     : null;
                             if (prevnext != null && prevnext.isPageBreak()) {
                                 if (c[k] == YassRow.SPACE) {
@@ -4074,9 +4192,7 @@ public class YassTable extends JTable {
                 r = prev;
             }
         }
-        tm.fireTableDataChanged();
-        setRowSelectionInterval(row, row);
-        updatePlayerPosition();
+
     }
 
     /**
@@ -4093,9 +4209,9 @@ public class YassTable extends JTable {
         }
 
         int i = n - 1;
-        YassRow r = getRowAt(i);
-        while (i > 0 && !r.isNote()) {
-            r = getRowAt(--i);
+        YassRow currentRow = getRowAt(i);
+        while (i > 0 && !currentRow.isNote()) {
+            currentRow = getRowAt(--i);
         }
         if (i < 1) {
             return;
@@ -4105,19 +4221,101 @@ public class YassTable extends JTable {
 
         // start at current row
         i = row;
-        r = getRowAt(i);
-        if (!r.isNote()) {
+        currentRow = getRowAt(i);
+        if (!currentRow.isNote()) {
             return;
         }
-        String txt = r.getText();
+        if (skipRolling()) {
+            return;
+        }
+        String txt = currentRow.getText();
         String init = null;
         if (txt.length() >= 1 && !txt.equals("~") && !txt.equals("-")) {
             init = txt;
         }
 
-        YassRow prev = r;
+        YassRow prev = currentRow;
+        if (prop.isUncommonSpacingAfter()) {
+            rollLeftNew(n, i, currentRow, lastIndex, init);
+        } else {
+            rollLeftLegacy(n, i, currentRow, lastIndex, init, prev);
+        }
+        tm.fireTableDataChanged();
+        setRowSelectionInterval(row, row);
+        updatePlayerPosition();
+    }
 
-        YassRow next = null;
+    private void rollLeftNew(int n, int i, YassRow currentRow, int lastIndex, String init) {
+        YassRow prev = getRowAt(i - 1);
+        YassRow next;
+        String txt;
+        while (i < lastIndex) {
+            boolean isFirst = i == 0 || getRowAt(i - 1).isPageBreak();
+
+            next = getRowAt(++i);
+            while (i < n - 1 && !next.isNote()) {
+                next = getRowAt(++i);
+            }
+            txt = next.getText();
+
+            if (i == lastIndex) {
+                char[] c = txt.toCharArray();
+                int k = 0;
+                while (k < c.length && c[k] == YassRow.SPACE) {
+                    k++;
+                }
+                while (k < c.length && c[k] != YassRow.SPACE && c[k] != '-') {
+                    k++;
+                }
+                if (k < c.length) {
+                    currentRow.setText(txt.substring(0, k));
+                    if (c[k] == YassRow.SPACE) {
+                        next.setText(txt.substring(k));
+                    } else {
+                        next.setText(txt.substring(k + 1));
+                    }
+                } else {
+                    currentRow.setText(txt);
+                    next.setText("~");
+                }
+            } else {
+                if (init != null) {
+                    if (txt.startsWith("~")) {
+                        txt = txt.substring(1);
+                    }
+                    if (init.startsWith(
+                            "~" + YassRow.SPACE) && prev != null && !prev.isTilde() && !prev.endsWithSpace()) {
+                        prev.setText(prev.getText() + YassRow.SPACE);
+                        init = StringUtils.EMPTY;
+                    }
+                    currentRow.setText(init + txt);
+                    init = null;
+                } else {
+                    if (isFirst && txt.startsWith(YassRow.SPACE + "")) {
+                        txt = txt.substring(1);
+                    }
+                    currentRow.setText(txt);
+                }
+
+                prev = currentRow;
+                currentRow = next;
+            }
+        }
+        currentRow = getRowAt(lastIndex);
+        prev = getRowAt(lastIndex - 1);
+        if (currentRow != null && prev != null) {
+            String[] textPunctuationPair = splitTextFromPunctuation(prev);
+            prev.setText(textPunctuationPair[0]);
+            String lastTxt = textPunctuationPair[1];
+            if (!lastTxt.endsWith(YassRow.SPACE + "")) {
+                lastTxt += YassRow.SPACE;
+            }
+            currentRow.setText(lastTxt);
+        }
+    }
+    private void rollLeftLegacy(int n, int i, YassRow currentRow, int lastIndex, String init, YassRow prev) {
+        String txt;
+        YassRow next;
         while (i < lastIndex) {
             boolean isFirst = i == 0 || getRowAt(i - 1).isPageBreak();
 
@@ -4138,14 +4336,14 @@ public class YassTable extends JTable {
                     k++;
                 }
                 if (k < c.length) {
-                    r.setText(txt.substring(0, k));
+                    currentRow.setText(txt.substring(0, k));
                     if (c[k] == YassRow.SPACE) {
                         next.setText(txt.substring(k));
                     } else {
                         next.setText(txt.substring(k + 1));
                     }
                 } else {
-                    r.setText(txt);
+                    currentRow.setText(txt);
                     next.setText("~");
                 }
             } else {
@@ -4172,7 +4370,7 @@ public class YassTable extends JTable {
                             || init.endsWith(YassRow.HYPHEN + "")) {
                         init = init.substring(0, init.length() - 1);
                     }
-                    r.setText(init + txt);
+                    currentRow.setText(init + txt);
                     init = null;
                 } else {
                     if (isFirst) {
@@ -4187,16 +4385,13 @@ public class YassTable extends JTable {
                             }
                         }
                     }
-                    r.setText(txt);
+                    currentRow.setText(txt);
                 }
 
-                prev = r;
-                r = next;
+                prev = currentRow;
+                currentRow = next;
             }
         }
-        tm.fireTableDataChanged();
-        setRowSelectionInterval(row, row);
-        updatePlayerPosition();
     }
 
     /**
@@ -5386,5 +5581,60 @@ public class YassTable extends JTable {
         public Object getCellEditorValue() {
             return ed.getSelectedItem();
         }
+    }
+
+    /**
+     * Removes a trailing space of a note.
+     *
+     * @param row Number of the row of the note to be trimmed.
+     */
+    private void trimEndSpace(int row) {
+        if (row < 1) {
+            return;
+        }
+        YassRow yassRow = getRowAt(row);
+        if (yassRow == null || !yassRow.endsWithSpace()) {
+            return;
+        }
+        String txt = yassRow.getText();
+        if (txt.length() > 1) {
+            yassRow.setText(txt.substring(0, txt.length() - 1));
+        }
+    }
+
+    private String[] splitTextFromPunctuation(YassRow yassRow) {
+        String txt = yassRow.getTrimmedText();
+        int txtLength = txt.length();
+        String newText;
+        String remainder;
+        if (txtLength > 0 && isSpaceOrPunctuation(txt.charAt(txtLength - 1))) {
+            newText = txt.substring(0, txtLength - 1);
+            remainder = "~" + txt.substring(txtLength - 1);
+        } else {
+            newText = txt;
+            remainder = "~";
+        }
+        return new String[]{newText, remainder};
+    }
+
+    public boolean isSongWithTrailingSpaces() {
+        int trailingCount = 0;
+        int leadingCount = 0;
+        for (YassRow yassRow : getNoteRows()) {
+            if (yassRow.endsWithSpace()) {
+                trailingCount++;
+            }
+            if (yassRow.startsWithSpace()) {
+                leadingCount++;
+            }
+        }
+        return trailingCount > leadingCount;
+    }
+
+    private boolean endsWithSpace(String input) {
+        if (StringUtils.isEmpty(input)) {
+            return false;
+        }
+        return input.endsWith(String.valueOf(YassRow.SPACE));
     }
 }

@@ -126,7 +126,7 @@ public class YassAudioSample {
                 }
                 if (bytesRead >= 0) {
                     for (int i = 1; i <= bytesRead; i++) {
-                        buffer.add(new Byte(bufferData[i]));
+                        buffer.add(Byte.valueOf(bufferData[i]));
                     }
                 }
             }

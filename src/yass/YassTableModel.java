@@ -30,7 +30,7 @@ import java.util.Vector;
  */
 public class YassTableModel extends AbstractTableModel {
     private static final long serialVersionUID = 879831241165423284L;
-    private static String[] columnNames = {"", I18.get("table_col_1"), I18.get("table_col_2"), I18.get("table_col_3"), I18.get("table_col_4")};
+    private String[] columnNames;
     private Vector<YassRow> data = new Vector<>(3000, 1000);
 
 
@@ -68,7 +68,7 @@ public class YassTableModel extends AbstractTableModel {
      * @return The columnCount value
      */
     public int getColumnCount() {
-        return columnNames.length;
+        return getColumnNames().length;
     }
 
 
@@ -89,9 +89,16 @@ public class YassTableModel extends AbstractTableModel {
      * @return The columnName value
      */
     public String getColumnName(int col) {
-        return columnNames[col];
+        return getColumnNames()[col];
     }
 
+    public String[] getColumnNames() {
+        if (columnNames == null) {
+            columnNames = new String[]{"", I18.get("table_col_1"), I18.get("table_col_2"), I18.get("table_col_3"),
+                    I18.get("table_col_4")};
+        }
+        return columnNames;
+    }
 
     /**
      * Gets the valueAt attribute of the MyTableModel object

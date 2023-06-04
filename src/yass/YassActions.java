@@ -32,11 +32,17 @@ import java.awt.dnd.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeListener;
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 public class YassActions implements DropTargetListener {
 
@@ -5959,26 +5965,26 @@ public class YassActions implements DropTargetListener {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         String w = prop.getProperty("frame-width");
         if (w == null) {
-            w = dim.width >= 1000 ? "1000" : dim.width + "";
+            w = dim.width >= 1000 ? "1000" : String.valueOf(dim.width);
         } else if (Integer.parseInt(w) > dim.width) {
-            w = dim.width + "";
+            w = String.valueOf(dim.width);
         }
         String h = prop.getProperty("frame-height");
         if (h == null) {
-            h = dim.height >= 600 ? "600" : dim.height + "";
+            h = dim.height >= 600 ? "600" : String.valueOf(dim.height);
         } else if (Integer.parseInt(h) > dim.height) {
-            w = dim.height + "";
+            w = String.valueOf(dim.height);
         }
         Point p = null;
-        String x = prop.getProperty("frame-x");
-        String y = prop.getProperty("frame-y");
-        if (x != null && y != null)
-            p = new Point(new Integer(x), new Integer(y));
-
+        int x = prop.getIntProperty("frame-x");
+        int y = prop.getIntProperty("frame-y");
+        if (x > 0 && y > 0) {
+            p = new Point(x, y);
+        }
         f.dispose();
         f.setUndecorated(false);
 
-        f.setSize(new Dimension(new Integer(w), new Integer(h)));
+        f.setSize(new Dimension(Integer.valueOf(w), Integer.valueOf(h)));
         if (p != null) {
             f.setLocation(p);
         } else {

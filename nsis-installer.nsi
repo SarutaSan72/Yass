@@ -1,6 +1,6 @@
 ﻿Name "Yass"
 
-OutFile ".\release\yass-installer-2.4.3.exe"
+OutFile ".\target\yass-installer-2023.5.exe"
 
 Unicode true
 SetCompressor lzma
@@ -193,8 +193,8 @@ Page instfiles
 Section
   SetShellVarContext all
   SetOutPath $INSTDIR
-  File ".\release\yass.exe"
-  File ".\lib\fobs4jmf.dll"
+  File ".\target\yass.exe"
+#  File ".\lib\fobs4jmf.dll"
 #  File ".\lib\jinput-raw.dll"
 #  File ".\lib\jinput-dx8.dll"
 #  File ".\src\icons\yass-edit.ico"

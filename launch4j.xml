@@ -2,7 +2,7 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>.\target\Yass-Reloaded-1.0-SNAPSHOT-jar-with-dependencies.jar</jar>
+  <jar>.\target\Yass-Reloaded-2023.5-jar-with-dependencies.jar</jar>
   <outfile>.\target\yass.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>

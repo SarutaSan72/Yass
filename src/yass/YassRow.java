@@ -595,6 +595,10 @@ public class YassRow implements Cloneable, Comparable<Object> {
         return isNote() && getText().endsWith(YassRow.SPACE + "");
     }
 
+    public boolean isTilde() {
+        return isNote() && getText().startsWith("~");
+    }
+
     public String getTrimmedText() {
         if (getText() == null) {
             return "";

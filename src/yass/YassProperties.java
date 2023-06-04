@@ -18,6 +18,8 @@
 
 package yass;
 
+import org.apache.commons.lang3.math.NumberUtils;
+
 import javax.swing.*;
 import java.io.File;
 import java.io.FileInputStream;
@@ -490,6 +492,11 @@ public class YassProperties extends Properties {
     public boolean getBooleanProperty(String s) {
         String p = getProperty(s);
         return p != null && p.equals("true");
+    }
+
+    public int getIntProperty(String key) {
+        String strValue = getProperty(key);
+        return NumberUtils.toInt(strValue, 0);
     }
 
     public boolean isUncommonSpacingAfter() {

@@ -15,7 +15,7 @@
 	<target name="compile">
 		<mkdir dir="out"/>
 		<javac srcdir="src" destdir="out" classpath="resources"/>
-		<copy todir="out">
+		<copy todir="target">
 		    <fileset dir="src">
 		        <exclude name="**/*.java"/>
 		    </fileset>
