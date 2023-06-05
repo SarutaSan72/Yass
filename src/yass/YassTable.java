@@ -3965,7 +3965,7 @@ public class YassTable extends JTable {
             return;
         }
         if (prop.isUncommonSpacingAfter()) {
-            rollRightWithTrailingSpaces(row, rowCount, splitCode, pos);
+            rollRightWithTrailingSpaces(row, rowCount, splitCode, pos - 1);
         } else {
             rollRightLegacy(row, rowCount, splitCode, pos);
         }

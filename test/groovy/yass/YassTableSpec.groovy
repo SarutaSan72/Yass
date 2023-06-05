@@ -81,26 +81,26 @@ class YassTableSpec extends Specification {
         }
 
         when:
-        yassTable.rollRight(splitCode as char, slitPos)
+        yassTable.rollRight(splitCode as char, splitPos)
 
         then:
         verifyExpectation(yassTable, expectation)
 
         where:
-        rowNum | splitCode | slitPos || expectation
-        0      | '$'       | 0       || ['~', 'One', '~', ' two', '_', 'three', ' Four', ' five']
-        0      | ' '       | 1       || ['O', ' ne', '~', ' two', '_', 'three', ' Four', ' five']
-        0      | '-'       | 1       || ['O', 'ne', '~', ' two', '_', 'three', ' Four', ' five']
-        1      | '$'       | 0       || ['One', '~', '~', ' two', '_', 'three', ' Four', ' five']
-        2      | '$'       | 0       || ['One', '~', '~', ' two', '_', 'three', ' Four', ' five']
-        2      | ' '       | 2       || ['One', '~', ' t', ' wo', '_', 'three', ' Four', ' five']
-        3      | '$'       | 0       || ['One', '~', ' two', '~', '_', ' three', ' Four', ' five'] // why?
-        5      | '$'       | 0       || ['One', '~', ' two', ' three', '_', '~', 'Four', ' five']
-        5      | '-'       | 2       || ['One', '~', ' two', ' three', '_', 'Fo', 'ur', ' five']
-        6      | '$'       | 0       || ['One', '~', ' two', ' three', '_', 'Four', '~', ' five']
-        6      | ' '       | 3       || ['One', '~', ' two', ' three', '_', 'Four', ' fi', ' ve']
-        6      | '-'       | 3       || ['One', '~', ' two', ' three', '_', 'Four', ' fi', 've']
-        7      | '$'       | 0       || ['One', '~', ' two', ' three', '_', 'Four', ' five', '~']
+        rowNum | splitCode | splitPos || expectation
+        0      | '$'       | 0        || ['~', 'One', '~', ' two', '_', 'three', ' Four', ' five']
+        0      | ' '       | 1        || ['O', ' ne', '~', ' two', '_', 'three', ' Four', ' five']
+        0      | '-'       | 1        || ['O', 'ne', '~', ' two', '_', 'three', ' Four', ' five']
+        1      | '$'       | 0        || ['One', '~', '~', ' two', '_', 'three', ' Four', ' five']
+        2      | '$'       | 0        || ['One', '~', '~', ' two', '_', 'three', ' Four', ' five']
+        2      | ' '       | 2        || ['One', '~', ' t', ' wo', '_', 'three', ' Four', ' five']
+        3      | '$'       | 0        || ['One', '~', ' two', '~', '_', ' three', ' Four', ' five'] // why?
+        5      | '$'       | 0        || ['One', '~', ' two', ' three', '_', '~', 'Four', ' five']
+        5      | '-'       | 2        || ['One', '~', ' two', ' three', '_', 'Fo', 'ur', ' five']
+        6      | '$'       | 0        || ['One', '~', ' two', ' three', '_', 'Four', '~', ' five']
+        6      | ' '       | 3        || ['One', '~', ' two', ' three', '_', 'Four', ' fi', ' ve']
+        6      | '-'       | 3        || ['One', '~', ' two', ' three', '_', 'Four', ' fi', 've']
+        7      | '$'       | 0        || ['One', '~', ' two', ' three', '_', 'Four', ' five', '~']
     }
 
     def 'rollRight applied to a song with leading spaces ending with ~. New spacing'() {
@@ -128,7 +128,7 @@ class YassTableSpec extends Specification {
         }
 
         when:
-        yassTable.rollRight(splitCode as char, slitPos)
+        yassTable.rollRight(splitCode as char, (slitPos + 1)) // We are substracting this in the code again
 
         then:
         verifyExpectation(yassTable, expectation)
@@ -137,11 +137,13 @@ class YassTableSpec extends Specification {
         rowNum | splitCode | slitPos || expectation
         0      | '$'       | 0       || ['~', 'One', '~ ', 'two ', '_', 'three ', 'Four ', 'five ']
         0      | ' '       | 1       || ['O ', 'ne', '~ ', 'two ', '_', 'three ', 'Four ', 'five ']
+        0      | ' '       | 2       || ['On ', 'e', '~ ', 'two ', '_', 'three ', 'Four ', 'five ']
         0      | '-'       | 1       || ['O', 'ne', '~ ', 'two ', '_', 'three ', 'Four ', 'five ']
         1      | '$'       | 0       || ['One', '~', '~ ', 'two ', '_', 'three ', 'Four ', 'five ']
         2      | '$'       | 0       || ['One', '~', '~ ', 'two ', '_', 'three ', 'Four ', 'five ']
         2      | ' '       | 2       || ['One', '~ ', 'tw ', 'o ', '_', 'three ', 'Four ', 'five ']
         3      | '$'       | 0       || ['One', '~ ', 'two', '~ ', '_', 'three ', 'Four ', 'five ']
+        3      | ' '       | 3       || ['One', '~ ', 'two ', 'thr ', '_', 'ee ', 'Four ', 'five ']
         5      | '$'       | 0       || ['One', '~ ', 'two ', 'three ', '_', '~', 'Four ', 'five ']
         5      | '-'       | 2       || ['One', '~ ', 'two ', 'three ', '_', 'Fo', 'ur ', 'five ']
         6      | '$'       | 0       || ['One', '~ ', 'two ', 'three ', '_', 'Four', '~ ', 'five ']
@@ -402,8 +404,8 @@ class YassTableSpec extends Specification {
 
         where:
         rowNum || expectation
-        0      || ['One ', 'two ', 'three ', 'Four ', '_', 'five ',  'six', '~ ']
-        1      || ['One ', 'two ', 'three ', 'Four ', '_', 'five ',  'six', '~ ']
+        0      || ['One ', 'two ', 'three ', 'Four ', '_', 'five ', 'six', '~ ']
+        1      || ['One ', 'two ', 'three ', 'Four ', '_', 'five ', 'six', '~ ']
         2      || ['One', '~ ', 'two three ', 'Four ', '_', 'five ', 'six', '~ ']
         3      || ['One', '~ ', 'two ', 'three Four ', '_', 'five ', 'six', '~ ']
         5      || ['One', '~ ', 'two ', 'three ', '_', 'Four five ', 'six', '~ ']
@@ -436,7 +438,7 @@ class YassTableSpec extends Specification {
 
         where:
         rowNum || expectation
-        0      || ['One', '_', '~', ' two', ' three', '_', 'Four',  ' five', '~']
+        0      || ['One', '_', '~', ' two', ' three', '_', 'Four', ' five', '~']
         1      || ['One', '~', '_', 'two', ' three', '_', 'Four', ' five', '~']
         2      || ['One', '~', ' two', '_', 'three', '_', 'Four', ' five', '~']
         3      || ['One', '~', ' two', ' three', '_', 'Four', ' five', '~']
@@ -471,12 +473,66 @@ class YassTableSpec extends Specification {
 
         where:
         rowNum || expectation
-        0      || ['One', '_', '~ ', 'two ', 'three ', '_', 'Four ',  'five', '~ ']
+        0      || ['One', '_', '~ ', 'two ', 'three ', '_', 'Four ', 'five', '~ ']
         1      || ['One', '~ ', '_', 'two ', 'three ', '_', 'Four ', 'five', '~ ']
         2      || ['One', '~ ', 'two ', '_', 'three ', '_', 'Four ', 'five', '~ ']
         3      || ['One', '~ ', 'two ', 'three ', '_', 'Four ', 'five', '~ ']
         5      || ['One', '~ ', 'two ', 'three ', '_', 'Four ', '_', 'five', '~ ']
         6      || ['One', '~ ', 'two ', 'three ', '_', 'Four ', 'five', '_', '~ ']
+    }
+
+    def 'getText retrieves the text of a song with Legacy spacing'() {
+        given:
+        YassTableModel ytm = new YassTableModel()
+        LEADING_SPACE_END_TILDE_SONG.each { row ->
+            ytm.addRow(row)
+        }
+
+        and:
+        I18.setDefaultLanguage()
+
+        and:
+        YassProperties props = Stub(YassProperties) {
+            isUncommonSpacingAfter() >> false
+        }
+        YassTable yassTable = new YassTable(ytm, props)
+        yassTable.model = Stub(TableModel) {
+            getRowCount() >> LEADING_SPACE_END_TILDE_SONG.size()
+        }
+
+        when:
+        String text = yassTable.getText()
+
+        then:
+        verifyExpectation(yassTable, ['One', '~', ' two', ' three', '_', 'Four', ' five', '~'])
+        text == 'One-~ two three\nFour five-~'
+    }
+
+    def 'getText retrieves the text of a song with regular spacing'() {
+        given:
+        YassTableModel ytm = new YassTableModel()
+        TRAILING_SPACE_END_TILDE_SONG.each { row ->
+            ytm.addRow(row)
+        }
+
+        and:
+        I18.setDefaultLanguage()
+
+        and:
+        YassProperties props = Stub(YassProperties) {
+            isUncommonSpacingAfter() >> true
+        }
+        YassTable yassTable = new YassTable(ytm, props)
+        yassTable.model = Stub(TableModel) {
+            getRowCount() >> TRAILING_SPACE_END_TILDE_SONG.size()
+        }
+
+        when:
+        String text = yassTable.getText()
+
+        then:
+        verifyExpectation(yassTable, ['One', '~ ', 'two ', 'three ', '_', 'Four ', 'five', '~ ' ])
+        text == 'One-~ two three\nFour five-~'
     }
 
     private boolean verifyExpectation(YassTable yassTable, List<String> expectation) {
