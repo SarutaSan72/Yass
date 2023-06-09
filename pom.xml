@@ -24,7 +24,7 @@
 
     <groupId>yass</groupId>
     <artifactId>Yass-Reloaded</artifactId>
-    <version>2023.5</version>
+    <version>2023.6</version>
     <dependencies>
         <dependency>
             <groupId>com.danielreese</groupId>
@@ -163,7 +163,11 @@
             <version>1.14.5</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.optimaize.languagedetector</groupId>
+            <artifactId>language-detector</artifactId>
+            <version>0.6</version>
+        </dependency>
     </dependencies>
 
     <properties>

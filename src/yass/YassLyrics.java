@@ -1374,12 +1374,15 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 			boolean first = true;
 			while (st2.hasMoreTokens()) {
 				String word = st2.nextToken();
-				if (first) {
-					first = false;
+				if (prop.isUncommonSpacingAfter()) {
+					word = word + YassRow.SPACE;
 				} else {
-					word = YassRow.SPACE + word;
+					if (first) {
+						first = false;
+					} else {
+						word = YassRow.SPACE + word;
+					}
 				}
-
 				StringTokenizer st3 = new StringTokenizer(word, "-", true);
 				boolean last;
 				boolean delim = false;

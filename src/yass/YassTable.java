@@ -53,6 +53,8 @@ public class YassTable extends JTable {
     private YassSheet sheet = null;
     private YassAutoCorrect auto = null;
     private YassProperties prop = null;
+    private YassHyphenator hyphenator;
+    private YassLanguageUtils languageUtils;
     private String mp3 = null, dir = null, txtFilename = null;
     private double bpm = 120, gap = 0, vgap = 0, start = 0, end = -1;
     private final int MAX_UNDO = 2048;
@@ -1256,7 +1258,24 @@ public class YassTable extends JTable {
         getModelData().clear();
         for (YassRow r: t.getModelData())
             addRow(r.toString());
+        languageUtils = new YassLanguageUtils();
+        if (StringUtils.isEmpty(getLanguage())) {
+            detectAndSetMissingLanguage();
+        }
+        hyphenator = new YassHyphenator("DE|EN|ES|FR|IT|PL|PT|RU|TR|ZH");
+        hyphenator.setLanguage(languageUtils.determineLanguageCode(getLanguage()));
         return true;
+    }
+
+    private void detectAndSetMissingLanguage() {
+        String language = languageUtils.detectLanguage(getText());
+        String msg = I18.get("tool_correct_tag_language");
+        String input = JOptionPane.showInputDialog(actions.getTab(), msg, language);
+        if (input == null) {
+            return;
+        }
+        setLanguage(input);
+        setSaved(false);
     }
 
     static int ns=0, utf=0, win=0;
@@ -3961,7 +3980,7 @@ public class YassTable extends JTable {
             return;
         }
 
-        if (skipRolling()) {
+        if (skipRollingOrSplitting()) {
             return;
         }
         if (prop.isUncommonSpacingAfter()) {
@@ -3974,12 +3993,16 @@ public class YassTable extends JTable {
         updatePlayerPosition();
     }
 
-    private boolean skipRolling() {
+    private boolean skipRollingOrSplitting() {
         if (prop.isUncommonSpacingAfter() != isSongWithTrailingSpaces()) {
-            JOptionPane.showMessageDialog(this, "<html>"
-                                                  + I18.get("edit_roll_spacing_conflict") + "</html>",
-                                          I18.get("edit_roll_failed"),
-                                          JOptionPane.INFORMATION_MESSAGE);
+            int autocorrect = JOptionPane.showConfirmDialog(this, I18.get("edit_rollsplit_spacing_conflict"),
+                                                            I18.get("edit_rollsplit_failed"),
+                                                            JOptionPane.OK_CANCEL_OPTION,
+                                                            JOptionPane.INFORMATION_MESSAGE);
+            if (autocorrect == JOptionPane.OK_OPTION) {
+                auto.autoCorrectSpacing(this);
+                return false;
+            }
             return true;
         }
         return false;
@@ -4225,7 +4248,7 @@ public class YassTable extends JTable {
         if (!currentRow.isNote()) {
             return;
         }
-        if (skipRolling()) {
+        if (skipRollingOrSplitting()) {
             return;
         }
         String txt = currentRow.getText();
@@ -4466,49 +4489,51 @@ public class YassTable extends JTable {
      * @param percent Description of the Parameter
      */
     public void split(double percent) {
+        if (skipRollingOrSplitting()) {
+            return;
+        }
         int row = getSelectionModel().getMinSelectionIndex();
         if (row < 0) {
             return;
         }
-        YassRow r = getRowAt(row);
-        if (!r.isNote()) {
+        YassRow currentRow = getRowAt(row);
+        if (!currentRow.isNote()) {
             return;
         }
 
-        int w = r.getLengthInt();
+        int w = currentRow.getLengthInt();
         if (w < 2) {
             return;
         }
 
         int w1 = (int) Math.round(w * percent);
         int w2 = w - w1;
-
-        r.setLength(w1);
-        YassRow r2 = r.clone();
-        r2.setBeat(r.getBeatInt() + w1);
-        r2.setLength(w2);
-        String txt = r.getText();
-        char[] c = txt.toCharArray();
-        int i = c.length - 1;
-        while (i > 0 && c[i] == YassRow.SPACE) {
-            i--;
-        }
-        while (i > 0 && !isSpaceOrPunctuation(c[i])) {
-            i--;
-        }
-        if (i > 0) {
-            r.setText(txt.substring(0, i));
-
-            String remainder = txt.substring(i);
-            if (remainder.length() == 1
-                    && isSpaceOrPunctuation(remainder.charAt(0)))
-                remainder = "~" + remainder;
-            r2.setText(remainder);
+        boolean startSyllable = !prop.isUncommonSpacingAfter() && currentRow.startsWithSpace();
+        boolean endSyllable = prop.isUncommonSpacingAfter() && currentRow.endsWithSpace();
+        currentRow.setLength(w1);
+        YassRow newRow = currentRow.clone();
+        newRow.setBeat(currentRow.getBeatInt() + w1);
+        newRow.setLength(w2);
+        String[] textPunctuationPair = splitTextFromPunctuation(currentRow);
+        String hyphenated = hyphenator.hyphenateWord(textPunctuationPair[0]);
+        int hyphenPos = hyphenated.indexOf("\u00AD");
+        String newText;
+        String currentText;
+        if (hyphenPos >= 0) {
+            currentText = hyphenated.substring(0, hyphenPos);
+            newText = textPunctuationPair[1].replace("~", hyphenated.substring(hyphenPos + 1)
+                                                                    .replace("\u00AD", ""));
         } else {
-            r2.setText("~");
+            currentText = textPunctuationPair[0];
+            newText = textPunctuationPair[1];
         }
-
-        tm.getData().insertElementAt(r2, row + 1);
+        currentRow.setText((startSyllable ? YassRow.SPACE : StringUtils.EMPTY) + currentText);
+        YassRow nextRow = getRowAt(row + 1);
+        if (endSyllable && !nextRow.isTilde()) {
+            newText = newText + YassRow.SPACE;
+        }
+        newRow.setText(newText);
+        tm.getData().insertElementAt(newRow, row + 1);
         tm.fireTableDataChanged();
         setRowSelectionInterval(row, row + 1);
         updatePlayerPosition();

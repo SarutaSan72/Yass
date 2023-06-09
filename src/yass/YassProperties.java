@@ -264,7 +264,7 @@ public class YassProperties extends Properties {
         p.put("group-edition", "all|unspecified|generic");
         p.put("group-album", "all|unspecified|generic");
         p.put("group-playlist", "all|generic|unspecified");
-        p.put("group-year", "all|unspecified|1930-1939|1940-1949|1950-1959|1960-1969|1970-1979|1980-1989|1990-1999|2000-2009|generic");
+        p.put("group-year", "all|unspecified|1930-1939|1940-1949|1950-1959|1960-1969|1970-1979|1980-1989|1990-1999|2000-2009|2010-2019|2020-2029|generic");
         p.put("group-folder", "all|generic");
         p.put("group-length", "all|unspecified|0 - 1:30|1:31 - 3:00|3:01 - 4:30|4:31 - 6:00|6:01 -");
         p.put("group-files", "all|duplicates|video|no_video|no_video_background|no_background|no_cover|uncommon_filenames|uncommon_cover_size|uncommon_background_size");
@@ -277,7 +277,7 @@ public class YassProperties extends Properties {
 
         p.put("group-min", "3");
 
-        p.put("hyphenations", "EN|DE|ES|PL|RU|ZH");
+        p.put("hyphenations", "EN|DE|ES|FR|IT|PL|PT|RU|TR|ZH");
         p.put("dicts", "EN|DE");
         p.put("dict-map", "English|EN|German|DE|French|EN|Croatian|EN|Hungarian|EN|Italian|EN|Japanese|EN|Polish|EN|Russian|EN|Spanish|EN|Swedish|EN|Turkish|EN");
         p.put("user-dicts", userDir + File.separator + yassDir);

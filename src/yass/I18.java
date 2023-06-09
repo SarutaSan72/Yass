@@ -19,7 +19,6 @@
 package yass;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
@@ -215,48 +214,6 @@ public class I18 {
      */
     @SuppressWarnings("StringConcatenationInsideStringBufferAppend")
     public static String getCopyright(String version, String date) {
-        /*
-        if (lang.equals("de")) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("<html><body><font size=+2><u>Yass</u>&#161;</font> by Saruta<br>Version: "
-                    + version + " (" + date + ")<br>mail@yass-along.com<br>");
-            sb.append("<a href=\"http://www.yass-along.com\">http://www.yass-along.com</a><br><br>");
-
-            sb.append("Yass ist Freeware. Die Verwendung ist kostenlos. <br><br>");
-            sb.append("Ohne meine ausdrückliche Erlaubnis darf Yass nicht für kommerzielle Zwecke<br>");
-            sb.append("genutzt werden, und nicht bearbeitet oder weiter gegeben werden.<br>");
-            sb.append("Verweise auf die Webseite sind jedoch erlaubt.<br>");
-            sb.append("Bitte kontaktieren Sie mich bei Bedarf.<br><br>");
-            sb.append("Yass verwendet: ");
-            sb.append("Java Look & Feel Graphics Repository, JavaZoom JLayer/MP3SPI/VorbisSPI<br>");
-            sb.append("and Tritonus Sequencer, iText, Jazzy Spell Checker, TeX Hyphenator, JInput,<br>");
-            sb.append("VFFMpeg Objects (fobs), Java Media Framework (JMF), Robert Eckstein's Wizard code.<br>");
-            sb.append("Speed measure 'Inverse Duration' basiert auf Marcel Taeumels Ansatz (http://uman.sf.net).<br>");
-            sb.append("Spanische Übersetzung von Pantera.<br>");
-            sb.append("Ungarische Übersetzung von Skyli.<br>");
-            sb.append("Lizensen finden Sie im Hilfebereich.");
-            return sb.toString();
-        } else if (lang.equals("es")) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("<html><body><font size=+2><u>Yass</u>&#161;</font> de Saruta<br>Versión: "
-                    + version + " (" + date + ")<br>mail@yass-along.com<br>");
-            sb.append("<a href=\"http://www.yass-along.com\">http://www.yass-along.com</a><br><br>");
-            sb.append("Yass es freeware, puedes usarlo sin costo. <br><br>");
-            sb.append("Está prohibido comercializar, distribuir o conjuntar Yass a otros productos<br>");
-            sb.append("sin mi permiso explícito. Sin embargo, puedes enlazar a este programa.<br>");
-            sb.append("Por favor, contáctame para mayor información.<br><br>");
-            sb.append("Yass usa: ");
-            sb.append("Repositorio de Gráficos Java Look & Feel, JavaZoom JLayer/MP3SPI/VorbisSPI<br>");
-            sb.append("y Secuenciador Tritonus, iText, Corrector Ortográfico Jazzy, Silabificador TeX, JInput,<br>");
-            sb.append("Objetos VFFMpeg (fobs), Entorno de Trabajo Multimedia de Java (JMF), código Wizard de Robert Eckstein.<br>");
-            sb.append("Medición de velocidad 'Inverse Duration' basada en el enfoque de Marcel Taeumel (http://uman.sf.net).<br>");
-            sb.append("Traducción al español por Pantero.<br>");
-            sb.append("Traducción al húngaro por Skyli.<br>");
-            sb.append("Las licencias se muestran en la sección de ayuda.");
-            return sb.toString();
-        }
-        */
-
         StringBuilder sb = new StringBuilder();
         sb.append("<html><body><font style=\"font-family: Arial; font-size:2em\"><u>Yass</u> Reloaded</font> by DoubleDee<br>Version: " + version + " (" + date + ")<br>");
         sb.append("<a href=\"https://github.com/DoubleDee73/Yass\">https://github.com/DoubleDee73/Yass</a><br>");
@@ -281,7 +238,7 @@ public class I18 {
         sb.append("Java Look & Feel Graphics Repository, JavaZoom JLayer/MP3SPI/VorbisSPI<br>");
         sb.append("and Tritonus Sequencer, iText, Jazzy Spell Checker, TeX Hyphenator, JInput,<br>");
         sb.append("Java Media Framework (JMF), Robert Eckstein's Wizard code,<br>");
-        sb.append("juniversalchardet.<br>");
+        sb.append("juniversalchardet, Optimaize Language Detector<br>");
         sb.append("Speed measure 'Inverse Duration' based on Marcel Taeumel's approach (http://uman.sf.net).<br>");
         sb.append("Spanish translation by Pantera.<br>");
         sb.append("Hungarian translation by Skyli.<br>");

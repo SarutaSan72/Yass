@@ -47,8 +47,8 @@ import java.util.Vector;
 public class YassActions implements DropTargetListener {
 
     private final YassSheet sheet;
-    public final static String VERSION = "2023.5";
-    public final static String DATE = "05/2023";
+    public final static String VERSION = "2023.6";
+    public final static String DATE = "06/2023";
 
     static int VIEW_LIBRARY = 1;
     static int VIEW_EDIT = 2;
@@ -315,10 +315,13 @@ public class YassActions implements DropTargetListener {
             if (n < 1) {
                 return;
             }
+            String spacingMsg = prop.isUncommonSpacingAfter() ? I18.get("options_errors_uncommon_spacing_after") :
+                    I18.get("options_errors_uncommon_spacing_before");
             int ok = JOptionPane.showConfirmDialog(
                     tab, "<html>"
                             + MessageFormat.format(
-                            I18.get("tool_correct_text_msg"), n), I18.get("tool_correct_text_title"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+                            I18.get("tool_correct_text_msg"), n, spacingMsg), I18.get("tool_correct_text_title"),
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
             if (ok != JOptionPane.OK_OPTION) {
                 return;
             }
@@ -5231,28 +5234,6 @@ public class YassActions implements DropTargetListener {
         showStartEnd.setEnabled(isOpened);
         showLyricsStart.setEnabled(isOpened);
         showVideoGap.setEnabled(isOpened);
-        //showErrors.setEnabled(onoff);
-        // openCover.setEnabled(onoff);
-        // openBackground.setEnabled(onoff);
-        // openMP3.setEnabled(onoff);
-        // openVideo.setEnabled(onoff);
-        // copyCover.setEnabled(onoff);
-        // pasteCover.setEnabled(onoff);
-        // copyBackground.setEnabled(onoff);
-        // copySongInfo.setEnabled(onoff);
-        // pasteBackground.setEnabled(onoff);
-        // pasteSongInfo.setEnabled(onoff);
-        // saveCover.setEnabled(onoff);
-        // saveVideo.setEnabled(onoff);
-        // saveBackground.setEnabled(onoff);
-        // editCover.setEnabled(onoff);
-        // editBackground.setEnabled(onoff);
-        // reloadCover.setEnabled(onoff);
-        // reloadVideo.setEnabled(onoff);
-        // reloadBackground.setEnabled(onoff);
-
-        // editRaw.setEnabled(onoff);
-        // editRawParent.setEnabled(onoff);
     }
 
     public void openSongFolder() {

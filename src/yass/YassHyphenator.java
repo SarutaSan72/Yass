@@ -128,7 +128,9 @@ public class YassHyphenator {
      * @return Description of the Return Value
      */
     public String hyphenateWord(String word) {
-        word = hyphenator.hyphenate(word, 2, 2);
+        if (hyphenator != null) {
+            word = hyphenator.hyphenate(word, 2, 2);
+        }
         return word;
     }
 

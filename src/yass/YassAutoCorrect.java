@@ -43,6 +43,7 @@ public class YassAutoCorrect {
     private String videoID;
 
     private Map<String, YassAutoCorrector> autoCorrectorMap;
+    private YassLanguageUtils languageUtils;
 
     private Map<String, YassAutoCorrector> initAutoCorrectors() {
         Map<String, YassAutoCorrector> tempAutoCorrectors = new HashMap<>();
@@ -394,6 +395,7 @@ public class YassAutoCorrect {
     public void init(YassProperties p) {
         prop = p;
         autoCorrectorMap = initAutoCorrectors();
+        languageUtils = new YassLanguageUtils();
         YassRow.setValidTags(prop.getProperty("valid-tags"));
         YassRow.setValidLines(prop.getProperty("valid-lines"));
         loadFont();
@@ -678,7 +680,6 @@ public class YassAutoCorrect {
                     .get("touching-syllables");
             boolean touchingSyllables = touchingSyllablesString != null
                     && touchingSyllablesString.equals("true");
-
             for (int i = 0; i < n; i++) {
                 r = table.getRowAt(i);
                 if (i + 1 < n) {
@@ -924,7 +925,6 @@ public class YassAutoCorrect {
                     String txt = r.getText();
                     boolean startswithspace = txt
                             .startsWith(YassRow.SPACE + "");
-                    boolean endswithspace = txt.endsWith(YassRow.SPACE + "");
                     if (txt.contains(YassRow.SPACE + "" + YassRow.SPACE)) {
                         r.addMessage(YassRow.TOO_MUCH_SPACES);
                         table.addMessage(YassRow.TOO_MUCH_SPACES);
@@ -1333,7 +1333,7 @@ public class YassAutoCorrect {
                     YassRow r2 = tm.
                             getCommentRow("LANGUAGE:");
                     if (r2 == null) {
-                        table.setLanguage("Other");
+                        table.setLanguage(languageUtils.detectLanguage(table.getText()));
                         changed = true;
                     }
                     r2 = tm.getCommentRow("GENRE:");
