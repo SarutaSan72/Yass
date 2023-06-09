@@ -1,3 +1,4 @@
+
 # Yass Reloaded Karaoke Editor
 Yass Reloaded is a graphical editor for finetuning Ultrastar karaoke songs. 
 You can drag & drop notes, spread syllables, and find errors. Further you can filter your song library, mass-tag or batch-correct them, or search for lyrics.
@@ -7,9 +8,7 @@ Yass Reloaded is a fork from Yass 2.4.3 that Saruta has been developing since 20
 
 
 # Downloads
-
-Executables for the original version can be found at [http://yass-along.com](http://yass-along.com)
-Stay tuned for binaries of the Reloaded version.
+Binaries can be found in the [Release Section](https://github.com/DoubleDee73/Yass/releases)
 
 # Developers
 
@@ -22,7 +21,7 @@ Basic setup is described in the Wiki: https://github.com/SarutaSan72/Yass/wiki/D
 - Jazzy Spell Checker
 - JInput
 - TeX Hyphenator
-- VFFMpeg Objects (fobs)
+- [Optimaize Language Detector](https://github.com/optimaize/language-detector)
 - Java Media Framework (JMF)
 - Robert Eckstein's Wizard code
 - juniversalchardet
