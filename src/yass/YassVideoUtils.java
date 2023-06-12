@@ -34,7 +34,7 @@ import java.util.Vector;
  */
 public class YassVideoUtils {
 
-    public static boolean TRY_TO_USE_FOBS = true;
+    public static boolean TRY_TO_USE_FOBS = false;
 
     public static boolean useFOBS = false;
 

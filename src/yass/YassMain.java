@@ -29,7 +29,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.net.URL;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Vector;
@@ -81,6 +80,9 @@ public class YassMain extends JFrame {
             y.load();
 
             y.initFrame();
+            if (y.refreshLibrary()) {
+                System.out.println("Song Library was refreshed...");
+            }
             System.out.println("Ready. Let's go.");
         });
     }
@@ -200,7 +202,6 @@ public class YassMain extends JFrame {
 
     public void init() {
         prop = new YassProperties();
-        YassVideoUtils.TRY_TO_USE_FOBS = prop.getBooleanProperty("use-fobs");
 
         initLanguage();
         checkVersion();
@@ -324,10 +325,11 @@ public class YassMain extends JFrame {
 
     public void load() {
         String s = prop.getProperty("welcome");
+        boolean store = false;
         if (s != null && s.equals("true")) {
             new YassLibOptions(prop, actions, songList, mp3);
             prop.setProperty("welcome", "false");
-            prop.store();
+            store = true;
         }
         String spacing = prop.getProperty("correct-uncommon-spacing");
         if (StringUtils.isEmpty(spacing)) {
@@ -339,6 +341,15 @@ public class YassMain extends JFrame {
             } else {
                 prop.setProperty("correct-uncommon-spacing", "after");
             }
+            store = true;
+        }
+        if (StringUtils.isEmpty(prop.getProperty("options_dir_refresh"))) {
+            int option = JOptionPane.showConfirmDialog(null, I18.get("options_dir_refresh_confirm"), I18.get(
+                    "options_dir_refresh"), JOptionPane.OK_CANCEL_OPTION);
+            prop.setProperty("options_dir_refresh", option == JOptionPane.OK_OPTION ? "true" : "false");
+            store = true;
+        }
+        if (store) {
             prop.store();
         }
         if (edit) {
@@ -806,6 +817,13 @@ public class YassMain extends JFrame {
 
         actions.registerLibraryActions(panel);
         return panel;
+    }
+    private boolean refreshLibrary() {
+        if (prop.getBooleanProperty("options_dir_refresh") && actions != null) {
+            actions.refreshLibrary();
+            return true;
+        }
+        return false;
     }
 }
 

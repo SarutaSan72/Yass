@@ -91,7 +91,6 @@ public class YassProperties extends Properties {
                 setProperty("key-18", "N");
             if (getProperty("before_next_ms") == null)
                 setProperty("before_next_ms", "300");
-
             return;
         } catch (Exception e) {
             // not exists
@@ -157,7 +156,6 @@ public class YassProperties extends Properties {
         p.put("background-id", "[BG]");
         p.put("video-id", "[VD#*]");
         p.put("videodir-id", "[VIDEO]");
-        p.put("use-fobs", "false");
 
         p.put("correct-uncommon-pagebreaks", "unknown");
         p.put("correct-uncommon-spacing", "");

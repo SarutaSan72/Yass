@@ -48,7 +48,7 @@ public class DirPanel extends OptionsPanel {
         addSeparator();
         addChoice(I18.get("options_yass_languages_title"), I18.get("options_yass_languages"), "yass-languages", "yass-language");
         addComment(I18.get("options_yass_languages_comment"));
-
+        addBoolean("", "options_dir_refresh", I18.get("options_dir_refresh"));
 		/*
          *  addSeparator();
 		 *  JButton b = addButton("", "Factory Settings: ", "Restore All");
