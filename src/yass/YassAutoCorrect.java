@@ -1036,7 +1036,7 @@ public class YassAutoCorrect {
 
                     int beat = r.getBeatInt();
                     if (i > 0) {
-                        YassRow r2 = table.getRowAt(i - 1);
+                        YassRow r2 = getPreviousNote(table, i);
                         if (r2.isNote()) {
                             int beat2 = r2.getBeatInt();
                             int dur2 = r2.getLengthInt();
@@ -1172,6 +1172,17 @@ public class YassAutoCorrect {
             return false;
         }
         return true;
+    }
+
+    private YassRow getPreviousNote(YassTable table, int i) {
+        YassRow previous = table.getRowAt(i - 1);
+        if (previous.isNote()) {
+            return previous;
+        }
+        if (i > 2) {
+            return table.getRowAt(i - 2);
+        }
+        return previous;
     }
 
     private boolean isUncommonSpacing(YassRow currentRow, YassRow nextRow) {
