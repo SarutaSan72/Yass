@@ -47,8 +47,8 @@ import java.util.Vector;
 public class YassActions implements DropTargetListener {
 
     private final YassSheet sheet;
-    public final static String VERSION = "2023.6";
-    public final static String DATE = "06/2023";
+    public final static String VERSION = "2023.7";
+    public final static String DATE = "07/2023";
 
     static int VIEW_LIBRARY = 1;
     static int VIEW_EDIT = 2;
@@ -118,7 +118,6 @@ public class YassActions implements DropTargetListener {
     private boolean soonStarting = false;
     private JMenuBar editMenu = null, libMenu = null;
     private JToolBar videoToolbar = null;
-    private JComponent dropTarget = null;
     private final RecordEventListener awt = new RecordEventListener();
     private final AWTEventListener awt2 = e -> {
         if (e instanceof MouseWheelEvent) {
@@ -126,8 +125,7 @@ public class YassActions implements DropTargetListener {
             stopPlaying();
             ((MouseWheelEvent) e).consume();
         }
-        if (e instanceof KeyEvent) {
-            KeyEvent k = (KeyEvent) e;
+        if (e instanceof KeyEvent k) {
             if (k.getID() == KeyEvent.KEY_RELEASED) {
                 return;
             }
@@ -814,7 +812,7 @@ public class YassActions implements DropTargetListener {
             for (YassTable t: getOpenTables(table))
                 t.multiply();
             if (bpmField != null)
-                bpmField.setText(table.getBPM() + "");
+                bpmField.setText(String.valueOf(table.getBPM()));
         }
     };
     private final Action divide = new AbstractAction(I18.get("edit_bpm_half")) {
@@ -822,7 +820,7 @@ public class YassActions implements DropTargetListener {
             for (YassTable t: getOpenTables(table))
                 t.divide();
             if (bpmField != null)
-                bpmField.setText(table.getBPM() + "");
+                bpmField.setText(String.valueOf(table.getBPM()));
         }
     };
     private final Action showLyricsStart = new AbstractAction(I18.get("edit_gap")) {
@@ -865,14 +863,14 @@ public class YassActions implements DropTargetListener {
             panel.add(new JLabel(I18.get("edit_bpm_title")));
 
             double bpm = table.getBPM();
-            bpmField = new JTextField(bpm + "", 5);
+            bpmField = new JTextField(String.valueOf(bpm), 5);
             bpmField.addActionListener(e1 -> {
                 String s = bpmField.getText();
                 double bpm1 = table.getBPM();
                 try {
                     bpm1 = Double.parseDouble(s);
                 } catch (Exception ex) {
-                    bpmField.setText(bpm1 + "");
+                    bpmField.setText(String.valueOf(bpm1));
                 }
                 for (YassTable t: getOpenTables(table))
                     t.setBPM(bpm1);
@@ -1289,7 +1287,7 @@ public class YassActions implements DropTargetListener {
                 if (s.equals(speed[3])) {
                     timebase = 4;
                 }
-                prop.setProperty("record-timebase", timebase + "");
+                prop.setProperty("record-timebase", String.valueOf(timebase));
                 prop.store();
 
                 // int ok = JOptionPane.showConfirmDialog(tab, "<html>" +
@@ -1709,9 +1707,9 @@ public class YassActions implements DropTargetListener {
             tracks[i].setSaved(false);
             tracks[i].setDuetTrack(t[i].getDuetTrack(), t[order[i]].getDuetTrackName());
         }
-        for (int i=0; i < tracks.length; i++) {
-            getAutoCorrect().checkData(tracks[i], true, true);
-            tracks[i].addUndo();
+        for (YassTable track : tracks) {
+            getAutoCorrect().checkData(track, true, true);
+            track.addUndo();
         }
         sheet.init();
         updateActions();
@@ -2329,10 +2327,7 @@ public class YassActions implements DropTargetListener {
             boolean autoTrim = prop.getProperty("auto-trim").equals("true");
             setAutoTrim(autoTrim);
 
-            boolean needSongDirUpdate = false;
-            if (newDir != null && !newDir.equals(oldDir)) {
-                needSongDirUpdate = true;
-            }
+            boolean needSongDirUpdate = newDir != null && !newDir.equals(oldDir);
             if (newpDir != null && !newpDir.equals(oldListDir)) {
                 needSongDirUpdate = true;
             }
@@ -7407,12 +7402,10 @@ public class YassActions implements DropTargetListener {
                 }
                 boolean pressed = k.getID() == KeyEvent.KEY_PRESSED;
                 if (pressed && !lastWasPressed) {
-                    sheet.getTemporaryNotes().addElement(
-                            new Long(mp3.getPosition()));
+                    sheet.getTemporaryNotes().addElement(mp3.getPosition());
                 }
                 if (!pressed && lastWasPressed) {
-                    sheet.getTemporaryNotes().addElement(
-                            new Long(mp3.getPosition()));
+                    sheet.getTemporaryNotes().addElement(mp3.getPosition());
                     added = true;
                 }
                 lastWasPressed = pressed;
@@ -7429,12 +7422,10 @@ public class YassActions implements DropTargetListener {
                 }
                 boolean pressed = k.getID() == MouseEvent.MOUSE_PRESSED;
                 if (pressed && !lastWasPressed) {
-                    sheet.getTemporaryNotes().addElement(
-                            new Long(mp3.getPosition()));
+                    sheet.getTemporaryNotes().addElement(mp3.getPosition());
                 }
                 if (!pressed && lastWasPressed) {
-                    sheet.getTemporaryNotes().addElement(
-                            new Long(mp3.getPosition()));
+                    sheet.getTemporaryNotes().addElement(mp3.getPosition());
                     added = true;
                 }
                 lastWasPressed = pressed;

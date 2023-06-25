@@ -195,6 +195,9 @@ public class YassTableModel extends AbstractTableModel {
         data.addElement(new YassRow(type, time, length, height, txt, err, detail));
     }
 
+    public void addRow(char type, String time, String length, String height, String txt, String err) {
+        data.addElement(new YassRow(Character.toString(type), time, length, height, txt, err));
+    }
 
     /**
      * Adds a feature to the Row attribute of the YassTableModel object
@@ -210,6 +213,10 @@ public class YassTableModel extends AbstractTableModel {
         data.addElement(new YassRow(type, time, length, height, txt, err));
     }
 
+
+    public void addRow(char type, String time, String length, String height, String txt) {
+        data.addElement(new YassRow(Character.toString(type), time, length, height, txt));
+    }
 
     /**
      * Adds a feature to the Row attribute of the YassTableModel object
@@ -234,6 +241,10 @@ public class YassTableModel extends AbstractTableModel {
         data.addElement(new YassRow(r));
     }
 
+    public void insertRowAt(String type, int time, int length, int height, String txt, int i) {
+        data.insertElementAt(
+                new YassRow(type, Integer.toString(time), Integer.toString(length), Integer.toString(height), txt), i);
+    }
 
     /**
      * Description of the Method

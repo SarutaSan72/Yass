@@ -100,7 +100,7 @@ public class YassSong implements Cloneable, Comparable<Object> {
      * Description of the Field
      */
     public static int statsindex = -1;
-    private String s[] = new String[31];
+    private String[] s = new String[31];
     private String[] messages = null;
     private float[] stats = null;
     private long timestamp = 0;
@@ -1340,15 +1340,17 @@ public class YassSong implements Cloneable, Comparable<Object> {
                 rt = "99999";
             }
 
-            Integer ti = new Integer(99999);
+            Integer ti;
             try {
-                ti = new Integer(t);
+                ti = Integer.parseInt(t);
             } catch (Exception ignored) {
+                ti = 99999;
             }
-            Integer rti = new Integer(99999);
+            int rti;
             try {
-                rti = new Integer(rt);
+                rti = Integer.parseInt(rt);
             } catch (Exception ignored) {
+                rti = 99999;
             }
 
             int res = ti.compareTo(rti);
@@ -1376,15 +1378,17 @@ public class YassSong implements Cloneable, Comparable<Object> {
                 rt = "999999";
             }
 
-            Integer ti = new Integer(999999);
+            Integer ti;
             try {
-                ti = new Integer(t);
+                ti = Integer.parseInt(t);
             } catch (Exception ignored) {
+                ti = 999999;
             }
-            Integer rti = new Integer(999999);
+            Integer rti;
             try {
-                rti = new Integer(rt);
+                rti = Integer.parseInt(rt);
             } catch (Exception ignored) {
+                rti = 999999;
             }
 
             int res = ti.compareTo(rti);
@@ -1473,8 +1477,8 @@ public class YassSong implements Cloneable, Comparable<Object> {
             if (rm == null || rm.length() < 1) {
                 rm = "0";
             }
-            Double d = new Double(m);
-            Double rd = new Double(rm);
+            Double d = Double.parseDouble(m);
+            Double rd = Double.parseDouble(rm);
 
             int res = d.compareTo(rd);
             if (res != 0) {

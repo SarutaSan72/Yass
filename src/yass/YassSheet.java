@@ -32,6 +32,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -86,6 +87,7 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
             stdStroke = new BasicStroke(1f), medStroke = new BasicStroke(1.5f),
             thickStroke = new BasicStroke(2f);
 
+    @Serial
     private static final long serialVersionUID = 3284920111520989009L;
     private final static int ACTION_CONTROL = 1, ACTION_ALT = 2,
             ACTION_CONTROL_ALT = 4, ACTION_NONE = 0;

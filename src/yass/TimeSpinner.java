@@ -22,6 +22,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.Serial;
 
 /**
  * Description of the Class
@@ -33,10 +34,11 @@ public class TimeSpinner extends JPanel {
      * Description of the Field
      */
     public final static int POSITIVE = 1, NEGATIVE = 2;
+    @Serial
     private static final long serialVersionUID = -1220107624676188602L;
     private int duration;
-    private JSpinner msSpinner = null;
-    private SpinnerNumberModel msModel = null;
+    private final JSpinner msSpinner;
+    private final SpinnerNumberModel msModel;
     private JLabel lab1 = null, lab2 = null;
 
 
@@ -94,7 +96,7 @@ public class TimeSpinner extends JPanel {
         msSpinner = new JSpinner(msModel);
 
         JTextField tf = ((JSpinner.DefaultEditor) msSpinner.getEditor()).getTextField();
-        tf.setColumns((duration + "").length());
+        tf.setColumns((String.valueOf(duration)).length());
         tf.setHorizontalAlignment(JTextField.RIGHT);
         tf.addKeyListener(
                 new KeyAdapter() {
@@ -178,7 +180,7 @@ public class TimeSpinner extends JPanel {
         if (t == ms.intValue()) {
             return;
         }
-        msSpinner.setValue(new Integer(t));
+        msSpinner.setValue(t);
     }
 
     /**
@@ -191,7 +193,7 @@ public class TimeSpinner extends JPanel {
             return;
         }
         duration = d;
-        msModel.setMaximum(new Integer(duration));
+        msModel.setMaximum(duration);
     }
 }
 

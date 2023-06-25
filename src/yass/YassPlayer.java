@@ -29,6 +29,7 @@ import yass.renderer.YassNote;
 import yass.renderer.YassPlaybackRenderer;
 import yass.renderer.YassPlayerNote;
 import yass.renderer.YassSession;
+
 import javax.sound.sampled.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -84,80 +85,19 @@ public class YassPlayer {
     private int audioBytesSampleSize = 2;
 
     public YassPlayer(YassPlaybackRenderer s) {
+
         playbackRenderer = s;
-
-        // Mixer defaultMixer = AudioSystem.getMixer(null);
-        // Mixer.Info mixerInfo = defaultMixer.getMixerInfo();
-        // System.out.println("Default Mixer: \"" + mixerInfo.getName() + "\"");
-        // System.out.println("    Description: " + mixerInfo.getDescription());
-        // System.out.println("    SourceLineInfo (e.g., speakers):");
-        // printLineInfo("        ", defaultMixer.getSourceLineInfo());
-        // System.exit(0);
-
-        // supported:
-        // PCM_SIGNED unknown sample rate, 16 bit, mono, 2 bytes/frame,
-        // little-endian
-        // PCM_SIGNED unknown sample rate, 16 bit, mono, 2 bytes/frame,
-        // big-endian
-        // PCM_SIGNED unknown sample rate, 16 bit, stereo, 4 bytes/frame,
-        // little-endian
-        // PCM_SIGNED unknown sample rate, 16 bit, stereo, 4 bytes/frame,
-        // big-endian
-
-        // printMixers();
-
         midi = new YassMIDI();
 
-        Thread synth = new Thread() {
-            public void run() {
-                midis = new byte[128][];
-                for (int i = 0; i < 128; i++) {
-                    // byte[] data = YassSynth.createRect(2);
-                    midis[i] = YassSynth.create(i, 15, YassSynth.SINE);
-                }
-
-                YassSynth.loadWav();
+        Thread synth = new Thread(() -> {
+            midis = new byte[128][];
+            for (int i = 0; i < 128; i++) {
+                // byte[] data = YassSynth.createRect(2);
+                midis[i] = YassSynth.create(i, 15, YassSynth.SINE);
             }
-        };
 
-        // click = null;
-        // if (clickEnabled) {
-        // click = loadClip("/yass/resources/samples/406__TicTacShutUp__click_1_d_long.wav");
-        // }
-
-        // if (false) {
-        // try {
-        // FileInputStream clickfi = new
-        // FileInputStream("/yass/resources/samples/406__TicTacShutUp__click_1_d_orig.wav");
-        // BufferedInputStream clickbfi = new BufferedInputStream(clickfi,
-        // 4096);
-        // ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        // int readP;
-        // byte[] bufferP = new byte[1024];
-        // while ((readP = clickbfi.read(bufferP)) > -1) {
-        // bout.write(bufferP, 0, readP);
-        // }
-        // clickmemcache = bout.toByteArray();
-        // clickbfi.close();
-        // bout.close();
-        //
-        // AudioInputStream stream =
-        // AudioSystem.getAudioInputStream(this.getClass().getResource("/yass/resources/samples/406__TicTacShutUp__click_1_d_orig.wav"));
-        // AudioFormat af = stream.getFormat();
-        //
-        // InputStream bis = new ByteArrayInputStream(clickmemcache);
-        // AudioInputStream din = new AudioInputStream(bis, af,
-        // clickmemcache.length / af.getFrameSize());
-        // DataLine.Info info = new DataLine.Info(Clip.class, af, ((int)
-        // din.getFrameLength() * af.getFrameSize()));
-        // click = (Clip) AudioSystem.getLine(info);
-        //
-        // click.open(din);
-        // }
-        // catch (Exception e) {
-        // e.printStackTrace();
-        // }
-        // }
+            YassSynth.loadWav();
+        });
 
         initCapture();
         synth.start();
@@ -243,70 +183,6 @@ public class YassPlayer {
     }
 
     /**
-     * Sets the volume attribute of the YassPlayer object
-     *
-     * @param c
-     *            The new volume value
-     * @param val
-     *            The new volume value
-     */
-    // private void setVolume(DataLine c, float val) {
-    // FloatControl gainControl = (FloatControl)
-    // c.getControl(FloatControl.Type.MASTER_GAIN);
-    // if (gainControl != null) {
-    // float min = gainControl.getMinimum();
-    // float max = gainControl.getMaximum();
-    // double minGainDB = min;
-    // double ampGainDB = ((10.0f / 20.0f) * max) - min;
-    // double cste = Math.log(10.0) / 20;
-    // double valueDB = minGainDB + (1 / cste) * Math.log(1 + (Math.exp(cste *
-    // ampGainDB) - 1) * val);
-    // gainControl.setValue((float) valueDB);
-    // }
-    // }
-
-    /**
-     * Description of the Method
-     *
-     * @param fnm
-     *            Description of the Parameter
-     * @return Description of the Return Value
-     */
-    // private Clip loadClip(String fnm) {
-    // Clip clip = null;
-    // try {
-    //
-    // AudioInputStream stream =
-    // AudioSystem.getAudioInputStream(this.getClass().getResource(fnm));
-    // AudioFormat format = stream.getFormat();
-    //
-    // DataLine.Info info = new DataLine.Info(Clip.class, format);
-    // if (!AudioSystem.isLineSupported(info)) {
-    // System.out.println("Unsupported Clip File: " + fnm);
-    // }
-    //
-    // clip = (Clip) AudioSystem.getLine(info);
-    // clip.addLineListener(
-    // new LineListener() {
-    // public void update(LineEvent lineEvent) {
-    // if (lineEvent.getType() == LineEvent.Type.STOP) {
-    // //((Clip)(lineEvent.getLine())).stop();
-    // //((Clip)(lineEvent.getLine())).setFramePosition(0);
-    // }
-    // }
-    // });
-    // clip.open(stream);
-    // stream.close();
-    // }
-    // catch (Exception e) {
-    // System.out.println("Unknown Audio Format: " + fnm);
-    // playbackRenderer.setErrorMessage(I18.get("sheet_msg_audio_format"));
-    // e.printStackTrace();
-    // }
-    // return clip;
-    // }
-
-    /**
      * Sets the playbackRenderer attribute of the YassPlayer object
      *
      * @param s The new playbackRenderer value
@@ -322,13 +198,6 @@ public class YassPlayer {
         capture = new YassCaptureAudio();
     }
 
-	/*
-	 * class AdvancedPlayer2 extends AdvancedPlayer { public
-	 * AdvancedPlayer2(InputStream is) throws JavaLayerException { super(is); }
-	 * public boolean skipFrame() throws JavaLayerException { return
-	 * super.skipFrame(); } }
-	 */
-
     public boolean isCapture() {
         return useCapture;
     }
@@ -339,17 +208,8 @@ public class YassPlayer {
     public void printMixers() {
         Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
         for (int i = 0; i < mixerInfo.length; i++) {
-            // Mixer mixer = AudioSystem.getMixer(mixerInfo[i]);
 
-            System.out.println("Mixer[" + i + "]: \"" + mixerInfo[i].getName()
-                    + "\"");
-            // System.out.println("    Description: " +
-            // mixerInfo[i].getDescription());
-            // System.out.println("    SourceLineInfo (e.g., speakers):");
-            // printLineInfo("        ", mixer.getSourceLineInfo());
-
-            // System.out.println("    TargetLineInfo (e.g., microphones):");
-            // printLineInfo("        ", mixer.getTargetLineInfo());
+            System.out.println("Mixer[" + i + "]: \"" + mixerInfo[i].getName() + "\"");
         }
     }
 
@@ -518,24 +378,6 @@ public class YassPlayer {
             in = AudioSystem.getAudioInputStream(file);
             if (in != null) {
                 AudioFormat baseFormat = in.getFormat();
-                // System.out.println("Source Format : " +
-                // baseFormat.toString());
-
-                if ((baseFormat.getEncoding() == AudioFormat.Encoding.ULAW)
-                        || (baseFormat.getEncoding() == AudioFormat.Encoding.ALAW)) {
-                    // System.out.println("Format: ULAW/ALAW");
-					/*
-					 * AudioFormat tmp = new AudioFormat(
-					 * AudioFormat.Encoding.PCM_SIGNED, format.getSampleRate(),
-					 * format.getSampleSizeInBits() * 2, format.getChannels(),
-					 * format.getFrameSize() * 2, format.getFrameRate(), true);
-					 * stream = AudioSystem.getAudioInputStream(tmp, stream);
-					 * format = tmp;
-					 */
-                } else {
-                    // System.out.println("Format: Not ULAW/ALAW, fine!");
-                }
-
                 fps = baseFormat.getFrameRate();
                 // System.out.println("fps: " + fps);
             }
@@ -553,87 +395,19 @@ public class YassPlayer {
             }
         }
         try {
-            AudioFileFormat baseFileFormat = AudioSystem
-                    .getAudioFileFormat(file);
+            AudioFileFormat baseFileFormat = AudioSystem.getAudioFileFormat(file);
             if (baseFileFormat instanceof TAudioFileFormat) {
                 Map<?, ?> properties = baseFileFormat
                         .properties();
-                String key = "author";
-                // String val = (String) properties.get(key);
-                // System.out.println(key + ": " + val);
-
-                key = "title";
-                // val = (String) properties.get(key);
-                // System.out.println(key + ": " + val);
-
-                // key = "mp3.id3tag.genre";
-                // val = (String) properties.get(key);
-                // System.out.println(key + ": " + val);
-
-                // key = "mp3.vbr";
-                // val = ((Boolean) properties.get(key)).toString();
-                // System.out.println(key + ": " + val);
-
-                key = "duration";
+                String key =  "duration";
                 duration = ((Long) properties.get(key)).longValue();
-                // System.out.println(key + ": " + duration);
-
-                // key = "mp3.id3tag.v2";
-                // InputStream tag = (InputStream) properties.get(key);
-                // key = "mp3.header.pos";
-                // headerpos = ((Integer) properties.get(key)).intValue();
-
-                // if (ogg) {
-                // Integer bpsi = (Integer)
-                // properties.get("ogg.bitrate.nominal.bps");
-                // if (bpsi != null) {
-                // bps = bpsi.intValue();
-                // }
-                // //System.out.println("BPS: " + bps);
-                // }
                 if (!ogg && fps < 0) {
                     Float fpsf = (Float) properties.get("mp3.framerate.fps");
                     if (fpsf != null) {
                         fps = fpsf.floatValue();
                     }
-                    // System.out.println("id3 fps: " + fps);
                 }
-
-                // if (!ogg) {
-                // Integer leni = (Integer) properties.get("mp3.length.frames");
-                // if (leni != null) {
-                // lengthInFrames = leni.intValue();
-                // }
-                // Integer fsi = (Integer)
-                // properties.get("mp3.framesize.bytes");
-                // if (fsi != null) {
-                // frameSizeInBytes = fsi.intValue();
-                // }
-                // }
-                // System.out.println("FPS: " + fps);
             }
-			/*
-			 * try { MpegAudioFileReader mpegAudioFileReader = new
-			 * MpegAudioFileReader(); in =
-			 * mpegAudioFileReader.getAudioInputStream(new
-			 * FileInputStream(file)); baseFormat = in.getFormat();
-			 * baseFileFormat = mpegAudioFileReader.getAudioFileFormat(in); if
-			 * (baseFileFormat instanceof MpegAudioFileFormat) { Map props =
-			 * ((TAudioFileFormat) baseFileFormat).properties(); Object[] obj =
-			 * props.keySet().toArray(); bps =
-			 * Integer.parseInt(props.get("mp3.bitrate.nominal.bps"
-			 * ).toString()); fps =
-			 * Float.parseFloat(props.get("mp3.framerate.fps").toString()); } }
-			 * catch (Exception e) {
-			 * playbackRenderer.setErrorMessage("Cannot read MPEG Audio";
-			 * e.printStackTrace(); }
-			 */
-			/*
-			 * try to prevents initial delay FileInputStream fi=new
-			 * FileInputStream(new File(filename)); advancedPlayer = new
-			 * AdvancedPlayer2(fi); while (advancedPlayer.skipFrame());
-			 * fi.close();
-			 */
         } catch (Exception e) {
             playbackRenderer.setErrorMessage(I18.get("sheet_msg_audio_format"));
             e.printStackTrace();
@@ -655,14 +429,6 @@ public class YassPlayer {
                 }
             }
         }
-		/*
-		 * } catch (Exception e) { if (e instanceof IOException &&
-		 * e.getMessage().equals("Resetting to invalid mark"))
-		 * playbackRenderer.setErrorMessage
-		 * ("Oversized MP3 ID3v2 Header (please remove)"); else
-		 * playbackRenderer.
-		 * setErrorMessage("Audio Read Error: "+e.getMessage()); }
-		 */
     }
 
     /**
@@ -778,16 +544,6 @@ public class YassPlayer {
      * Description of the Method
      */
     public void interruptMP3() {
-
-//		if (player != null) {
-//			System.out.println("interrupt started:" + player.started
-//					+ " finished:" + player.finished);
-//		} else {
-//			System.out.println("interrupt player==null");
-//		}
-
-        // new Exception("interrupt").printStackTrace();
-
         if (player != null && player.started) {
             player.notInterrupted = false;
             if (hasPlaybackRenderer) {
@@ -1386,12 +1142,6 @@ public class YassPlayer {
                             midi.startPlay(midiPitch);
                         }
 
-                        // if (clickEnabled) {
-                        // click.stop();
-                        // click.setFramePosition(0);
-                        // click.start();
-                        // }
-
                         if (++clicksPos < n) {
                             nextClick = clicks[clicksPos][0];
                             nextClickEnd = clicks[clicksPos][2];
@@ -1564,12 +1314,10 @@ public class YassPlayer {
         }
     }
 
-    public void setPianoVolume(int vol)
-    {
+    public void setPianoVolume(int vol) {
         midi.setVolume(vol);
     }
-    public int getPianoVolume()
-    {
+    public int getPianoVolume() {
         return midi.getVolume();
     }
 }

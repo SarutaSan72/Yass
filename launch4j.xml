@@ -2,7 +2,7 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>.\target\Yass-Reloaded-2023.6-jar-with-dependencies.jar</jar>
+  <jar>.\target\Yass-Reloaded-2023.7-jar-with-dependencies.jar</jar>
   <outfile>.\target\yass.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
@@ -15,8 +15,7 @@
   <manifest></manifest>
   <icon>.\src\yass\resources\icons\yass-multi-icon.ico</icon>
   <jre>
-    <minVersion>1.8.0</minVersion>
-    <maxVersion></maxVersion>
+    <minVersion>17.0</minVersion>
     <jdkPreference>preferJre</jdkPreference>
     <initialHeapSize>48</initialHeapSize>
     <maxHeapSize>512</maxHeapSize>
@@ -29,13 +28,13 @@
   </splash>
   <versionInfo>
     <fileVersion>2.4.3.1</fileVersion>
-    <txtFileVersion>Yass Reloaded 2023.6</txtFileVersion>
+    <txtFileVersion>Yass Reloaded 2023.7</txtFileVersion>
     <fileDescription>Yass Reloaded - Karaoke Editor</fileDescription>
     <copyright>(C)2023 DoubleDee</copyright>
     <productVersion>2.4.3.1</productVersion>
-    <txtProductVersion>2023.6</txtProductVersion>
+    <txtProductVersion>2023.7</txtProductVersion>
     <productName>Yass Reloaded</productName>
-    <companyName>yass-along.com</companyName>
+    <companyName>yass-reloaded.com</companyName>
     <internalName>yass</internalName>
     <originalFilename>yass.exe</originalFilename>
   </versionInfo>

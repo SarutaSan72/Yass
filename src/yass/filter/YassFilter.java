@@ -80,7 +80,7 @@ public class YassFilter implements Cloneable {
         YassFilter f;
         try {
             Class<?> c = YassUtils.forName(filtername);
-            f = (YassFilter) c.newInstance();
+            f = (YassFilter) c.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -90,23 +90,6 @@ public class YassFilter implements Cloneable {
         plugins.addElement(f);
         return f;
     }
-
-
-    /**
-     * Gets the pluginIDList attribute of the YassFilter class
-     *
-     * @return The pluginIDList value
-     */
-    public static String[] getAllIDs() {
-        String[] s = new String[plugins.size()];
-        int i = 0;
-        for (Enumeration<YassFilter> en = plugins.elements(); en.hasMoreElements(); ) {
-            YassFilter f = en.nextElement();
-            s[i++] = f.getID();
-        }
-        return s;
-    }
-
 
     /**
      * Gets the groupsLabel attribute of the YassGroups class
@@ -184,7 +167,7 @@ public class YassFilter implements Cloneable {
             return false;
         }
         f = f.toLowerCase();
-        return f.indexOf(str) >= 0;
+        return f.contains(str);
     }
 
     /**
@@ -333,10 +316,7 @@ public class YassFilter implements Cloneable {
      * @return Description of the Return Value
      */
     public boolean renderTitle() {
-        if (rule.equals("all")) {
-            return true;
-        }
-        return false;
+        return rule.equals("all");
     }
 
     /**
@@ -348,10 +328,7 @@ public class YassFilter implements Cloneable {
         if (rule.equals("all")) {
             return false;
         }
-        if (rule.equals("unspecified")) {
-            return false;
-        }
-        return true;
+        return !rule.equals("unspecified");
     }
 
     /**
