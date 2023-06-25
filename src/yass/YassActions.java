@@ -6191,6 +6191,7 @@ public class YassActions implements DropTargetListener {
             return;
         updateTrackComponent();
         storeRecentFiles();
+        mp3.reinitSynth();
         mp3.openMP3(table.getDirMP3());
         updateTitle();
 

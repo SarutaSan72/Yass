@@ -1317,7 +1317,8 @@ public class YassPlayer {
     public void setPianoVolume(int vol) {
         midi.setVolume(vol);
     }
-    public int getPianoVolume() {
-        return midi.getVolume();
+
+    public void reinitSynth() {
+        midi = new YassMIDI();
     }
 }

@@ -163,6 +163,12 @@
             <version>1.14.5</version>
             <scope>test</scope>
         </dependency>
+        <!-- Guava atm only for optimaize due to CVEs -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>32.0.1-jre</version>
+        </dependency>
         <dependency>
             <groupId>com.optimaize.languagedetector</groupId>
             <artifactId>language-detector</artifactId>

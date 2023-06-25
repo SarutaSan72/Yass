@@ -41,30 +41,6 @@ public class YassMIDI {
      */
     public YassMIDI() {
         try {
-            Soundbank s = MidiSystem.getSoundbank(getClass().getResource(
-                    "/yass/resources/midi/AJH_Piano.sf2"));
-
-            // Soundbank s = synth.getDefaultSoundbank();
-            Instrument[] instr = s.getInstruments();
-            System.out.println("Soundbank loaded with instrument: " + instr[0].getName().trim());
-
-//            for (int i = 1; i < instr.length; i++) {
-//                System.out.print(i + " " + instr[i].getName().trim() + " ");
-//                synth.loadInstrument(instr[i]);
-//                mc[4].programChange(i);
-//                mc[4].setMute(false);
-//                mc[4].noteOn(65, 100);
-//                try {
-//                    Thread.currentThread().sleep(500);
-//                } catch (InterruptedException e) {
-//                }
-//                mc[4].setMute(true);
-//                try {
-//                    Thread.currentThread().sleep(1000);
-//                } catch (InterruptedException e) {
-//                }
-//            }
-
             if (DEBUG) {
                 // loop through all mixers, and all source and target lines within each mixer.
                 Mixer.Info[] mis = AudioSystem.getMixerInfo();
@@ -92,6 +68,7 @@ public class YassMIDI {
             int n = 0;// default jdk soundbank.gm 1 piano 56 trumpet
 
             synth = MidiSystem.getSynthesizer();
+            Instrument[] instr = synth.getAvailableInstruments();
             MidiDevice.Info info = synth.getDeviceInfo();
             System.out.println("Synthesizer found: "+info.getName() + " v" + info.getVersion() + " " + info.getVendor());
 
@@ -108,20 +85,11 @@ public class YassMIDI {
             if (DEBUG) System.out.println("Available channels: " + mc.length);
 
             if (DEBUG) System.out.println("Program channel: set instrument");
+            mc[4].allNotesOff();
             mc[4].programChange(n);
             if (DEBUG) System.out.println("Program channel: set volume");
             mc[4].controlChange(7, volume);
             System.out.println("Soundbank ready.");
-
-//			for (int i = 0; i < 127; i++) {
-//				startPlay(i);
-//				System.out.println(i);
-//				try {
-//					Thread.sleep(600);
-//				} catch (InterruptedException e) {
-//				}
-//				stopPlay();
-//			}
 
         } catch (IllegalArgumentException e) {
             /* The soft synthesizer appears to be throwing
