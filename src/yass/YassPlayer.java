@@ -399,7 +399,7 @@ public class YassPlayer {
             if (baseFileFormat instanceof TAudioFileFormat) {
                 Map<?, ?> properties = baseFileFormat
                         .properties();
-                String key =  "duration";
+                String key = "duration";
                 duration = ((Long) properties.get(key)).longValue();
                 if (!ogg && fps < 0) {
                     Float fpsf = (Float) properties.get("mp3.framerate.fps");
@@ -424,8 +424,10 @@ public class YassPlayer {
                 e.printStackTrace();
             } finally {
                 if (in != null) {
-                    try { in.close(); }
-                    catch (Exception e) { }
+                    try {
+                        in.close();
+                    } catch (Exception e) {
+                    }
                 }
             }
         }
@@ -744,21 +746,24 @@ public class YassPlayer {
             // System.out.println("len " + audioBytes.length);
         } catch (Exception e) {
             e.printStackTrace();
-            if (e instanceof BitstreamException)
-            {
-                int code = ((BitstreamException)e).getErrorCode();
+            if (e instanceof BitstreamException) {
+                int code = ((BitstreamException) e).getErrorCode();
                 if (code == 102) {
-                    if (bout != null)  audioBytes = bout.toByteArray();
+                    if (bout != null) audioBytes = bout.toByteArray();
                 }
             }
-        }
-        finally {
-            try { decodedStream.close(); } catch (Exception e) {}
-            try { bout.close(); } catch (Exception e) {}
+        } finally {
+            try {
+                decodedStream.close();
+            } catch (Exception e) {
+            }
+            try {
+                bout.close();
+            } catch (Exception e) {
+            }
         }
 
-        if (audioBytes != null && audioBytes.length < 1)
-        {
+        if (audioBytes != null && audioBytes.length < 1) {
             audioBytes = null;
             createWaveform = false;
         }
@@ -954,8 +959,8 @@ public class YassPlayer {
                     long duration = clicks[i][2] - clicks[i][0];
                     System.out
                             .println("click[" + i + "]=" + clicks[i][1]
-                                    + " (at:" + clicks[i][0] + " len:"
-                                    + duration + ")");
+                                             + " (at:" + clicks[i][0] + " len:"
+                                             + duration + ")");
                 }
             }
 
@@ -1025,7 +1030,7 @@ public class YassPlayer {
                 }
 
                 if (!playbackRenderer.preparePlayback(inpoint / 1000,
-                        outpoint / 1000)) {
+                                                      outpoint / 1000)) {
                     finished = true;
                     return;
                 }
@@ -1060,9 +1065,9 @@ public class YassPlayer {
             if (playAudio && !ogg) {
                 try {
                     isPlaying = false;
-                    int skip1 = (int) Math.floor(fps * ((inpoint+seekInOffsetMs*1000) / 1000000.0))
+                    int skip1 = (int) Math.floor(fps * ((inpoint + seekInOffsetMs * 1000) / 1000000.0))
                             + (int) seekInOffset;
-                    int skip2 = (int) Math.floor(fps * ((outpoint+seekOutOffsetMs*1000) / 1000000.0))
+                    int skip2 = (int) Math.floor(fps * ((outpoint + seekOutOffsetMs * 1000) / 1000000.0))
                             + (int) seekOutOffset;
                     if (skip1 < 0) {
                         skip1 = 0;
@@ -1086,7 +1091,7 @@ public class YassPlayer {
                         System.out.println("Cannot start playback.");
                     notInterrupted = false;
                 }
-                if (DEBUG) System.out.println("Waited " + ((200-nn)*100) + " nanos");
+                if (DEBUG) System.out.println("Waited " + ((200 - nn) * 100) + " nanos");
             }
 
             long nanoStart = System.nanoTime() / 1000L;
@@ -1099,8 +1104,7 @@ public class YassPlayer {
             }
 
             while (notInterrupted) {
-                position = (System.nanoTime() / 1000L - nanoStart) / timebase
-                        + inpoint;
+                position = (System.nanoTime() / 1000L - nanoStart) / timebase + inpoint;
                 if (position >= outpoint) {
                     position = outpoint;
                     notInterrupted = false;
@@ -1117,7 +1121,7 @@ public class YassPlayer {
                         off = Math.abs(position - nextClick);
                         if (DEBUG)
                             System.out.println(off + " us offset  at line "
-                                    + clicksPos);
+                                                       + clicksPos);
                         maxClickOffset = Math.max(maxClickOffset, off);
                         midiPitch = (int) clicks[clicksPos][1];
                         midiPitch += 60;
@@ -1162,21 +1166,21 @@ public class YassPlayer {
                             int trackCount = session.getTrackCount();
                             for (int t = 0; t < trackCount; t++) {
                                 int currentNoteIndex = session.getTrack(t)
-                                        .getCurrentNote();
+                                                              .getCurrentNote();
                                 YassNote currentTrackNote = session.getTrack(t)
-                                        .getNote(currentNoteIndex);
+                                                                   .getNote(currentNoteIndex);
                                 if (currentTrackNote.getStartMillis() <= currentMillis
                                         && currentMillis <= currentTrackNote
                                         .getEndMillis()) {
                                     if (currentMillis < currentTrackNote
                                             .getStartMillis() + 10) {
                                         note.setStartMillis(currentTrackNote
-                                                .getStartMillis());
+                                                                    .getStartMillis());
                                     }
                                     if (currentMillis > currentTrackNote
                                             .getEndMillis() - 10) {
                                         note.setEndMillis(currentTrackNote
-                                                .getEndMillis());
+                                                                  .getEndMillis());
                                     }
 
                                     int h = currentTrackNote.getHeight();
@@ -1209,21 +1213,21 @@ public class YassPlayer {
                                 note.setStartMillis(currentMillis);
 
                                 int currentNoteIndex = session.getTrack(t)
-                                        .getCurrentNote();
+                                                              .getCurrentNote();
                                 YassNote currentTrackNote = session.getTrack(t)
-                                        .getNote(currentNoteIndex);
+                                                                   .getNote(currentNoteIndex);
                                 if (currentTrackNote.getStartMillis() <= currentMillis
                                         && currentMillis <= currentTrackNote
                                         .getEndMillis()) {
                                     if (currentMillis < currentTrackNote
                                             .getStartMillis() + 10) {
                                         note.setStartMillis(currentTrackNote
-                                                .getStartMillis());
+                                                                    .getStartMillis());
                                     }
                                     if (currentMillis > currentTrackNote
                                             .getEndMillis() - 10) {
                                         note.setEndMillis(currentTrackNote
-                                                .getEndMillis());
+                                                                  .getEndMillis());
                                     }
                                 } else {
                                     note.setHeight(YassPlayerNote.NOISE);
@@ -1254,6 +1258,7 @@ public class YassPlayer {
                         System.out.println("Playback renderer: interrupt.");
                     notInterrupted = false;
                 }
+
             }
 
             if (midiEnabled) {
@@ -1302,8 +1307,8 @@ public class YassPlayer {
                 if (clicks != null && maxClickOffset / 1000.0 > 10) {
                     // greater 10 ms
                     playbackRenderer.setErrorMessage(latency
-                            .format(new Object[]{Math
-                                    .round(maxClickOffset / 1000.0) + ""}));
+                                                             .format(new Object[]{Math
+                                                                     .round(maxClickOffset / 1000.0) + ""}));
                 }
             }
             live = false;

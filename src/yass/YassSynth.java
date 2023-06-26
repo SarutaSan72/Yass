@@ -258,7 +258,7 @@ public class YassSynth {
                 //System.out.println("   Number of bytes read: "+nBytesRead);
                 if (nBytesRead >= 0) {
                     for (int i = 1; i <= nBytesRead; i++) {
-                        buffer.add(new Byte(abData[i]));
+                        buffer.add(abData[i]);
                     }
                 }
             }
@@ -276,24 +276,8 @@ public class YassSynth {
      * @param dat Description of the Parameter
      */
     public static void play(byte dat[]) {
-        //Thread playThread = new Thread(new PlayThread());
-        //playThread.start();
-
-        //byte tempBuffer[] = new byte[10000];
-
         try {
-			/*
-			 *  int cnt;
-			 *  while ((cnt =
-			 *  audioInputStream[i].read(tempBuffer, 0, tempBuffer.length)) != -1) {
-			 *  if (cnt > 0) {
-			 *  sourceDataLine.write(tempBuffer, 0, cnt);
-			 *  }
-			 *  }
-			 */
             if (sourceDataLine != null) sourceDataLine.write(dat, 0, dat.length);
-            // sourceDataLine.drain();
-            //audioInputStream[i].reset();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -405,20 +389,15 @@ public class YassSynth {
      * Description of the Method
      */
     public static void playWav() {
-        //Thread t =
-        //	new Thread() {
-        //		public void run() {
         double snd_pos = 1;// In Frames
         int frame_length = wavaudioFormat.getFrameSize();
         int length_in_frames = buffer.size() / frame_length - 1;
-        //System.out.println("   -frame length " + frame_length + " length_in_frames " + length_in_frames);
 
         byte[] sample;
 
         wavsourceDataLine.flush();
 
         while (Math.floor(snd_pos) <= length_in_frames) {
-            // System.out.println("   -Filling a buffer");
 
             int buff_pos = 0;
             while ((buff_pos < BUFFER_SIZE) & (Math.floor(snd_pos) <= length_in_frames)) {
@@ -430,16 +409,9 @@ public class YassSynth {
             }
 
             if (buff_pos > 0) {
-                //System.out.println("   -Doing a write: "+buff_pos);
                 int nBytesWritten = wavsourceDataLine.write(tempBuff, 0, buff_pos);
-                //for (int i=0; i<tempBuff.length; i++)
-                //	System.out.print(tempBuff[i]+", ");
-                //System.out.println("---"+tempBuff.length+"---");
             }
         }
-        //		}
-        //	};
-        //t.start();
     }
 
 }
