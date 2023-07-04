@@ -39,6 +39,8 @@ public class YassPlayList extends JPanel implements TabChangeListener {
     private Action saveAction = null, saveAsAction = null, moveUpAction = null, moveDownAction = null;
     private String txtFile = null;
 
+    private boolean changed = false;
+    private String previousItem = null;
 
     /**
      * Constructor for the YassPlayList object
@@ -618,6 +620,7 @@ public class YassPlayList extends JPanel implements TabChangeListener {
             outputStream.close();
 
             saveAction.setEnabled(false);
+            setChanged(false);
         } catch (Exception e) {
             return false;
         }
@@ -672,6 +675,9 @@ public class YassPlayList extends JPanel implements TabChangeListener {
      * @param n The new playList value
      */
     public void setPlayList(int n) {
+        if (getPlayLists() == null) {
+            return;
+        }
         YassPlayListModel pl = getPlayLists().elementAt(n);
         setPlayList(pl);
     }
@@ -763,6 +769,7 @@ public class YassPlayList extends JPanel implements TabChangeListener {
         saveAsAction.setEnabled(n >= 1);
         moveUpAction.setEnabled(n > 1);
         moveDownAction.setEnabled(n > 1);
+        this.changed = changed;
     }
 
 
@@ -821,6 +828,18 @@ public class YassPlayList extends JPanel implements TabChangeListener {
             e.printStackTrace();
         }
         return pl;
+    }
+
+    public boolean isChanged() {
+        return changed;
+    }
+
+    public String getPreviousItem() {
+        return previousItem;
+    }
+
+    public void setPreviousItem(String previousItem) {
+        this.previousItem = previousItem;
     }
 }
 

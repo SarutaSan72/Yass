@@ -473,6 +473,13 @@ public class YassActions implements DropTargetListener {
     };
     Action refreshLibrary = new AbstractAction(I18.get("lib_refresh")) {
         public void actionPerformed(ActionEvent e) {
+            int savePlaylist = unsavedPlaylist();
+            if (savePlaylist == JOptionPane.YES_OPTION) {
+                playList.storePlayList();
+            } else if (savePlaylist == JOptionPane.CANCEL_OPTION) {
+                return;
+            }
+
             refreshLibrary();
         }
     };
@@ -3999,6 +4006,7 @@ public class YassActions implements DropTargetListener {
         plBoxTips = new Vector<>();
 
         plBox.addActionListener(plBoxListener = new PlayListBoxListener());
+        plBox.addItemListener(plBoxListener);
         plBox.setRenderer(new PlayListBoxRenderer());
         updatePlayListBox();
         return plBox;
@@ -4016,6 +4024,7 @@ public class YassActions implements DropTargetListener {
 
     public void updatePlayListBox() {
         plBox.removeActionListener(plBoxListener);
+        plBox.removeItemListener(plBoxListener);
 
         plBox.removeAllItems();
         plBoxTips.clear();
@@ -4053,6 +4062,7 @@ public class YassActions implements DropTargetListener {
 
         plBox.setSelectedIndex(k + 1);
         plBox.addActionListener(plBoxListener);
+        plBox.addItemListener(plBoxListener);
         plBox.validate();
 
         removePlayList.setEnabled(k >= 0);
@@ -4976,7 +4986,7 @@ public class YassActions implements DropTargetListener {
     }
 
     /**
-     * Ask user 'cancel' and not loose changes.
+     * Ask user 'cancel' and not lose changes.
      * @return true if should cancel (if not saved or user responded with 'cancel')
      */
     boolean cancelOpen() {
@@ -4987,7 +4997,7 @@ public class YassActions implements DropTargetListener {
     }
 
     /**
-     * Ask user 'cancel' and not loose changes.
+     * Ask user 'cancel' and not lose changes.
      * @return true if should cancel (if not saved or user responded with 'cancel')
      */
     boolean cancelTrack() {
@@ -4997,6 +5007,15 @@ public class YassActions implements DropTargetListener {
                 I18.get("edit_tracks_exit_cancel"), I18.get("edit_exit_title"), JOptionPane.OK_CANCEL_OPTION);
     }
 
+    /**
+     * Ask user 'cancel' and not lose changes.
+     * @return true if should cancel (if not saved or user responded with 'cancel')
+     */
+    int unsavedPlaylist() {
+        if (playList == null || !playList.isChanged())
+            return JOptionPane.NO_OPTION;
+        return JOptionPane.showConfirmDialog(tab, I18.get("playlist_unsaved"), I18.get("edit_exit_title"), JOptionPane.YES_NO_CANCEL_OPTION);
+    }
     public boolean isLibraryLoaded() {
         return groups.isEnabled();
     }
@@ -7338,12 +7357,23 @@ public class YassActions implements DropTargetListener {
         }
     }
 
-    class PlayListBoxListener implements ActionListener {
+    class PlayListBoxListener implements ItemListener, ActionListener {
         public void actionPerformed(ActionEvent e) {
             if (playList == null) {
                 return;
             }
-
+            int savePlaylist = unsavedPlaylist();
+            if (savePlaylist == JOptionPane.YES_OPTION) {
+                playList.storePlayList();
+            } else if (savePlaylist == JOptionPane.CANCEL_OPTION) {
+                for (int i = 0; i < plBox.getItemCount(); i++) {
+                    if (plBox.getItemAt(i).equals(playList.getPreviousItem())) {
+                        plBox.setSelectedIndex(i);
+                        break;
+                    }
+                }
+                return;
+            }
             int n = plBox.getSelectedIndex();
             if (n == 0) {
                 playList.setName(I18.get("tool_playlist_new"));
@@ -7352,6 +7382,13 @@ public class YassActions implements DropTargetListener {
                 playList.setPlayList(n - 1);
             }
             removePlayList.setEnabled(n != 0);
+        }
+
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+            if (e.getStateChange() == ItemEvent.DESELECTED) {
+                playList.setPreviousItem((String)e.getItem());
+            }
         }
     }
 
