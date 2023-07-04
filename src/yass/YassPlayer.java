@@ -993,18 +993,17 @@ public class YassPlayer {
             }
             if (playAudio && !ogg) {
                 try {
-                    // System.out.println("Creating JavaZoom AdvancedPlayer...");
                     Media media = new Media(mp3File.toURI().toString());
                     mediaPlayer = new MediaPlayer(media);
                     mediaPlayer.setVolume(1);
                     if (DEBUG)
-                        System.out.println("JavaZoom AdvancedPlayer created.");
+                        System.out.println("JavaFX MediaPlayer created.");
                 } catch (IllegalArgumentException e) {
                     System.err.println("YassPlayer: " + e.getMessage());
                 } catch (Exception e) {
                     notInterrupted = false;
                     if (DEBUG)
-                        System.out.println("Cannot create JavaZoom AdvancedPlayer.");
+                        System.out.println("Cannot create JavaFX MediaPlayer.");
                 }
             }
 
