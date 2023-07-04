@@ -89,6 +89,8 @@ public class YassMIDI {
             mc[4].programChange(n);
             if (DEBUG) System.out.println("Program channel: set volume");
             mc[4].controlChange(7, volume);
+            mc[4].controlChange(91, 1);
+            mc[4].controlChange(93, 1);
             System.out.println("Soundbank ready.");
 
         } catch (IllegalArgumentException e) {
@@ -159,7 +161,38 @@ public class YassMIDI {
             return;
         }
         mc[4].setMute(false);
-        mc[4].noteOn(n, 127);
+        mc[4].noteOn(n, VOLUME_MED);
+    }
+
+    public void playNote(int n, long length) {
+        if (mc == null) {
+            return;
+        }
+        mc[4].setMute(false);
+        new Play2Thread(mc[4], n, length).start();
+    }
+
+    class Play2Thread extends Thread {
+        MidiChannel midiChannel;
+        int note;
+        long length;
+        public Play2Thread(MidiChannel midiChannel, int note, long length) {
+            this.midiChannel = midiChannel;
+            this.note = note;
+            this.length = length;
+        }
+
+        @Override
+        public void run() {
+            midiChannel.noteOn(note, VOLUME_MED);
+            try {
+                Thread.sleep(length);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            midiChannel.noteOn(note, 0);
+            midiChannel.noteOff(note);
+        }
     }
 
     /**
