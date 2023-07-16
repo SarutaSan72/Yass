@@ -1882,9 +1882,19 @@ public class YassActions implements DropTargetListener {
             table.shiftHeight(+1);
         }
     };
+    private final Action incHeightOctave = new AbstractAction(I18.get("edit_height_inc_octave")) {
+        public void actionPerformed(ActionEvent e) {
+            table.shiftHeight(+12);
+        }
+    };
     private final Action decHeight = new AbstractAction(I18.get("edit_height_dec")) {
         public void actionPerformed(ActionEvent e) {
             table.shiftHeight(-1);
+        }
+    };
+    private final Action decHeightOctave = new AbstractAction(I18.get("edit_height_dec_octave")) {
+        public void actionPerformed(ActionEvent e) {
+            table.shiftHeight(-12);
         }
     };
     private final Action incLeft = new AbstractAction(I18.get("edit_length_left_inc")) {
@@ -3433,7 +3443,9 @@ public class YassActions implements DropTargetListener {
         menu.add(shiftLeftRemainder);
         menu.add(shiftRightRemainder);
         menu.add(incHeight);
+        menu.add(incHeightOctave);
         menu.add(decHeight);
+        menu.add(decHeightOctave);
         menu.addSeparator();
         menu.add(copyRows);
         menu.add(pasteRows);
@@ -6985,9 +6997,18 @@ public class YassActions implements DropTargetListener {
         am.put("decHeight", decHeight);
         decHeight.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK));
 
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK ), "decHeightOctave");
+
+        am.put("decHeightOctave", decHeightOctave);
+        decHeightOctave.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK ));
+
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK), "incHeight");
         am.put("incHeight", incHeight);
         incHeight.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK));
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK), "incHeightOctave");
+        am.put("incHeightOctave", incHeightOctave);
+        incHeightOctave.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.CTRL_MASK), "decLeft");
         am.put("decLeft", decLeft);
@@ -7052,7 +7073,7 @@ public class YassActions implements DropTargetListener {
         am.put("pasteRows", pasteRows);
         pasteRows.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK));
 
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK), "pasteNotes");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK | InputEvent.SHIFT_DOWN_MASK), "pasteNotes");
         am.put("pasteNotes", pasteNotes);
         pasteNotes.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK));
 

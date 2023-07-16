@@ -18,6 +18,8 @@
 
 package yass;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.swing.table.AbstractTableModel;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -239,6 +241,10 @@ public class YassTableModel extends AbstractTableModel {
      */
     public void addRow(YassRow r) {
         data.addElement(new YassRow(r));
+    }
+
+    public void addEndRow() {
+        data.addElement(new YassRow("E", StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY));
     }
 
     public void insertRowAt(String type, int time, int length, int height, String txt, int i) {
