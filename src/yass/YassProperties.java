@@ -299,6 +299,8 @@ public class YassProperties extends Properties {
         p.put("record-timebase", "2");
 
         p.put("use-sample", "true");
+        p.put("typographic-apostrophe", "false");
+        p.put("capitalize-rows", "false");
 
         // 0=next_note, 1=prev_note, 2=page_down, 3=page_up, 4=init, 5=init_next, 6=right, 7=left, 8=up, 9=down, 10=lengthen, 11=shorten, 12=play, 13=play_page, 14=scroll_left, 15=scroll_right, 16=one_page
         p.put("key-0", "NUMPAD6");
@@ -411,7 +413,7 @@ public class YassProperties extends Properties {
         p.put("debug-waveform", "false");
 
         //piano
-        p.put("piano-volume", "127");
+        p.put("piano-volume", "100");
 
         //non-editable
         p.put("welcome", "true");

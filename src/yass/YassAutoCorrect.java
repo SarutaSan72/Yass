@@ -676,10 +676,7 @@ public class YassAutoCorrect {
                     .get("freestyle-counts");
             boolean freestyleCounts = freestyleCountsString != null
                     && freestyleCountsString.equals("true");
-            String touchingSyllablesString = (String) prop
-                    .get("touching-syllables");
-            boolean touchingSyllables = touchingSyllablesString != null
-                    && touchingSyllablesString.equals("true");
+            boolean touchingSyllables = isTouchingSyllables();
             for (int i = 0; i < n; i++) {
                 r = table.getRowAt(i);
                 if (i + 1 < n) {
@@ -1571,5 +1568,13 @@ public class YassAutoCorrect {
             System.out.println("Font file not found: " + font);
             e.printStackTrace();
         }
+    }
+
+    /**
+     * If true, syllable should not touch each other
+     * @return true if syllable should not touch each other
+     */
+    public boolean isTouchingSyllables() {
+        return prop.getBooleanProperty("touching-syllables");
     }
 }

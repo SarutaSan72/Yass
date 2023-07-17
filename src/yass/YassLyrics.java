@@ -1144,7 +1144,7 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 				int n = table.getRowCount();
 				while (ij != null) {
 					YassRow r = table.getRowAt(k);
-					while (!r.isNote() && k < n) {
+					while (r != null && !r.isNote() && k < n) {
 						r = table.getRowAt(++k);
 					}
 					if (k >= n) {

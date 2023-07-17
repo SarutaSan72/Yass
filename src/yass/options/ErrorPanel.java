@@ -42,6 +42,8 @@ public class ErrorPanel extends OptionsPanel {
         addComment(I18.get("options_errors_pages_fix_comment"));
         addRadio(I18.get("options_errors_spacing"), "correct-uncommon-spacing", "after|before", I18.get("options_errors_uncommon_spacing_after") + "|" + I18.get("options_errors_uncommon_spacing_before"));
         addComment(I18.get("options_errors_spacing_comment"));
+        addBoolean(I18.get("options_errors_apostrophes"), "typographic-apostrophes", I18.get("options_errors_apostrophes_typographic"));
+        addBoolean(I18.get("options_errors_captilization"), "capitalize-rows", I18.get("options_errors_captilization_all_rows"));
     }
 }
 

@@ -4502,6 +4502,24 @@ public class YassTable extends JTable {
             return;
         }
 
+        String[] textPunctuationPair = splitTextFromPunctuation(currentRow);
+        String hyphenated = hyphenator.hyphenateWord(textPunctuationPair[0]);
+        int hyphenPos = hyphenated.indexOf("\u00AD");
+        String newText;
+        String currentText;
+        if (hyphenPos >= 0) {
+            String[] syllables = hyphenated.split("\u00AD");
+            if (currentRow.getLengthInt() > 2 && syllables.length > 2) {
+                percent = 1d / syllables.length;
+            }
+            currentText = hyphenated.substring(0, hyphenPos);
+            newText = textPunctuationPair[1].replace("~", hyphenated.substring(hyphenPos + 1)
+                                                                    .replace("\u00AD", ""));
+        } else {
+            currentText = textPunctuationPair[0];
+            newText = textPunctuationPair[1];
+        }
+
         int w = currentRow.getLengthInt();
         if (w < 2) {
             return;
@@ -4511,23 +4529,14 @@ public class YassTable extends JTable {
         int w2 = w - w1;
         boolean startSyllable = !prop.isUncommonSpacingAfter() && currentRow.startsWithSpace();
         boolean endSyllable = prop.isUncommonSpacingAfter() && currentRow.endsWithSpace();
-        currentRow.setLength(w1);
+        if (auto.isTouchingSyllables() && w1 > 1) {
+            currentRow.setLength(w1 - 1);
+        } else {
+            currentRow.setLength(w1);
+        }
         YassRow newRow = currentRow.clone();
         newRow.setBeat(currentRow.getBeatInt() + w1);
         newRow.setLength(w2);
-        String[] textPunctuationPair = splitTextFromPunctuation(currentRow);
-        String hyphenated = hyphenator.hyphenateWord(textPunctuationPair[0]);
-        int hyphenPos = hyphenated.indexOf("\u00AD");
-        String newText;
-        String currentText;
-        if (hyphenPos >= 0) {
-            currentText = hyphenated.substring(0, hyphenPos);
-            newText = textPunctuationPair[1].replace("~", hyphenated.substring(hyphenPos + 1)
-                                                                    .replace("\u00AD", ""));
-        } else {
-            currentText = textPunctuationPair[0];
-            newText = textPunctuationPair[1];
-        }
         currentRow.setText((startSyllable ? YassRow.SPACE : StringUtils.EMPTY) + currentText);
         YassRow nextRow = getRowAt(row + 1);
         if (endSyllable && !nextRow.isTilde()) {
@@ -4536,7 +4545,7 @@ public class YassTable extends JTable {
         newRow.setText(newText);
         tm.getData().insertElementAt(newRow, row + 1);
         tm.fireTableDataChanged();
-        setRowSelectionInterval(row, row + 1);
+        setRowSelectionInterval(row, row);
         updatePlayerPosition();
     }
 
