@@ -70,7 +70,7 @@ public class YassMain extends JFrame {
 
             System.out.println("Init...");
             y.init();
-            System.out.println("Inited.");
+            System.out.println("Initialized.");
 
             y.initConvert();
 

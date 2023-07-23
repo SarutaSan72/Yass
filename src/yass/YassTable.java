@@ -3674,7 +3674,7 @@ public class YassTable extends JTable {
                     String txt = st2.hasMoreTokens() ? st2.nextToken() : "";
                     txt = txt.replace(' ', YassRow.SPACE);
                     int beatInt = Integer.parseInt(beat);
-                    int lengthInt = Integer.parseInt(length);
+                    int lengthInt = StringUtils.isNumeric(length) ? Integer.parseInt(length) : 0;
                     boolean isSep = type.equals("-");
                     if (isSep && length.length() > 0) {
                         length = Integer.toString(lengthInt + startBeat);
@@ -3701,11 +3701,11 @@ public class YassTable extends JTable {
                     if (row.getBeatInt() < noteEnd) {
                         tm.removeRowAt(startRow + num);
                     }
-                    finished = row.isEnd() || (row.getBeatInt() + row.getLengthInt() > noteEnd);
+                    finished = row.isEnd() || row.isPageBreak() || (row.getBeatInt() + row.getLengthInt() > noteEnd);
                 } while (!finished);
                 if (num > 0 && appendPageBreak && !reachedEnd) {
-                    YassRow r = tm.getRowAt(startRow + i - 1);
-                    if (r.isNote() && !reachedEnd) {
+                    YassRow r = tm.getRowAt(startRow + i);
+                    if (!r.isPageBreak() && !reachedEnd) {
                         tm.insertRowAt("-", String.valueOf(r.getBeatInt() + r.getLengthInt() + 1),
                                        "", "", "", startRow + i);
                         i++;
