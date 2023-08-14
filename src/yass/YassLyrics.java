@@ -259,7 +259,6 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 		StyleConstants.setItalic(notGoldenOrFreeStyle, false);
 
 		lineNumbers = new LineNumbers();
-		System.out.println("-- Init Lyrics Area");
 		lyricsArea = new JTextPane(doc) {
 			private static final long serialVersionUID = -639942626000500351L;
 
@@ -305,15 +304,15 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 			}
 		};
 		lyricsArea.setLogicalStyle(notLongStyle);
-		System.out.println("-- Init Key Bindings");
+
 		addKeymapBindings();
-		System.out.println("-- Init Font");
+
 		init(prop);
 
 		// compound editing instead of character-based:
 
 		// http://forum.java.sun.com/thread.jspa?forumID=57&threadID=637225
-		System.out.println("-- Init Lyrics Area - Document Listener");
+
 		lyricsArea.getDocument().addDocumentListener(new DocumentListener() {
 			public void insertUpdate(DocumentEvent e) {
 				if (preventFireUpdate) {
@@ -440,7 +439,7 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 				KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0), "nop");
 		lyricsArea.getInputMap().put(
 				KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "nop");
-		System.out.println("-- Init Lyrics Area - Key Listener");
+
 		lyricsArea.addKeyListener(new KeyListener() {
 			public void keyPressed(KeyEvent e) {
 				if (!lyricsArea.isEditable() && sheet != null) {
@@ -752,9 +751,8 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 				e.consume();
 			}
 		});
-		System.out.println("-- Init Lyrics Area - Action Map");
+
 		ActionMap am = lyricsArea.getActionMap();
-		System.out.println("--- Init Lyrics Area - Action Map - Select Word");
 		am.put(DefaultEditorKit.selectWordAction, new TextAction(
 				DefaultEditorKit.selectWordAction) {
 			private static final long serialVersionUID = 2463563308976339545L;
@@ -762,7 +760,6 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		System.out.println("--- Init Lyrics Area - Action Map - Select Line");
 		am.put(DefaultEditorKit.selectLineAction, new TextAction(
 				DefaultEditorKit.selectLineAction) {
 			private static final long serialVersionUID = -4742750389608437521L;
@@ -770,7 +767,6 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		System.out.println("--- Init Lyrics Area - Action Map - Insert Break");
 		am.put(DefaultEditorKit.insertBreakAction, new TextAction(
 				DefaultEditorKit.selectLineAction) {
 			private static final long serialVersionUID = -3927177417337723716L;
@@ -781,11 +777,10 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 
 		// lyricsArea.requestFocus();
 		// lyricsArea.setBackground(Color.lightGray);
-		System.out.println("-- finish Editing");
 		finishEditing();
-		System.out.println("-- set Locale");
+
 		setLanguage("EN_US");
-		System.out.println("-- Init Lyrics Scroll Pane");
+
 		lyricsScrollPane = new JScrollPane(lyricsArea);
 		// lyricsArea.setBackground(YassMain.combinedLyrics ? fontBG :
 		// lyricsArea.getBackground());
@@ -874,7 +869,6 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 		 */
 		public LanguageLoader(String language) {
 			lang = language;
-			YassLogger.log("LanguageLoader " + language);
 		}
 
 		/**
