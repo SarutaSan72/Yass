@@ -24,6 +24,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import javazoom.jl.decoder.BitstreamException;
 import javazoom.spi.mpeg.sampled.file.MpegAudioFileReader;
+import org.tritonus.share.sampled.file.TAudioFileFormat;
 import yass.renderer.YassNote;
 import yass.renderer.YassPlaybackRenderer;
 import yass.renderer.YassPlayerNote;
@@ -31,12 +32,10 @@ import yass.renderer.YassSession;
 
 import javax.sound.sampled.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
 import java.text.MessageFormat;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -83,7 +82,6 @@ public class YassPlayer {
     private int audioBytesChannels = 2;
     private float audioBytesSampleRate = 44100;
     private int audioBytesSampleSize = 2;
-
     public YassPlayer(YassPlaybackRenderer s) {
         JFXPanel jfxPanel = new JFXPanel();
         playbackRenderer = s;
@@ -367,45 +365,7 @@ public class YassPlayer {
                 if (in != null) {
                     AudioFormat baseFormat = in.getFormat();
                     fps = baseFormat.getFrameRate();
-                    /*
-                    if (filename.endsWith(".ogg")) {
-                        AudioInputStream din;
-                        AudioFormat decodedFormat = new AudioFormat(
-                                AudioFormat.Encoding.PCM_SIGNED, baseFormat.getSampleRate(),
-                                16, baseFormat.getChannels(), baseFormat.getChannels() * 2,
-                                baseFormat.getSampleRate(), false);
-
-                        din = AudioSystem.getAudioInputStream(decodedFormat, in);
-                        file = new File(filename + ".temp.wav");
-                        final byte [] buffer = new byte [4096];
-                        int n;
-                        long len = 0;
-                        final FileOutputStream fos = new FileOutputStream("test.pcm");
-                        while(-1 != (n = din.read(buffer))) {
-                            fos.write(buffer, 0, n);
-                            len++;
-                        }
-                        fos.close();
-                        final AudioInputStream pcmIn = new AudioInputStream(new FileInputStream("test.pcm"),
-                                                                            decodedFormat, len * 4096);
-                        AudioSystem.write(pcmIn, AudioFileFormat.Type.WAVE, file);
-                        this.filename = filename + ".temp.wav";
-                    }
-                    */
                 }
-            }
-            Media media = new Media(file.toURI().toString());
-            playbackRenderer.setErrorMessage(null);
-            mediaPlayer = new MediaPlayer(media);
-            mediaPlayer.statusProperty().addListener((observable, old, cur) -> {
-                if (cur == MediaPlayer.Status.READY) {
-                    duration = (long) media.getDuration().toMillis() * 1000;
-                }
-            });
-            long now = System.currentTimeMillis();
-            while (mediaPlayer.getStatus() != MediaPlayer.Status.READY) {
-                Thread.sleep(50);
-                System.out.println("Slept " + (System.currentTimeMillis() - now) + " ms");
             }
         } catch (Exception e) {
             String s = e.getMessage();
@@ -419,6 +379,40 @@ public class YassPlayer {
                 } catch (Exception e) {
                 }
             }
+        }
+        if (fps < 0 && !filename.endsWith("m4a")) {
+            AudioFileFormat baseFileFormat;
+            try {
+                baseFileFormat = AudioSystem.getAudioFileFormat(file);
+                if (baseFileFormat instanceof TAudioFileFormat) {
+                    Map<?, ?> properties = baseFileFormat.properties();
+                    Float fpsf = (Float) properties.get("mp3.framerate.fps");
+                    if (fpsf != null) {
+                        fps = fpsf.floatValue();
+                    }
+                }
+            } catch (UnsupportedAudioFileException | IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        Media media = new Media(file.toURI().toString());
+        playbackRenderer.setErrorMessage(null);
+        mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.statusProperty().addListener((observable, old, cur) -> {
+            if (cur == MediaPlayer.Status.READY) {
+                duration = (long) media.getDuration().toMillis() * 1000;
+            }
+            Map<String, Object> metadata = media.getMetadata();
+            System.out.println(metadata.toString());
+        });
+        long now = System.currentTimeMillis();
+        try {
+            while (mediaPlayer.getStatus() != MediaPlayer.Status.READY) {
+                Thread.sleep(50);
+            }
+            System.out.println("Slept " + (System.currentTimeMillis() - now) + " ms");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
         if (createWaveform) {
             try {

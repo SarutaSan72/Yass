@@ -1,6 +1,6 @@
 ﻿Name "Yass"
 
-OutFile ".\target\yass-installer-2023.7.exe"
+OutFile ".\target\yass-installer-2023.8.exe"
 
 Unicode true
 SetCompressor lzma

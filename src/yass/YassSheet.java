@@ -305,7 +305,6 @@ public class YassSheet extends JPanel implements yass.renderer.YassPlaybackRende
     private boolean pisinterrupted = false;
     private BufferedImage videoFrame = null;
     private YassSession session = null;
-
     private boolean isMousePressed = false;
 
     public YassSheet() {

@@ -32,7 +32,11 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Vector;
+import java.util.regex.Pattern;
 
 /**
  * Description of the Class
@@ -1008,6 +1012,10 @@ public class YassUtils {
             --count;
         }
         return pow2;
+    }
+
+    public static boolean isPunctuation(String input) {
+        return Pattern.matches("\\p{IsPunctuation}", input);
     }
 
     static class ImageLoadStatus {

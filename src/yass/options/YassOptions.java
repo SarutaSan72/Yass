@@ -161,8 +161,8 @@ public class YassOptions extends JDialog {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         pack();
         Dimension dim = this.getToolkit().getScreenSize();
-        setSize(780, 620);
-        setLocation(dim.width / 2 - 390, dim.height / 2 - 250);
+        setSize(800, 620);
+        setLocation(dim.width / 2 - 400, dim.height / 2 - 250);
         setTitle(I18.get("options_title"));
         showPanel(I18.get("options_directories"));
         setVisible(true);

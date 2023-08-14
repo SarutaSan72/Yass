@@ -61,6 +61,8 @@ public class YassRow implements Cloneable, Comparable<Object> {
     public static final String WRONG_VIDEOGAP = "err_wrong_videogap";
     public static final String WRONG_MEDLEY_START_BEAT = "err_wrong_medley_start_beat";
     public static final String WRONG_MEDLEY_END_BEAT = "err_wrong_medley_end_beat";
+    public static final String LOWERCASE_ROWSTART = "err_line_starts_with_lowercase";
+    public static final String BORING_APOSTROPHE = "err_contains_boring_apostrophe";
     public final static String[] ALL_MESSAGES = {
             MISSING_TAG, UNSORTED_COMMENTS,
             WRONG_MEDLEY_START_BEAT, WRONG_MEDLEY_END_BEAT,
@@ -71,7 +73,7 @@ public class YassRow implements Cloneable, Comparable<Object> {
             TOO_MUCH_SPACES, UNCOMMON_SPACING,
             EMPTY_LINE, TRANSPOSED_NOTES, NONZERO_FIRST_BEAT, INVALID_NOTE_LENGTH, NOTES_TOUCHING,
             INVALID_LINE, LINE_CUT,
-            OUT_OF_ORDER, NOTES_OVERLAP, TOO_MUCH_TEXT, UNCOMMON_GOLDEN
+            OUT_OF_ORDER, NOTES_OVERLAP, TOO_MUCH_TEXT, UNCOMMON_GOLDEN, LOWERCASE_ROWSTART, BORING_APOSTROPHE
             // MISSING_SPACES, WRONG_SPELLING,
             //WRONG_LENGTH, WRONG_HEIGHT, WRONG_TEXT, MISUSED_HYPHENATION
     };

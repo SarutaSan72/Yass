@@ -44,7 +44,6 @@ public class YassMain extends JFrame {
     private static String midiFile = null;
     private static final Vector<String> txtFiles = new Vector<>();
     private static String dirFile = null;
-
     private YassProperties prop;
     private YassSheet sheet = null;
     private YassActions actions = null;
