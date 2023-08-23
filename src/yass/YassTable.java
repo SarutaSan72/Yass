@@ -1249,8 +1249,7 @@ public class YassTable extends JTable {
             duetTrack = t.duetTrack;
             duetTrackCount = t.duetTrackCount;
             duetTrackName = t.duetTrackName;
-        }
-        else {
+        } else {
             duetTrack = -1;
             duetTrackCount = -1;
             duetTrackName = null;
@@ -1525,6 +1524,7 @@ public class YassTable extends JTable {
             }
         }
         YassTable verify = new YassTable();
+        verify.init(prop);
         verify.loadFile(filename);
         if (!equalsData(verify)) {
             System.out.println("###############################################");
@@ -1750,9 +1750,10 @@ public class YassTable extends JTable {
                     vgap = Double.parseDouble(s.replace(',', '.'));
                 } else if (tag.equals("RELATIVE:")) {
                     isRelative = s.equalsIgnoreCase("yes") || s.equalsIgnoreCase("true");
-                } else if (tag.startsWith("DUETSINGERP")) {
+                } else if (tag.startsWith("DUETSINGERP") || tag.startsWith("P")) {
                     try {
-                        int p = Integer.parseInt(String.valueOf(tag.charAt(11))) - 1; // P1=[0], P2=[1], ...
+                        int pIndex = tag.indexOf("P") + 1;
+                        int p = Integer.parseInt(String.valueOf(tag.charAt(pIndex))) - 1; // P1=[0], P2=[1], ...
                         if (duetSingerNames[p] != null) { // duplicate
                             tm.addRow("#", tag, s, "", "", YassRow.INVALID_LINE);
                             return true;
@@ -1803,21 +1804,7 @@ public class YassTable extends JTable {
             return true;
         }
 
-        if (s.charAt(0) == 'P' && n > 1) {
-            String pnum = s.substring(1).trim();
-            try {
-                int pn = Integer.parseInt(pnum);
-                tm.addRow("P", pnum, "", "", "", ""); // add space (not stored, see YassRow.toString)
-                if (pn > 0) {
-                    if (pn == 3) pn = 0; // P0 = P3 = both
-                    maxP = Math.max(maxP, pn);
-                }
-                return true;
-            } catch (Exception e) {
-                tm.addRow("#", s, "", "", "", YassRow.LINE_CUT);
-                return true;
-            }
-        }
+        if (handleDuets(s, n)) return true;
 
         // convert invalid lines into comments
         if (s.charAt(0) != ':' && s.charAt(0) != '*' && s.charAt(0) != 'G' && s.charAt(0) != 'R' && s.charAt(0) != 'F' && s.charAt(0) != 'P') {
@@ -1900,6 +1887,30 @@ public class YassTable extends JTable {
         txt = txt.replace(' ', YassRow.SPACE);
         tm.addRow(s.charAt(0), time, length, height, txt);
         return true;
+    }
+
+    private boolean handleDuets(String line, int numberOfPlayers) {
+        if (line.charAt(0) == 'P' && numberOfPlayers > 1) {
+            String pnum = line.substring(1).trim();
+            try {
+                int currentPlayer = Integer.parseInt(pnum);
+
+                if (prop.isLegacyDuet()) {
+                    tm.addRow("P", pnum, "", "", "", ""); // add space (not stored, see YassRow.toString)
+                } else {
+                    tm.addRow("P" + pnum, "", "", "", "", "");
+                }
+                if (currentPlayer > 0) {
+                    if (currentPlayer == 3) currentPlayer = 0; // P0 = P3 = both
+                    maxP = Math.max(maxP, currentPlayer);
+                }
+                return true;
+            } catch (Exception e) {
+                tm.addRow("#", line, "", "", "", YassRow.LINE_CUT);
+                return true;
+            }
+        }
+        return false;
     }
 
     public YassRow getRowAt(int row) {
@@ -5064,9 +5075,10 @@ public class YassTable extends JTable {
             for (YassTable t : trackTables) {
                 Vector<YassRow> trackData = t.getModelData();
                 for (YassRow r : getModelData()) {
+                    String commentTag = r.getCommentTag();
                     if (!r.isComment()) // stop after header
                         break;
-                    if (r.getCommentTag().startsWith("DUETSINGERP")) // remove track name
+                    if (commentTag.startsWith("DUETSINGERP") || commentTag.startsWith("P")) // remove track name
                         continue;
                     trackData.addElement(new YassRow(r));
                 }
@@ -5085,8 +5097,11 @@ public class YassTable extends JTable {
                 if (r.isComment())
                     continue;
                 if (r.isP()) {
+                    String player = StringUtils.isEmpty(r.getBeat()) && r.getType().length() > 1 ? r.getType()
+                                                                                                    .substring(1)
+                                                                                                    .trim() : r.getBeat();
                     try {
-                        p = r.getBeatInt();
+                        p = Integer.parseInt(player);
                     } catch (Exception e) {
                         p = 0;
                     }
@@ -5157,6 +5172,7 @@ public class YassTable extends JTable {
         Vector<YassTable> tables2 = new Vector<>();
         for (YassTable t: tables) {
             YassTable t2 = new YassTable();
+            t.init(prop);
             t2.loadTable(t, true);
             tables2.add(t2);
         }
@@ -5164,8 +5180,7 @@ public class YassTable extends JTable {
         // assure all tables share same gap/bpm/start/end
         if (! YassTable.sameBPM(tables))
             throw new IllegalArgumentException("BPM");
-        if (! YassTable.sameGap(tables))
-        {
+        if (! YassTable.sameGap(tables)) {
             // new gap = minimum of all first notes (in ms)
             double gapMs = Double.MAX_VALUE;
             for (YassTable t: tables) {
@@ -5214,10 +5229,11 @@ public class YassTable extends JTable {
             resData.addElement(new YassRow(r));
         }
         int i = 1;
+        String duetTag = prop.getProperty("duetsinger-tag", "P");
         for (YassTable t: tables2) {
             String name = t.getDuetTrackName();
             if (name != null && name.trim().length() > 0)
-                resData.addElement(new YassRow("#", "DUETSINGERP" + i + ":", name, "", ""));
+                resData.addElement(new YassRow("#", duetTag + i + ":", name, "", ""));
             i++;
         }
 
@@ -5225,7 +5241,11 @@ public class YassTable extends JTable {
             // notes sorted by player
             i = 1;
             for (YassTable t: tables2) {
-                resData.addElement(new YassRow("P", i + "", "", "", ""));
+                if (prop.isLegacyDuet()) {
+                    resData.addElement(new YassRow("P", i + "", "", "", ""));
+                } else {
+                    resData.addElement(new YassRow("P" + i,  "", "", "", ""));
+                }
                 for (YassRow r: t.getModelData()) {
                     if (r.isNoteOrPageBreak())
                         resData.addElement(r);
