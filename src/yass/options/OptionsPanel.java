@@ -477,6 +477,9 @@ public class OptionsPanel extends JPanel {
 
         String keyval = getProperty(key);
         if (keyval == null) {
+            keyval = prop.getDefaultProperty(key);
+        }
+        if (keyval == null) {
             keyval = "unknown";
         }
 

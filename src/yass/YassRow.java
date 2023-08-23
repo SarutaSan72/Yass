@@ -18,6 +18,8 @@
 
 package yass;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Vector;
 
 public class YassRow implements Cloneable, Comparable<Object> {
@@ -403,7 +405,7 @@ public class YassRow implements Cloneable, Comparable<Object> {
      * @return
      */
     public boolean isP() {
-        return s[0].equals("P");
+        return s[0].charAt(0) == 'P';
     }
 
     public boolean isNote() {
@@ -493,8 +495,10 @@ public class YassRow implements Cloneable, Comparable<Object> {
                 ss = ss + " " + s[4];
             }
             return ss;
-        } else if (isP()) {
+        } else if (isP() && StringUtils.isNotEmpty(s[1])) {
             return s[0] + " " + s[1];
+        } else if (isP()) {
+            return s[0];
         }
         return s[0] + s[1] + s[2] + s[3] + s[4];
     }
@@ -531,8 +535,10 @@ public class YassRow implements Cloneable, Comparable<Object> {
             }
             return ss;
         }
-        if (isP()) {
+        if (isP() && StringUtils.isNotEmpty(s[1])) {
             return s[0] + " " + s[1];
+        } else if (isP()) {
+            return s[0];
         }
         return s[0] + s[1] + s[2] + s[3] + s[4];
     }

@@ -386,8 +386,8 @@ public class YassTableModel extends AbstractTableModel {
             YassRow r = getRowAt(i);
             YassRow tr = tm.getRowAt(i);
             if (!r.equals(tr)) {
-                //System.out.println("this: " + r);
-                //System.out.println("that: " + tr);
+                System.out.println("this: " + r);
+                System.out.println("that: " + tr);
                 return false;
             }
         }

@@ -1139,7 +1139,7 @@ public class YassAutoCorrect {
         if (!niceApostrophes()) {
             return;
         }
-        String txt = currentRow.getText();
+        String txt = currentRow.isComment() ? currentRow.getComment() : currentRow.getText();
         boolean containsBoringApostrophe = YassAutoCorrectApostrophes.BORING_APOSTROPHES.stream()
                                                                                         .anyMatch(txt::contains);
         if (containsBoringApostrophe) {
@@ -1164,6 +1164,9 @@ public class YassAutoCorrect {
     }
 
     private void checkTitleRelevantErros(YassTable table, YassRow currentRow, YassTableModel tm, String dir) {
+        if (currentRow.getCommentTag().equals("TITLE:")) {
+            checkNiceApostrophes(currentRow, table);
+        }
         YassRow r2 = tm.getCommentRow("MP3:");
         if (r2 == null) {
             File mp3 = YassUtils.getFileWithExtension(dir, null, audioExtensions);
@@ -1205,6 +1208,10 @@ public class YassAutoCorrect {
         if (r2 == null) {
             currentRow.addMessage(YassRow.MISSING_TAG, I18.get("correct_add_genre"));
             table.addMessage(YassRow.MISSING_TAG);
+        }
+        r2 = tm.getCommentRow("ARTIST:");
+        if (r2 != null) {
+            checkNiceApostrophes(r2, table);
         }
     }
 

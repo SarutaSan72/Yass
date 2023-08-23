@@ -4614,6 +4614,7 @@ public class YassSongList extends JTable {
 
             int i = 0;
             YassTable t = new YassTable();
+            t.init(prop);
             String libmsgload = I18.get("lib_msg_load_n");
             for (Enumeration<?> e = data.elements(); e.hasMoreElements() && notInterrupted; ) {
                 YassSong s = (YassSong) e.nextElement();

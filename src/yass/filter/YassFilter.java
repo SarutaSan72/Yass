@@ -167,6 +167,9 @@ public class YassFilter implements Cloneable {
             return false;
         }
         f = f.toLowerCase();
+        if (str.contains("'")) {
+            f = f.replace("’", "'");
+        }
         return f.contains(str);
     }
 

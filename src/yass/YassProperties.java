@@ -183,9 +183,10 @@ public class YassProperties extends Properties {
         p.put("edition-tag", "Birthday Party|Child's Play|Christmas|Greatest Hits|Halloween|Hits of the 60s|Kuschelrock|New Year's Eve|Summer|Sodamakers");
         // http|//de.wikipedia.org/wiki/Compilation
         p.put("note-naming-h", "DE RU PL NO FI SE");
+        p.put("duetsinger-tag", "P");
 
         // errors
-        p.put("valid-tags", "TITLE ARTIST LANGUAGE EDITION <br> GENRE ALBUM YEAR CREATOR ID <br> MP3 COVER BACKGROUND VIDEO <br> VIDEOGAP START END DUETSINGERP1 DUETSINGERP2 DUETSINGERP3 DUETSINGERP4 <br> RELATIVE BPM GAP <br> LENGTH PREVIEWSTART MEDLEYSTARTBEAT MEDLEYENDBEAT");
+        p.put("valid-tags", "TITLE ARTIST LANGUAGE EDITION <br> GENRE ALBUM YEAR CREATOR AUTHOR ID <br> MP3 COVER BACKGROUND VIDEO VIDEOGAP START END DUETSINGERP1 DUETSINGERP2 DUETSINGERP3 DUETSINGERP4 P1 P2 P3 P4 RELATIVE BPM GAP LENGTH PREVIEWSTART MEDLEYSTARTBEAT MEDLEYENDBEAT ENCODING COMMENT ");
         p.put("valid-lines", "#:*FRG-EP");
         p.put("max-points", "7500");
         p.put("max-golden", "1250");
@@ -501,6 +502,10 @@ public class YassProperties extends Properties {
 
     public boolean isUncommonSpacingAfter() {
         return "after".equals(getProperty("correct-uncommon-spacing"));
+    }
+
+    public boolean isLegacyDuet() {
+        return "DUETSINGERP".equals(getProperty("duetsinger-tag", "P"));
     }
 }
 

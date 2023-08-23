@@ -84,6 +84,7 @@ public class YassPlayer {
     private int audioBytesSampleSize = 2;
     public YassPlayer(YassPlaybackRenderer s) {
         JFXPanel jfxPanel = new JFXPanel();
+        jfxPanel.setVisible(false);
         playbackRenderer = s;
         midi = new YassMIDI();
 
@@ -406,9 +407,14 @@ public class YassPlayer {
             System.out.println(metadata.toString());
         });
         long now = System.currentTimeMillis();
+        int counter = 0;
         try {
             while (mediaPlayer.getStatus() != MediaPlayer.Status.READY) {
                 Thread.sleep(50);
+                counter++;
+                if (counter > 200) {
+                    throw new RuntimeException("Mediaplayer could not be readied in less than 10 seconds");
+                }
             }
             System.out.println("Slept " + (System.currentTimeMillis() - now) + " ms");
         } catch (InterruptedException e) {
@@ -861,6 +867,13 @@ public class YassPlayer {
         useCapture = onoff;
     }
 
+    public void disposeMediaPlayer() {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.dispose();
+        }
+    }
+
     /**
      * Description of the Class
      *
@@ -1253,6 +1266,7 @@ public class YassPlayer {
                     }
                     try {
                         mediaPlayer.stop();
+                        mediaPlayer.dispose();
                         // System.out.println("player stop()");
                     } catch (Throwable t) {
                         // t.printStackTrace();

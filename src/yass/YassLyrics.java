@@ -1144,7 +1144,7 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 				int n = table.getRowCount();
 				while (ij != null) {
 					YassRow r = table.getRowAt(k);
-					while (r != null && !r.isNote() && k < n) {
+					while (!r.isNote() && k < n) {
 						r = table.getRowAt(++k);
 					}
 					if (k >= n) {
@@ -1912,9 +1912,9 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 					g.drawString(s, multiBarWidth - w - 3, y - 6);
 
 					if (n == 0) {
-						g.drawString("\u3010", 0, y - 6);
+						g.drawString("【", 0, y - 6);
 					}if (n == rows-1) {
-						g.drawString("\u3011", 0, y - 6);
+						g.drawString("】", 0, y - 6);
 					}
 				}
 

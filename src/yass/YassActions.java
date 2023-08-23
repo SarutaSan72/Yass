@@ -414,6 +414,7 @@ public class YassActions implements DropTargetListener {
             msg.addElement(YassRow.UNSORTED_COMMENTS);
             msg.addElement(YassRow.WRONG_MEDLEY_START_BEAT);
             msg.addElement(YassRow.WRONG_MEDLEY_END_BEAT);
+            msg.addElement(YassRow.BORING_APOSTROPHE);
             songList.batchProcess(false, msg);
         }
     };
@@ -2797,6 +2798,7 @@ public class YassActions implements DropTargetListener {
         lyrics.setTable(null);
         sheet.setActiveTable(null);
         songList.closeOpened();
+        mp3.disposeMediaPlayer();
 
         isUpdating = true;
         updateLyrics();
@@ -4995,7 +4997,7 @@ public class YassActions implements DropTargetListener {
             songList.requestFocus();
         }
         menuHolder.repaint();
-    }
+        }
 
     /**
      * Ask user 'cancel' and not lose changes.
@@ -6174,6 +6176,7 @@ public class YassActions implements DropTargetListener {
         Vector<YassTable> singles = new Vector<>();
         for (String f : all) {
             YassTable t = new YassTable();
+            t.init(prop);
             t.loadFile(f);
             int multi = t.getMaxP();
             if (multi > 1) {
