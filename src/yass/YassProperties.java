@@ -197,7 +197,7 @@ public class YassProperties extends Properties {
         p.put("font-file", "Candara Bold");
         p.put("font-files", "Arial Bold|Candara Bold|Roboto Regular");
         p.put("font-file-custom", "");
-        p.put("font-size", "28");
+        p.put("font-size", "25");
         p.put("char-spacing", "0");
         p.put("text-max-width", "800");
 
@@ -220,9 +220,9 @@ public class YassProperties extends Properties {
         //editor
         p.put("editor-layout", "East");
         p.put("editor-layouts", "East|West");
-        p.put("lyrics-width", "450");
+        p.put("lyrics-width", "530");
         p.put("lyrics-min-height", "120");
-        p.put("lyrics-font-size", "14");
+        p.put("lyrics-font-size", "16");
 
         p.put("note-color-8", "#dd9966"); // warning
         p.put("note-color-7", "#dd6666"); // error
