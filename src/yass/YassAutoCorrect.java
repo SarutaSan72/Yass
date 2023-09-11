@@ -849,7 +849,7 @@ public class YassAutoCorrect {
                         int beat = currentRow.getBeatInt();
                         double gap = table.getGap();
                         double bpm = table.getBPM();
-                        if (beat != 0) {
+                        if ((beat != 0 && table.getDuetTrack() < 2) || (beat < 0 && table.getDuetTrack() > 1)) {
                             double ms = beat * (60 * 1000) / (4 * bpm);
                             double newgap = gap + ms;
                             newgap = ((int) (newgap * 100)) / 100.0;
