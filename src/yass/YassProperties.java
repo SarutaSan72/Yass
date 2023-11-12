@@ -18,14 +18,16 @@
 
 package yass;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.Hashtable;
-import java.util.Properties;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
 
 public class YassProperties extends Properties {
     private static final long serialVersionUID = -8189893110989853544L;
@@ -91,6 +93,7 @@ public class YassProperties extends Properties {
                 setProperty("key-18", "N");
             if (getProperty("before_next_ms") == null)
                 setProperty("before_next_ms", "300");
+            setupHyphenationDictionaries();
             return;
         } catch (Exception e) {
             // not exists
@@ -98,6 +101,7 @@ public class YassProperties extends Properties {
         // user props not found; fall back to defaults
         setDefaultProperties(this);
         loadDevices();
+        setupHyphenationDictionaries();
     }
 
     private void loadDevices() {
@@ -506,6 +510,88 @@ public class YassProperties extends Properties {
 
     public boolean isLegacyDuet() {
         return "DUETSINGERP".equals(getProperty("duetsinger-tag", "P"));
+    }
+
+    public void setupHyphenationDictionaries() {
+        String hyphenationLanguages = getProperty("hyphenations");
+        if (StringUtils.isEmpty(hyphenationLanguages)) {
+            System.out.println("No hyphenation languages have been setup, skipping this now...");
+            return;
+        }
+        Map<String, String> languageMap = initLanguageMap();
+        Set<Path> paths = findPath(List.of("UltraStar-Creator"));
+        if (paths == null || paths.isEmpty()) {
+            System.out.println("No valid program paths were found, skipping this now...");
+            return;
+        }
+        String[] languages = hyphenationLanguages.split("\\|");
+        boolean changes = false;
+        for (String language : languages) {
+            String prop = getProperty("hyphenations_" + language);
+            if (StringUtils.isEmpty(prop)) {
+                for (Path path : paths) {
+                    if (languageMap.get(language) == null) {
+                        System.out.println("Language " + language + " is not supported, skipping this now...");
+                        continue;
+                    }
+                    Path dictionary = Path.of(path.toString(), languageMap.get(language));
+                    if (Files.exists(dictionary)) {
+                        changes = true;
+                        setProperty("hyphenations_" + language, dictionary.toString());
+                        continue;
+                    }
+                    System.out.println("Dictionary for " + language + " was not supported, skipping this now...");
+                }
+            }
+        }
+        if (changes) {
+            store();
+        }
+    }
+
+    private Map<String, String> initLanguageMap() {
+        Map<String, String> languageMap = new HashMap<>();
+        languageMap.put("EN", "English.txt");
+        languageMap.put("FR", "French.txt");
+        languageMap.put("DE", "German.txt");
+        languageMap.put("IT", "Italian.txt");
+        languageMap.put("PL", "Polish.txt");
+        languageMap.put("PT", "Portuguese.txt");
+        languageMap.put("ES", "Spanish.txt");
+        languageMap.put("SE", "Swedish.txt");
+        return languageMap;
+    }
+
+    private Set<Path> findPath(List<String> additionalPrograms) {
+        String defaultPaths = getProperty("default-programs");
+        if (StringUtils.isEmpty(defaultPaths)) {
+            return null;
+        }
+        Set<Path> validPaths = new HashSet<>();
+        Set<String> parentPaths = new HashSet<>();
+        String[] paths = defaultPaths.split("\\|");
+        for (String path : paths) {
+            Path tempPath = Path.of(path);
+            if (!Files.exists(tempPath)) {
+                continue;
+            }
+            parentPaths.add(tempPath.toString());
+            parentPaths.add(tempPath.getParent().toString());
+            validPaths.add(tempPath);
+        }
+        if (validPaths.isEmpty()) {
+            return null;
+        }
+        for (String additionalProgram : additionalPrograms) {
+             for (String parentPath : parentPaths) {
+                 Path tempPath = Path.of(parentPath, additionalProgram);
+                 if (!Files.exists(tempPath)) {
+                     continue;
+                 }
+                 validPaths.add(tempPath);
+             }
+        }
+        return validPaths;
     }
 }
 

@@ -868,9 +868,13 @@ public class YassPlayer {
     }
 
     public void disposeMediaPlayer() {
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.dispose();
+        try {
+            if (mediaPlayer != null && mediaPlayer.getStatus() != MediaPlayer.Status.DISPOSED) {
+                mediaPlayer.stop();
+                mediaPlayer.dispose();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 

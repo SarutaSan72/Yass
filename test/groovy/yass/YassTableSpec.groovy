@@ -535,9 +535,52 @@ class YassTableSpec extends Specification {
         text == 'One-~ two three\nFour five-~'
     }
 
+    def 'insertRowsAt should insert rows'() {
+        given:
+        YassTableModel ytm = new YassTableModel()
+        TRAILING_SPACE_END_TILDE_SONG.each { row ->
+            ytm.addRow(row)
+        }
+
+        and:
+        I18.setDefaultLanguage()
+
+        and:
+        YassProperties props = Stub(YassProperties) {
+            isUncommonSpacingAfter() >> true
+        }
+        YassTable yassTable = new YassTable(ytm, props)
+        yassTable.setBPM(240d)
+        yassTable.gap = 1000
+        yassTable.model = Stub(TableModel) {
+            getRowCount() >> TRAILING_SPACE_END_TILDE_SONG.size()
+        }
+
+        when:
+        yassTable.insertRowsAt(textToInsert, 7, false)
+
+        then:
+        verifyExpectation(yassTable, expectation)
+
+        where:
+        textToInsert                 || expectation
+        ':\t0\t4\t20\tHello '        || ['One', '~ ', 'two ', 'three ', '_', 'Hello ', 'five', '~ ']
+        ':\t0\t8\t20\tHello '        || ['One', '~ ', 'two ', 'three ', '_', 'Hello ', '~ ']
+        ':\t0\t2\t20\ta \n' +
+                ':\t3\t2\t20\tb \n' +
+                ':\t6\t2\t20\tc \n' +
+                ':\t9\t3\t20\td \n' +
+                ':\t14\t2\t20\te \n' || ['One', '~ ', 'two ', 'three ', '_', 'a ', 'b ', 'c ', 'd ', 'e ']
+    }
+
     private boolean verifyExpectation(YassTable yassTable, List<String> expectation) {
+        int offset = 0
+        YassRow yassRow
+        do {
+            yassRow = yassTable.getRowAt(++offset)
+        } while(yassRow.isComment())
         expectation.eachWithIndex { String entry, int i ->
-            YassRow yassRow = yassTable.getRowAt(i)
+            yassRow = yassTable.getRowAt(i + offset)
             if (yassRow.isPageBreak()) {
                 assert entry == '_'
             } else {

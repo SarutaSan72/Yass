@@ -19,6 +19,7 @@
 package yass;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.math3.util.Precision;
 
 import java.util.Vector;
 
@@ -121,6 +122,18 @@ public class YassRow implements Cloneable, Comparable<Object> {
         s[2] = r.s[2];
         s[3] = r.s[3];
         s[4] = r.s[4];
+    }
+
+    public YassRow(String line) {
+        String[] rows = line.split("\t");
+        for (int i = 0; i < rows.length; i++) {
+            s[i] = rows[i];
+        }
+        if (rows.length >= 1 && rows.length < 4) {
+            for (int i = rows.length; i < 5; i++) {
+                s[i] = "";
+            }
+        }
     }
 
     public static int[] getMinorPageBreakMessages() {
@@ -299,6 +312,10 @@ public class YassRow implements Cloneable, Comparable<Object> {
         s[2] = val + "";
     }
 
+    public void setLength(double val) {
+        setLength((int)Precision.round(val, 0));
+    }
+
     public String getSecondBeat() {
         return s[2];
     }
@@ -309,6 +326,10 @@ public class YassRow implements Cloneable, Comparable<Object> {
         } else {
             s[2] = val + "";
         }
+    }
+
+    public void setSecondBeat(double val) {
+        setSecondBeat((int)Math.round(val));
     }
 
     public String getHeight() {
@@ -384,6 +405,10 @@ public class YassRow implements Cloneable, Comparable<Object> {
         s[1] = val + "";
     }
 
+    public void setBeat(double val) {
+        setBeat((int) Precision.round(val, 0));
+    }
+
     public boolean isGolden() {
         return s[0].equals("*");
     }
@@ -405,7 +430,7 @@ public class YassRow implements Cloneable, Comparable<Object> {
      * @return
      */
     public boolean isP() {
-        return s[0].charAt(0) == 'P';
+        return s[0] != "" && s[0].charAt(0) == 'P';
     }
 
     public boolean isNote() {

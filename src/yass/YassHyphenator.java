@@ -19,14 +19,12 @@
 package yass;
 
 import net.davidashen.text.Hyphenator;
+import org.apache.commons.lang3.StringUtils;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 
 /**
  * Description of the Class
@@ -37,7 +35,10 @@ public class YassHyphenator {
     private static String userdir = System.getProperty("user.home") + File.separator + ".yass" + File.separator + "hyphen";
     private Hyphenator hyphenator = null;
     private Hashtable<String, Object> hyphenators = null;
+    private String currentLanguage;
+    private YassProperties yassProperties;
 
+    private List<String> fallbackHyphenations = null;
 
     /**
      * Constructor for the YassHyphenator object
@@ -89,7 +90,7 @@ public class YassHyphenator {
         String language = st.nextToken();
         String country = st.hasMoreTokens() ? st.nextToken() : "";
         String lc = country.length() > 0 ? language + "_" + country : language;
-
+        this.currentLanguage = lang;
         hyphenator = null;
         Object hy = hyphenators.get(lc);
         if (hy == null) {
@@ -130,10 +131,116 @@ public class YassHyphenator {
     public String hyphenateWord(String word) {
         if (hyphenator != null) {
             word = hyphenator.hyphenate(word, 2, 2);
+            if (!word.contains("\u00AD")) {
+                word = fallbackHyphenation(word);
+            }
+            if (!word.contains("\u00AD")) {
+                // Still couldn't hyphenate. Checking, if it's a word like Checkin'
+                word = hyphenateWithApostrophe(word);
+            }
+            if (!word.contains("\u00AD") && word.length() == 2 && StringUtils.isAllUpperCase(word)) {
+                word = word.charAt(0) + "\u00AD" + word.charAt(1);
+            }
         }
         return word;
     }
 
+    private String hyphenateWithApostrophe(String word) {
+        if (!word.contains("\u00AD") && (word.endsWith("in'") || word.endsWith("in’"))) {
+            String temp = hyphenateWord(word.substring(0, word.length() - 1) + "g");
+            String apostrophe = word.substring(word.length() - 1);
+            if (temp.contains("\u00AD")) {
+                word = temp.substring(0, temp.length() - 1) + apostrophe;
+            }
+        }
+        return word;
+    }
+
+    private List<String> splitAtApostrophe(String word) {
+        int pos;
+        List<String> result = new ArrayList<>();
+        String apostrophe = yassProperties.getBooleanProperty("typographic-apostrophes") ? "’" : "'";
+        pos = word.indexOf(apostrophe);
+        if (pos >= 0) {
+            result.add(word.substring(0, pos));
+            result.add(word.substring(pos));
+        }
+        return result;
+    }
+
+    public List<String> rehyphenate(List<String> original) {
+        if (hyphenator == null) {
+            return original;
+        }
+        String word = String.join("", original);
+        if (original.size() == 2 && original.get(1).equals("~")) {
+            List<String> apostropheTilde = splitAtApostrophe(original.get(0));
+            if (apostropheTilde.size() == 2) {
+                return apostropheTilde;
+            }
+        }
+        boolean triedFallback = false;
+        String apostrophe = yassProperties.getBooleanProperty("typographic-apostrophes") ? "’" : "'";
+        boolean shortened = word.endsWith("in" + apostrophe);
+        if (shortened) {
+            word = word.substring(0, word.length() - 1) + "g";
+        }
+        String hyphenated = hyphenator.hyphenate(word, 2, 2);
+        String[] newSyllables = hyphenated.split("\u00AD");
+        if (newSyllables.length < 2) {
+            triedFallback = true;
+            hyphenated = fallbackHyphenation(word);
+            newSyllables = hyphenated.split("\u00AD");
+        }
+        if (!triedFallback && original.get(0).equals(newSyllables[0])) {
+            hyphenated = fallbackHyphenation(word);
+            newSyllables = hyphenated.split("\u00AD");
+        }
+
+        if (newSyllables.length != original.size() && word.endsWith("~")) {
+            hyphenated = fallbackHyphenation(word.substring(0, word.indexOf("~")));
+            newSyllables = hyphenated.split("\u00AD");
+        }
+        if (newSyllables.length != original.size() && checkAbbreviatedWord(original)) {
+            hyphenated = hyphenateAbbreviation(original.get(0));
+            newSyllables = hyphenated.split("\u00AD");
+        }
+        if (newSyllables.length != original.size()) {
+            return original;
+        }
+        if (shortened) {
+            newSyllables[newSyllables.length - 1] = newSyllables[newSyllables.length - 1].replace("ing", "in" + apostrophe);
+        }
+        return Arrays.stream(newSyllables).toList();
+    }
+
+    private String hyphenateAbbreviation(String input) {
+        StringJoiner output = new StringJoiner("\u00AD");
+        for (int i = 0; i < input.length(); i++) {
+            output.add(String.valueOf(input.charAt(i)));
+        }
+        return output.toString();
+    }
+
+    /**
+     * Check if passed syllables are in the following format:
+     * First item in the list contains an abbreviated all-caps word like "TV" or "ATM", the following items in the
+     * list are all tildes, e. g. ["TV", "~"] or ["ATM", "~", "~"]
+     * @param original
+     * @return true, if the passed syllables are an abbreviation
+     */
+    private boolean checkAbbreviatedWord(List<String> original) {
+        String firstWord = original.get(0);
+        if (original.size() == 1 || (firstWord.length() != original.size() && !StringUtils.isAllUpperCase(firstWord))) {
+            return false;
+        }
+        for (int i = 1; i < original.size(); i++) {
+            if (!original.get(i).trim().equals("~")) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
      * Description of the Method
@@ -172,6 +279,48 @@ public class YassHyphenator {
             sb.append("\n");
         }
         return sb.toString();
+    }
+
+    public String getCurrentLanguage() {
+        return currentLanguage;
+    }
+
+    public YassProperties getYassProperties() {
+        return yassProperties;
+    }
+
+    public void setYassProperties(YassProperties yassProperties) {
+        this.yassProperties = yassProperties;
+    }
+
+    public String fallbackHyphenation(String word) {
+        if (fallbackHyphenations == null) {
+            String fallbackDictionary = getYassProperties().getProperty("hyphenations_" + getCurrentLanguage());
+            if (StringUtils.isEmpty(fallbackDictionary)) {
+                fallbackHyphenations = null;
+            }
+            try {
+                fallbackHyphenations = Files.readAllLines(Paths.get(fallbackDictionary));
+            } catch (IOException e) {
+                fallbackHyphenations = null;
+            }
+        }
+        if (fallbackHyphenations != null) {
+            for (String line : fallbackHyphenations) {
+                if (line.replace("•", "").equals(word.toLowerCase())) {
+                    String temp = line.replace("•", "\u00AD");
+                    if (StringUtils.isAllUpperCase(word.substring(0, 1))) {
+                        temp = StringUtils.capitalize(temp);
+                    }
+                    return temp;
+                }
+                if (Character.getNumericValue(line.charAt(0)) > Character.getNumericValue(
+                        word.toLowerCase().charAt(0))) {
+                    break;
+                }
+            }
+        }
+        return word;
     }
 }
 

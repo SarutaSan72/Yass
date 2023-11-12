@@ -47,8 +47,8 @@ import java.util.Vector;
 public class YassActions implements DropTargetListener {
 
     private final YassSheet sheet;
-    public final static String VERSION = "2023.8";
-    public final static String DATE = "08/2023";
+    public final static String VERSION = "2023.11";
+    public final static String DATE = "11/2023";
 
     static int VIEW_LIBRARY = 1;
     static int VIEW_EDIT = 2;
@@ -261,6 +261,11 @@ public class YassActions implements DropTargetListener {
                 filterLibrary();
             }
         }
+    };
+    private final Action reHyphenate = new AbstractAction(I18.get("edit_rehyphenate")) {
+      public void actionPerformed(ActionEvent e) {
+          table.rehyphenate();
+      }
     };
     private final Action findLyrics = new AbstractAction(I18.get("edit_lyrics_find")) {
         public void actionPerformed(ActionEvent e) {
@@ -831,6 +836,20 @@ public class YassActions implements DropTargetListener {
                 bpmField.setText(String.valueOf(table.getBPM()));
         }
     };
+    private final Action recalcBpm = new AbstractAction(I18.get("edit_bpm_recalc")) {
+        public void actionPerformed(ActionEvent e) {
+            double newBpm = 0;
+            String strBpm = bpmField.getText().replace(",", ".");
+            if (bpmField != null && Double.parseDouble(strBpm) > 0) {
+                newBpm = Double.parseDouble(bpmField.getText());
+            }
+            for (YassTable t: getOpenTables(table)) {
+                t.recalcBPM(newBpm);
+            }
+            if (bpmField != null)
+                bpmField.setText(String.valueOf(table.getBPM()));
+        }
+    };
     private final Action showLyricsStart = new AbstractAction(I18.get("edit_gap")) {
         public void actionPerformed(ActionEvent e) {
             updateGap();
@@ -897,7 +916,12 @@ public class YassActions implements DropTargetListener {
             b.setText("");
             b.setIcon(getIcon("rewind24Icon"));
             b.setFocusable(false);
-
+            panel.add(b = new JButton());
+            b.setAction(recalcBpm);
+            b.setToolTipText(b.getText());
+            b.setText("");
+            b.setIcon(getIcon("refresh24Icon"));
+            b.setFocusable(false);
             panel.add(b = new JButton());
             b.setAction(showOnlineHelpBeat);
             b.setToolTipText(b.getText());
@@ -1456,14 +1480,19 @@ public class YassActions implements DropTargetListener {
     };
     private final Action removePageBreak = new AbstractAction(I18.get("edit_break_remove")) {
         public void actionPerformed(ActionEvent e) {
-            int row = table.getSelectionModel().getMinSelectionIndex() - 1;
-            if (row < 1) {
-                return;
-            }
-            table.removePageBreak(true);
-            table.setRowSelectionInterval(row, row);
+            removePageBreak();
         }
     };
+
+    public void removePageBreak() {
+        int row = table.getSelectionModel().getMinSelectionIndex() - 1;
+        if (row < 1) {
+            return;
+        }
+        table.removePageBreak(true);
+        table.setRowSelectionInterval(row, row);
+    }
+
     private final Action copyRows = new AbstractAction(I18.get("edit_copy")) {
         public void actionPerformed(ActionEvent e) {
             interruptPlay();
@@ -2007,7 +2036,11 @@ public class YassActions implements DropTargetListener {
                     || isFilterEditing()) {
                 return;
             }
-            table.setType(":");
+            if (table.getRowAt(table.getSelectedRow()).getType().equals(":")) {
+                playSelectionNext(0);
+            } else {
+                table.setType(":");
+            }
         }
     };
     private final Action addEndian = new AbstractAction(I18.get("edit_length_right_inc")) {
@@ -3585,6 +3618,7 @@ public class YassActions implements DropTargetListener {
         menu.add(space);
         menu.addSeparator();
 
+        menu.add(reHyphenate);
         menu.add(findLyrics);
         menu.add(spellLyrics);
 
@@ -6926,6 +6960,10 @@ public class YassActions implements DropTargetListener {
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK), "findLyrics");
         am.put("findLyrics", findLyrics);
         findLyrics.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_MASK), "reHyphenate");
+        am.put("reHyphenate", reHyphenate);
+        reHyphenate.putValue(AbstractAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_MASK));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK), "selectAllSongs");
         am.put("selectAllSongs", selectAllSongs);

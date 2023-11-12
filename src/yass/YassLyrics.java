@@ -471,8 +471,7 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 						e.consume();
 					}
 					return;
-				}
-				else if (keyCode == KeyEvent.VK_Y && e.isControlDown()) {
+				} else if (keyCode == KeyEvent.VK_Y && e.isControlDown()) {
 					if (isEditable()) {
 						finishEditing();
 						table.redoRows();
@@ -584,6 +583,9 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 						|| keyCode == KeyEvent.VK_BACK_SPACE) {
 					// check on valid action
 					if (!lyricsArea.isEditable()) {
+						if (keyCode == KeyEvent.VK_BACK_SPACE) {
+							table.getActions().removePageBreak();
+						}
 						return;
 					}
 					String txt = lyricsArea.getText();
@@ -626,12 +628,10 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 						return;
 					}
 
-					if (c == ' ' || c == '-'
-							|| (c == YassRow.HYPHEN && c1 == '\n')) {
+					if (c == ' ' || c == '-' || (c == YassRow.HYPHEN && c1 == '\n')) {
 						// workaround
 						lyricsArea.getCaret().setDot(dot1);
 						lyricsArea.getCaret().setDot(dot);
-
 						finishEditing();
 						preventFireUpdate = false;
 						table.getModel()
@@ -639,7 +639,11 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 						table.getSelectionModel().removeListSelectionListener(
 								tableSelectionListener);
 						lyricsArea.removeCaretListener(caretListener);
-						table.rollLeft();
+						if (prop.isUncommonSpacingAfter()) {
+							table.removeEndSpace();
+						} else {
+							table.rollLeft();
+						}
 						lyricsArea.setText(table.getText());
 						lyricsArea.addCaretListener(caretListener);
 						table.getSelectionModel().addListSelectionListener(
@@ -696,6 +700,8 @@ public class YassLyrics extends JPanel implements TabChangeListener, YassSheetLi
 						lastTime = currentTime;
 						lyricsArea.repaint();
 						e.consume();
+					} else if (e.isControlDown() && keyCode == KeyEvent.VK_H) {
+						table.rehyphenate();
 					} else {
 						table.dispatchEvent(e);
 					}
