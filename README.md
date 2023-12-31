@@ -34,7 +34,7 @@ Speed measure 'Inverse Duration' based on Marcel Taeumel's approach (http://uman
 
 # License
 
-Copyright (C) 2009-2022 Saruta
+Copyright (C) 2009-2023 Saruta
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
