@@ -3837,6 +3837,15 @@ public class YassTable extends JTable {
     }
 
     /**
+     * Checks if more than one row is selected.
+     * */
+    public boolean hasSingleSelectedRow() {
+        int iMin = selectionModel.getMinSelectionIndex();
+        int iMax = selectionModel.getMaxSelectionIndex();
+        return iMin >= 0 && iMin == iMax;
+    }
+
+    /**
      * Description of the Method
      */
     public void joinRows() {

@@ -3720,6 +3720,13 @@ public class YassActions implements DropTargetListener {
         b.setIcon(getIcon("save24Icon"));
         b.setFocusable(false);
         b.setOpaque(false);
+        b.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (lyrics.isEditable())
+                    lyrics.finishEditing();
+            }
+        });
 
         t.addSeparator();
 
