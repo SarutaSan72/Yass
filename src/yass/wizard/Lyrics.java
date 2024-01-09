@@ -63,9 +63,11 @@ public class Lyrics extends JPanel {
 
 
     /**
-     * Gets the contentPanel attribute of the Lyrics object
+     * Lyrics text field.
      *
-     * @return The contentPanel value
+     * Enforces UTF-8 encoding.
+     *
+     * @return  panel
      */
     private JPanel getContentPanel() {
         JPanel content = new JPanel(new BorderLayout());
@@ -81,6 +83,7 @@ public class Lyrics extends JPanel {
         txt.setEditable(false);
         content.add("Center", new JScrollPane(txt));
 
+        /*
         JPanel buttons = new JPanel(new GridLayout(1, 3));
         utf8 = new JCheckBox("UTF-8");
         utf8.setSelected(wizard.getValue("encoding").equals("utf8"));
@@ -97,11 +100,12 @@ public class Lyrics extends JPanel {
         buttons.add(utf8);
         buttons.add(new JLabel(""));
         buttons.add(new JLabel(""));
+        */
 
         lyricsArea = new JTextArea(10, 20);
         JPanel pan = new JPanel(new BorderLayout());
         pan.add("Center", new JScrollPane(lyricsArea));
-        pan.add("South", buttons);
+        //pan.add("South", buttons);
         content.add("South", pan);
         return content;
     }

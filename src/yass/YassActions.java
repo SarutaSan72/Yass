@@ -1568,6 +1568,12 @@ public class YassActions implements DropTargetListener {
             activateNextTrack(1);
         }
     };
+
+    /**
+     * Editor > File > Save All Tracks
+     *
+     * Enforces UTF-8 encoding.
+     */
     private final Action saveAll = new AbstractAction(I18.get("edit_save_all")) {
         public void actionPerformed(ActionEvent e) {
             if (lyrics.isEditable() || songList.isEditing() || isFilterEditing())
@@ -1577,6 +1583,12 @@ public class YassActions implements DropTargetListener {
             save(openTables);
         }
     };
+
+    /**
+     * Editor > File > Save Track
+     *
+     * Enforces UTF-8 encoding.
+     */
     private final Action saveTrack = new AbstractAction(I18.get("edit_save_track")) {
         public void actionPerformed(ActionEvent e) {
             if (lyrics.isEditable() || songList.isEditing() || isFilterEditing())
@@ -1597,6 +1609,12 @@ public class YassActions implements DropTargetListener {
             save(v);
         }
     };
+
+    /**
+     * Editor > File > Merge Tracks
+     *
+     * Enforces UTF-8 encoding.
+     */
     private final Action mergeTracks = new AbstractAction(I18.get("edit_tracks_merge")) {
         public void actionPerformed(ActionEvent e) {
             boolean bContinue = true;
@@ -1612,7 +1630,7 @@ public class YassActions implements DropTargetListener {
                 String filename = askFilename(I18.get("lib_edit_file_msg"), FileDialog.SAVE);
                 if (filename != null) {
                     YassTable mt = YassTable.mergeTables(openTables, prop);
-                    if (!mt.storeFile(filename)) // todo warn
+                    if (!mt.storeFileAsUTF8(filename)) // todo warn
                         return;
                     openFiles(filename, false);
                 }
@@ -6437,6 +6455,11 @@ public class YassActions implements DropTargetListener {
         updateVideoGap();
     }
 
+    /**
+     * Editor > File > Save Track
+     *
+     * Enforces UTF-8 encoding.
+     */
     private void save(Vector<YassTable> tables) {
         Vector<YassTable> stored = new Vector<>();
         for (YassTable t : tables) {
@@ -6445,10 +6468,10 @@ public class YassActions implements DropTargetListener {
             if (t.getDuetTrack() > 0) {
                 Vector<YassTable> tracks = getOpenTables(t);
                 YassTable mt = YassTable.mergeTables(tracks, prop);
-                mt.storeFile(t.getDirFilename());
+                mt.storeFileAsUTF8(t.getDirFilename());
                 stored.addAll(tracks);
             } else {
-                t.storeFile(t.getDirFilename());
+                t.storeFileAsUTF8(t.getDirFilename());
                 stored.add(t);
             }
         }
@@ -6458,10 +6481,15 @@ public class YassActions implements DropTargetListener {
         main.repaint();
     }
 
+    /**
+     * Editor > File > Save Track
+     *
+     * Enforces UTF-8 encoding.
+     */
     private void saveTrackAs() {
         String filename = askFilename(I18.get("lib_edit_file_msg"), FileDialog.SAVE);
         if (filename != null) {
-            if (!table.storeFile(filename)) // todo warn
+            if (!table.storeFileAsUTF8(filename)) // todo warn
                 return;
             openFiles(filename, true);
         }
@@ -6514,12 +6542,17 @@ public class YassActions implements DropTargetListener {
         return filename;
     }
 
+    /**
+     * Editor > File > Save Duet As
+     *
+     * Enforces UTF-8 encoding.
+     */
     private void saveDuetAs() {
         String filename = askFilename(I18.get("lib_edit_file_msg"), FileDialog.SAVE);
         if (filename != null) {
             Vector<YassTable> tracks = getOpenTables(table);
             YassTable mt = YassTable.mergeTables(tracks, prop);
-            if (!mt.storeFile(filename)) // todo warn
+            if (!mt.storeFileAsUTF8(filename)) // todo warn
                 return;
             openFiles(filename, false);
         }

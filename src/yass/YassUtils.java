@@ -179,11 +179,13 @@ public class YassUtils {
     }
 
     /**
-     * Description of the Method
+     * Editor > Create New Song
      *
-     * @param parent Description of the Parameter
-     * @param vals   Description of the Parameter
-     * @return Description of the Return Value
+     * Enforces UTF-8 encoding.
+     *
+     * @param parent dialog owner
+     * @param vals   chosen attributes
+     * @return absolute path of new file
      */
     public static String createSong(JComponent parent, Hashtable<?, ?> vals, YassProperties prop) {
         String artist = (String) vals.get("artist");
@@ -195,12 +197,7 @@ public class YassUtils {
         String folder = (String) vals.get("folder");
         String songdir = (String) vals.get("songdir");
         String tabletxt = (String) vals.get("melodytable");
-        String encoding = (String) vals.get("encoding");
-        if (encoding != null && encoding.trim().length() < 1) {
-            encoding = null;
-        }
-        // saruta, Jan 2019: utf8-->UTF-8
-        if (encoding == "utf8") encoding = "UTF-8";
+        String encoding = "UTF-8";
 
         if (artist == null || artist.trim().length() < 1) {
             artist = "UnknownArtist";
@@ -266,7 +263,7 @@ public class YassUtils {
         table.setLanguage(language);
         table.setBPM(bpm);
         table.setEncoding(encoding);
-        table.storeFile(newtxt.getAbsolutePath());
+        table.storeFileAsUTF8(newtxt.getAbsolutePath());
         return newtxt.getAbsolutePath();
     }
 

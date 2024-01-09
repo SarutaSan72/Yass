@@ -491,7 +491,7 @@ public class YassSongList extends JTable {
                     String olda = r.getComment();
                     if (!a1.equals(olda)) {
                         r.setComment(a1);
-                        t.storeFile(filename);
+                        t.storeFile_CompatibleEncoding(filename);
                     }
                 }
             } else if (col1 == TITLE_COLUMN) {
@@ -501,7 +501,7 @@ public class YassSongList extends JTable {
                     String olda = r.getComment();
                     if (!a1.equals(olda)) {
                         r.setComment(a1);
-                        t.storeFile(filename);
+                        t.storeFile_CompatibleEncoding(filename);
                     }
                 }
             }
@@ -3189,7 +3189,7 @@ public class YassSongList extends JTable {
                 }
             }
 
-            t.storeFile(filename);
+            t.storeFile_CompatibleEncoding(filename);
             s.setSaved(true);
             loadSongDetails(s, t);
 
@@ -4959,7 +4959,7 @@ public class YassSongList extends JTable {
                             }
                         }
 						filename = t.getDir() + File.separator + t.getFilename();
-                        t.storeFile(filename);
+                        t.storeFile_CompatibleEncoding(filename);
                         s.setDirectory(t.getDir());
                         s.setFilename(t.getFilename());
 

@@ -2388,7 +2388,7 @@ public class YassSongInfo extends JPanel implements DropTargetListener {
                     }
 
                     t3.setEncoding(t.getEncoding());
-                    if (!t3.storeFile(song.getDirectory() + File.separator
+                    if (!t3.storeFile_CompatibleEncoding(song.getDirectory() + File.separator
                             + song.getFilename())) {
                         System.out.println("Cannot update file: "
                                 + song.getDirectory() + File.separator
