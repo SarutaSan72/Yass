@@ -1,6 +1,6 @@
 ﻿Name "Yass"
 
-OutFile ".\release\yass-installer-2.4.3.exe"
+OutFile ".\release\yass-installer-2.5.0.exe"
 
 Unicode true
 SetCompressor lzma
@@ -120,8 +120,19 @@ uninst:
   RMDir /r "$SMPROGRAMS\Yass Along 1.8.0"
   RMDir /r "$SMPROGRAMS\Yass Along 1.7.1"
 
+  MessageBox MB_YESNO|MB_ICONEXCLAMATION \
+    $(Msg_RemoveSettings) \
+    IDNO bye IDYES yes
+yes:
+  MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION \
+    $(Msg_RemoveSettingsReally) \
+    IDOK yes2 IDCANCEL bye
+yes2:
+  RMDir /r "$PROFILE\.yass"
+bye:
+
   ClearErrors
-  ExecWait $R0
+  ExecWait "$R0 /S _?=$INSTDIR"
 done:
 FunctionEnd
 ##################
@@ -263,16 +274,4 @@ Section "Uninstall"
   Delete "$INSTDIR\yass.exe"
   Delete "$INSTDIR\uninstall.exe"
   RMDir  "$INSTDIR"
-
-  MessageBox MB_YESNO|MB_ICONEXCLAMATION \
-    $(Msg_RemoveSettings) \
-    IDNO bye IDYES yes
-yes:
-  MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION \
-    $(Msg_RemoveSettingsReally) \
-    IDOK yes2 IDCANCEL bye
-yes2:
-  RMDir /r "$PROFILE\.yass"
-bye:
-
 sectionEnd

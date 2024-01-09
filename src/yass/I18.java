@@ -262,7 +262,7 @@ public class I18 {
         sb.append("mail@yass-along.com<br>");
         sb.append("<a href=\"http://yass-along.com\">http://yass-along.com</a><br>");
         sb.append("<br>");
-        sb.append("Copyright (C) 2020 Saruta<br>");
+        sb.append("Copyright (C) 2009-2024 Saruta<br>");
         sb.append("This program is free software: you can redistribute it and/or modify<br>");
         sb.append("it under the terms of the GNU General Public License as published by<br>");
         sb.append("the Free Software Foundation, either version 3 of the License, or<br>");
