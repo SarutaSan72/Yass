@@ -1510,7 +1510,31 @@ public class YassTable extends JTable {
         return true;
     }
 
-    public boolean storeFile(String filename) {
+
+    /**
+     * Does not change the encoding (for compatibility).
+     *
+     * @param filename
+     * @return
+     */
+    public boolean storeFile_CompatibleEncoding(String filename) {
+        return storeFile(filename, false);
+    }
+
+    /**
+     * Since January 2024 (v2.5.0), Yass uses UTF-8 for changing saves in the song editor
+     * and for creating new files (library > file > new...).
+     *
+     * For compatibility, the encoding is not changed by batch-correcting multiple files
+     * (library > errors > multiselect/all > correct).
+     *
+     * @param filename
+     * @return
+     */
+    public boolean storeFileAsUTF8(String filename) {
+        return storeFile(filename, true);
+    }
+    private boolean storeFile(String filename, boolean utf8) {
         // System.out.println("Storing "+tm.getCommentRow("ARTIST:").getComment()+" - "+tm.getCommentRow("TITLE:").getComment());
 
         int relPageBreak = 0;
@@ -1537,6 +1561,8 @@ public class YassTable extends JTable {
 
         p = prop.getProperty("utf8-always");
         boolean utf8Always = p != null && p.equals("true");
+        if (utf8)
+            utf8Always = true;
 
         boolean success = false;
         try {
