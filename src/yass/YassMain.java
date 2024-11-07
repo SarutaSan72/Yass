@@ -71,6 +71,7 @@ public class YassMain extends JApplet {
 
             System.out.println("Init...");
             y.init();
+            y.actions.refreshLibrary();
             System.out.println("Inited.");
 
             y.initConvert();
